@@ -1,0 +1,23 @@
+.. wichit2s documentation master file, created by
+   sphinx-quickstart on Sun Jan 21 09:42:27 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+wichit2s
+====================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: :
+
+   .. cv/index
+   courses/index
+   workshops/index
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
