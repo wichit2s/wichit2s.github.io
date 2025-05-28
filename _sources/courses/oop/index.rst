@@ -5,6 +5,7 @@
 
   เอกสารชุดนี้อยู่ในระหว่างการปรับปรุง
 
+
 .. list-table:: ตารางหลักสูตรการเขียนโปรแกรมเชิงวัตถุ
    :header-rows: 1
    :widths: 5 35 35 25
@@ -126,5 +127,13 @@
      - 1. สามารถนำเสนอให้เข้าใจโครงงานได้ง่าย สื่อสารโดยใช้เทคโนโลยีที่เหมาะสม ตอบคำถามด้วยความเข้าใจและมีหลักการ
         :icon:`fa-solid fa-person-running` `เกณฑ์การประเมิน <./project_criteria.html>`_
      - Final Presentation
+
+
+     
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   oop-in-pygame/slide
 
 

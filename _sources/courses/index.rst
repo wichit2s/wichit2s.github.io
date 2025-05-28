@@ -7,9 +7,7 @@ Courses
 
    programming/index
    oop/index
-   como/index
    webdev/index
-   datawarehousing/index
    mobiledev/index
 
 

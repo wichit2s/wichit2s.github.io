@@ -1,4 +1,4 @@
-แผนการจัดการเรียนรู้
+โครงงาน
 ============================================================
 
 .. warning::
@@ -14,12 +14,28 @@
      - เอกสารประกอบ
    * - 1 
      - ความรู้เบื้องต้นเกี่ยวกับการพัฒนาเว็บ 
-        **ผลลัพธ์การเรียนรู้**
+
+       **ผลลัพธ์การเรียนรู้**
+
        1. เข้าใจองค์ประกอบสำคัญของการพัฒนาเว็บ (Frontend+Backend+Storage)
        2. แสดงรายการเทคโนโลยี Frontend ได้อย่างน้อย 3 รายการ
        3. แสดงรายการเทคโนโลยี Backend ได้อย่างน้อย 3 รายการ
        4. แสดงรายการ Storage ได้อย่างน้อย 3 รายการ
        5. ติดตั้งโปรแกรมที่จำเป็นสำหรับการพัฒนาเว็บด้วย django ได้
+       
+       .. collapse:: แบบฝึกหัดภาคทฤษฏี
+
+         1. อธิบายองค์ประกอบของระบบการพัฒนาเว็บว่าเกี่ยวข้องกับส่วนใดบ้าง พร้อมยกตัวอย่างแต่ละส่วน
+         2. จงระบุเทคโนโลยีที่ใช้ในฝั่ง Frontend อย่างน้อย 3 รายการ พร้อมอธิบายหน้าที่ของแต่ละรายการ
+         3. จงระบุเทคโนโลยีที่ใช้ในฝั่ง Backend อย่างน้อย 3 รายการ พร้อมอธิบายสั้น ๆ ว่าแต่ละตัวทำงานอย่างไร 
+         4. จงระบุระบบจัดเก็บข้อมูลอย่างน้อย 3 รายการ พร้อมระบุว่าระบบใดเป็นแบบ SQL และแบบ NoSQL
+
+       .. collapse:: แบบฝึกหัดภาคปฏิบัติ
+
+         1. แสดงการติดตั้ง Python และ Django ในเครื่องของตัวเอง
+         2. แสดงคำสั่งที่ใช้ในการติดตั้ง
+         3. สร้างโปรเจกต์ชื่อ mysite และเปิดการใช้งานให้สำเร็จ
+
      - 1. `Chapter 1 Web Applications <https://www.softkraft.co/web-application-architecture/>`_
        2. `Web Development <https://www.geeksforgeeks.org/web-development/>`_
        3. `การติดตั้ง <https://www.slideshare.net/slideshow/python-dev-setup-thaipdf/253351612>`_ 
@@ -31,11 +47,27 @@
           * `download pycharm professional <https://www.jetbrains.com/pycharm/download>`_
    * - 2 
      - โครงสร้างของโครงงานและการรับส่งข้อมูล (HttpRequest,HttpResponse)
+
         **ผลลัพธ์การเรียนรู้**
+
        1. เข้าใจรูปแบบการส่งและรับข้อความระหว่างเครื่องผู้ใช้และเครื่องแม่ข่ายได้(client-server)
        2. อธิบายองค์ประกอบของข้อมูลคำร้อง (request) ได้
        3. อธิบายองค์ประกอบของข้อมูลส่งกลับ (response) ได้
        4. สร้างโครงงานและเขียนคำสั่งรับส่งข้อมูลได้
+
+       .. collapse:: แบบฝึกหัดภาคทฤษฏี
+
+         1. จงอธิบายรูปแบบการสื่อสารระหว่างเครื่องผู้ใช้ (client) และเครื่องแม่ข่าย (server) โดยระบุลักษณะการทำงานและตัวอย่างที่พบในชีวิตประจำวัน 
+         2. จงอธิบายองค์ประกอบหลักของข้อมูลคำร้อง (HTTP Request) อย่างน้อย 3 รายการ พร้อมระบุหน้าที่ของแต่ละรายการ
+         3. จงอธิบายองค์ประกอบหลักของข้อมูลส่งกลับ (HTTP Response) อย่างน้อย 3 รายการ พร้อมระบุหน้าที่ของแต่ละรายการ
+
+       .. collapse:: แบบฝึกหัดภาคปฏิบัติ
+
+          ส่งวีดีโอที่มีเสียงอธิบายประกอบเพื่อแสดงการปฏิบัติตามคำสั่งต่อไปนี้
+
+         1. สร้างโครงงาน Django ชื่อ mysite 
+         2. สร้าง url ที่สามารถเข้าถึงได้จาก /info ที่ส่งข้อมูลกลับเป็นข้อมูล python django ที่ระบุเวอร์ชัน
+         3. สร้าง url ที่สามารถเข้าถึงได้จาก /hello ที่สามารถรับค่า name จากผู้ใช้ผ่านแบบฟอร์ม (POST) โดยให้เซิร์ฟเวอร์ตอบกลับด้วยข้อความ “Hello, [ชื่อผู้ใช้]” 
      - 1. `Chapter 2 Request and response objects <https://docs.djangoproject.com/en/5.0/ref/request-response/>`_
        2. `HTTP Messages <https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages>`_
        3. `Tutorial <https://docs.djangoproject.com/en/5.0/intro/tutorial01/>`_
@@ -107,7 +139,7 @@
         **ผลลัพธ์การเรียนรู้**
        1. อธิบายรูปแบบการเขียนคำสั่งภาษา JavaScript ได้
        2. ประยุกต์ใช้ความรู้ชุดคำสั่ง client-side web API เบื้องต้นได้
-     - - `Chapter 9.1 JavaScript <https://javacript.info/first-steps>`_
+     - - `Chapter 9.1 JavaScript <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Language_overview>`_
        - `Chapter 9.2 Client-Side Web API <https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs>`_
    * - 11 
      - HTMX

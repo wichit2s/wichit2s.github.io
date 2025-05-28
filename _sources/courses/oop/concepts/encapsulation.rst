@@ -75,9 +75,11 @@ Exercise
 
 :Ex0601: จงเขียนโปรแกรมเพื่อสร้างประกาศและเรียกใช้ ScoreKeeper เพื่อให้สามารถอ่านและแสดงคะแนนเฉลี่ยของทุกคนจากไฟล์ต่อไปนี้
 
+
 .. literalinclude:: codes/java/scores.txt
    :name: scorestxt
    :caption: ไฟล์ที่ใช้เก็บคะแนน
+
 
 .. tabs::
 
@@ -407,29 +409,29 @@ Exercise
 
 :Ex0607: จงประกาศคลาส Hero และ NPC เพื่อให้สามารถเรียกใช้คำสั่งต่อไปนี้ได้
 
-         .. code-block:: java
-            :linenos:
+.. code-block:: java
+   :linenos:
 
-            public class CharacterApp<T> {
-              private T c;
-              public CharacterApp(T c) {
-                this.c = c;
-              }
-              public void combat(Character b) {
-                c.fight(b);
-              }
-              public static void main(String[] args) {
-                Hero batman = new Hero("Batman", 100, 15);
-                Hero superman = new Hero("Superman", 200, 25);
-                NPC zbot = new NPC("Zombie", 20);
+   public class CharacterApp<T> {
+     private T c;
+     public CharacterApp(T c) {
+       this.c = c;
+     }
+     public void combat(Character b) {
+       c.fight(b);
+     }
+     public static void main(String[] args) {
+       Hero batman = new Hero("Batman", 100, 15);
+       Hero superman = new Hero("Superman", 200, 25);
+       NPC zbot = new NPC("Zombie", 20);
 
-                CharacterApp<Hero> b = new CharacterApp<>(batman);
-                CharacterApp<Hero> s = new CharacterApp<>(superman);
-                b.print(); // "Batman HP:100 Damage:15
-                b.combat(zbot);
-                b.print(); // "Batman HP:80 Damage:15
-                b.combat(s);
-                b.print(); // "Batman HP:55 Damage:15
-              }
-            }
+       CharacterApp<Hero> b = new CharacterApp<>(batman);
+       CharacterApp<Hero> s = new CharacterApp<>(superman);
+       b.print(); // "Batman HP:100 Damage:15
+       b.combat(zbot);
+       b.print(); // "Batman HP:80 Damage:15
+       b.combat(s);
+       b.print(); // "Batman HP:55 Damage:15
+     }
+   }
 
