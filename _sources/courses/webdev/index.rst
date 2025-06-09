@@ -189,11 +189,10 @@
 
           ส่งวีดีโอที่มีเสียงอธิบายประกอบเพื่อแสดงการปฏิบัติตามคำสั่งต่อไปนี้
 
-         1. ให้เขียน view และ template สำหรับสร้างฟอร์ม HTML เพื่อรับข้อมูลคำถาม
-         2. (Create) สร้างฟอร์มโดยใช้ forms.ModelForm
-         3. (Update) แก้ไขข้อมูลโดยใช้ฟอร์ม 
-         4. (CreateView) class-based view สำหรับสร้างงคำถาม
-         6. (UpdateView) class-based view สำหรับแก้ไขคำถาม
+         1. ให้เขียน view และ template สำหรับสร้างฟอร์ม HTML เสำหรับลงทะเบียนผู้ใช้งาน
+         2. ให้เขียน view และ template สำหรับสร้างฟอร์ม HTML สำหรับการล็อกอินน์สมาชิก
+         3. เขียน RegisterView และ template สำหรับลงทะเบียนผู้ใช้
+         3. เขียน LoginView และ template สำหรับลงล็อกอินสมาชิก
      - - `Chapter 6 Authentication <https://docs.djangoproject.com/en/5.0/topics/auth/default/>`_
        - **Code** `Github Repo <https://github.com/wichit2s/KhootClone/tree/week06>`_
    * - 8 

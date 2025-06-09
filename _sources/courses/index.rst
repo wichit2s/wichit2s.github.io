@@ -9,5 +9,6 @@ Courses
    oop/index
    webdev/index
    mobiledev/index
+   datawarehousing/index
 
 
