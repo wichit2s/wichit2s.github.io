@@ -45,7 +45,8 @@
            - anaconda3
           * `สมัครใช้ pycharm professional <https://www.jetbrains.com/shop/eform/students>`_
           * `download pycharm professional <https://www.jetbrains.com/pycharm/download>`_
-       4. **Code** `Github KhootClone Week01 <https://github.com/wichit2s/KhootClone/tree/week01>`_ 
+       4. **Slide** `ความรู้เบื้องต้นเกี่ยวกับการพัฒนาเว็บ <../../_static/courses/webdev/slides/wk01.html>`_ 
+       5. **Code** `Github KhootClone Week01 <https://github.com/wichit2s/KhootClone/tree/week01>`_ 
    * - 2 
      - โครงสร้างของโครงงานและการรับส่งข้อมูล (HttpRequest,HttpResponse)
 
@@ -76,7 +77,8 @@
        3. `Tutorial <https://docs.djangoproject.com/en/5.0/intro/tutorial01/>`_
        4. `PDF Response <https://docs.djangoproject.com/en/5.0/howto/outputting-pdf/>`_
        5. :download:`Image Response <codes/chapter02/dynamic_image.py>` :icon:`fa-solid fa-download`
-       6. **Code** `Github KhootClone Week02 <https://github.com/wichit2s/KhootClone/tree/week02>`_ 
+       6. **Slide** `โครงสร้างและการรับส่งข้อมูล <../../_static/courses/webdev/slides/wk02.html>`_ 
+       7. **Code** `Github KhootClone Week02 <https://github.com/wichit2s/KhootClone/tree/week02>`_ 
    * - 3 - 4 
      - การจัดการข้อมูล (model)
 
@@ -114,6 +116,8 @@
          * 3.7 `คำสั่งค้นหา (Search) <https://docs.djangoproject.com/en/5.0/topics/db/search/>`_
        * `Tutorial <https://docs.djangoproject.com/en/5.0/intro/tutorial02/>`_
        * `ประเภทของฟิลด์ใน model <https://docs.djangoproject.com/en/5.0/ref/models/fields/#field-types>`_
+       * **Slide** `3 - การจัดการข้อมูล <../../_static/courses/webdev/slides/wk03.html>`_ 
+       * **Slide** `4 - การจัดการข้อมูลขั้นสูง <../../_static/courses/webdev/slides/wk04.html>`_ 
        * **Code** `Github Repo <https://github.com/wichit2s/KhootClone/tree/week03>`_
    * - 5 
      - การกำหนดการเข้าถึงและการแสดงผล (views,template)

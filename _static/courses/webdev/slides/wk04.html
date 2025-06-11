@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การจัดการข้อมูลขั้นสูง (Advanced Django Model)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .slide {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slide h2 {
+            color: #3498db;
+            font-size: 2em;
+            margin: 25px 0 15px 0;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            color: #e74c3c;
+            font-size: 1.5em;
+            margin: 20px 0 10px 0;
+        }
+
+        .slide h4 {
+            color: #8e44ad;
+            font-size: 1.2em;
+            margin: 15px 0 8px 0;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            margin-bottom: 8px;
+        }
+
+        .slide pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .slide code {
+            background: #34495e;
+            color: #e74c3c;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .controls button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .controls button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            backdrop-filter: blur(10px);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #3498db;
+        }
+
+        .warning {
+            background: linear-gradient(120deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 5px solid #e17055;
+        }
+
+        .success {
+            background: linear-gradient(120deg, #d1f2eb 0%, #a8e6cf 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 5px solid #00b894;
+        }
+
+        .exercise {
+            background: linear-gradient(120deg, #e8f4fd 0%, #c8e6f5 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #3498db;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: #3498db;
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        .navigation-menu {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1002;
+        }
+
+        .menu-toggle {
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background: rgba(0,0,0,0.9);
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-dropdown.show {
+            display: block;
+            animation: menuSlideIn 0.3s ease;
+        }
+
+        @keyframes menuSlideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-item {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 3px 0;
+            transition: background 0.2s ease;
+            font-size: 0.9em;
+        }
+
+        .menu-item:hover {
+            background: rgba(52, 152, 219, 0.6);
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 30px;
+            right: 120px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+                font-size: 0.9em;
+            }
+            
+            .slide h1 {
+                font-size: 1.8em;
+            }
+            
+            .slide h2 {
+                font-size: 1.4em;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                bottom: 15px;
+                padding: 10px 15px;
+            }
+            
+            .controls button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="navigation-menu">
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <div class="menu-dropdown" id="menuDropdown">
+            <a href="#" class="menu-item" onclick="goToSlide(0)">หน้าปก</a>
+            <a href="#" class="menu-item" onclick="goToSlide(1)">ผลลัพธ์การเรียนรู้</a>
+            <a href="#" class="menu-item" onclick="goToSlide(2)">บทนำ Advanced Django Model</a>
+            <a href="#" class="menu-item" onclick="goToSlide(3)">Django ORM Review</a>
+            <a href="#" class="menu-item" onclick="goToSlide(4)">Complex Lookups</a>
+            <a href="#" class="menu-item" onclick="goToSlide(5)">Q Objects</a>
+            <a href="#" class="menu-item" onclick="goToSlide(6)">Aggregation และ Annotation</a>
+            <a href="#" class="menu-item" onclick="goToSlide(7)">Prefetch และ Select Related</a>
+            <a href="#" class="menu-item" onclick="goToSlide(8)">Advanced Filtering</a>
+            <a href="#" class="menu-item" onclick="goToSlide(9)">Lab 1: Complex Queries</a>
+            <a href="#" class="menu-item" onclick="goToSlide(10)">Lab 2: Aggregation</a>
+            <a href="#" class="menu-item" onclick="goToSlide(11)">Lab 3: Performance</a>
+            <a href="#" class="menu-item" onclick="goToSlide(12)">Lab 4: Advanced Queries</a>
+            <a href="#" class="menu-item" onclick="goToSlide(13)">การประเมินผล</a>
+            <a href="#" class="menu-item" onclick="goToSlide(14)">บทสรุป</a>
+        </div>
+    </div>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">15</span>
+    </div>
+
+    <div class="presentation">
+      <!-- Slide 1: Title -->
+      <div class="slide active">
+        <h1>การจัดการข้อมูลขั้นสูง</h1>
+        <h1>(Advanced Django Model)</h1>
+        <br><br>
+        <div class="highlight">
+          <h2 style="text-align: center; border: none; color: #2c3e50;">5 ชั่วโมง</h2>
+          <h3 style="text-align: center; color: #3498db;">ทฤษฎี 1 ชั่วโมง + ปฏิบัติ 4 ชั่วโมง</h3>
+        </div>
+        <br><br>
+        <div style="text-align: center; font-size: 1.3em; color: #7f8c8d;">
+          <p>เรียนรู้การใช้ Django ORM ขั้นสูง</p>
+          <p>เพื่อจัดการข้อมูลอย่างมีประสิทธิภาพ</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div class="slide">
+        <h1>ผลลัพธ์การเรียนรู้</h1>
+        <div class="highlight">
+          <h2>เมื่อจบการเรียนแล้ว ผู้เรียนสามารถ:</h2>
+          <h3>1. ประยุกต์ใช้คำสั่งค้นหา (query) ได้ตรงตามเงื่อนไขที่กำหนดให้</h3>
+        </div>
+        <br>
+        <h2>ทักษะที่จะได้รับ:</h2>
+        <ul>
+          <li><strong>Complex Queries:</strong> การสร้างเงื่อนไขการค้นหาที่ซับซ้อน</li>
+          <li><strong>Performance Optimization:</strong> การเพิ่มประสิทธิภาพการทำงาน</li>
+          <li><strong>Data Aggregation:</strong> การคำนวณและสรุปข้อมูล</li>
+          <li><strong>Advanced Relationships:</strong> การจัดการความสัมพันธ์ข้อมูล</li>
+        </ul>
+      </div>
+
+      <!-- Slide 3: Introduction -->
+      <div class="slide">
+        <h1>บทนำ Advanced Django Model</h1>
+        <h2>ทำไมต้องใช้ Advanced Query?</h2>
+        <div class="two-column">
+          <div>
+            <h3>🚀 ประสิทธิภาพ</h3>
+            <ul>
+              <li>ลดจำนวนครั้งในการเชื่อมต่อฐานข้อมูล</li>
+              <li>ลด Memory Usage</li>
+              <li>เพิ่มความเร็วในการประมวลผล</li>
+            </ul>
+
+            <h3>🎯 ความแม่นยำ</h3>
+            <ul>
+              <li>ได้ข้อมูลที่ตรงตามเงื่อนไขแบบซับซ้อน</li>
+              <li>ลดข้อผิดพลาดจากการประมวลผลใน Python</li>
+            </ul>
+          </div>
+          <div>
+            <h3>💰 ประหยัดทรัพยากร</h3>
+            <ul>
+              <li>ลด CPU usage</li>
+              <li>ลดการใช้ bandwidth</li>
+              <li>ประหยัดค่าใช้จ่าย cloud</li>
+            </ul>
+
+            <h3>⚡ User Experience</h3>
+            <ul>
+              <li>Response time ที่ดีขึ้น</li>
+              <li>การทำงานที่ลื่นไหล</li>
+              <li>รองรับผู้ใช้งานจำนวนมาก</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Django ORM Review -->
+      <div class="slide">
+        <h1>Django ORM Review</h1>
+        <h2>พื้นฐานที่ควรทราบ</h2>
+        <pre><code># Basic queries ที่เราเคยใช้
+          User.objects.all()
+          User.objects.get(id=1)
+          User.objects.filter(name="John")
+          User.objects.exclude(age__lt=18)</code></pre>
+
+        <h2>Model ตัวอย่างที่ใช้ในคลาส</h2>
+        <pre><code>class Author(models.Model):
+          name = models.CharField(max_length=100)
+          email = models.EmailField()
+          birth_date = models.DateField()
+
+          class Category(models.Model):
+          name = models.CharField(max_length=50)
+
+          class Book(models.Model):
+          title = models.CharField(max_length=200)
+          author = models.ForeignKey(Author, on_delete=models.CASCADE)
+          category = models.ForeignKey(Category, on_delete=models.CASCADE)
+          published_date = models.DateField()
+          price = models.DecimalField(max_digits=10, decimal_places=2)
+          is_available = models.BooleanField(default=True)</code></pre>
+      </div>
+
+      <!-- Slide 5: Complex Lookups -->
+      <div class="slide">
+        <h1>Complex Lookups</h1>
+        <h2>Field Lookups แบบขั้นสูง</h2>
+        <pre><code># ค้นหาข้อมูลด้วยเงื่อนไขซับซ้อน
+          Book.objects.filter(title__icontains="python")     # Contains (case-insensitive)
+          Book.objects.filter(price__range=(100, 500))       # Between values
+          Book.objects.filter(published_date__year=2023)     # Extract year
+          Book.objects.filter(author__name__startswith="J")  # Related field lookup</code></pre>
+
+        <h2>Date/Time Lookups</h2>
+        <pre><code>from datetime import datetime, timedelta
+
+          # ค้นหาหนังสือที่ออกในเดือนนี้
+          this_month = datetime.now().month
+          Book.objects.filter(published_date__month=this_month)
+
+          # ค้นหาหนังสือที่ออกใน 30 วันที่ผ่านมา
+          last_30_days = datetime.now() - timedelta(days=30)
+          Book.objects.filter(published_date__gte=last_30_days)</code></pre>
+      </div>
+
+      <!-- Slide 6: Q Objects -->
+      <div class="slide">
+        <h1>Q Objects และ Complex Queries</h1>
+        <h2>การใช้ Q Objects สำหรับเงื่อนไขซับซ้อน</h2>
+        <pre><code>from django.db.models import Q
+
+          # OR condition
+          Book.objects.filter(
+          Q(category__name="Fiction") | Q(category__name="Romance")
+          )
+
+          # AND + OR combination
+          Book.objects.filter(
+          Q(price__lt=300) & (Q(category__name="Fiction") | Q(author__name="John"))
+          )
+
+          # NOT condition
+          Book.objects.filter(~Q(category__name="Horror"))</code></pre>
+
+        <div class="highlight">
+          <h3>💡 Tips:</h3>
+          <ul>
+            <li><code>&</code> = AND operation</li>
+            <li><code>|</code> = OR operation</li>
+            <li><code>~</code> = NOT operation</li>
+            <li>ใช้วงเล็บ <code>()</code> เพื่อจัดกลุมเงื่อนไข</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 7: Aggregation -->
+      <div class="slide">
+        <h1>Aggregation และ Annotation</h1>
+        <h2>การคำนวณข้อมูลในฐานข้อมูล</h2>
+        <pre><code>from django.db.models import Count, Avg, Sum, Max, Min
+
+          # นับจำนวนหนังสือของแต่ละผู้แต่ง
+          Author.objects.annotate(book_count=Count('book'))
+
+          # หาราคาเฉลี่ยของหนังสือแต่ละหมวดหมู่
+          Category.objects.annotate(avg_price=Avg('book__price'))
+
+          # รวมยอดขายทั้งหมด
+          Book.objects.aggregate(total_value=Sum('price'))</code></pre>
+
+        <div class="warning">
+          <h3>⚠️ ความแตกต่าง:</h3>
+          <ul>
+            <li><strong>aggregate():</strong> คำนวณค่าเดียวสำหรับทั้ง QuerySet</li>
+            <li><strong>annotate():</strong> เพิ่มคอลัมน์คำนวณให้แต่ละ object</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 8: Prefetch -->
+      <div class="slide">
+        <h1>Prefetch และ Select Related</h1>
+        <h2>ป้องกัน N+1 Query Problem</h2>
+        <pre><code># select_related สำหรับ ForeignKey และ OneToOne
+          books = Book.objects.select_related('author', 'category').all()
+
+          # prefetch_related สำหรับ ManyToMany และ Reverse ForeignKey
+          authors = Author.objects.prefetch_related('book_set').all()
+
+          # Combined usage
+          books = Book.objects.select_related('author')\
+          .prefetch_related('author__book_set').all()</code></pre>
+
+        <div class="two-column">
+          <div class="success">
+            <h3>✅ select_related</h3>
+            <ul>
+              <li>ใช้ SQL JOIN</li>
+              <li>ForeignKey, OneToOne</li>
+              <li>1 query เดียว</li>
+            </ul>
+          </div>
+          <div class="success">
+            <h3>✅ prefetch_related</h3>
+            <ul>
+              <li>ใช้ separate queries</li>
+              <li>ManyToMany, Reverse FK</li>
+              <li>2+ queries แต่มีประสิทธิภาพ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Advanced Filtering -->
+      <div class="slide">
+        <h1>Advanced Filtering Techniques</h1>
+        <h2>Subqueries และ Exists</h2>
+        <pre><code>from django.db.models import Exists, OuterRef
+
+          # ค้นหา Author ที่มีหนังสือราคาแพงกว่า 500
+          expensive_books = Book.objects.filter(price__gt=500, author=OuterRef('pk'))
+          authors_with_expensive_books = Author.objects.filter(
+          Exists(expensive_books)
+          )</code></pre>
+
+        <h2>Subquery สำหรับการเปรียบเทียบ</h2>
+        <pre><code>from django.db.models import Subquery
+
+          newest_book_per_author = Book.objects.filter(
+          author=OuterRef('author')
+          ).order_by('-published_date').values('published_date')[:1]
+
+          books = Book.objects.annotate(
+          latest_date=Subquery(newest_book_per_author)
+          )</code></pre>
+      </div>
+
+      <!-- Slide 10: Lab 1 -->
+      <div class="slide">
+        <h1>Lab 1: พื้นฐาน Complex Queries</h1>
+        <h2>⏱️ เวลา: 1 ชั่วโมง</h2>
+
+        <div class="exercise">
+          <h3>🎯 เป้าหมาย: สร้างและทดสอบ queries แบบซับซ้อน</h3>
+
+          <h4>แบบฝึกหัด 1.1: Field Lookups (20 นาที)</h4>
+          <pre><code># TODO: เขียน query สำหรับ
+            # 1. ค้นหาหนังสือที่ชื่อมีคำว่า "Django" (ไม่สนใจตัวพิมพ์เล็ก-ใหญ่)
+            # 2. ค้นหาหนังสือที่ราคาอยู่ระหว่าง 200-800 บาท
+            # 3. ค้นหาหนังสือที่ออกในปี 2023
+            # 4. ค้นหาหนังสือของผู้แต่งที่ชื่อขึ้นต้นด้วย "A"
+            # 5. ค้นหาหนังสือที่ออกในเดือนปัจจุบัน</code></pre>
+
+          <h4>แบบฝึกหัด 1.2: Q Objects (20 นาที)</h4>
+          <pre><code># TODO: เขียน query สำหรับ
+            # 1. หนังสือประเภท Fiction หรือ Romance
+            # 2. หนังสือราคาน้อยกว่า 300 และเป็นประเภท Programming
+            # 3. หนังสือที่ไม่ใช่ประเภท Horror</code></pre>
+        </div>
+      </div>
+
+      <!-- Slide 11: Lab 2 -->
+      <div class="slide">
+        <h1>Lab 2: Aggregation และ Annotation</h1>
+        <h2>⏱️ เวลา: 1 ชั่วโมง</h2>
+
+        <div class="exercise">
+          <h3>🎯 เป้าหมาย: เรียนรู้การคำนวณข้อมูลสถิติ</h3>
+
+          <h4>แบบฝึกหัด 2.1: Basic Aggregation (20 นาที)</h4>
+          <pre><code># TODO: เขียน query สำหรับ
+            # 1. หาจำนวนหนังสือทั้งหมด
+            # 2. หาราคาเฉลี่ยของหนังสือทั้งหมด
+            # 3. หาหนังสือที่แพงที่สุดและถูกที่สุด
+            # 4. หาผลรวมราคาของหนังสือประเภท Programming</code></pre>
+
+          <h4>แบบฝึกหัด 2.2: Annotation (20 นาที)</h4>
+          <pre><code># TODO: เขียน query สำหรับ
+            # 1. แสดงรายชื่อผู้แต่งพร้อมจำนวนหนังสือที่เขียน
+            # 2. แสดงหมวดหมู่พร้อมราคาเฉลี่ยของหนังสือในหมวดนั้น
+            # 3. แสดงผู้แต่งพร้อมราคาหนังสือที่แพงที่สุดของเขา</code></pre>
+        </div>
+      </div>
+
+      <!-- Slide 12: Lab 3 -->
+      <div class="slide">
+        <h1>Lab 3: Performance Optimization</h1>
+        <h2>⏱️ เวลา: 1 ชั่วโมง</h2>
+
+        <div class="exercise">
+          <h3>🎯 เป้าหมาย: เพิ่มประสิทธิภาพด้วย select_related และ prefetch_related</h3>
+
+          <h4>แบบฝึกหัด 3.1: N+1 Problem (15 นาที)</h4>
+          <pre><code># TODO: วิเคราะห์และแก้ไข N+1 problem
+            books = Book.objects.all()
+            for book in books:
+            print(f"{book.title} by {book.author.name} ({book.category.name})")
+
+            # แก้ไข: ใช้ select_related</code></pre>
+
+          <h4>แบบฝึกหัด 3.4: Performance Testing (15 นาที)</h4>
+          <pre><code>from django.db import connection
+            import time
+
+            def test_query_performance():
+            connection.queries_log.clear()
+            start_time = time.time()
+            # Your query here
+            end_time = time.time()
+            print(f"Time: {end_time - start_time:.4f}s")
+            print(f"Queries: {len(connection.queries)}")</code></pre>
+        </div>
+      </div>
+
+      <!-- Slide 13: Lab 4 -->
+      <div class="slide">
+        <h1>Lab 4: Advanced Queries</h1>
+        <h2>⏱️ เวลา: 1 ชั่วโมง</h2>
+
+        <div class="exercise">
+          <h3>🎯 เป้าหมาย: ประยุกต์ใช้ความรู้ในปัญหาจริง</h3>
+
+          <h4>แบบฝึกหัด 4.3: Mini Project - Book Analytics (20 น</h4>
+        </div>
+      </div>
+
+        <!-- Q&A -->
+        <div class="slide">
+            <h1>🙋‍♂️ Q&A</h1>
+            <p class="subtitle">ถาม-ตอบ และเตรียมความพร้อมสำหรับการปฏิบัติ</p>
+            <div class="learning-outcome">
+                <h3>พร้อมสำหรับการเขียนโค้ดแล้วหรือยัง? 🚀</h3>
+                <p>เริ่มต้นการเดินทางสู่การเป็น Web Developer!</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← ก่อนหน้า</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">ถัดไป →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+        }
+        
+        function changeSlide(direction) {
+            const newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                currentSlideIndex = newIndex;
+                showSlide(currentSlideIndex);
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Auto-animate tech cards
+        function animateCards() {
+            const cards = document.querySelectorAll('.tech-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.1) + 's';
+            });
+        }
+        
+        // Animate cards when slide becomes active
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.target.classList.contains('active')) {
+                    setTimeout(animateCards, 100);
+                }
+            });
+        });
+        
+        slides.forEach(slide => {
+            observer.observe(slide, { attributes: true, attributeFilter: ['class'] });
+        });
+    </script>
+</body>
+</html>
