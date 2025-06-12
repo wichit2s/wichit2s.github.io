@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การจัดการข้อมูลขั้นสูง - Advanced Django Models</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 25px;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #87ceeb;
+        }
+
+        p, li {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            border-left: 4px solid #ffd700;
+        }
+
+        .highlight {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+        }
+
+        .intro-slide {
+            text-align: center;
+        }
+
+        .intro-slide h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .intro-slide .subtitle {
+            font-size: 1.5em;
+            color: #87ceeb;
+            margin-bottom: 30px;
+        }
+
+        .query-example {
+            background: rgba(135, 206, 235, 0.1);
+            border-left: 4px solid #87ceeb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .important-note {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active intro-slide">
+            <h1>การจัดการข้อมูลขั้นสูง</h1>
+            <div class="subtitle">Advanced Django Models</div>
+            <p style="font-size: 1.3em; margin-top: 40px;">การประยุกต์ใช้คำสั่งค้นหา (Query) ขั้นสูงใน Django</p>
+            <div style="margin-top: 50px; font-size: 1.1em; color: #87ceeb;">
+                <p>🎯 <strong>ผลลัพธ์การเรียนรู้:</strong></p>
+                <p>ประยุกต์ใช้คำสั่งค้นหา (query) ได้ตรงตามเงื่อนไขที่กำหนดให้</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Django ORM Overview -->
+        <div class="slide">
+            <h2>Django ORM คืออะไร?</h2>
+            <ul>
+                <li><strong>Object-Relational Mapping</strong> - เครื่องมือแปลงระหว่าง Object และฐานข้อมูล</li>
+                <li>ช่วยให้เขียน Python แทนการเขียน SQL โดยตรง</li>
+                <li>รองรับฐานข้อมูลหลายประเภท (PostgreSQL, MySQL, SQLite, Oracle)</li>
+                <li>มีระบบ Query ที่ทรงพลังและยืดหยุ่น</li>
+            </ul>
+            
+            <div class="important-note">
+                <h3>💡 ข้อดีของ Django ORM</h3>
+                <ul>
+                    <li>ป้องกัน SQL Injection โดยอัตโนมัติ</li>
+                    <li>เขียนโค้ดง่าย อ่านเข้าใจง่าย</li>
+                    <li>สามารถเปลี่ยนฐานข้อมูลได้โดยไม่ต้องแก้โค้ด</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: QuerySet Basics -->
+        <div class="slide">
+            <h2>QuerySet พื้นฐาน</h2>
+            <p>QuerySet คือ collection ของ objects จากฐานข้อมูล</p>
+            
+            <div class="code-block">
+# ตัวอย่าง Model
+class Student(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.IntegerField()
+    grade = models.CharField(max_length=10)
+    gpa = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+# คำสั่งพื้นฐาน
+students = Student.objects.all()        # ดึงข้อมูลทั้งหมด
+student = Student.objects.get(id=1)     # ดึงข้อมูลเฉพาะ
+students = Student.objects.filter(age=20)  # กรองข้อมูล
+            </div>
+
+            <div class="query-example">
+                <strong>Lazy Evaluation:</strong> QuerySet จะไม่ทำงานจริงจนกว่าจะมีการเรียกใช้ข้อมูล
+            </div>
+        </div>
+
+        <!-- Slide 4: Field Lookups -->
+        <div class="slide">
+            <h2>Field Lookups - การค้นหาแบบละเอียด</h2>
+            
+            <div class="code-block">
+# Exact match
+Student.objects.filter(name="John")
+Student.objects.filter(name__exact="John")
+
+# Case-insensitive
+Student.objects.filter(name__iexact="john")
+
+# Contains
+Student.objects.filter(name__contains="Jo")
+Student.objects.filter(name__icontains="jo")  # case-insensitive
+
+# Starts with / Ends with
+Student.objects.filter(name__startswith="J")
+Student.objects.filter(name__endswith="son")
+            </div>
+
+            <h3>การเปรียบเทียบตัวเลข</h3>
+            <div class="code-block">
+# Greater than, Less than
+Student.objects.filter(age__gt=18)    # age > 18
+Student.objects.filter(age__gte=18)   # age >= 18
+Student.objects.filter(age__lt=25)    # age < 25
+Student.objects.filter(age__lte=25)   # age <= 25
+
+# Range
+Student.objects.filter(age__range=(18, 25))  # 18 <= age <= 25
+            </div>
+        </div>
+
+        <!-- Slide 5: Advanced Filtering -->
+        <div class="slide">
+            <h2>การกรองข้อมูลขั้นสูง</h2>
+            
+            <h3>IN และ NOT IN</h3>
+            <div class="code-block">
+# IN - อยู่ในรายการ
+grades = ['A', 'B+', 'B']
+Student.objects.filter(grade__in=grades)
+
+# NOT IN - ไม่อยู่ในรายการ
+Student.objects.exclude(grade__in=['F', 'D'])
+            </div>
+
+            <h3>NULL และ Empty Values</h3>
+            <div class="code-block">
+# IS NULL
+Student.objects.filter(grade__isnull=True)
+
+# IS NOT NULL
+Student.objects.filter(grade__isnull=False)
+
+# Empty string
+Student.objects.filter(name__exact='')
+            </div>
+
+            <h3>การใช้ exclude()</h3>
+            <div class="code-block">
+# ไม่เอานักเรียนที่อายุ 20
+Student.objects.exclude(age=20)
+
+# ไม่เอานักเรียนเกรด F
+Student.objects.exclude(grade='F')
+            </div>
+        </div>
+
+        <!-- Slide 6: Q Objects -->
+        <div class="slide">
+            <h2>Q Objects - การรวมเงื่อนไขแบบซับซ้อน</h2>
+            
+            <div class="code-block">
+from django.db.models import Q
+
+# OR condition
+Student.objects.filter(
+    Q(age=20) | Q(age=21)
+)
+
+# AND condition (default)
+Student.objects.filter(
+    Q(age__gte=18) & Q(gpa__gte=3.0)
+)
+
+# NOT condition
+Student.objects.filter(
+    ~Q(grade='F')
+)
+            </div>
+
+            <h3>ตัวอย่างเงื่อนไขซับซ้อน</h3>
+            <div class="code-block">
+# (age >= 20 AND gpa >= 3.5) OR (grade = 'A')
+Student.objects.filter(
+    (Q(age__gte=20) & Q(gpa__gte=3.5)) | Q(grade='A')
+)
+
+# ชื่อขึ้นต้นด้วย 'A' หรือ 'B' และอายุไม่เกิน 25
+Student.objects.filter(
+    (Q(name__startswith='A') | Q(name__startswith='B')) & 
+    Q(age__lte=25)
+)
+            </div>
+        </div>
+
+        <!-- Slide 7: Date and Time Queries -->
+        <div class="slide">
+            <h2>การค้นหาข้อมูลวันที่และเวลา</h2>
+            
+            <div class="code-block">
+from datetime import date, datetime
+
+# วันที่เฉพาะ
+Student.objects.filter(created_at__date=date(2024, 1, 15))
+
+# ปีเฉพาะ
+Student.objects.filter(created_at__year=2024)
+
+# เดือนเฉพาะ
+Student.objects.filter(created_at__month=1)
+
+# วันในสัปดาห์ (1=อาทิตย์, 7=เสาร์)
+Student.objects.filter(created_at__week_day=2)  # วันจันทร์
+            </div>
+
+            <h3>ช่วงเวลา</h3>
+            <div class="code-block">
+# หลังวันที่กำหนด
+Student.objects.filter(created_at__gt=date(2024, 1, 1))
+
+# ก่อนวันที่กำหนด
+Student.objects.filter(created_at__lt=datetime.now())
+
+# ช่วงเวลา
+start_date = date(2024, 1, 1)
+end_date = date(2024, 12, 31)
+Student.objects.filter(created_at__range=(start_date, end_date))
+            </div>
+        </div>
+
+        <!-- Slide 8: Aggregation -->
+        <div class="slide">
+            <h2>Aggregation - การคำนวณสถิติ</h2>
+            
+            <div class="code-block">
+from django.db.models import Count, Sum, Avg, Max, Min
+
+# นับจำนวน
+total_students = Student.objects.count()
+
+# ค่าเฉลี่ย
+avg_gpa = Student.objects.aggregate(Avg('gpa'))
+# ผลลัพธ์: {'gpa__avg': 3.25}
+
+# หลายค่าพร้อมกัน
+stats = Student.objects.aggregate(
+    total=Count('id'),
+    avg_gpa=Avg('gpa'),
+    max_age=Max('age'),
+    min_age=Min('age')
+)
+            </div>
+
+            <h3>การใช้ annotate()</h3>
+            <div class="code-block">
+# เพิ่มข้อมูลสถิติให้แต่ละ object
+Student.objects.annotate(
+    age_category=Case(
+        When(age__lt=20, then=Value('Teen')),
+        When(age__lt=30, then=Value('Young Adult')),
+        default=Value('Adult')
+    )
+)
+            </div>
+        </div>
+
+        <!-- Slide 9: Ordering and Limiting -->
+        <div class="slide">
+            <h2>การเรียงลำดับและจำกัดข้อมูล</h2>
+            
+            <h3>การเรียงลำดับ (Ordering)</h3>
+            <div class="code-block">
+# เรียงตามอายุจากน้อยไปมาก
+Student.objects.order_by('age')
+
+# เรียงตามอายุจากมากไปน้อย
+Student.objects.order_by('-age')
+
+# เรียงหลายเงื่อนไข
+Student.objects.order_by('-gpa', 'age')
+
+# เรียงแบบสุ่ม
+Student.objects.order_by('?')
+            </div>
+
+            <h3>การจำกัดข้อมูล (Limiting)</h3>
+            <div class="code-block">
+# 5 คนแรก
+Student.objects.all()[:5]
+
+# คนที่ 5-10
+Student.objects.all()[5:10]
+
+# คนแรกสุด
+Student.objects.first()
+
+# คนสุดท้าย
+Student.objects.last()
+            </div>
+        </div>
+
+        <!-- Slide 10: Select Related and Prefetch -->
+        <div class="slide">
+            <h2>การเพิ่มประสิทธิภาพ Query</h2>
+            
+            <div class="code-block">
+# Model ที่มี Foreign Key
+class Course(models.Model):
+    name = models.CharField(max_length=100)
+    
+class Enrollment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    grade = models.CharField(max_length=2)
+            </div>
+
+            <h3>select_related() - สำหรับ Foreign Key</h3>
+            <div class="code-block">
+# แทนที่จะ query หลายครั้ง
+enrollments = Enrollment.objects.select_related('student', 'course')
+
+# จะ JOIN ข้อมูลมาพร้อมกันในครั้งเดียว
+for enrollment in enrollments:
+    print(enrollment.student.name)  # ไม่มี additional query
+    print(enrollment.course.name)   # ไม่มี additional query
+            </div>
+
+            <h3>prefetch_related() - สำหรับ Many-to-Many</h3>
+            <div class="code-block">
+# สำหรับความสัมพันธ์แบบ reverse หรือ many-to-many
+students = Student.objects.prefetch_related('enrollment_set')
+for student in students:
+    for enrollment in student.enrollment_set.all():
+        print(enrollment.course.name)
+            </div>
+        </div>
+
+        <!-- Slide 11: Raw SQL and Custom Queries -->
+        <div class="slide">
+            <h2>การใช้ Raw SQL และ Custom Queries</h2>
+            
+            <h3>Raw SQL</h3>
+            <div class="code-block">
+# เมื่อ ORM ไม่เพียงพอ
+students = Student.objects.raw(
+    'SELECT * FROM app_student WHERE age > %s ORDER BY gpa DESC',
+    [18]
+)
+
+# ใช้ connection โดยตรง
+from django.db import connection
+with connection.cursor() as cursor:
+    cursor.execute("SELECT COUNT(*) FROM app_student WHERE age > %s", [18])
+    result = cursor.fetchone()
+            </div>
+
+            <h3>Extra() Method</h3>
+            <div class="code-block">
+# เพิ่ม custom field
+Student.objects.extra(
+    select={
+        'age_category': """
+            CASE 
+                WHEN age < 20 THEN 'Teen'
+                WHEN age < 30 THEN 'Young Adult'
+                ELSE 'Adult'
+            END
+        """
+    }
+)
+            </div>
+        </div>
+
+        <!-- Slide 12: Best Practices -->
+        <div class="slide">
+            <h2>Best Practices สำหรับ Django Queries</h2>
+            
+            <ul>
+                <li><strong>หลีกเลี่ยง N+1 Problem:</strong> ใช้ select_related() และ prefetch_related()</li>
+                <li><strong>ใช้ only() และ defer():</strong> เมื่อต้องการเฉพาะบางฟิลด์</li>
+                <li><strong>ใช้ exists():</strong> แทน len() หรือ count() เมื่อต้องการเช็คว่ามีข้อมูลหรือไม่</li>
+                <li><strong>ใช้ Database Index:</strong> สำหรับฟิลด์ที่ใช้ filter บ่อย</li>
+            </ul>
+
+            <div class="code-block">
+# ✅ Good
+if Student.objects.filter(age__gt=18).exists():
+    pass
+
+# ❌ Bad
+if len(Student.objects.filter(age__gt=18)) > 0:
+    pass
+
+# ✅ เลือกเฉพาะฟิลด์ที่ต้องการ
+Student.objects.only('name', 'age')
+
+# ✅ ยกเว้นฟิลด์ที่ไม่ต้องการ
+Student.objects.defer('created_at', 'updated_at')
+            </div>
+        </div>
+
+        <!-- Slide 13: Summary -->
+        <div class="slide">
+            <h2>สรุป - Advanced Django Queries</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <h3>🔍 การค้นหาขั้นสูง</h3>
+                    <ul>
+                        <li>Field Lookups</li>
+                        <li>Q Objects</li>
+                        <li>Date/Time Queries</li>
+                        <li>Complex Filtering</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>📊 การประมวลผลข้อมูล</h3>
+                    <ul>
+                        <li>Aggregation</li>
+                        <li>Annotation</li>
+                        <li>Ordering & Limiting</li>
+                        <li>Statistical Functions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="important-note" style="margin-top: 30px;">
+                <h3>🎯 เป้าหมายที่บรรลุ</h3>
+                <p>✅ <strong>ประยุกต์ใช้คำสั่งค้นหา (query) ได้ตรงตามเงื่อนไขที่กำหนดให้</strong></p>
+                <ul>
+                    <li>เข้าใจ QuerySet และ Field Lookups</li>
+                    <li>ใช้ Q Objects สำหรับเงื่อนไขซับซ้อน</li>
+                    <li>ประยุกต์ใช้ Aggregation และ Annotation</li>
+                    <li>เพิ่มประสิทธิภาพ Query ด้วย select_related</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 14: Next Steps -->
+        <div class="slide">
+            <h2>การเรียนรู้ต่อไป</h2>
+            
+            <h3>📚 หัวข้อที่ควรศึกษาเพิ่มเติม</h3>
+            <ul>
+                <li><strong>Database Optimization:</strong> Index, Query Performance</li>
+                <li><strong>Custom Model Methods:</strong> การสร้าง method ใน Model</li>
+                <li><strong>Model Inheritance:</strong> การสืบทอด Model</li>
+                <li><strong>Database Transactions:</strong> การจัดการ Transaction</li>
+                <li><strong>Database Migrations:</strong> การจัดการ Schema Changes</li>
+            </ul>
+
+            <div class="important-note">
+                <h3>💡 เตรียมพร้อมสำหรับแบบฝึกหัด</h3>
+                <p>ในส่วนแบบฝึกหัด เราจะได้ลองใช้:</p>
+                <ul>
+                    <li>สร้าง Query ที่ซับซ้อนด้วย Q Objects</li>
+                    <li>คำนวณสถิติด้วย Aggregation</li>
+                    <li>เพิ่มประสิทธิภาพ Query</li>
+                    <li>แก้ปัญหา N+1 Problem</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; font-size: 1.5em; color: #ffd700;">
+                <strong>พร้อมสำหรับแบบฝึกหัดแล้วหรือยัง? 🚀</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">14</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">◀ ก่อนหน้า</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">ถัดไป ▶</button>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+            
+            // Update counter
+            document.getElementById('currentSlide').textContent = n + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            
+            if (currentSlideIndex < 0) {
+                currentSlideIndex = 0;
+            } else if (currentSlideIndex >= totalSlides) {
+                currentSlideIndex = totalSlides - 1;
+            }
+            
+            showSlide(currentSlideIndex);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+
+        // Auto-resize text for mobile
+        function adjustTextSize() {
+            const slides = document.querySelectorAll('.slide');
+            const screenWidth = window.innerWidth;
+            
+            if (screenWidth < 768) {
+                slides.forEach(slide => {
+                    slide.style.padding = '30px 20px';
+                    slide.style.fontSize = '0.9em';
+                });
+            }
+        }
+
+        window.addEventListener('resize', adjustTextSize);
+        adjustTextSize();
+    </script>
+</body>
+</html>
