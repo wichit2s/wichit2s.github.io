@@ -1,531 +1,254 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ความรู้เบื้องต้นเกี่ยวกับการพัฒนาเว็บ</title>
+    <title>โครงสร้างของโครงงานและการรับส่งข้อมูล - สัปดาห์ 2</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            overflow: hidden;
-        }
+    body {
+      font-family: 'Kanit', sans-serif;
+    }
 
-        .presentation-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-        }
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
 
-        .slide {
-            width: 100%;
-            height: 100%;
-            display: none;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transform: translateX(100px);
-            transition: all 0.5s ease-in-out;
-        }
+    .slide.active {
+      display: flex;
+    }
 
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            transform: translateX(0);
-        }
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
 
-        .slide h1 {
-            font-size: 3.5rem;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
 
-        .slide h2 {
-            font-size: 2.8rem;
-            margin-bottom: 25px;
-            color: #FFE4B5;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    .tech-card {
+      transition: all 0.3s ease;
+    }
 
-        .slide h3 {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            color: #F0E68C;
-        }
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
 
-        .slide p, .slide li {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-
-        .slide ul {
-            text-align: left;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .slide li {
-            margin-bottom: 20px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .slide li::before {
-            content: "🚀";
-            position: absolute;
-            left: -10px;
-            font-size: 1.2rem;
-        }
-
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 30px 0;
-            max-width: 1000px;
-        }
-
-        .tech-card {
-            background: rgba(255,255,255,0.1);
-            padding: 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: slideUp 0.6s ease-out forwards;
-            transition: transform 0.3s ease;
-        }
-
-        .tech-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            background: rgba(255,255,255,0.15);
-        }
-
-        .tech-card h4 {
-            font-size: 1.6rem;
-            margin-bottom: 15px;
-            color: #FFD700;
-        }
-
-        .navigation {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        .nav-btn {
-            padding: 12px 24px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
-
-        .nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .slide-counter {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: rgba(0,0,0,0.3);
-            padding: 10px 20px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .learning-outcome {
-            background: linear-gradient(45deg, rgba(255,215,0,0.2), rgba(255,165,0,0.2));
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border-left: 5px solid #FFD700;
-        }
-
-        .practice-section {
-            background: linear-gradient(45deg, rgba(50,205,50,0.2), rgba(34,139,34,0.2));
-            padding: 25px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border-left: 5px solid #32CD32;
-        }
-
-        .installation-steps {
-            text-align: left;
-            background: rgba(0,0,0,0.3);
-            padding: 25px;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .installation-steps code {
-            background: rgba(0,0,0,0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            color: #00FF00;
-        }
-
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
-            to { filter: drop-shadow(0 0 20px rgba(255,215,0,0.8)); }
-        }
-
-        @keyframes slideUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #E6E6FA;
-            margin-bottom: 40px;
-            font-style: italic;
-        }
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
     </style>
-</head>
-<body>
-    <div class="presentation-container">
-        <div class="slide-counter">
-            <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/webdev/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter bg-gray-900">
+      <span id="current-slide">1</span> / <span id="total-slides">3</span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/webdev/slides/wk02.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+    <!-- Slide 1: Title Slide -->
+      <div :class="{'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div class="text-center max-w-4xl mx-auto px-8">
+
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          โครงสร้างของโครงงาน<br>
+          <span class="text-yellow-300">และการรับส่งข้อมูลใน Django</span>
+        </h1>
+
+        <div class="text-xl text-white/90 mb-8 font-light">
+          ทำความเข้าใจระบบ Client-Server, HttpRequest และ HttpResponse
         </div>
 
-        <!-- Slide 1: Title -->
-        <div class="slide active">
-            <h1>ความรู้เบื้องต้นเกี่ยวกับการพัฒนาเว็บ</h1>
-            <p class="subtitle">Web Development with Django, HTMX, Alpine.js & Tailwind CSS</p>
-            <div class="learning-outcome">
-                <h3>ระยะเวลา</h3>
-                <p>ทฤษฎี: 1 ชั่วโมง | ปฏิบัติ: 4 ชั่วโมง</p>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+          <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1
+              </div>
+              <span>เข้าใจรูปแบบการส่งและรับข้อความระหว่างเครื่องผู้ใช้และเครื่องแม่ข่าย (Client-Server)</span>
             </div>
-        </div>
-
-        <!-- Slide 2: Learning Outcomes -->
-        <div class="slide">
-            <h2>ผลลัพธ์การเรียนรู้</h2>
-            <ul>
-                <li>เข้าใจองค์ประกอบสำคัญของการพัฒนาเว็บ (Frontend + Backend + Storage)</li>
-                <li>แสดงรายการเทคโนโลยี Frontend ได้อย่างน้อย 3 รายการ</li>
-                <li>แสดงรายการเทคโนโลยี Backend ได้อย่างน้อย 3 รายการ</li>
-                <li>แสดงรายการ Storage ได้อย่างน้อย 3 รายการ</li>
-                <li>ติดตั้งโปรแกรมที่จำเป็นสำหรับการพัฒนาเว็บด้วย Django ได้</li>
-            </ul>
-        </div>
-
-        <!-- Slide 3: Web Development Overview -->
-        <div class="slide">
-            <h2>การพัฒนาเว็บคืออะไร?</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h4>🎨 Frontend</h4>
-                    <p>ส่วนที่ผู้ใช้เห็นและโต้ตอบได้<br>User Interface (UI)</p>
-                </div>
-                <div class="tech-card">
-                    <h4>⚙️ Backend</h4>
-                    <p>ส่วนประมวลผลข้อมูล<br>Server-side Logic</p>
-                </div>
-                <div class="tech-card">
-                    <h4>🗄️ Database</h4>
-                    <p>ส่วนจัดเก็บข้อมูล<br>Data Storage</p>
-                </div>
+            <div class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2
+              </div>
+              <span>อธิบายองค์ประกอบของข้อมูลคำร้อง (Request) ได้</span>
             </div>
-        </div>
-
-        <!-- Slide 4: Frontend Technologies -->
-        <div class="slide">
-            <h2>🎨 เทคโนโลยี Frontend</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                <h4>HTML</h4>
-                    <p>โครงสร้างของเว็บเพจ<br>Hypertext Markup Language</p>
-                </div>
-                <div class="tech-card">
-                    <h4>CSS</h4>
-                    <p>ตกแต่งรูปแบบและสีสัน<br>Cascading Style Sheets</p>
-                    <div class="container">
-                      <h6 class="text-xl font-bold text-blue-800">Tailwind CSS</h6>
-                      <span class="text-gray-200">Utility-first CSS Framework<br>รวดเร็วและยืดหยุ่น</span>
-                    </div>
-                </div>
-                <div class="tech-card">
-                    <h4>JavaScript</h4>
-                    <p>ความโต้ตอบและพลวัต<br>Interactive Behavior</p>
-                    <div class="container">
-                    <h6 class="text-xl font-bold text-blue-800">Alpine.js</h6>
-                    <span class="text-gray-200">JavaScript Framework<br>เบาและใช้งานง่าย</span>
-                    </div>
-                    <div class="container">
-                    <h6 class="text-xl font-bold text-blue-800">HTMX</h6>
-                    <span class="text-gray-200">AJAX สำหรับ HTML<br>ไม่ต้องเขียน JS เยอะ</span>
-                    </div>
-                </div>
+            <div class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3
+              </div>
+              <span>อธิบายองค์ประกอบของข้อมูลส่งกลับ (Response) ได้</span>
             </div>
-        </div>
-
-        <!-- Slide 5: Backend Technologies -->
-        <div class="slide">
-            <h2>⚙️ เทคโนโลยี Backend</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h4>Python</h4>
-                    <p>CPython, Cython, Pypy </p>
-                    <span class="text-amber-200 text-xl">Django, CherryPy, FastAPI, Flask</span>
-                </div>
-                <div class="tech-card">
-                    <h4>Java</h4>
-                    <p>Oracle jdk, open jdk</p>
-                    <span class="text-amber-200 text-xl">Spring, Struts, JSF, GWT, Play</span>
-                </div>
-                <div class="tech-card">
-                    <h4>TypeScript/JavaScript</h4>
-                    <p>Nodejs, Deno, Bun</p>
-                    <span class="text-amber-200 text-xl">Next, Nuxt, Fastify, Express</span>
-                </div>
-                <div class="tech-card">
-                    <h4>PHP</h4>
-                    <p>ยอดนิยมสำหรับเว็บ</p>
-                    <span class="text-amber-200 text-xl">Laravel, Symfony, Laminas, CodeIgniter</span>
-                </div>
-                <div class="tech-card">
-                    <h4>Go</h4>
-                    <p>ภาษาโปรแกรมจาก Google</p>
-                    <span class="text-amber-200 text-xl">Buffalo, Beego, Fiber, Gin</span>
-                </div>
-                <div class="tech-card">
-                    <h4>C#</h4>
-                    <p>ภาษาโปรแกรมจาก MS</p>
-                    <span class="text-amber-200 text-xl">ASP.NET</span>
-                </div>
+            <div class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4
+              </div>
+              <span>สร้างโครงงานและเขียนคำสั่งรับส่งข้อมูลได้</span>
             </div>
+          </div>
         </div>
 
-        <!-- Slide 6: Storage Technologies -->
-        <div class="slide">
-            <h2>🗄️ เทคโนโลยี Storage</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h4>SQLite</h4>
-                    <p>ฐานข้อมูลไฟล์เดียว<br>เหมาะสำหรับพัฒนา</p>
-                </div>
-                <div class="tech-card">
-                    <h4>PostgreSQL</h4>
-                    <p>ฐานข้อมูลเชิงสัมพันธ์<br>ประสิทธิภาพสูง</p>
-                </div>
-                <div class="tech-card">
-                    <h4>MySQL</h4>
-                    <p>ฐานข้อมูลยอดนิยม<br>เรียนรู้ง่าย</p>
-                </div>
-                <div class="tech-card">
-                    <h4>MongoDB</h4>
-                    <p>NoSQL Database<br>ยืดหยุ่นกับข้อมูล</p>
-                </div>
-                <div class="tech-card">
-                    <h4>Redis</h4>
-                    <p>In-memory Database<br>เร็วมากสำหรับ Cache</p>
-                </div>
-                <div class="tech-card">
-                    <h4>Cloud Storage</h4>
-                    <p>AWS S3, Google Cloud<br>จัดเก็บไฟล์บนคลาวด์</p>
-                </div>
-            </div>
+        <div class="text-lg text-white/80">
+          <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div :class="{'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div class="text-center max-w-4xl mx-auto px-8">
+
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+          รู้จักกับ <span class="text-yellow-300">Client-Server Model</span>
+        </h2>
+
+        <div class="text-xl text-white/90 mb-6 font-light">
+          รูปแบบการสื่อสารพื้นฐานในการพัฒนาเว็บแอปพลิเคชัน
         </div>
 
-        <!-- Slide 7: Why Django Stack -->
-        <div class="slide">
-            <h2>ทำไมเลือก Django + HTMX + Alpine.js + Tailwind?</h2>
-            <ul>
-                <li><strong>Django:</strong> Framework ที่ครบครัน มีระบบรักษาความปลอดภัยในตัว</li>
-                <li><strong>HTMX:</strong> ทำให้ HTML มีความสามารถ AJAX โดยไม่ต้องเขียน JavaScript มาก</li>
-                <li><strong>Alpine.js:</strong> JavaScript Framework เบา เหมาะกับการเพิ่มความโต้ตอบ</li>
-                <li><strong>Tailwind CSS:</strong> CSS Framework ที่ช่วยให้ออกแบบได้รวดเร็ว</li>
-                <li><strong>ร่วมกันได้ดี:</strong> เทคโนโลยีเหล่านี้ทำงานร่วมกันได้อย่างลงตัว</li>
-            </ul>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-8">
+          <h3 class="text-2xl font-semibold mb-4">ส่วนประกอบหลัก</h3>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">🖥️</span>
+              <span><strong>Client</strong>: อุปกรณ์ของผู้ใช้ เช่น เบราว์เซอร์ ทำหน้าที่ร้องขอข้อมูล</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">🗄️</span>
+              <span><strong>Server</strong>: เครื่องแม่ข่ายที่ให้บริการข้อมูลและประมวลผลคำร้อง</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">🌐</span>
+              <span><strong>HTTP Protocol</strong>: ช่องทางการสื่อสารระหว่าง Client และ Server</span>
+            </li>
+          </ul>
         </div>
 
-        <!-- Slide 8: Installation Requirements -->
-        <div class="slide">
-            <h2>🛠️ การติดตั้งโปรแกรมที่จำเป็น</h2>
-            <div class="installation-steps">
-                <h3>1. Python (3.8+)</h3>
-                <p>ดาวน์โหลดจาก: <code>python.org</code></p>
-                
-                <h3>2. Code Editor</h3>
-                <p>แนะนำ: <code>VS Code</code> หรือ <code>PyCharm</code></p>
-                
-                <h3>3. Git</h3>
-                <p>สำหรับจัดการ Version Control</p>
-                
-                <h3>4. Virtual Environment</h3>
-                <p><code>pip install virtualenv</code></p>
-            </div>
+        <div class="text-lg text-white/80">
+          <span class="bg-white/20 px-4 py-2 rounded-full">Client → Request → Server → Response → Client</span>
         </div>
-
-        <!-- Slide 9: Practice Session Overview -->
-        <div class="slide">
-            <h2>📝 แผนการปฏิบัติ (4 ชั่วโมง)</h2>
-            <div class="practice-section">
-                <h3>ชั่วโมงที่ 1: Setup Environment</h3>
-                <p>• ติดตั้ง Python, Django และ Virtual Environment<br>
-                • สร้างโปรเจค Django แรก<br>
-                • ทำความเข้าใจโครงสร้าง Django</p>
-                
-                <h3>ชั่วโมงที่ 2-3: Build Simple Web App</h3>
-                <p>• สร้าง Views และ Templates<br>
-                • เพิ่ม Tailwind CSS<br>
-                • ใช้ HTMX สำหรับ Dynamic Content</p>
-                
-                <h3>ชั่วโมงที่ 4: Add Interactivity</h3>
-                <p>• เพิ่ม Alpine.js สำหรับ JavaScript<br>
-                • สร้างฟอร์มและการจัดการข้อมูล<br>
-                • Deploy บน Local Server</p>
-            </div>
-        </div>
-
-        <!-- Slide 10: Hands-on Activities -->
-        <div class="slide">
-            <h2>🎯 กิจกรรมปฏิบัติ</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <h4>📋 Todo App</h4>
-                    <p>สร้างแอพจดรายการสิ่งที่ต้องทำ<br>CRUD Operations</p>
-                </div>
-                <div class="tech-card">
-                    <h4>🎨 Portfolio Site</h4>
-                    <p>เว็บไซต์แสดงผลงาน<br>Responsive Design</p>
-                </div>
-                <div class="tech-card">
-                    <h4>💬 Chat App</h4>
-                    <p>แอพแชทแบบง่าย<br>Real-time Updates</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 11: Resources -->
-        <div class="slide">
-            <h2>📚 แหล่งเรียนรู้เพิ่มเติม</h2>
-            <ul>
-                <li><strong>Django:</strong> docs.djangoproject.com</li>
-                <li><strong>HTMX:</strong> htmx.org/docs/</li>
-                <li><strong>Alpine.js:</strong> alpinejs.dev/start-here</li>
-                <li><strong>Tailwind CSS:</strong> tailwindcss.com/docs</li>
-                <li><strong>MDN Web Docs:</strong> สำหรับ HTML, CSS, JavaScript</li>
-                <li><strong>Python.org:</strong> เอกสารประกอบการเรียน Python</li>
-            </ul>
-        </div>
-
-        <!-- Slide 12: Q&A -->
-        <div class="slide">
-            <h1>🙋‍♂️ Q&A</h1>
-            <p class="subtitle">ถาม-ตอบ และเตรียมความพร้อมสำหรับการปฏิบัติ</p>
-            <div class="learning-outcome">
-                <h3>พร้อมสำหรับการเขียนโค้ดแล้วหรือยัง? 🚀</h3>
-                <p>เริ่มต้นการเดินทางสู่การเป็น Web Developer!</p>
-            </div>
-        </div>
-
-        <div class="navigation">
-            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← ก่อนหน้า</button>
-            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">ถัดไป →</button>
-        </div>
+      </div>
+    </div>
     </div>
 
     <script>
-        let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
-        
-        document.getElementById('totalSlides').textContent = totalSlides;
-        
-        function showSlide(index) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            slides[index].classList.add('active');
-            
-            document.getElementById('currentSlide').textContent = index + 1;
-            
-            // Update navigation buttons
-            document.getElementById('prevBtn').disabled = index === 0;
-            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
-        }
-        
-        function changeSlide(direction) {
-            const newIndex = currentSlideIndex + direction;
-            if (newIndex >= 0 && newIndex < totalSlides) {
-                currentSlideIndex = newIndex;
-                showSlide(currentSlideIndex);
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+          console.log(`${this.currentSlide}/${this.totalSlides}`);
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          console.log(`${this.currentSlide}/${this.totalSlides}`);
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          console.log(`${this.currentSlide}/${this.totalSlides}`);
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
             }
-        }
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowLeft') {
-                changeSlide(-1);
-            } else if (event.key === 'ArrowRight') {
-                changeSlide(1);
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
             }
-        });
-        
-        // Initialize
-        showSlide(0);
-        
-        // Auto-animate tech cards
-        function animateCards() {
-            const cards = document.querySelectorAll('.tech-card');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = (index * 0.1) + 's';
-            });
+          });
         }
-        
-        // Animate cards when slide becomes active
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.target.classList.contains('active')) {
-                    setTimeout(animateCards, 100);
-                }
-            });
-        });
-        
-        slides.forEach(slide => {
-            observer.observe(slide, { attributes: true, attributeFilter: ['class'] });
-        });
+      }
+    }
     </script>
-</body>
+  </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ความรู้เบื้องต้นเกี่ยวกับการพัฒนาเว็บ - สัปดาห์ 1</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
@@ -51,971 +52,1061 @@
       font-size: 14px;
       z-index: 1000;
     }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
     </style>
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/webdev/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
     <!-- Slide Counter -->
     <div class="slide-counter">
       <span id="current-slide">1</span> / <span id="total-slides">3</span>
     </div>
 
     <!-- Navigation -->
-    <div class="fixed top-4 left-4 z-50 flex gap-2">
-      <button onclick="previousSlide()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg backdrop-blur-sm transition-all">
-        ← ก่อนหน้า
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
-      <button onclick="nextSlide()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg backdrop-blur-sm transition-all">
-        ถัดไป →
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/webdev/slides/wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
 
-    <!-- Slide 1: Title Slide -->
-    <div class="slide active gradient-bg flex-col justify-center items-center text-white">
-      <div class="text-center max-w-4xl mx-auto px-8">
-        <div class="mb-8">
-          <div class="inline-block p-4 bg-white/10 rounded-full backdrop-blur-sm mb-6">
-            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
+
+    <div x-ref="slidesContainer">
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ความรู้เบื้องต้นเกี่ยวกับ<br>
+            <span class="text-yellow-300">การพัฒนาเว็บ</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Django + HTMX + Alpine.js + Tailwind CSS
           </div>
-        </div>
 
-        <h1 class="text-6xl font-bold mb-6 leading-tight">
-          ความรู้เบื้องต้นเกี่ยวกับ<br>
-          <span class="text-yellow-300">การพัฒนาเว็บ</span>
-        </h1>
-
-        <div class="text-xl text-white/90 mb-8 font-light">
-          Django + HTMX + Alpine.js + Tailwind CSS
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
-          <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
-          <div class="grid md:grid-cols-2 gap-4 text-left">
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
-              <span>เข้าใจองค์ประกอบสำคัญของการพัฒนาเว็บ</span>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>เข้าใจองค์ประกอบสำคัญของการพัฒนาเว็บ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>แสดงรายการเทคโนโลยี Frontend ได้อย่างน้อย 3 รายการ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>แสดงรายการเทคโนโลยี Backend ได้อย่างน้อย 3 รายการ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>แสดงรายการ Storage ได้อย่างน้อย 3 รายการ</span>
+              </div>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
-              <span>แสดงรายการเทคโนโลยี Frontend ได้อย่างน้อย 3 รายการ</span>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
-              <span>แสดงรายการเทคโนโลยี Backend ได้อย่างน้อย 3 รายการ</span>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
-              <span>แสดงรายการ Storage ได้อย่างน้อย 3 รายการ</span>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 mt-4 justify-center">
-            <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">5</div>
-            <span>ติดตั้งโปรแกรมที่จำเป็นสำหรับการพัฒนาเว็บด้วย Django ได้</span>
-          </div>
-        </div>
-
-        <div class="text-lg text-white/80">
-          <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 1</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 2: Web Development Architecture -->
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">องค์ประกอบสำคัญของการพัฒนาเว็บ</h1>
-          <p class="text-xl text-white/90">สถาปัตยกรรมเว็บแอปพลิเคชันแบบ 3 ชั้น</p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-          <!-- Frontend -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 tech-card text-center">
-            <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-semibold mb-4">Frontend</h3>
-            <p class="text-white/90 mb-4">ส่วนที่ผู้ใช้เห็นและสามารถโต้ตอบได้</p>
-            <div class="text-sm text-white/80">
-              <div class="bg-blue-500/20 rounded-lg p-3 mb-2">User Interface (UI)</div>
-              <div class="bg-blue-500/20 rounded-lg p-3 mb-2">User Experience (UX)</div>
-              <div class="bg-blue-500/20 rounded-lg p-3">Client-Side Logic</div>
+            <div class="flex items-start gap-3 mt-4 justify-center">
+              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">5</div>
+              <span>ติดตั้งโปรแกรมที่จำเป็นสำหรับการพัฒนาเว็บด้วย Django ได้</span>
             </div>
           </div>
 
-          <!-- Backend -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 tech-card text-center">
-            <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-semibold mb-4">Backend</h3>
-            <p class="text-white/90 mb-4">ส่วนที่ประมวลผลและจัดการข้อมูล</p>
-            <div class="text-sm text-white/80">
-              <div class="bg-green-500/20 rounded-lg p-3 mb-2">Server-Side Logic</div>
-              <div class="bg-green-500/20 rounded-lg p-3 mb-2">API Development</div>
-              <div class="bg-green-500/20 rounded-lg p-3">Authentication</div>
-            </div>
-          </div>
-
-          <!-- Storage -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 tech-card text-center">
-            <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-semibold mb-4">Storage</h3>
-            <p class="text-white/90 mb-4">ระบบเก็บข้อมูลและไฟล์</p>
-            <div class="text-sm text-white/80">
-              <div class="bg-purple-500/20 rounded-lg p-3 mb-2">Database</div>
-              <div class="bg-purple-500/20 rounded-lg p-3 mb-2">File Storage</div>
-              <div class="bg-purple-500/20 rounded-lg p-3">Caching</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center">
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
-            <h3 class="text-xl font-semibold mb-2">การทำงานร่วมกัน</h3>
-            <p class="text-white/90">Frontend ↔ Backend ↔ Storage</p>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 1</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Slide 3: Frontend Technologies -->
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">เทคโนโลยี Frontend</h1>
-          <p class="text-xl text-white/90">เครื่องมือสำหรับสร้างส่วนติดต่อผู้ใช้</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <!-- HTML -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">HTML</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">HTML</h3>
-                <p class="text-sm text-white/80">HyperText Markup Language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">โครงสร้างและเนื้อหาของเว็บเพจ</p>
+      <!-- Slide 2: Web Development Architecture -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">องค์ประกอบสำคัญของการพัฒนาเว็บ</h1>
+            <p class="text-xl text-white/90">สถาปัตยกรรมเว็บแอปพลิเคชันแบบ 3 ชั้น</p>
           </div>
 
-          <!-- CSS -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">CSS</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">CSS</h3>
-                <p class="text-sm text-white/80">Cascading Style Sheets</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">การจัดรูปแบบและการออกแบบ</p>
-          </div>
-
-          <!-- JavaScript -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">JS</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">JavaScript</h3>
-                <p class="text-sm text-white/80">Programming Language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ความสามารถในการโต้ตอบ</p>
-          </div>
-
-          <!-- React -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">R</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">React</h3>
-                <p class="text-sm text-white/80">JavaScript Library</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">สร้าง UI แบบ Component-based</p>
-          </div>
-
-          <!-- Vue.js -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">V</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Vue.js</h3>
-                <p class="text-sm text-white/80">Progressive Framework</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">Framework ที่เรียนรู้ง่าย</p>
-          </div>
-
-          <!-- Tailwind CSS -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">T</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Tailwind CSS</h3>
-                <p class="text-sm text-white/80">Utility-First CSS</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">CSS Framework แบบ Utility</p>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-          <h3 class="text-2xl font-semibold mb-4">ในวิชานี้เราจะใช้</h3>
-          <div class="flex justify-center gap-4 flex-wrap">
-            <span class="bg-blue-500 px-4 py-2 rounded-full">HTML</span>
-            <span class="bg-teal-500 px-4 py-2 rounded-full">Tailwind CSS</span>
-            <span class="bg-red-500 px-4 py-2 rounded-full">HTMX</span>
-            <span class="bg-purple-500 px-4 py-2 rounded-full">Alpine.js</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 4: Backend Technologies -->
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">เทคโนโลยี Backend</h1>
-          <p class="text-xl text-white/90">เครื่องมือสำหรับการประมวลผลฝั่งเซิร์ฟเวอร์</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <!-- Python -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">🐍</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Python</h3>
-                <p class="text-sm text-white/80">Programming Language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ภาษาโปรแกรมที่เรียนรู้ง่าย</p>
-            <p class="text-amber-800"><a href="https://www.djangoproject.com/">Django</a>, CherryPy, FastAPI, Flask</p>
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">JS</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">JavaScript</h3>
-                <p class="text-sm text-white/80">most popular language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">Nodejs, Bun, Deno</p>
-            <p class="text-green-800"><a href="https://nextjs.org/">Nextjs</a>, Nuxtjs, Fastify, Expressjs</p>
-          </div>
-
-          <!-- Node.js -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">Go</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Go</h3>
-                <p class="text-sm text-white/80">Modern backend language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">created by Google</p>
-            <p class="text-emerald-700"><a href="https://gobuffalo.io/documentation/">Buffalo</a>, Beego, Fiber, Gin</p>
-          </div>
-
-          <!-- PHP -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">PHP</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">PHP</h3>
-                <p class="text-sm text-white/80">Server-side Language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ภาษาสำหรับเว็บแอปพลิเคชัน</p>
-            <p class="text-purple-800"><a href="https://laravel.com/">Laravel</a>, Symfony, Laminas, CodeIgniter</p>
-          </div>
-
-          <!-- Java -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">J</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Java</h3>
-                <p class="text-sm text-white/80">Enterprise Language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ภาษาสำหรับระบบขนาดใหญ่</p>
-            <p class="text-red-800"><a href="https://spring.io/projects/spring-boot">Spring</a>, Struts, JSF, GWT, Play</p>
-          </div>
-
-          <!-- Ruby -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">R</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Ruby</h3>
-                <p class="text-sm text-white/80">Dynamic Language</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ภาษาที่เน้นความสวยงาม</p>
-            <p class="text-pink-800"><a href="https://guides.rubyonrails.org/getting_started.html">Ruby on Rail</a></p>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-6 text-center">หน้าที่ของ Backend</h3>
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="text-center">
-              <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+          <div class="grid md:grid-cols-3 gap-8 mb-12">
+            <!-- Frontend -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 tech-card text-center">
+              <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                 </svg>
               </div>
-              <h4 class="text-lg font-semibold mb-2">Business Logic</h4>
-              <p class="text-white/90 text-sm">ประมวลผลและตรวจสอบข้อมูล</p>
+              <h3 class="text-2xl font-semibold mb-4">Frontend</h3>
+              <p class="text-white/90 mb-4">ส่วนที่ผู้ใช้เห็นและสามารถโต้ตอบได้</p>
+              <div class="text-sm text-white/80">
+                <div class="bg-blue-500/20 rounded-lg p-3 mb-2">User Interface (UI)</div>
+                <div class="bg-blue-500/20 rounded-lg p-3 mb-2">User Experience (UX)</div>
+                <div class="bg-blue-500/20 rounded-lg p-3">Client-Side Logic</div>
+              </div>
             </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+
+            <!-- Backend -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 tech-card text-center">
+              <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
                 </svg>
               </div>
-              <h4 class="text-lg font-semibold mb-2">API Development</h4>
-              <p class="text-white/90 text-sm">สร้าง Interface สำหรับ Frontend</p>
-            </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                </svg>
+              <h3 class="text-2xl font-semibold mb-4">Backend</h3>
+              <p class="text-white/90 mb-4">ส่วนที่ประมวลผลและจัดการข้อมูล</p>
+              <div class="text-sm text-white/80">
+                <div class="bg-green-500/20 rounded-lg p-3 mb-2">Server-Side Logic</div>
+                <div class="bg-green-500/20 rounded-lg p-3 mb-2">API Development</div>
+                <div class="bg-green-500/20 rounded-lg p-3">Authentication</div>
               </div>
-              <h4 class="text-lg font-semibold mb-2">Authentication</h4>
-              <p class="text-white/90 text-sm">จัดการผู้ใช้และสิทธิ์การเข้าถึง</p>
             </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <!-- Storage -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 tech-card text-center">
+              <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
                 </svg>
               </div>
-              <h4 class="text-lg font-semibold mb-2">Database Management</h4>
-              <p class="text-white/90 text-sm">จัดการและเชื่อมต่อฐานข้อมูล</p>
+              <h3 class="text-2xl font-semibold mb-4">Storage</h3>
+              <p class="text-white/90 mb-4">ระบบเก็บข้อมูลและไฟล์</p>
+              <div class="text-sm text-white/80">
+                <div class="bg-purple-500/20 rounded-lg p-3 mb-2">Database</div>
+                <div class="bg-purple-500/20 rounded-lg p-3 mb-2">File Storage</div>
+                <div class="bg-purple-500/20 rounded-lg p-3">Caching</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
+              <h3 class="text-xl font-semibold mb-2">การทำงานร่วมกัน</h3>
+              <p class="text-white/90">Frontend ↔ Backend ↔ Storage</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">เทคโนโลยี Storage</h1>
-          <p class="text-xl text-white/90">ระบบจัดเก็บข้อมูลสำหรับแอปพลิเคชันเว็บ</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <!-- SQLite -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border-2 border-yellow-400">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">SQ</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">SQLite</h3>
-                <p class="text-sm text-white/80">Lightweight Database</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ฐานข้อมูลแบบฝังตัว ใช้งานง่าย เหมาะกับการพัฒนา</p>
+      <!-- Slide 3: Frontend Technologies -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">เทคโนโลยี Frontend</h1>
+            <p class="text-xl text-white/90">เครื่องมือสำหรับสร้างส่วนติดต่อผู้ใช้</p>
           </div>
 
-          <!-- PostgreSQL -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">PG</span>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- HTML -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">HTML</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">HTML</h3>
+                  <p class="text-sm text-white/80">HyperText Markup Language</p>
+                </div>
               </div>
-              <div>
-                <h3 class="text-xl font-semibold">PostgreSQL</h3>
-                <p class="text-sm text-white/80">Advanced Relational DB</p>
-              </div>
+              <p class="text-white/90 text-sm">โครงสร้างและเนื้อหาของเว็บเพจ</p>
             </div>
-            <p class="text-white/90 text-sm">ระบบฐานข้อมูลที่รองรับข้อมูลซับซ้อนและมีประสิทธิภาพสูง</p>
+
+            <!-- CSS -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">CSS</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">CSS</h3>
+                  <p class="text-sm text-white/80">Cascading Style Sheets</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">การจัดรูปแบบและการออกแบบ</p>
+            </div>
+
+            <!-- JavaScript -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">JS</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">JavaScript</h3>
+                  <p class="text-sm text-white/80">Programming Language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ความสามารถในการโต้ตอบ</p>
+            </div>
+
+            <!-- React -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">R</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">React</h3>
+                  <p class="text-sm text-white/80">JavaScript Library</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">สร้าง UI แบบ Component-based</p>
+            </div>
+
+            <!-- Vue.js -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">V</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Vue.js</h3>
+                  <p class="text-sm text-white/80">Progressive Framework</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">Framework ที่เรียนรู้ง่าย</p>
+            </div>
+
+            <!-- Tailwind CSS -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">T</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Tailwind CSS</h3>
+                  <p class="text-sm text-white/80">Utility-First CSS</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">CSS Framework แบบ Utility</p>
+            </div>
           </div>
 
-          <!-- MySQL -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">MY</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">MySQL</h3>
-                <p class="text-sm text-white/80">Popular Relational DB</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">ฐานข้อมูลยอดนิยม ใช้กันอย่างแพร่หลายในเว็บแอป</p>
-          </div>
-
-          <!-- MongoDB -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">MG</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">MongoDB</h3>
-                <p class="text-sm text-white/80">NoSQL Database</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">จัดเก็บข้อมูลในรูปแบบเอกสาร เหมาะกับข้อมูลที่ยืดหยุ่น</p>
-          </div>
-
-          <!-- Firebase -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">FB</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Firebase</h3>
-                <p class="text-sm text-white/80">Cloud NoSQL Service</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">บริการฐานข้อมูลบนคลาวด์จาก Google</p>
-          </div>
-
-          <!-- Redis -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold">RD</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-semibold">Redis</h3>
-                <p class="text-sm text-white/80">In-Memory Database</p>
-              </div>
-            </div>
-            <p class="text-white/90 text-sm">เก็บข้อมูลในหน่วยความจำ ใช้สำหรับ cache และ queue</p>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-6 text-center">หน้าที่ของ Storage</h3>
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="text-center">
-              <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                </svg>
-              </div>
-              <h4 class="text-lg font-semibold mb-2">Data Storage</h4>
-              <p class="text-white/90 text-sm">เก็บข้อมูลที่สำคัญของระบบ</p>
-            </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-4-8h.01M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <h4 class="text-lg font-semibold mb-2">Query & Access</h4>
-              <p class="text-white/90 text-sm">เข้าถึงและจัดการข้อมูลผ่านคำสั่ง SQL หรือ API</p>
-            </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 018 0v2m-3-6a4 4 0 01-8 0V7a4 4 0 018 0v4z"></path>
-                </svg>
-              </div>
-              <h4 class="text-lg font-semibold mb-2">Data Security</h4>
-              <p class="text-white/90 text-sm">ควบคุมการเข้าถึงข้อมูลและการสำรองข้อมูล</p>
-            </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 4a8 8 0 110 16 8 8 0 010-16z"></path>
-                </svg>
-              </div>
-              <h4 class="text-lg font-semibold mb-2">Backup & Recovery</h4>
-              <p class="text-white/90 text-sm">สามารถสำรองและกู้คืนข้อมูลได้เมื่อจำเป็น</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+            <h3 class="text-2xl font-semibold mb-4">ในวิชานี้เราจะใช้</h3>
+            <div class="flex justify-center gap-4 flex-wrap">
+              <span class="bg-blue-500 px-4 py-2 rounded-full">HTML</span>
+              <span class="bg-teal-500 px-4 py-2 rounded-full">Tailwind CSS</span>
+              <span class="bg-red-500 px-4 py-2 rounded-full">HTMX</span>
+              <span class="bg-purple-500 px-4 py-2 rounded-full">Alpine.js</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-4xl mx-auto px-8 w-full text-center">
-        <h1 class="text-5xl font-bold mb-4">เข้าสู่ภาคปฏิบัติ</h1>
-        <p class="text-xl text-white/90 mb-12">4 ชั่วโมงเต็ม! เพื่อปูพื้นฐานสู่การเป็นนักพัฒนาเว็บด้วย Django</p>
+      <!-- Slide 4: Backend Technologies -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">เทคโนโลยี Backend</h1>
+            <p class="text-xl text-white/90">เครื่องมือสำหรับการประมวลผลฝั่งเซิร์ฟเวอร์</p>
+          </div>
 
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Python -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">🐍</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Python</h3>
+                  <p class="text-sm text-white/80">Programming Language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ภาษาโปรแกรมที่เรียนรู้ง่าย</p>
+              <p class="text-amber-800"><a href="https://www.djangoproject.com/">Django</a>, CherryPy, FastAPI, Flask</p>
+            </div>
 
-          <!-- Why -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">JS</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">JavaScript</h3>
+                  <p class="text-sm text-white/80">most popular language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">Nodejs, Bun, Deno</p>
+              <p class="text-green-800"><a href="https://nextjs.org/">Nextjs</a>, Nuxtjs, Fastify, Expressjs</p>
+            </div>
+
+            <!-- Node.js -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">Go</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Go</h3>
+                  <p class="text-sm text-white/80">Modern backend language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">created by Google</p>
+              <p class="text-emerald-700"><a href="https://gobuffalo.io/documentation/">Buffalo</a>, Beego, Fiber, Gin</p>
+            </div>
+
+            <!-- PHP -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">PHP</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">PHP</h3>
+                  <p class="text-sm text-white/80">Server-side Language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ภาษาสำหรับเว็บแอปพลิเคชัน</p>
+              <p class="text-purple-800"><a href="https://laravel.com/">Laravel</a>, Symfony, Laminas, CodeIgniter</p>
+            </div>
+
+            <!-- Java -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">J</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Java</h3>
+                  <p class="text-sm text-white/80">Enterprise Language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ภาษาสำหรับระบบขนาดใหญ่</p>
+              <p class="text-red-800"><a href="https://spring.io/projects/spring-boot">Spring</a>, Struts, JSF, GWT, Play</p>
+            </div>
+
+            <!-- Ruby -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">R</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Ruby</h3>
+                  <p class="text-sm text-white/80">Dynamic Language</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ภาษาที่เน้นความสวยงาม</p>
+              <p class="text-pink-800"><a href="https://guides.rubyonrails.org/getting_started.html">Ruby on Rail</a></p>
+            </div>
+          </div>
+
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-            <h2 class="text-2xl font-semibold mb-4">ทำไมต้องเรียนภาคปฏิบัติ?</h2>
-            <ul class="list-disc list-inside text-left text-white/90 space-y-2 text-sm">
-              <li>ได้ลองติดตั้งเครื่องมือด้วยตนเอง</li>
-              <li>เข้าใจขั้นตอนการเริ่มต้น Django จริง</li>
-              <li>แก้ปัญหาเบื้องต้นได้ด้วยตัวเอง</li>
-              <li>เห็นภาพรวมระบบเว็บแอปพลิเคชัน</li>
-            </ul>
+            <h3 class="text-2xl font-semibold mb-6 text-center">หน้าที่ของ Backend</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="text-center">
+                <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Business Logic</h4>
+                <p class="text-white/90 text-sm">ประมวลผลและตรวจสอบข้อมูล</p>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">API Development</h4>
+                <p class="text-white/90 text-sm">สร้าง Interface สำหรับ Frontend</p>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Authentication</h4>
+                <p class="text-white/90 text-sm">จัดการผู้ใช้และสิทธิ์การเข้าถึง</p>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Database Management</h4>
+                <p class="text-white/90 text-sm">จัดการและเชื่อมต่อฐานข้อมูล</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">เทคโนโลยี Storage</h1>
+            <p class="text-xl text-white/90">ระบบจัดเก็บข้อมูลสำหรับแอปพลิเคชันเว็บ</p>
           </div>
 
-          <!-- What will you do -->
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- SQLite -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border-2 border-yellow-400">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">SQ</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">SQLite</h3>
+                  <p class="text-sm text-white/80">Lightweight Database</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ฐานข้อมูลแบบฝังตัว ใช้งานง่าย เหมาะกับการพัฒนา</p>
+            </div>
+
+            <!-- PostgreSQL -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">PG</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">PostgreSQL</h3>
+                  <p class="text-sm text-white/80">Advanced Relational DB</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ระบบฐานข้อมูลที่รองรับข้อมูลซับซ้อนและมีประสิทธิภาพสูง</p>
+            </div>
+
+            <!-- MySQL -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">MY</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">MySQL</h3>
+                  <p class="text-sm text-white/80">Popular Relational DB</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">ฐานข้อมูลยอดนิยม ใช้กันอย่างแพร่หลายในเว็บแอป</p>
+            </div>
+
+            <!-- MongoDB -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">MG</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">MongoDB</h3>
+                  <p class="text-sm text-white/80">NoSQL Database</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">จัดเก็บข้อมูลในรูปแบบเอกสาร เหมาะกับข้อมูลที่ยืดหยุ่น</p>
+            </div>
+
+            <!-- Firebase -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">FB</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Firebase</h3>
+                  <p class="text-sm text-white/80">Cloud NoSQL Service</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">บริการฐานข้อมูลบนคลาวด์จาก Google</p>
+            </div>
+
+            <!-- Redis -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mr-4">
+                  <span class="text-white font-bold">RD</span>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold">Redis</h3>
+                  <p class="text-sm text-white/80">In-Memory Database</p>
+                </div>
+              </div>
+              <p class="text-white/90 text-sm">เก็บข้อมูลในหน่วยความจำ ใช้สำหรับ cache และ queue</p>
+            </div>
+          </div>
+
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-            <h2 class="text-2xl font-semibold mb-4">วันนี้คุณจะได้ทำอะไร?</h2>
-            <ul class="list-disc list-inside text-left text-white/90 space-y-2 text-sm">
-              <li>ติดตั้ง Git, Python, VS Code, PyCharm</li>
-              <li>สร้าง Virtual Environment</li>
-              <li>ติดตั้ง Django และรันเซิร์ฟเวอร์</li>
-              <li>สร้างแอปแรกของคุณด้วย Django</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h2 class="text-2xl font-semibold mb-4">เป้าหมายเมื่อจบภาคปฏิบัติ</h2>
-          <div class="grid md:grid-cols-3 gap-6 text-white/90 text-sm">
-            <div class="flex flex-col items-center">
-              <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-2">
-                <span class="text-xl font-bold">✔️</span>
+            <h3 class="text-2xl font-semibold mb-6 text-center">หน้าที่ของ Storage</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="text-center">
+                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Data Storage</h4>
+                <p class="text-white/90 text-sm">เก็บข้อมูลที่สำคัญของระบบ</p>
               </div>
-              ติดตั้งเครื่องมือพัฒนาเว็บได้
-            </div>
-            <div class="flex flex-col items-center">
-              <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-2">
-                <span class="text-xl font-bold">📂</span>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-4-8h.01M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Query & Access</h4>
+                <p class="text-white/90 text-sm">เข้าถึงและจัดการข้อมูลผ่านคำสั่ง SQL หรือ API</p>
               </div>
-              สร้างโปรเจกต์ Django ได้
-            </div>
-            <div class="flex flex-col items-center">
-              <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-2">
-                <span class="text-xl font-bold">🧠</span>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 018 0v2m-3-6a4 4 0 01-8 0V7a4 4 0 018 0v4z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Data Security</h4>
+                <p class="text-white/90 text-sm">ควบคุมการเข้าถึงข้อมูลและการสำรองข้อมูล</p>
               </div>
-              เข้าใจโครงสร้างของ Django
+              <div class="text-center">
+                <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 4a8 8 0 110 16 8 8 0 010-16z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Backup & Recovery</h4>
+                <p class="text-white/90 text-sm">สามารถสำรองและกู้คืนข้อมูลได้เมื่อจำเป็น</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">ติดตั้งเครื่องมือพัฒนาเว็บ</h1>
-          <p class="text-xl text-white/90">ใช้ <code>winget</code> สำหรับ Windows</p>
-        </div>
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-5xl font-bold mb-4">เข้าสู่ภาคปฏิบัติ</h1>
+          <p class="text-xl text-white/90 mb-12">4 ชั่วโมงเต็ม! เพื่อปูพื้นฐานสู่การเป็นนักพัฒนาเว็บด้วย Django</p>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
-          <!-- Git -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">Git</h3>
-            <p class="text-white/80 mb-4">ระบบควบคุมเวอร์ชันที่จำเป็นสำหรับโปรเจกต์</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              winget install --id Git.Git -e --source winget
+          <div class="grid md:grid-cols-2 gap-8 mb-12">
+
+            <!-- Why -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h2 class="text-2xl font-semibold mb-4">ทำไมต้องเรียนภาคปฏิบัติ?</h2>
+              <ul class="list-disc list-inside text-left text-white/90 space-y-2 text-sm">
+                <li>ได้ลองติดตั้งเครื่องมือด้วยตนเอง</li>
+                <li>เข้าใจขั้นตอนการเริ่มต้น Django จริง</li>
+                <li>แก้ปัญหาเบื้องต้นได้ด้วยตัวเอง</li>
+                <li>เห็นภาพรวมระบบเว็บแอปพลิเคชัน</li>
+              </ul>
+            </div>
+
+            <!-- What will you do -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h2 class="text-2xl font-semibold mb-4">วันนี้คุณจะได้ทำอะไร?</h2>
+              <ul class="list-disc list-inside text-left text-white/90 space-y-2 text-sm">
+                <li>ติดตั้ง Git, Python, VS Code, PyCharm</li>
+                <li>สร้าง Virtual Environment</li>
+                <li>ติดตั้ง Django และรันเซิร์ฟเวอร์</li>
+                <li>สร้างแอปแรกของคุณด้วย Django</li>
+              </ul>
             </div>
           </div>
 
-          <!-- Python 3.13 -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">Python 3.13</h3>
-            <p class="text-white/80 mb-4">ภาษาหลักสำหรับการพัฒนาเว็บด้วย Django</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              winget install --id Python.Python.3.13 -e --source winget
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h2 class="text-2xl font-semibold mb-4">เป้าหมายเมื่อจบภาคปฏิบัติ</h2>
+            <div class="grid md:grid-cols-3 gap-6 text-white/90 text-sm">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-2">
+                  <span class="text-xl font-bold">✔️</span>
+                </div>
+                ติดตั้งเครื่องมือพัฒนาเว็บได้
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-2">
+                  <span class="text-xl font-bold">📂</span>
+                </div>
+                สร้างโปรเจกต์ Django ได้
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mb-2">
+                  <span class="text-xl font-bold">🧠</span>
+                </div>
+                เข้าใจโครงสร้างของ Django
+              </div>
             </div>
           </div>
-
-          <!-- VS Code -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">Visual Studio Code</h3>
-            <p class="text-white/80 mb-4">เครื่องมือแก้ไขโค้ดที่ทันสมัยและเบา</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              winget install --id Microsoft.VisualStudioCode -e
-            </div>
-          </div>
-
-          <!-- PyCharm Professional -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">PyCharm Professional</h3>
-            <p class="text-white/80 mb-4">IDE สำหรับ Python ที่สมบูรณ์แบบ</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              winget install --id JetBrains.PyCharm.Professional -e
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-6 text-center">หมายเหตุสำคัญ</h3>
-          <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
-            <li>การใช้ <code>winget</code> ต้องใช้ Windows 10 / 11 ที่อัปเดตแล้ว</li>
-            <li>แนะนำให้เปิด PowerShell หรือ Command Prompt ด้วยสิทธิ์ผู้ดูแลระบบ (Run as Administrator)</li>
-            <li>กรณีติดตั้ง PyCharm Professional ต้องมีบัญชี JetBrains <a class="text-blue-600 hover:text-blue-800" href="https://www.jetbrains.com/shop/eform/students">ของนักศึกษา</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">เตรียมเครื่องมือและสภาพแวดล้อม</h1>
-          <p class="text-xl text-white/90">สร้างพื้นฐานสำหรับการเริ่มต้นพัฒนาเว็บด้วย Django</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
-
-          <!-- สร้าง Virtual Environment -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <h3 class="text-2xl font-semibold mb-2">1. สร้างโฟล์เดอร์</h3>
-            <p class="text-white/80 mb-4">สร้างโครงงาน mysite</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              mkdir mysite<br>
-              cd mysite
-            </div>
-          </div>
-
-          <!-- สร้าง Virtual Environment -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <h3 class="text-2xl font-semibold mb-2">2. สร้าง Virtual Environment</h3>
-            <p class="text-white/80 mb-4">แยกสภาพแวดล้อมการพัฒนาออกจากระบบหลัก</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              python -m venv .venv<br>
-              <span class="text-yellow-300"># Windows</span><br>
-              .venv/Scripts/activate<br>
-              <span class="text-yellow-300"># macOS / Linux</span><br>
-              source .venv/bin/activate
-            </div>
-          </div>
-
-          <!-- ติดตั้ง Django -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <h3 class="text-2xl font-semibold mb-2">3. ติดตั้ง Django</h3>
-            <p class="text-white/80 mb-4">Framework สำหรับพัฒนาเว็บด้วย Python</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              pip install django
-            </div>
-          </div>
-
-          <!-- สร้าง Project -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <h3 class="text-2xl font-semibold mb-2">4. สร้าง project</h3>
-            <p class="text-white/80 mb-4">create django project</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              django-amdin startproject mysite .<br>
-            </div>
-          </div>
-
-          <!-- เปิด web server -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
-            <h3 class="text-2xl font-semibold mb-2">5. เปิดใช้งาน web server</h3>
-            <p class="text-white/80 mb-4">start django web server</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              <span class="text-yellow-300"># Windows</span><br>
-              python manage.py runserver 80<br>
-              <span class="text-yellow-300"># macOS / Linux</span><br>
-              python manage.py runserver 8000
-            </div>
-          </div>
-
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-6 text-center">คำแนะนำเพิ่มเติม</h3>
-          <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
-            <li>ใช้ <code>requirements.txt</code> เพื่อเก็บรายการแพ็กเกจที่ใช้</li>
-            <li>ตั้งชื่อโปรเจกต์และแอปด้วยตัวอักษรเล็ก ไม่เว้นวรรค เช่น <code>myproject</code>, <code>homepage</code></li>
-            <li>เปิดใช้งาน virtual environment ทุกครั้งก่อนพัฒนา</li>
-            <li>บันทึกคำสั่งที่ใช้ลงในไฟล์ README.md</li>
-          </ul>
         </div>
       </div>
-    </div>
 
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">ติดตั้งเครื่องมือพัฒนาเว็บ</h1>
+            <p class="text-xl text-white/90">ใช้ <code>winget</code> สำหรับ Windows</p>
+          </div>
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">สร้างและทดลอง Django Project</h1>
-          <p class="text-xl text-white/90">เริ่มต้นโปรเจกต์เว็บด้วยคำสั่งพื้นฐานของ Django</p>
-        </div>
+          <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
+            <!-- Git -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
+              <h3 class="text-2xl font-semibold mb-2">Git</h3>
+              <p class="text-white/80 mb-4">ระบบควบคุมเวอร์ชันที่จำเป็นสำหรับโปรเจกต์</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                winget install Git.Git
+              </div>
+            </div>
 
-        <div class="grid md:grid-cols-2 gap-6 mb-12">
-          <!-- สร้างโปรเจกต์ Django -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">1. สร้างโปรเจกต์</h3>
-            <p class="text-white/80 mb-4">ใช้คำสั่ง <code>django-admin</code> สร้างโครงสร้างโปรเจกต์</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              django-admin startproject mysite<br>
-              cd mysite
+            <!-- Python 3.13 -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
+              <h3 class="text-2xl font-semibold mb-2">Python 3.13</h3>
+              <p class="text-white/80 mb-4">ภาษาหลักสำหรับการพัฒนาเว็บด้วย Django</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                winget install Python.Python.3.13
+              </div>
+            </div>
+
+            <!-- VS Code -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
+              <h3 class="text-2xl font-semibold mb-2">Visual Studio Code</h3>
+              <p class="text-white/80 mb-4">เครื่องมือแก้ไขโค้ดที่ทันสมัยและเบา</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                winget install Microsoft.VisualStudioCode
+              </div>
+            </div>
+
+            <!-- PyCharm Professional -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
+              <h3 class="text-2xl font-semibold mb-2">PyCharm Professional</h3>
+              <p class="text-white/80 mb-4">IDE สำหรับ Python ที่สมบูรณ์แบบ</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                winget install JetBrains.PyCharm.Professional
+              </div>
             </div>
           </div>
 
-          <!-- รันเว็บเซิร์ฟเวอร์ -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">2. รันเว็บเซิร์ฟเวอร์</h3>
-            <p class="text-white/80 mb-4">ตรวจสอบว่าโปรเจกต์ทำงานได้</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              python manage.py runserver
-            </div>
-            <p class="text-white/80 mt-2 text-sm">เปิดเบราว์เซอร์: <code>http://127.0.0.1:8000</code></p>
-          </div>
-
-          <!-- โครงสร้างโปรเจกต์ -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20 md:col-span-2">
-            <h3 class="text-2xl font-semibold mb-4">3. โครงสร้างพื้นฐานของโปรเจกต์</h3>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-6 text-center">หมายเหตุสำคัญ</h3>
             <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
-              <li><code>manage.py</code> – ตัวสั่งการหลักของโปรเจกต์</li>
-              <li><code>mysite/settings.py</code> – การตั้งค่าโปรเจกต์</li>
-              <li><code>mysite/urls.py</code> – เส้นทาง URL ทั้งระบบ</li>
-              <li><code>wsgi.py / asgi.py</code> – จุดเริ่มต้นเซิร์ฟเวอร์ (สำหรับ deployment)</li>
-              <li><code>__init__.py</code> – บอกว่าเป็น Python package</li>
+              <li>การใช้ <code>winget</code> ต้องใช้ Windows 10 / 11 ที่อัปเดตแล้ว</li>
+              <li>แนะนำให้เปิด PowerShell หรือ Command Prompt ด้วยสิทธิ์ผู้ดูแลระบบ (Run as Administrator)</li>
+              <li>กรณีติดตั้ง PyCharm Professional ต้องมีบัญชี JetBrains <a class="text-blue-600 hover:text-blue-800" href="https://www.jetbrains.com/shop/eform/students">ของนักศึกษา</a></li>
             </ul>
           </div>
         </div>
+      </div>
 
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-6 text-center">คำแนะนำเพิ่มเติม</h3>
-          <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
-            <li>ควรอยู่ใน virtual environment ขณะทำงาน</li>
-            <li>หากพิมพ์คำสั่งผิด ให้ใช้ปุ่มลูกศร ⬆️ เพื่อเรียกคำสั่งเก่ากลับมา</li>
-            <li>สามารถหยุดเซิร์ฟเวอร์ด้วย Ctrl+C</li>
-            <li>ควรตั้งชื่อโปรเจกต์ด้วยตัวพิมพ์เล็ก เช่น <code>mysite</code>, <code>myproject</code></li>
-          </ul>
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">เตรียมเครื่องมือและสภาพแวดล้อม</h1>
+            <p class="text-xl text-white/90">สร้างพื้นฐานสำหรับการเริ่มต้นพัฒนาเว็บด้วย Django</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
+
+            <!-- สร้าง Virtual Environment -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">1. สร้างโฟล์เดอร์</h3>
+              <p class="text-white/80 mb-4">สร้างโครงงาน mysite</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                mkdir mysite<br>
+                cd mysite
+              </div>
+            </div>
+
+            <!-- สร้าง Virtual Environment -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">2. สร้าง Virtual Environment</h3>
+              <p class="text-white/80 mb-4">สร้างสภาพแวดล้อมแยกสำหหรับโครงงานในโฟลเดอร์ <span class="text-yellow-700">.venv</span></p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                python -m venv .venv<br>
+                <span class="text-yellow-300"># หรือ บน Windows</span><br>
+                py -m venv .venv<br>
+              </div>
+            </div>
+
+            <!-- สร้าง Virtual Environment -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">3. เปิดใช้งาน Virtual Environment</h3>
+              <p class="text-white/80 mb-4">เปิดใช้งานสำหรับการพัฒนาโครงงาน</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                <span class="text-yellow-300"># Windows</span><br>
+                .venv/Scripts/activate<br>
+                <span class="text-yellow-300"># macOS / Linux</span><br>
+                source .venv/bin/activate
+              </div>
+            </div>
+
+            <!-- ติดตั้ง Django -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">4. ติดตั้ง Django</h3>
+              <p class="text-white/80 mb-4">Framework สำหรับพัฒนาเว็บด้วย Python</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                pip install django
+              </div>
+            </div>
+
+            <!-- สร้าง Project -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">5. สร้าง project</h3>
+              <p class="text-white/80 mb-4">create django project</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                django-admin startproject mysite .<br>
+              </div>
+            </div>
+
+            <!-- เปิด web server -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">6. เปิดใช้งาน web server</h3>
+              <p class="text-white/80 mb-4">start django web server</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                <span class="text-yellow-300"># Windows</span><br>
+                python manage.py runserver 80<br>
+                <span class="text-yellow-300"># macOS / Linux</span><br>
+                python manage.py runserver 8000
+              </div>
+            </div>
+
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-6 text-center">คำแนะนำเพิ่มเติม</h3>
+            <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
+              <li>ใช้ <code>requirements.txt</code> เพื่อเก็บรายการแพ็กเกจที่ใช้</li>
+              <li>ตั้งชื่อโปรเจกต์และแอปด้วยตัวอักษรเล็ก ไม่เว้นวรรค เช่น <code>myproject</code>, <code>homepage</code></li>
+              <li>เปิดใช้งาน virtual environment ทุกครั้งก่อนพัฒนา</li>
+              <li>บันทึกคำสั่งที่ใช้ลงในไฟล์ README.md</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">สร้างแอปแรก (Create Your First App)</h1>
-          <p class="text-xl text-white/90">เริ่มเขียนเว็บด้วย Django App แรกของคุณ</p>
-        </div>
 
-        <div class="grid md:grid-cols-2 gap-6 mb-12">
-          <!-- สร้างแอป -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">1. สร้างแอป Django</h3>
-            <p class="text-white/80 mb-4">ใช้คำสั่ง <code>startapp</code> เพื่อสร้างแอปใหม่</p>
-            <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
-              python manage.py startapp blog
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">สร้างและทดลอง Django Project</h1>
+            <p class="text-xl text-white/90">เริ่มต้นโปรเจกต์เว็บด้วยคำสั่งพื้นฐานของ Django</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6 mb-12">
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">1. สร้างโฟล์เดอร์</h3>
+              <p class="text-white/80 mb-4">สร้างโครงงาน mysite</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                mkdir mysite<br>
+                cd mysite
+              </div>
+            </div>
+
+            <!-- สร้าง Virtual Environment -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">2. สร้าง Virtual Environment</h3>
+              <p class="text-white/80 mb-4">สร้างสภาพแวดล้อมแยกสำหหรับโครงงานในโฟลเดอร์ <span class="text-yellow-700">.venv</span></p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                python -m venv .venv<br>
+                <span class="text-yellow-300"># หรือ บน Windows</span><br>
+                py -m venv .venv<br>
+              </div>
+            </div>
+
+            <!-- สร้าง Virtual Environment -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">3. เปิดใช้งาน Virtual Environment</h3>
+              <p class="text-white/80 mb-4">เปิดใช้งานสำหรับการพัฒนาโครงงาน</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                <span class="text-yellow-300"># Windows</span><br>
+                .venv/Scripts/activate<br>
+                <span class="text-yellow-300"># macOS / Linux</span><br>
+                source .venv/bin/activate
+              </div>
+            </div>
+
+            <!-- ติดตั้ง Django -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">4. ติดตั้ง Django</h3>
+              <p class="text-white/80 mb-4">Framework สำหรับพัฒนาเว็บด้วย Python</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                pip install django
+              </div>
+            </div>
+
+            <!-- สร้าง Project -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">5. สร้าง project</h3>
+              <p class="text-white/80 mb-4">create django project</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                django-admin startproject mysite .<br>
+              </div>
+            </div>
+
+            <!-- เปิด web server -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card">
+              <h3 class="text-2xl font-semibold mb-2">6. เปิดใช้งาน web server</h3>
+              <p class="text-white/80 mb-4">start django web server</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                <span class="text-yellow-300"># Windows</span><br>
+                python manage.py runserver 80<br>
+                <span class="text-yellow-300"># macOS / Linux</span><br>
+                python manage.py runserver 8000
+              </div>
+              <p class="text-white/80 mt-2 text-sm">เปิดเบราว์เซอร์: <code>http://127.0.0.1:8000</code></p>
+            </div>
+
+            <!-- โครงสร้างโปรเจกต์ -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20 md:col-span-2">
+              <h3 class="text-2xl font-semibold mb-4">3. โครงสร้างพื้นฐานของโปรเจกต์</h3>
+              <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
+                <li><code>manage.py</code> – ตัวสั่งการหลักของโปรเจกต์</li>
+                <li><code>mysite/settings.py</code> – การตั้งค่าโปรเจกต์</li>
+                <li><code>mysite/urls.py</code> – เส้นทาง URL ทั้งระบบ</li>
+                <li><code>wsgi.py / asgi.py</code> – จุดเริ่มต้นเซิร์ฟเวอร์ (สำหรับ deployment)</li>
+                <li><code>__init__.py</code> – บอกว่าเป็น Python package</li>
+              </ul>
             </div>
           </div>
 
-          <!-- ลงทะเบียนแอปใน settings.py -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
-            <h3 class="text-2xl font-semibold mb-2">2. ลงทะเบียนแอปใน <code>settings.py</code></h3>
-            <p class="text-white/80 mb-4">เพิ่มชื่อแอปใน <code>INSTALLED_APPS</code></p>
-            <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
-              INSTALLED_APPS = [
-              ...
-              'blog',
-              ]
-            </pre>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-6 text-center">คำแนะนำเพิ่มเติม</h3>
+            <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
+              <li>ควรอยู่ใน virtual environment ขณะทำงาน</li>
+              <li>หากพิมพ์คำสั่งผิด ให้ใช้ปุ่มลูกศร ⬆️ เพื่อเรียกคำสั่งเก่ากลับมา</li>
+              <li>สามารถหยุดเซิร์ฟเวอร์ด้วย Ctrl+C</li>
+              <li>ควรตั้งชื่อโปรเจกต์ด้วยตัวพิมพ์เล็ก เช่น <code>mysite</code>, <code>myproject</code></li>
+            </ul>
           </div>
-
-          <!-- สร้าง View แรก -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20 md:col-span-2">
-            <h3 class="text-2xl font-semibold mb-2">3. สร้าง View แรกใน <code>views.py</code></h3>
-            <p class="text-white/80 mb-4">เขียนฟังก์ชันแสดงข้อความพื้นฐาน</p>
-            <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
-              from django.http import HttpResponse
-
-              def home(request):
-              return HttpResponse("สวัสดี Django!")
-            </pre>
-          </div>
-
-          <!-- Mapping URL -->
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20 md:col-span-2">
-            <h3 class="text-2xl font-semibold mb-2">4. Mapping URL ใน <code>urls.py</code></h3>
-            <p class="text-white/80 mb-4">เชื่อม URL กับ View ที่สร้างไว้</p>
-            <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
-              from django.urls import path
-              from . import views
-
-              urlpatterns = [
-              path('', views.home, name='home'),
-              ]
-            </pre>
-            <p class="text-white/90 text-sm mt-2">
-              จากนั้นเพิ่มในไฟล์ <code>mysite/urls.py</code>:
-            </p>
-            <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
-              from django.urls import include, path
-
-              urlpatterns = [
-              path('', include('blog.urls')),
-              ]
-            </pre>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-6 text-center">คำแนะนำเพิ่มเติม</h3>
-          <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
-            <li>เซฟไฟล์และรันเซิร์ฟเวอร์ใหม่เพื่อทดสอบผลลัพธ์</li>
-            <li>ทดลองเปลี่ยนข้อความในฟังก์ชัน View แล้วดูผลลัพธ์บนเว็บ</li>
-            <li>แยก URL ออกเป็นไฟล์ <code>urls.py</code> ในแต่ละแอปช่วยให้ง่ายต่อการจัดการ</li>
-            <li>หากเจอ error อ่านข้อความในเทอร์มินัลเพื่อแก้ไข</li>
-          </ul>
         </div>
       </div>
-    </div>
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">แบบฝึกหัด 1</h1>
-          <p class="text-xl text-white/90">สร้างแอปชื่อ <code>book</code> และแสดงข้อความบนหน้าเว็บ</p>
-        </div>
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">สร้างแอปแรก (Create Your First App)</h1>
+            <p class="text-xl text-white/90">เริ่มเขียนเว็บด้วย Django App แรกของคุณ</p>
+          </div>
 
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
-          <h3 class="text-3xl font-semibold mb-4">ขั้นตอน</h3>
-          <ol class="list-decimal list-inside space-y-4 text-white/90 text-lg">
-            <li>สร้างแอป Django ชื่อ <code>book</code> โดยใช้คำสั่ง:
-              <pre class="bg-black/50 rounded p-3 font-mono text-sm mt-2 overflow-auto">
-                python manage.py startapp book
+          <div class="grid md:grid-cols-2 gap-6 mb-12">
+            <!-- สร้างแอป -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
+              <h3 class="text-2xl font-semibold mb-2">1. สร้างแอป Django</h3>
+              <p class="text-white/80 mb-4">ใช้คำสั่ง <code>startapp</code> เพื่อสร้างแอปใหม่</p>
+              <div class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto">
+                python manage.py startapp blog
+              </div>
+            </div>
+
+            <!-- ลงทะเบียนแอปใน settings.py -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20">
+              <h3 class="text-2xl font-semibold mb-2">2. ลงทะเบียนแอปใน <code>settings.py</code></h3>
+              <p class="text-white/80 mb-4">เพิ่มชื่อแอปใน <code>INSTALLED_APPS</code></p>
+              <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
+                INSTALLED_APPS = [
+                ...
+                'blog',
+                ]
               </pre>
-            </li>
-            <li>เพิ่มชื่อแอป <code>'book'</code> ลงใน <code>INSTALLED_APPS</code> ในไฟล์ <code>settings.py</code></li>
-            <li>สร้างฟังก์ชัน View ชื่อ <code>index</code> ใน <code>book/views.py</code> โดยให้แสดงข้อความ <em>"ยินดีต้อนรับสู่ Book App!"</em></li>
-            <li>สร้างไฟล์ <code>urls.py</code> ในโฟลเดอร์แอป <code>book</code> และเพิ่ม URL pattern สำหรับฟังก์ชัน <code>index</code></li>
-            <li>เชื่อมต่อ <code>book.urls</code> ในไฟล์หลัก <code>mysite/urls.py</code> ให้ URL หลักเรียกไปยังแอป <code>book</code></li>
-            <li>รันเซิร์ฟเวอร์และทดสอบการเข้าถึง URL หลัก ควรแสดงข้อความที่เขียนไว้ใน View</li>
-          </ol>
-        </div>
+            </div>
 
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-4 text-center">คำแนะนำ</h3>
-          <ul class="list-disc list-inside space-y-2 text-white/90 text-sm">
-            <li>ตรวจสอบว่าเพิ่มแอป <code>book</code> ใน <code>INSTALLED_APPS</code> แล้ว</li>
-            <li>ใช้คำสั่ง <code>python manage.py runserver</code> เพื่อรันเซิร์ฟเวอร์</li>
-            <li>ถ้าเจอปัญหา error ให้ตรวจสอบข้อความในเทอร์มินัลและแก้ไขตามนั้น</li>
-            <li>ทดลองแก้ไขข้อความใน View เพื่อฝึกการเปลี่ยนแปลงและรีเฟรชหน้าเว็บ</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+            <!-- สร้าง View แรก -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20 md:col-span-2">
+              <h3 class="text-2xl font-semibold mb-2">3. สร้าง View แรกใน <code>views.py</code></h3>
+              <p class="text-white/80 mb-4">เขียนฟังก์ชันแสดงข้อความพื้นฐาน</p>
+              <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
+                from django.http import HttpResponse
 
-    <div class="slide gradient-bg flex-col justify-center items-center text-white">
-      <div class="max-w-6xl mx-auto px-8 w-full">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl font-bold mb-4">แบบฝึกหัด 2</h1>
-          <p class="text-xl text-white/90">สร้างแอปชื่อ <code>product</code> และแสดงรายการสินค้า</p>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
-          <h3 class="text-3xl font-semibold mb-4">ขั้นตอน</h3>
-          <ol class="list-decimal list-inside space-y-4 text-white/90 text-lg">
-            <li>สร้างแอป Django ชื่อ <code>product</code> โดยใช้คำสั่ง:
-              <pre class="bg-black/50 rounded p-3 font-mono text-sm mt-2 overflow-auto">
-                python manage.py startapp product
+                def home(request):
+                return HttpResponse("สวัสดี Django!")
               </pre>
-            </li>
-            <li>เพิ่มชื่อแอป <code>'product'</code> ลงใน <code>INSTALLED_APPS</code> ในไฟล์ <code>settings.py</code></li>
-            <!--
-            <li>สร้างโมเดล <code>Product</code> ใน <code>product/models.py</code> โดยมีฟิลด์ เช่น <code>name</code>, <code>price</code>, และ <code>description</code></li>
-            <li>รันคำสั่ง <code>python manage.py makemigrations</code> และ <code>python manage.py migrate</code> เพื่อสร้างตารางในฐานข้อมูล</li>
-            -->
-            <li>สร้างฟังก์ชัน View ชื่อ <code>product_list</code> ใน <code>product/views.py</code> เพื่อดึงข้อมูลสินค้าและส่งไปยังเทมเพลต</li>
-            <li>สร้างไฟล์เทมเพลตสำหรับแสดงรายการสินค้าใน <code>product/templates/product/product_list.html</code></li>
-            <li>เพิ่ม URL pattern สำหรับ <code>product_list</code> ในไฟล์ <code>product/urls.py</code> และเชื่อมต่อใน <code>mysite/urls.py</code></li>
-            <li>รันเซิร์ฟเวอร์และทดสอบการแสดงรายการสินค้า</li>
-          </ol>
-        </div>
+            </div>
 
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-          <h3 class="text-2xl font-semibold mb-4 text-center">คำแนะนำ</h3>
-          <ul class="list-disc list-inside space-y-2 text-white/90 text-sm">
-            <li>ตรวจสอบการเพิ่มแอป <code>product</code> ใน <code>INSTALLED_APPS</code> แล้ว</li>
-            <li>ลองเพิ่มข้อมูลสินค้าใน Django Admin หรือ shell เพื่อแสดงในหน้าเว็บ</li>
-            <li>ศึกษาวิธีสร้างและใช้เทมเพลต Django เพื่อแสดงข้อมูล</li>
-            <li>ทดลองแก้ไขเทมเพลตและ View เพื่อฝึกการทำงานกับข้อมูล</li>
-          </ul>
+            <!-- Mapping URL -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 tech-card border border-white/20 md:col-span-2">
+              <h3 class="text-2xl font-semibold mb-2">4. Mapping URL ใน <code>urls.py</code></h3>
+              <p class="text-white/80 mb-4">เชื่อม URL กับ View ที่สร้างไว้</p>
+              <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
+                from django.urls import path
+                from . import views
+
+                urlpatterns = [
+                path('', views.home, name='home'),
+                ]
+              </pre>
+              <p class="text-white/90 text-sm mt-2">
+                จากนั้นเพิ่มในไฟล์ <code>mysite/urls.py</code>:
+              </p>
+              <pre class="bg-black/50 rounded p-4 font-mono text-sm overflow-auto text-white/90">
+                from django.urls import include, path
+
+                urlpatterns = [
+                path('', include('blog.urls')),
+                ]
+              </pre>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-6 text-center">คำแนะนำเพิ่มเติม</h3>
+            <ul class="list-disc list-inside text-white/90 text-sm space-y-2">
+              <li>เซฟไฟล์และรันเซิร์ฟเวอร์ใหม่เพื่อทดสอบผลลัพธ์</li>
+              <li>ทดลองเปลี่ยนข้อความในฟังก์ชัน View แล้วดูผลลัพธ์บนเว็บ</li>
+              <li>แยก URL ออกเป็นไฟล์ <code>urls.py</code> ในแต่ละแอปช่วยให้ง่ายต่อการจัดการ</li>
+              <li>หากเจอ error อ่านข้อความในเทอร์มินัลเพื่อแก้ไข</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">แบบฝึกหัด 1</h1>
+            <p class="text-xl text-white/90">สร้างแอปชื่อ <code>book</code> และแสดงข้อความบนหน้าเว็บ</p>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h3 class="text-3xl font-semibold mb-4">ขั้นตอน</h3>
+            <ol class="list-decimal list-inside space-y-4 text-white/90 text-lg">
+              <li>สร้างแอป Django ชื่อ <code>book</code> โดยใช้คำสั่ง:
+                <pre class="bg-black/50 rounded p-3 font-mono text-sm mt-2 overflow-auto">
+                  python manage.py startapp book
+                </pre>
+              </li>
+              <li>เพิ่มชื่อแอป <code>'book'</code> ลงใน <code>INSTALLED_APPS</code> ในไฟล์ <code>settings.py</code></li>
+              <li>สร้างฟังก์ชัน View ชื่อ <code>index</code> ใน <code>book/views.py</code> โดยให้แสดงข้อความ <em>"ยินดีต้อนรับสู่ Book App!"</em></li>
+              <li>สร้างไฟล์ <code>urls.py</code> ในโฟลเดอร์แอป <code>book</code> และเพิ่ม URL pattern สำหรับฟังก์ชัน <code>index</code></li>
+              <li>เชื่อมต่อ <code>book.urls</code> ในไฟล์หลัก <code>mysite/urls.py</code> ให้ URL หลักเรียกไปยังแอป <code>book</code></li>
+              <li>รันเซิร์ฟเวอร์และทดสอบการเข้าถึง URL หลัก ควรแสดงข้อความที่เขียนไว้ใน View</li>
+            </ol>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-center">คำแนะนำ</h3>
+            <ul class="list-disc list-inside space-y-2 text-white/90 text-sm">
+              <li>ตรวจสอบว่าเพิ่มแอป <code>book</code> ใน <code>INSTALLED_APPS</code> แล้ว</li>
+              <li>ใช้คำสั่ง <code>python manage.py runserver</code> เพื่อรันเซิร์ฟเวอร์</li>
+              <li>ถ้าเจอปัญหา error ให้ตรวจสอบข้อความในเทอร์มินัลและแก้ไขตามนั้น</li>
+              <li>ทดลองแก้ไขข้อความใน View เพื่อฝึกการเปลี่ยนแปลงและรีเฟรชหน้าเว็บ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-6xl mx-auto px-8 w-full">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">แบบฝึกหัด 2</h1>
+            <p class="text-xl text-white/90">สร้างแอปชื่อ <code>product</code> และแสดงรายการสินค้า</p>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h3 class="text-3xl font-semibold mb-4">ขั้นตอน</h3>
+            <ol class="list-decimal list-inside space-y-4 text-white/90 text-lg">
+              <li>สร้างแอป Django ชื่อ <code>product</code> โดยใช้คำสั่ง:
+                <pre class="bg-black/50 rounded p-3 font-mono text-sm mt-2 overflow-auto">
+                  python manage.py startapp product
+                </pre>
+              </li>
+              <li>เพิ่มชื่อแอป <code>'product'</code> ลงใน <code>INSTALLED_APPS</code> ในไฟล์ <code>settings.py</code></li>
+              <!--
+<li>สร้างโมเดล <code>Product</code> ใน <code>product/models.py</code> โดยมีฟิลด์ เช่น <code>name</code>, <code>price</code>, และ <code>description</code></li>
+<li>รันคำสั่ง <code>python manage.py makemigrations</code> และ <code>python manage.py migrate</code> เพื่อสร้างตารางในฐานข้อมูล</li>
+-->
+              <li>สร้างฟังก์ชัน View ชื่อ <code>product_list</code> ใน <code>product/views.py</code> เพื่อดึงข้อมูลสินค้าและส่งไปยังเทมเพลต</li>
+              <li>สร้างไฟล์เทมเพลตสำหรับแสดงรายการสินค้าใน <code>product/templates/product/product_list.html</code></li>
+              <li>เพิ่ม URL pattern สำหรับ <code>product_list</code> ในไฟล์ <code>product/urls.py</code> และเชื่อมต่อใน <code>mysite/urls.py</code></li>
+              <li>รันเซิร์ฟเวอร์และทดสอบการแสดงรายการสินค้า</li>
+            </ol>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-center">คำแนะนำ</h3>
+            <ul class="list-disc list-inside space-y-2 text-white/90 text-sm">
+              <li>ตรวจสอบการเพิ่มแอป <code>product</code> ใน <code>INSTALLED_APPS</code> แล้ว</li>
+              <li>ลองเพิ่มข้อมูลสินค้าใน Django Admin หรือ shell เพื่อแสดงในหน้าเว็บ</li>
+              <li>ศึกษาวิธีสร้างและใช้เทมเพลต Django เพื่อแสดงข้อมูล</li>
+              <li>ทดลองแก้ไขเทมเพลตและ View เพื่อฝึกการทำงานกับข้อมูล</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-
-
     <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
 
-    document.getElementById('total-slides').textContent = totalSlides;
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
 
-    function showSlide(n) {
-    slides[currentSlide].classList.remove('active');
-    currentSlide = (n + totalSlides) % totalSlides;
-    slides[currentSlide].classList.add('active');
-    document.getElementById('current-slide').textContent = currentSlide + 1;
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
     }
-
-    function nextSlide() {
-    showSlide(currentSlide + 1);
-    }
-
-    function previousSlide() {
-    showSlide(currentSlide - 1);
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight' || e.key === ' ') {
-    nextSlide();
-    } else if (e.key === 'ArrowLeft') {
-    previousSlide();
-    }
-    });
-
-    // Touch navigation for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    document.addEventListener('touchstart', function(e) {
-    touchStartX = e.changedTouches[0].screenX;
-    });
-
-    document.addEventListener('touchend', function(e) {
-    touchEndX = e.changedTouches[0].screenX;
-    if (touchStartX - touchEndX > 50) {
-    nextSlide();
-    } else if (touchEndX - touchStartX > 50) {
-    previousSlide();
-    }
-    });
     </script>
   </body>
 </html>
