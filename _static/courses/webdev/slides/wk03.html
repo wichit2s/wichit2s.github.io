@@ -75,7 +75,7 @@
 
     <!-- Slide Counter -->
     <div class="slide-counter">
-      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
     </div>
 
     <!-- Navigation -->
@@ -121,16 +121,16 @@
 
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
             <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
-            <div class="grid md:grid-cols-2 gap-4 text-left">
-              <div class="flex items-start gap-3">
+            <div class="w-full flex flex-col text-left">
+              <div class="w-full flex items-start gap-3">
                 <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
                 <span>อธิบายรูปแบบการกำหนดรูปแบบการจัดเก็บข้อมูลของ Django ได้</span>
               </div>
-              <div class="flex items-start gap-3">
+              <div class="w-full flex items-start gap-3">
                 <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
                 <span>ประยุกต์ใช้ฟิลด์ (Field) ใน Model ได้</span>
               </div>
-              <div class="flex items-start gap-3 md:col-span-2 justify-center">
+              <div class="w-full flex items-start gap-3 md:col-span-2 justify-center">
                 <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
                 <span>ประยุกต์ใช้คำสั่งค้นหา (Query) ได้ตรงตามเงื่อนไขที่กำหนดให้</span>
               </div>
@@ -163,13 +163,15 @@
 
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-white/90">
             <h3 class="text-2xl font-semibold mb-4">2. การสร้าง Model พื้นฐาน</h3>
-            <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code>from django.db import models
+            <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto">
+              <code>
+from django.db import models
 
-              class Student(models.Model):
-              name = models.CharField(max_length=100)
-              age = models.IntegerField()
-              email = models.EmailField()
-            </code></pre>
+class Student(models.Model):
+   name = models.CharField(max_length=100)
+   age = models.IntegerField()
+   email = models.EmailField()
+              </code></pre>
             <p class="mt-4 text-white/80">
               โค้ดด้านบนจะสร้างตารางชื่อ <code>student</code> ในฐานข้อมูล พร้อม field name, age และ email
             </p>
@@ -218,17 +220,19 @@
 
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 text-white/90">
             <h3 class="text-2xl font-semibold mb-4">2. คำสั่งค้นหาพื้นฐาน</h3>
-            <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto"><code># ดึงทั้งหมด
-              Student.objects.all()
+            <pre class="bg-black/50 rounded-lg p-4 text-sm overflow-x-auto">
+              <code>
+# ดึงทั้งหมด
+Student.objects.all()
 
-              # ดึงเฉพาะคนที่อายุเกิน 18
-              Student.objects.filter(age__gt=18)
+# ดึงเฉพาะคนที่อายุเกิน 18
+Student.objects.filter(age__gt=18)
 
-              # ดึงคนที่ชื่อคือ “John”
-              Student.objects.get(name="John")
+# ดึงคนที่ชื่อคือ “John”
+Student.objects.get(name="John")
 
-              # ดึงเฉพาะคนที่ไม่ใช่ John
-              Student.objects.exclude(name="John")
+# ดึงเฉพาะคนที่ไม่ใช่ John
+Student.objects.exclude(name="John")
             </code></pre>
             <p class="mt-4 text-white/80">
               ใช้ <code>filter</code> สำหรับหลายผลลัพธ์ และ <code>get</code> สำหรับผลลัพธ์เดียว
@@ -279,20 +283,21 @@
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-white/90">
             <h2 class="text-2xl font-semibold mb-4">ตัวอย่างการใช้งาน QuerySet</h2>
             <pre class="bg-black/40 p-4 rounded-lg text-sm overflow-auto">
-              <code># ดึงข้อมูลนักเรียนทั้งหมด
-                Student.objects.all()
+              <code>
+# ดึงข้อมูลนักเรียนทั้งหมด
+Student.objects.all()
 
-                # ดึงนักเรียนที่อายุ 18 ปี
-                Student.objects.filter(age=18)
+# ดึงนักเรียนที่อายุ 18 ปี
+Student.objects.filter(age=18)
 
-                # ดึงนักเรียนชื่อ "สมชาย"
-                Student.objects.get(name="สมชาย")
+# ดึงนักเรียนชื่อ "สมชาย"
+Student.objects.get(name="สมชาย")
 
-                # ดึงนักเรียนที่ไม่ใช่อายุ 20 ปี
-                Student.objects.exclude(age=20)
+# ดึงนักเรียนที่ไม่ใช่อายุ 20 ปี
+Student.objects.exclude(age=20)
 
-                # เรียงลำดับตามชื่อ (จาก ก → ฮ)
-                Student.objects.order_by("name")</code>
+# เรียงลำดับตามชื่อ (จาก ก → ฮ)
+Student.objects.order_by("name")</code>
             </pre>
           </div>
 
@@ -319,12 +324,13 @@
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
               <h2 class="text-2xl font-semibold mb-2 text-green-300">🟢 เพิ่มข้อมูล (Create)</h2>
               <pre class="bg-black/40 p-3 rounded text-sm overflow-auto">
-                <code># สร้างและบันทึกข้อมูลใหม่
-                  student = Student(name="สมศรี", age=17)
-                  student.save()
+                <code>
+# สร้างและบันทึกข้อมูลใหม่
+student = Student(name="สมศรี", age=17)
+student.save()
 
-                  # หรือใช้ create()
-                  Student.objects.create(name="สมศรี", age=17)</code>
+# หรือใช้ create()
+Student.objects.create(name="สมศรี", age=17)</code>
               </pre>
             </div>
 
@@ -332,10 +338,11 @@
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
               <h2 class="text-2xl font-semibold mb-2 text-yellow-300">🟡 แก้ไขข้อมูล (Update)</h2>
               <pre class="bg-black/40 p-3 rounded text-sm overflow-auto">
-                <code># แก้ไขข้อมูลของนักเรียน
-                  student = Student.objects.get(id=1)
-                  student.age = 18
-                  student.save()</code>
+                <code>
+# แก้ไขข้อมูลของนักเรียน
+student = Student.objects.get(id=1)
+student.age = 18
+student.save()</code>
               </pre>
             </div>
 
@@ -343,9 +350,10 @@
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
               <h2 class="text-2xl font-semibold mb-2 text-red-300">🔴 ลบข้อมูล (Delete)</h2>
               <pre class="bg-black/40 p-3 rounded text-sm overflow-auto">
-                <code># ลบข้อมูลนักเรียน
-                  student = Student.objects.get(id=1)
-                  student.delete()</code>
+                <code>
+# ลบข้อมูลนักเรียน
+student = Student.objects.get(id=1)
+student.delete()</code>
               </pre>
             </div>
           </div>
@@ -556,62 +564,62 @@
       </div>
 
 
-
     </div>
+
     <script>
     function slideshow() {
-    return {
-    currentSlide: 0,
-    totalSlides: 0,
-    touchStartX: 0,
-    touchEndX: 0,
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
 
-    init() {
-    // นับจำนวนสไลด์ทั้งหมด
-    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
 
-    // เพิ่ม event listeners
-    this.setupKeyboardNavigation();
-    this.setupTouchNavigation();
-    },
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
 
-    nextSlide() {
-    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-    },
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
 
-    previousSlide() {
-    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-    },
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
 
-    setupKeyboardNavigation() {
-    document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') {
-    e.preventDefault();
-    this.nextSlide();
-    } else if (e.key === 'ArrowLeft') {
-    e.preventDefault();
-    this.previousSlide();
-    }
-    });
-    },
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
 
-    setupTouchNavigation() {
-    document.addEventListener('touchstart', (e) => {
-    this.touchStartX = e.changedTouches[0].screenX;
-    });
-
-    document.addEventListener('touchend', (e) => {
-    this.touchEndX = e.changedTouches[0].screenX;
-    const swipeDistance = 50;
-
-    if (this.touchStartX - this.touchEndX > swipeDistance) {
-    this.nextSlide();
-    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
-    this.previousSlide();
-    }
-    });
-    }
-    }
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
     }
     </script>
   </body>
