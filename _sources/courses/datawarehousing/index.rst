@@ -3,7 +3,7 @@
 
 .. warning::
 
-   ฉบับปรับปรุงเน้นการใช้งานในยุค AI
+   ฉบับปรับปรุงเน้นการใช้งานในยุค Generative AI
 
 จุดมุ่งหมาย
 ------------------------------------------------------------
@@ -26,89 +26,125 @@
 แผนการเรียนรู้
 ------------------------------------------------------------
 
-.. list-table:: แผนการสอนรายสัปดาห์
+.. list-table:: แผนการสอนรายวิชา Modern Data Warehousing for Generative AI
    :header-rows: 1
-   :widths: 5 15 20 25 15
+   :widths: 4 10 12 12
 
    * - สัปดาห์
-     - หัวข้อหลัก
-     - หัวข้อย่อย
-     - วัตถุประสงค์
-     - ลิงก์ประกอบ
-   * - 1
-     - บทนำสู่ Data Warehousing ยุค AI
-     - ความแตกต่าง Data Lake / Lakehouse / DW, บทบาทของ AI
-     - เข้าใจบริบทการเปลี่ยนผ่านจากคลังข้อมูลแบบดั้งเดิมสู่ AI-driven platform
-     - https://databricks.com
-   * - 2
-     - AI-native Data Architectures
-     - Lakehouse, Vector Database, Multimodal Storage
-     - เข้าใจการออกแบบสถาปัตยกรรมข้อมูลที่รองรับ AI เช่น LLM/Embedding
-     - https://pinecone.io
-   * - 3
-     - AI-ready Data Modeling
-     - Feature Store, Semantic Layer, Ontologies
-     - เข้าใจแนวคิดการเตรียมข้อมูลให้พร้อมสำหรับ AI Training/Inference
-     - https://feast.dev
-   * - 4
-     - Modern ETL/ELT & Streaming
-     - Data ingestion tools (Airbyte, Kafka, dbt)
-     - สร้าง pipeline สำหรับ real-time และ batch data ingestion สำหรับ AI
-     - https://docs.getdbt.com
-   * - 5
-     - Unstructured Data & Embedding Index
-     - Text/Image/Audio storage, vector embedding
-     - เรียนรู้การจัดการข้อมูลไม่มีโครงสร้างเพื่อให้ใช้งานกับ LLM ได้
-     - https://langchain.com
-   * - 6
-     - Data Quality, Bias & Explainability
-     - Detecting bias, profiling, data lineage
-     - วิเคราะห์คุณภาพข้อมูลและผลกระทบต่อ AI ด้วย Explainable AI (XAI)
-     - https://arxiv.org/pdf/2001.07588.pdf
-   * - 7
-     - Governance & AI Compliance
-     - AI Act, Data Provenance, Auditing
-     - เข้าใจข้อกำหนดด้านจริยธรรมและกฎหมายของการใช้ข้อมูลใน AI
-     - https://www.europa.eu (EU AI Act)
-   * - 8
-     - Midterm Project Pitch
-     - AI data pipeline + storage proposal
-     - นำเสนอแนวคิด project ที่รวมการจัดเก็บและใช้ข้อมูลสำหรับ AI
-     - https://notion.so
-   * - 9
-     - Foundation Models & Training Data Strategy
-     - Training dataset structure, scale, diversity
-     - ออกแบบคลังข้อมูลให้เหมาะสมกับ model training ในระดับ foundation
-     - https://huggingface.co/docs
-   * - 10
-     - Retrieval-Augmented Generation (RAG)
-     - Hybrid architecture, document retrieval + LLM
-     - สร้าง data schema ที่สามารถใช้ร่วมกับ RAG pipeline
-     - https://docs.llamaindex.ai
-   * - 11
-     - AI Inference & Vector Search
-     - Similarity search, ANN Index, Faiss
-     - สร้างคลังข้อมูลที่ใช้สำหรับ AI inference ผ่าน vector search
-     - https://facebookresearch.github.io/faiss
-   * - 12
-     - Monitoring & Observability
-     - ML observability, data drift, model feedback loop
-     - ออกแบบระบบ DW ที่สามารถตรวจสอบและปรับปรุงข้อมูลให้ AI
-     - https://evidentlyai.com
-   * - 13
-     - Synthetic Data Generation
-     - Generative modeling, Data simulation, Augmentation
-     - ใช้ AI สร้างข้อมูลจำลองเพื่อนำไปใช้ใน DW/AI pipeline
-     - https://gretel.ai
-   * - 14
-     - Final Project Presentation
-     - นำเสนอ DW/AI integrated solution
-     - แสดงความเข้าใจภาพรวมตั้งแต่ ingestion ถึงการใช้ข้อมูลกับ AI
-     - https://slidesgo.com
-   * - 15
-     - Reflection & Trends
-     - Data mesh, decentralized AI, future outlook
-     - วิเคราะห์แนวโน้มคลังข้อมูลในยุค AI และการเตรียมความพร้อมด้านอาชีพ
-     - https://towardsdatascience.com
+     - หัวข้อ
+     - ผลลัพธ์การเรียนรู้
+     - ลิงก์สื่อการเรียนรู้เพิ่มเติม
 
+   * - 1
+     - บทนำสู่ Data Warehousing ยุคใหม่
+     - เข้าใจภาพรวมของ Modern DW และความเชื่อมโยงกับ Generative AI
+     - https://www.snowflake.com/guides/what-is-data-warehouse
+
+   * - 2
+     - Architectures
+     - วิเคราะห์และเปรียบเทียบสถาปัตยกรรม DW สมัยใหม่
+     - https://docs.databricks.com/lakehouse/index.html
+
+   * - 3
+     - Data Modeling สำหรับ DW
+     - ออกแบบโมเดลข้อมูล Star และ Snowflake ได้อย่างเหมาะสม
+     - https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/
+
+   * - 4
+     - Data Ingestion & ETL/ELT
+     - วางแผนและพัฒนา pipeline สำหรับ ingest ข้อมูล
+     - https://docs.getdbt.com/docs/introduction
+
+   * - 5
+     - Data Quality & Governance
+     - ประเมินคุณภาพข้อมูลและนำหลัก Data Governance ไปประยุกต์
+     - https://greatexpectations.io/
+
+   * - 6
+     - Modern Storage Formats
+     - เลือกใช้ format เช่น Parquet/Delta/Iceberg ให้เหมาะกับ use-case
+     - https://delta.io/
+
+   * - 7
+     - SQL for Analytics & Feature Engineering
+     - เขียน SQL เชิงลึกเพื่อวิเคราะห์และสร้างฟีเจอร์สำหรับ AI
+     - https://mode.com/sql-tutorial/
+
+   * - 8
+     - Midterm: Hands-on Project Review
+     - นำเสนอ pipeline ที่ออกแบบเอง และได้รับ feedback
+     - (ไฟล์แนบ/รายงานตามที่อาจารย์กำหนด)
+
+   * - 9
+     - Introduction to Generative AI
+     - อธิบายการทำงานของ LLM และแนวคิดพื้นฐานของ GenAI
+     - https://platform.openai.com/docs/introduction
+
+   * - 10
+     - Connecting DW to GenAI
+     - สร้าง flow ในการนำข้อมูลจาก DW ไปใช้ใน GenAI
+     - https://docs.langchain.com/
+
+   * - 11
+     - RAG (Retrieval Augmented Generation)
+     - สร้างระบบที่ใช้ข้อมูลจาก DW เพื่อ enhance LLM
+     - https://www.llamaindex.ai/
+
+   * - 12
+     - DW สำหรับ Fine-tuning
+     - เตรียม dataset สำหรับ fine-tune LLM ด้วยข้อมูลจาก DW
+     - https://huggingface.co/docs/transformers/training
+
+   * - 13
+     - Case Study: Chatbot/AI Generator
+     - ออกแบบระบบ AI ที่ใช้ DW จริงในการตอบคำถาม
+     - https://cloud.google.com/solutions/genai-chat-app-data
+
+   * - 14
+     - Final Project Work
+     - สร้างโครงงานแบบ end-to-end ที่บูรณาการเนื้อหาทั้งหมด
+     - (Google Colab / GitHub / เอกสารแนบตามกลุ่ม)
+
+   * - 15
+     - Final Presentation
+     - นำเสนอผลงานสรุป และอภิปรายศักยภาพของระบบที่สร้าง
+     - (ไฟล์สไลด์ / สรุปผลการนำเสนอ)
+
+เกณฑ์การให้คะแนนรายวิชา
+--------------------------
+
+.. list-table:: สัดส่วนคะแนน
+   :widths: 50 10 40
+   :header-rows: 1
+
+   * - รายการ
+     - สัดส่วน (%)
+     - หมายเหตุ
+   * - การบ้าน
+
+       **ประกอบด้วย**
+
+       1. แบบฝึกหัดรายสัปดาห์ / Quizzes
+       2. แบบฝึกหัดเขียน SQL/ETL/Modeling
+       3. การมีปฏิสัมพันธ์ ถาม-ตอบ ช่วยเหลือเพื่อน ฯลฯ
+     - 30%
+     - * ตรวจสอบความเข้าใจรายบท
+       * ทักษะทางเทคนิค
+   * - ประเมินรายงาน / โครงงาน
+
+       **เกณฑ์ย่อย**
+
+       1. ออกแบบ schema ได้ถูกต้อง สอดคล้องกับ use-case
+       2. ใช้ข้อมูลจาก DW ใน pipeline ของ GenAI เช่น RAG
+       3. ใช้ Snowflake, dbt, LangChain ฯลฯ ได้อย่างเหมาะสม
+       4. อธิบายเหตุผลและการเลือกวิธีการได้ดี
+       5. อธิบายเข้าใจง่าย มี demo หรือ dashboard ประกอบ
+     - 20%
+     - ความสามารถในการอธิบาย วิเคราะห์ และสื่อสาร
+   * - สอบกลางภาค (Midterm Examination)
+     - 25%
+     - เนื้อหาสัปดาห์ที่ 1 - 7
+   * - สอบปลายภาค (Final Examination)
+     - 25%
+     - เนื้อหาสัปดาห์ที่ 8 - 15
 

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทนำสู่ Data Warehousing ยุค AII - สัปดาห์ 1</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tech-card {
+      transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/datawarehousing/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/datawarehousing/slides/wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ความรู้เบื้องต้นเกี่ยวกับ<br>
+            <span class="text-yellow-300">Data Warehousing</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Data Warehousing Concepts + Practical AI-Focused Use Cases
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>อธิบายความหมายและวัตถุประสงค์ของ Data Warehousing ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>จำแนกองค์ประกอบพื้นฐานของระบบคลังข้อมูล (DW Architecture) ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>อธิบายความสัมพันธ์ระหว่าง Data Warehouse กับ AI และ Generative AI ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>ตั้งค่า PostgreSQL และ DB tool (เช่น pgAdmin หรือ DBeaver) สำหรับ DW ได้</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4 justify-center">
+              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">5</div>
+              <span>สามารถนำเข้าชุดข้อมูลเบื้องต้นเข้าสู่ระบบฐานข้อมูลได้</span>
+            </div>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 1</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-left max-w-4xl mx-auto px-8 py-12">
+
+          <h2 class="text-5xl font-bold mb-6">
+            Data Warehouse คืออะไร?
+          </h2>
+
+          <p class="text-xl text-white/90 leading-relaxed mb-6">
+            Data Warehouse (คลังข้อมูล) คือระบบที่ออกแบบมาเพื่อรวบรวม จัดเก็บ และวิเคราะห์ข้อมูลจากหลายแหล่งอย่างมีโครงสร้าง<br>
+            โดยมีจุดประสงค์หลักเพื่อสนับสนุนการตัดสินใจเชิงกลยุทธ์ขององค์กร
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-white/90 mt-6">
+            <div class="bg-white/10 p-5 rounded-xl backdrop-blur-sm">
+              <h3 class="text-2xl font-semibold mb-2">คุณสมบัติหลัก</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li>รวมข้อมูลจากหลายระบบ (ETL)</li>
+                <li>จัดเก็บข้อมูลในรูปแบบ Time-Variant</li>
+                <li>ไม่สามารถเขียน/แก้ไขข้อมูลย้อนหลัง</li>
+                <li>เหมาะสำหรับการสืบค้นและวิเคราะห์ (OLAP)</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl backdrop-blur-sm">
+              <h3 class="text-2xl font-semibold mb-2">ทำไมถึงสำคัญ?</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li>ช่วยรวบรวมข้อมูลจากระบบต่างๆ</li>
+                <li>รองรับการตัดสินใจด้วยข้อมูลแบบ Real-time หรือใกล้เคียง</li>
+                <li>เป็นฐานข้อมูลที่ใช้กับ Generative AI ได้อย่างมีประสิทธิภาพ</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-left max-w-4xl mx-auto px-8 py-12">
+
+          <h2 class="text-5xl font-bold mb-6">วัตถุประสงค์ของ Data Warehousing</h2>
+
+          <p class="text-xl text-white/90 mb-6 leading-relaxed">
+            Data Warehouse ถูกออกแบบมาเพื่อให้สามารถรวบรวม วิเคราะห์ และสนับสนุนการตัดสินใจทางธุรกิจได้อย่างมีประสิทธิภาพ โดยมีวัตถุประสงค์หลักดังนี้:
+          </p>
+
+          <ul class="list-disc list-inside space-y-3 text-white/90 text-lg">
+            <li>รวมข้อมูลจากแหล่งข้อมูลหลายระบบ (Data Integration) เพื่อให้ข้อมูลครบถ้วนและสอดคล้องกัน</li>
+            <li>สนับสนุนการวิเคราะห์ข้อมูลเชิงลึก (Data Analysis & Reporting)</li>
+            <li>เก็บข้อมูลในระยะยาว (Historical Data Storage) เพื่อวิเคราะห์แนวโน้มและพฤติกรรม</li>
+            <li>ช่วยให้การตัดสินใจมีข้อมูลรองรับมากขึ้น (Decision Support)</li>
+            <li>เพิ่มประสิทธิภาพการทำงานของระบบ BI (Business Intelligence)</li>
+            <li>รองรับการใช้งาน AI และ Machine Learning โดยการจัดเตรียมข้อมูลคุณภาพ</li>
+          </ul>
+
+          <div class="mt-8 bg-white/10 p-6 rounded-xl backdrop-blur-sm text-white/90">
+            <h3 class="text-2xl font-semibold mb-3">ตัวอย่างการใช้งานจริง</h3>
+            <p>องค์กรขายปลีกใช้ Data Warehouse เพื่อวิเคราะห์ยอดขายย้อนหลังและวางแผนการตลาด</p>
+            <p>บริษัทเทคโนโลยีใช้ข้อมูลใน Data Warehouse เป็นฐานสำหรับฝึกโมเดล AI ในการพยากรณ์พฤติกรรมลูกค้า</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-12 text-center">
+          <h2 class="text-5xl font-bold mb-6">Data Warehousing กับ AI ในยุคปัจจุบัน</h2>
+
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            Data Warehouse คือฐานข้อมูลสำคัญที่ช่วยรวบรวมข้อมูลจากหลายแหล่ง เพื่อเตรียมข้อมูลที่มีคุณภาพสำหรับการประมวลผลด้วย AI และ Machine Learning
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-10 text-left text-white/90">
+            <div class="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
+              <h3 class="text-2xl font-semibold mb-4">บทบาทของ Data Warehousing กับ AI</h3>
+              <ul class="list-disc list-inside space-y-3">
+                <li>จัดเตรียมข้อมูลที่สะอาดและมีโครงสร้าง (Clean & Structured Data)</li>
+                <li>สนับสนุนการฝึกโมเดล AI ด้วยข้อมูลเชิงลึกจากประวัติย้อนหลัง</li>
+                <li>เพิ่มความเร็วในการดึงข้อมูลสำหรับ AI ทำงานแบบเรียลไทม์</li>
+                <li>ช่วยลดความซ้ำซ้อนและความผิดพลาดของข้อมูล</li>
+              </ul>
+            </div>
+
+            <div class="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
+              <h3 class="text-2xl font-semibold mb-4">ตัวอย่างการใช้งาน AI ที่อาศัย Data Warehouse</h3>
+              <ul class="list-disc list-inside space-y-3">
+                <li>การพยากรณ์ยอดขายด้วย Machine Learning</li>
+                <li>การวิเคราะห์พฤติกรรมลูกค้าเพื่อสร้าง Personalized Marketing</li>
+                <li>การตรวจจับความผิดปกติในระบบธุรกรรม</li>
+                <li>การปรับปรุงประสิทธิภาพกระบวนการผลิตด้วย AI</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mt-10 text-white/90 italic">"Data Warehousing is the backbone for AI-driven decision making."</div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 py-16 text-center">
+          <h2 class="text-5xl font-bold mb-8">สรุปความรู้เรื่อง Data Warehousing</h2>
+
+          <ul class="text-xl text-white/90 list-disc list-inside space-y-6 mb-12">
+            <li>Data Warehouse คือระบบเก็บข้อมูลที่รวบรวมจากหลายแหล่งในองค์กร เพื่อสนับสนุนการวิเคราะห์ข้อมูลอย่างมีประสิทธิภาพ</li>
+            <li>วัตถุประสงค์หลักคือ เพื่อรวมข้อมูลให้สะอาดและเป็นมาตรฐานสำหรับการตัดสินใจเชิงธุรกิจ</li>
+            <li>ประกอบด้วยส่วนหลัก ได้แก่ ETL Process, Storage Layer และ Presentation Layer</li>
+            <li>ช่วยให้องค์กรวางแผนกลยุทธ์และตัดสินใจบนฐานข้อมูลที่มีคุณภาพสูง</li>
+          </ul>
+
+          <div class="text-2xl font-semibold mb-6">คำถามท้ายบทเรียน</div>
+          <div class="text-xl text-white/90 space-y-4 max-w-3xl mx-auto">
+            <p>1. Data Warehouse คืออะไร และมีวัตถุประสงค์อะไร?</p>
+            <p>2. องค์ประกอบหลักของ Data Warehousing มีอะไรบ้าง?</p>
+            <p>3. Data Warehousing ช่วยสนับสนุน AI อย่างไร?</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-12">
+          <h2 class="text-5xl font-bold mb-8 text-center">โครงสร้างของ Data Warehouse</h2>
+
+          <div class="flex flex-col md:flex-row justify-center items-center gap-10">
+            <!-- Data Sources -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 w-72 text-center">
+              <h3 class="text-2xl font-semibold mb-6">แหล่งข้อมูล (Data Sources)</h3>
+              <ul class="text-white/90 list-disc list-inside space-y-3">
+                <li>ฐานข้อมูลธุรกรรม (OLTP)</li>
+                <li>ไฟล์ข้อมูล</li>
+                <li>API จากระบบภายนอก</li>
+                <li>เซ็นเซอร์และ IoT</li>
+              </ul>
+            </div>
+
+            <!-- ETL Process -->
+            <div class="bg-green-600/30 backdrop-blur-sm rounded-2xl p-8 w-72 text-center">
+              <h3 class="text-2xl font-semibold mb-6">ETL Process</h3>
+              <p class="text-white/90">Extract - Transform - Load<br>กระบวนการดึงข้อมูล แปลงข้อมูลให้สะอาด และโหลดลง Data Warehouse</p>
+            </div>
+
+            <!-- Data Warehouse -->
+            <div class="bg-purple-600/30 backdrop-blur-sm rounded-2xl p-8 w-72 text-center">
+              <h3 class="text-2xl font-semibold mb-6">Data Warehouse</h3>
+              <p class="text-white/90">พื้นที่เก็บข้อมูลขนาดใหญ่ ที่รวบรวมข้อมูลจากหลายแหล่งอย่างเป็นระบบ</p>
+            </div>
+          </div>
+
+          <div class="mt-12 text-center text-white/90 italic">
+            โครงสร้างนี้ช่วยให้การวิเคราะห์และรายงานข้อมูลมีความแม่นยำและรวดเร็วขึ้น
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-12">
+          <h2 class="text-5xl font-bold mb-8 text-center">ตัวอย่างการใช้งาน Data Warehouse ในธุรกิจ</h2>
+
+          <div class="grid md:grid-cols-3 gap-8 text-white/90">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-2xl font-semibold mb-4">การวิเคราะห์ยอดขาย</h3>
+              <p>รวมข้อมูลยอดขายจากหลายสาขา เพื่อวิเคราะห์แนวโน้มและกำหนดกลยุทธ์ทางการตลาด</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-2xl font-semibold mb-4">บริหารลูกค้าสัมพันธ์ (CRM)</h3>
+              <p>เก็บและวิเคราะห์ข้อมูลลูกค้า เพื่อปรับปรุงบริการและเพิ่มความพึงพอใจ</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-2xl font-semibold mb-4">การบริหารสินค้าคงคลัง</h3>
+              <p>ติดตามสต็อกสินค้าแบบเรียลไทม์ ลดการขาดแคลนและลดต้นทุน</p>
+            </div>
+          </div>
+
+          <div class="mt-12 text-center text-white/90 italic">
+            Data Warehouse ช่วยเพิ่มประสิทธิภาพการตัดสินใจและการบริหารจัดการในธุรกิจได้อย่างมาก
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-12">
+          <h2 class="text-5xl font-bold mb-8 text-center">ข้อดีและข้อจำกัดของ Data Warehousing</h2>
+
+          <div class="grid md:grid-cols-2 gap-12 text-white/90">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-3xl font-semibold mb-6">ข้อดี</h3>
+              <ul class="list-disc list-inside space-y-3">
+                <li>รวมข้อมูลจากแหล่งต่าง ๆ ได้อย่างมีประสิทธิภาพ</li>
+                <li>สนับสนุนการวิเคราะห์และรายงานข้อมูลที่แม่นยำ</li>
+                <li>ช่วยในการตัดสินใจเชิงกลยุทธ์ขององค์กร</li>
+                <li>ปรับปรุงประสิทธิภาพการเข้าถึงข้อมูล</li>
+              </ul>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-3xl font-semibold mb-6">ข้อจำกัด</h3>
+              <ul class="list-disc list-inside space-y-3">
+                <li>การติดตั้งและบำรุงรักษามีค่าใช้จ่ายสูง</li>
+                <li>ต้องการการวางแผนและออกแบบระบบอย่างรอบคอบ</li>
+                <li>ข้อมูลอาจล่าช้า ไม่อัพเดตแบบเรียลไทม์</li>
+                <li>ความซับซ้อนของ ETL อาจทำให้เกิดข้อผิดพลาด</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mt-12 text-center text-white/90 italic">
+            การวางแผนและการบริหารจัดการที่ดีช่วยให้ระบบ Data Warehouse ทำงานได้เต็มประสิทธิภาพ
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 py-12">
+          <h2 class="text-5xl font-bold mb-10 text-center">ขั้นตอนการสร้าง Data Warehouse</h2>
+
+          <ol class="list-decimal list-inside space-y-6 text-white/90 text-lg max-w-3xl mx-auto">
+            <li><strong>การวางแผนและกำหนดความต้องการ:</strong> วิเคราะห์ความต้องการข้อมูลและวัตถุประสงค์ขององค์กร</li>
+            <li><strong>การออกแบบสถาปัตยกรรม:</strong> กำหนดโครงสร้าง Data Warehouse, schema และเทคโนโลยีที่ใช้</li>
+            <li><strong>การรวบรวมข้อมูล (ETL):</strong> ดึงข้อมูลจากแหล่งต่าง ๆ มาแปลงและโหลดลง Data Warehouse</li>
+            <li><strong>การจัดเก็บและจัดการข้อมูล:</strong> วางระบบจัดเก็บข้อมูลให้มีประสิทธิภาพและรองรับการขยายตัว</li>
+            <li><strong>การวิเคราะห์และรายงาน:</strong> ใช้เครื่องมือ BI (Business Intelligence) เพื่อวิเคราะห์และสร้างรายงาน</li>
+            <li><strong>การดูแลและบำรุงรักษา:</strong> ตรวจสอบคุณภาพข้อมูลและปรับปรุงระบบอย่างต่อเนื่อง</li>
+          </ol>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-12">
+          <h2 class="text-5xl font-bold mb-10 text-center">ตัวอย่างการใช้งาน Data Warehouse กับ AI</h2>
+
+          <div class="space-y-8 text-white/90 text-lg max-w-4xl mx-auto">
+            <div>
+              <h3 class="text-3xl font-semibold mb-4">1. การวิเคราะห์พฤติกรรมลูกค้า</h3>
+              <p>รวบรวมข้อมูลจากหลายแหล่งเพื่อสร้างโมเดลทำนายพฤติกรรมลูกค้า และปรับปรุงการตลาดแบบเฉพาะเจาะจง</p>
+            </div>
+
+            <div>
+              <h3 class="text-3xl font-semibold mb-4">2. การทำนายและวางแผนซัพพลายเชน</h3>
+              <p>ใช้ข้อมูลใน Data Warehouse เพื่อสร้างโมเดล AI ที่ช่วยทำนายความต้องการสินค้าและปรับแผนการผลิต</p>
+            </div>
+
+            <div>
+              <h3 class="text-3xl font-semibold mb-4">3. การตรวจจับและป้องกันการฉ้อโกง</h3>
+              <p>วิเคราะห์ข้อมูลธุรกรรมใน Data Warehouse โดยใช้ AI เพื่อตรวจจับพฤติกรรมผิดปกติและป้องกันความเสี่ยง</p>
+            </div>
+
+            <div>
+              <h3 class="text-3xl font-semibold mb-4">4. การปรับปรุงประสิทธิภาพการให้บริการลูกค้า</h3>
+              <p>รวบรวมข้อมูลประวัติการให้บริการและใช้ AI เพื่อแนะนำการตอบสนองที่เหมาะสมและรวดเร็ว</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 py-12 text-center">
+          <h2 class="text-5xl font-bold mb-8">สรุปเนื้อหา</h2>
+          <p class="text-xl mb-12 text-white/90">
+            Data Warehousing คือการรวบรวมและจัดเก็บข้อมูลจากแหล่งต่าง ๆ เพื่อการวิเคราะห์และสนับสนุนการตัดสินใจในองค์กรอย่างมีประสิทธิภาพ
+          </p>
+          <h3 class="text-3xl font-semibold mb-6">คำถามทบทวน</h3>
+          <ul class="list-disc list-inside text-left max-w-xl mx-auto space-y-4 text-white/90 text-lg">
+            <li>Data Warehouse คืออะไรและมีวัตถุประสงค์อย่างไร?</li>
+            <li>องค์ประกอบหลักของ Data Warehouse มีอะไรบ้าง?</li>
+            <li>ขั้นตอนหลักในการสร้าง Data Warehouse คืออะไร?</li>
+            <li>ตัวอย่างการใช้งาน Data Warehouse ในองค์กรมีอะไรบ้าง?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 py-12 text-center">
+          <h2 class="text-5xl font-bold mb-8">แหล่งข้อมูลและแหล่งเรียนรู้เพิ่มเติม</h2>
+          <ul class="list-disc list-inside max-w-xl mx-auto space-y-6 text-white/90 text-lg text-left">
+            <li>
+              <a href="https://www.oracle.com/data-warehouse/" target="_blank" class="underline hover:text-blue-300">
+                Oracle Data Warehouse Overview
+              </a>
+            </li>
+            <li>
+              <a href="https://aws.amazon.com/data-warehousing/" target="_blank" class="underline hover:text-blue-300">
+                AWS Data Warehousing Services
+              </a>
+            </li>
+            <li>
+              <a href="https://www.tutorialspoint.com/dwh/index.htm" target="_blank" class="underline hover:text-blue-300">
+                Data Warehouse Tutorial at TutorialsPoint
+              </a>
+            </li>
+            <li>
+              <a href="https://www.edx.org/learn/data-warehousing" target="_blank" class="underline hover:text-blue-300">
+                Data Warehousing Courses on edX
+              </a>
+            </li>
+          </ul>
+          <p class="mt-12 text-white/80 italic">
+            เรียนรู้เพิ่มเติมเพื่อเสริมความเข้าใจและประยุกต์ใช้ Data Warehousing อย่างมีประสิทธิภาพ
+          </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 py-12 text-center">
+          <h2 class="text-5xl font-bold mb-8">ข้อดีและข้อจำกัดของ Data Warehousing</h2>
+          <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-3xl font-semibold mb-4">ข้อดี</h3>
+              <ul class="list-disc list-inside text-left text-white/90 text-lg space-y-2">
+                <li>รวบรวมข้อมูลจากหลายแหล่งได้อย่างมีประสิทธิภาพ</li>
+                <li>สนับสนุนการวิเคราะห์และตัดสินใจได้รวดเร็ว</li>
+                <li>เพิ่มความถูกต้องและความสม่ำเสมอของข้อมูล</li>
+                <li>ช่วยให้การรายงานเป็นระบบและง่ายต่อการเข้าถึงข้อมูล</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 class="text-3xl font-semibold mb-4">ข้อจำกัด</h3>
+              <ul class="list-disc list-inside text-left text-white/90 text-lg space-y-2">
+                <li>ต้องใช้เวลาและทรัพยากรในการออกแบบและพัฒนา</li>
+                <li>ต้องมีการบำรุงรักษาและปรับปรุงอย่างต่อเนื่อง</li>
+                <li>อาจมีค่าใช้จ่ายสูงในการจัดเก็บข้อมูลปริมาณมาก</li>
+                <li>ความซับซ้อนในการจัดการข้อมูลที่หลากหลาย</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 py-12 text-center">
+          <h2 class="text-5xl font-bold mb-8">สรุปความรู้เบื้องต้นเกี่ยวกับ Data Warehousing</h2>
+          <p class="text-xl text-white/90 max-w-3xl mx-auto mb-8">
+            Data Warehousing คือการรวบรวมและจัดเก็บข้อมูลจากแหล่งต่าง ๆ เพื่อสนับสนุนการวิเคราะห์ข้อมูลและการตัดสินใจทางธุรกิจอย่างมีประสิทธิภาพ
+          </p>
+          <ul class="list-disc list-inside text-left text-white/90 text-lg max-w-3xl mx-auto space-y-4">
+            <li>ช่วยเพิ่มความแม่นยำและความสม่ำเสมอของข้อมูล</li>
+            <li>สนับสนุนการวิเคราะห์และรายงานที่รวดเร็วและครอบคลุม</li>
+            <li>ประกอบด้วยแหล่งข้อมูล, ETL, Data Storage, และเครื่องมือ BI</li>
+            <li>เป็นส่วนสำคัญในการบริหารจัดการข้อมูลในองค์กรขนาดใหญ่</li>
+          </ul>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
