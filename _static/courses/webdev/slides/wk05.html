@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Views and Templates - สัปดาห์ 5</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tech-card {
+      transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/webdev/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter bg-gray-900">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/webdev/slides/wk05.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            Django Views และ Templates<br>
+            <span class="text-yellow-300">การกำหนดการเข้าถึงและแสดงผลข้อมูล</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เข้าใจขั้นตอนการแมป URL → View → Template และการใช้ Context เพื่อแสดงผล
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>อธิบายรูปแบบการกำหนดการเข้าถึงและการแสดงผลได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>เขียนข้อกำหนดการเข้าถึงตามข้อกำหนดที่ระบุให้ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ประยุกต์ใช้ความรู้เพื่อแสดงผลตามข้อกำหนดที่ระบุให้ได้</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 5</span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            โครงสร้างการทำงานของ<br>
+            <span class="text-yellow-300">Django View และ Template</span>
+          </h1>
+
+          <div class="text-lg text-white/90 mb-8 font-light">
+            Django จะรับคำร้อง (Request) จาก URL, ส่งไปยัง View, ประมวลผล และส่งข้อมูลกลับผ่าน Template
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">ขั้นตอนการทำงาน</h2>
+            <ol class="list-decimal list-inside space-y-2 text-white/90">
+              <li>ผู้ใช้ส่งคำร้อง (Request) มายัง URL ที่กำหนดไว้</li>
+              <li>URL จะถูกแมปไปยัง View function หรือ class-based view</li>
+              <li>View ทำงาน ประมวลผลข้อมูล และเตรียม context (dictionary)</li>
+              <li>ส่งข้อมูลไปยัง Template เพื่อแสดงผล</li>
+            </ol>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            หมายเหตุ: ในระบบจริง HTMX สามารถเรียก View เพื่ออัปเดตบางส่วนของหน้าได้โดยไม่ต้อง reload
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 2</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            ตัวอย่าง View และ URL Mapping<br>
+            <span class="text-yellow-300">ใน Django</span>
+          </h1>
+
+          <div class="text-left bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-sm md:text-base leading-relaxed">
+            <h2 class="text-xl font-semibold mb-4 text-white">📄 views.py</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              from django.shortcuts import render
+
+              def homepage(request):
+              context = {
+              'title': 'ยินดีต้อนรับ',
+              'message': 'นี่คือหน้าแรกของเว็บไซต์ Django'
+              }
+              return render(request, 'home.html', context)
+            </code></pre>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4 text-white">🔗 urls.py</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              from django.urls import path
+              from .views import homepage
+
+              urlpatterns = [
+              path('', homepage, name='home'),
+              ]
+            </code></pre>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            View ทำหน้าที่ประมวลผล และส่ง context ไปยัง template เพื่อแสดงผล
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 3</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            Template และ Context<br>
+            <span class="text-yellow-300">การแสดงผลข้อมูลจาก View</span>
+          </h1>
+
+          <div class="text-left bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-sm md:text-base leading-relaxed">
+            <h2 class="text-xl font-semibold mb-4 text-white">📄 home.html</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              &lt;!DOCTYPE html&gt;
+              &lt;html lang="th"&gt;
+              &lt;head&gt;
+              &lt;meta charset="UTF-8"&gt;
+              &lt;title&gt;{{ title }}&lt;/title&gt;
+              &lt;link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"&gt;
+              &lt;/head&gt;
+              &lt;body class="bg-gray-100 text-gray-800 p-6"&gt;
+
+              &lt;div class="max-w-xl mx-auto bg-white shadow rounded-lg p-6"&gt;
+              &lt;h1 class="text-2xl font-bold text-blue-600 mb-4"&gt;{{ title }}&lt;/h1&gt;
+              &lt;p class="text-lg"&gt;{{ message }}&lt;/p&gt;
+              &lt;/div&gt;
+
+              &lt;/body&gt;
+              &lt;/html&gt;
+            </code></pre>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            Template ใช้ {{ variable }} เพื่อแสดงค่าจาก context ที่ view ส่งมา
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 4</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            ใช้ HTMX เรียก Django View<br>
+            <span class="text-yellow-300">อัปเดตบางส่วนของหน้าเว็บ</span>
+          </h1>
+
+          <div class="text-left bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-sm md:text-base leading-relaxed">
+            <h2 class="text-xl font-semibold mb-4 text-white">🎯 เป้าหมาย</h2>
+            <ul class="list-disc list-inside space-y-2 text-white/90">
+              <li>แสดงปุ่มที่เมื่อกดแล้วโหลดข้อมูลจาก view</li>
+              <li>อัปเดตเฉพาะส่วนของ HTML โดยไม่ reload หน้า</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4 text-white">📄 HTML Template</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              &lt;button 
+              hx-get="/quote/" 
+              hx-target="#quote-box" 
+              class="bg-blue-500 text-white px-4 py-2 rounded"&gt;
+              โหลดข้อความใหม่
+              &lt;/button&gt;
+
+              &lt;div id="quote-box" class="mt-4 text-xl"&gt;
+              &lt;!-- ตรงนี้จะถูกแทนที่ --&gt;
+              &lt;/div&gt;
+            </code></pre>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4 text-white">📄 views.py</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              from django.http import HttpResponse
+              import random
+
+              def quote(request):
+              quotes = ["จงทำให้ดีที่สุด", "อย่ากลัวที่จะเริ่มต้น", "พยายามเข้าไว้!"]
+              return HttpResponse(random.choice(quotes))
+            </code></pre>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            HTMX ใช้ attribute อย่าง <code>hx-get</code>, <code>hx-target</code> เพื่อควบคุมการโหลดข้อมูล
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 5</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            แผนภาพการไหลของข้อมูล<br>
+            <span class="text-yellow-300">ใน Django + HTMX</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="text-white/90 text-left text-sm md:text-base leading-relaxed">
+              <p class="mb-4">การไหลของข้อมูลจากการเรียก URL ไปยัง View และ Template พร้อมการโต้ตอบแบบ dynamic ด้วย HTMX:</p>
+            </div>
+
+            <div class="overflow-x-auto">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Django_Project_Flow.png/800px-Django_Project_Flow.png" alt="Django View Template Flow" class="rounded-lg mx-auto max-w-full border border-white/20">
+            </div>
+
+            <div class="mt-4 text-sm italic text-white/70 text-center">
+              ภาพจาก Wikimedia / ดัดแปลงเพิ่มเติมในบทเรียนถัดไป
+            </div>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            HTMX ทำให้เราสามารถส่ง request ไปยัง View โดยไม่ต้องโหลดหน้าใหม่ เช่นผ่าน hx-get, hx-post
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 6</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            การใช้ Alpine.js<br>
+            <span class="text-yellow-300">ควบคุมการแสดงผลร่วมกับ HTMX</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm md:text-base leading-relaxed">
+            <h2 class="text-xl font-semibold mb-4 text-white">🎯 ตัวอย่าง: แสดง/ซ่อนข้อความที่โหลดจาก View</h2>
+
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              &lt;div x-data="{ show: false }"&gt;
+              &lt;button 
+              @click="show = !show" 
+              hx-get="/quote/" 
+              hx-target="#quote-box" 
+              hx-swap="innerHTML" 
+              class="bg-blue-500 text-white px-4 py-2 rounded"&gt;
+              {{ show ? 'ซ่อนข้อความ' : 'โหลดข้อความ' }}
+              &lt;/button&gt;
+
+              &lt;div id="quote-box" x-show="show" class="mt-4 text-xl"&gt;&lt;/div&gt;
+              &lt;/div&gt;
+            </code></pre>
+
+            <ul class="list-disc list-inside mt-4 space-y-2 text-white/90">
+              <li><code>x-data</code> สร้าง reactive state</li>
+              <li><code>@click</code> เปลี่ยนค่าตัวแปร show</li>
+              <li><code>x-show</code> ควบคุมการแสดงผล</li>
+              <li>HTMX ใช้โหลดข้อมูลจาก Django View เข้ามา</li>
+            </ul>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            Alpine.js เหมาะกับงานที่ต้องการ interactivity เล็กน้อย โดยไม่ต้องใช้ JavaScript เยอะ
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 7</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            แบบฝึกหัด<br>
+            <span class="text-yellow-300">Views, Templates, HTMX และ Alpine.js</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-white/90 text-sm md:text-base leading-relaxed">
+            <h2 class="text-xl font-semibold mb-4">📌 โจทย์</h2>
+            <p class="mb-4">ให้นักเรียนสร้างเว็บเพจแสดงสุ่มคำคม (Quote Generator) โดยมีคุณสมบัติดังนี้:</p>
+            <ul class="list-disc list-inside space-y-2">
+              <li>View ฟังก์ชันสำหรับส่งข้อความแบบสุ่มจากรายการ (quotes)</li>
+              <li>Template ใช้ Tailwind จัดรูปแบบให้สวยงาม</li>
+              <li>เมื่อคลิกปุ่ม จะโหลดข้อความใหม่ด้วย HTMX โดยไม่ reload หน้า</li>
+              <li>ใช้ Alpine.js ควบคุมการแสดง/ซ่อนคำคม</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4">🧪 สิ่งที่ควรทดสอบ</h2>
+            <ul class="list-disc list-inside space-y-2">
+              <li>มีปุ่มสำหรับโหลดคำคมใหม่</li>
+              <li>คำคมเปลี่ยนโดยไม่ reload หน้า</li>
+              <li>สามารถซ่อน/แสดงคำคมได้</li>
+            </ul>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            คำแนะนำ: เริ่มจาก view ง่าย ๆ ที่ส่งข้อความ จากนั้นค่อยเพิ่ม HTMX และ Alpine ทีละขั้นตอน
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 8</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            สรุปเนื้อหา<br>
+            <span class="text-yellow-300">Views และ Templates ใน Django</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-white/90 text-sm md:text-base leading-relaxed">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <ul class="list-disc list-inside space-y-3">
+              <li>อธิบายรูปแบบการกำหนดการเข้าถึงและการแสดงผลใน Django ได้</li>
+              <li>เขียน View และ URL Mapping ได้ตามข้อกำหนด</li>
+              <li>สร้าง Template เพื่อแสดงผลข้อมูลจาก View ได้อย่างเหมาะสม</li>
+              <li>ประยุกต์ใช้ HTMX และ Alpine.js เพื่อสร้าง UI แบบ dynamic ได้</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mt-6 mb-4">Checklist สำหรับการบ้าน / แบบฝึกหัด</h2>
+            <ul class="list-disc list-inside space-y-3">
+              <li>View ส่งข้อมูล (context) ไปยัง Template อย่างถูกต้อง</li>
+              <li>Template แสดงข้อมูลโดยใช้ตัวแปร Django Template Language</li>
+              <li>HTMX โหลดข้อมูลจาก View ได้โดยไม่รีเฟรชหน้า</li>
+              <li>Alpine.js ควบคุมการแสดงผลแบบ interactive ได้</li>
+            </ul>
+          </div>
+
+          <div class="text-white/70 text-sm italic">
+            ทบทวนและฝึกปฏิบัติอย่างต่อเนื่องเพื่อความชำนาญ
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 9</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            ตัวอย่างเฉลยแบบฝึกหัด<br>
+            <span class="text-yellow-300">Views, Templates, HTMX และ Alpine.js</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-white/90 text-sm md:text-base leading-relaxed">
+            <h2 class="text-xl font-semibold mb-4">📄 views.py</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              from django.shortcuts import render
+              import random
+
+              def quote(request):
+              quotes = [
+              "อย่ากลัวที่จะเริ่มต้น",
+              "ทำวันนี้ให้ดีที่สุด",
+              "ความพยายามไม่เคยทรยศใคร"
+              ]
+              text = random.choice(quotes)
+              return render(request, "quote.html", { "quote": text })
+            </code></pre>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4">📄 quote.html</h2>
+            <pre class="bg-black/40 p-4 rounded text-left overflow-x-auto text-green-200"><code>
+              &lt;div x-data="{ show: true }"&gt;
+              &lt;button 
+              @click="show = !show" 
+              hx-get="{% url 'quote' %}" 
+              hx-target="#quote-box" 
+              hx-swap="innerHTML" 
+              class="bg-blue-600 text-white px-4 py-2 rounded"&gt;
+              &lt;template x-text="show ? 'ซ่อนข้อความ' : 'โหลดข้อความ'"&gt;&lt;/template&gt;
+              &lt;/button&gt;
+
+              &lt;div id="quote-box" x-show="show" class="mt-4 text-xl text-yellow-300"&gt;
+              {{ quote }}
+              &lt;/div&gt;
+              &lt;/div&gt;
+            </code></pre>
+
+            <div class="text-white/70 text-sm italic mt-4">
+              ใน urls.py ให้แมป path('quote/', views.quote, name='quote')
+            </div>
+          </div>
+
+          <div class="mt-6 text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 4 – Slide 10</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            สัปดาห์ที่ 5<br>
+            <span class="text-yellow-300">การจัดการฟอร์มใน Django</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เรียนรู้การสร้างและจัดการฟอร์ม รับข้อมูลจากผู้ใช้ และตรวจสอบความถูกต้อง
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4">เป้าหมายการเรียนรู้</h2>
+            <ul class="list-disc list-inside text-left space-y-3 text-white/90 text-lg">
+              <li>เข้าใจการสร้างฟอร์มใน Django ทั้งแบบฟอร์มธรรมดาและ ModelForm</li>
+              <li>จัดการรับข้อมูลและตรวจสอบความถูกต้อง (Validation)</li>
+              <li>แสดงฟอร์มใน template และประมวลผลข้อมูลที่ส่งมา</li>
+              <li>ประยุกต์ใช้ฟอร์มร่วมกับ Tailwind CSS และ HTMX</li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">เตรียมตัวสำหรับบทเรียนที่สำคัญนี้</span>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+
+  </body>
+</html>

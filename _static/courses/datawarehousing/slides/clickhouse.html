@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickhouse Workshop</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tech-card {
+      transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/datawarehousing/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/datawarehousing/slides/clickhouse.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ClickHouse<br>
+            <span class="text-yellow-300">OLTP เวิร์กชอป</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การแทรกข้อมูลความเร็วสูง & การดึงข้อมูลแบบเรียลไทม์ด้วย ClickHouse
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>เข้าใจสถาปัตยกรรม ClickHouse และการออกแบบเพื่อประสิทธิภาพ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>ติดตั้ง ClickHouse บนเครื่องด้วย Docker หรือไฟล์ไบนารี</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ออกแบบตารางให้เหมาะกับงาน OLTP แบบง่าย</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>แทรกข้อมูล สืบค้น และจัดการข้อมูลซ้ำได้อย่างมีประสิทธิภาพ</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4 justify-center">
+              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">5</div>
+              <span>ทำเดโมการติดตามเหตุการณ์แบบเรียลไทม์อย่างง่าย</span>
+            </div>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">เวิร์กชอป 2 ชั่วโมง</span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            ทำไมต้องใช้<br>
+            <span class="text-yellow-300">ClickHouse</span>
+            กับ OLTP
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            จุดเด่นของ ClickHouse ในการรองรับงานที่มีการเขียนข้อมูลความเร็วสูง
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>จัดเก็บข้อมูลแบบ Columnar เหมาะกับการอ่านและวิเคราะห์ข้อมูลเร็ว</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>รองรับการ Insert ข้อมูลจำนวนมากแบบ Batch ได้ดี</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>สามารถใช้ MergeTree และ ReplacingMergeTree สำหรับ Deduplication</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>เหมาะกับระบบเก็บ Event Log, Metrics และ Clickstream</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">เหตุผลหลัก</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            สถาปัตยกรรม<br>
+            <span class="text-yellow-300">ClickHouse</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ส่วนประกอบหลักและวิธีทำงานภายใน ClickHouse
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>Storage Engine: MergeTree, ReplacingMergeTree</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>Distributed Processing: การกระจายการอ่าน-เขียน</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>Columnar Storage: เก็บข้อมูลแบบคอลัมน์เพื่อความเร็ว</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>การจัดการ Index และการจัดเรียงข้อมูล</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">โครงสร้างภายใน</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การติดตั้ง<br>
+            <span class="text-yellow-300">ClickHouse</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            วิธีติดตั้งและตั้งค่า ClickHouse เบื้องต้น
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ติดตั้งผ่าน Docker: ใช้ image มาตรฐานของ ClickHouse</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ติดตั้ง Binary บน Linux หรือ MacOS</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>เชื่อมต่อด้วย clickhouse-client</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ไฟล์ config สำคัญ: config.xml, users.xml</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">เริ่มต้นใช้งาน</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การสร้างตาราง<br>
+            <span class="text-yellow-300">สำหรับ OLTP</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            โครงสร้างตารางและ Engine ที่เหมาะกับงาน OLTP-like ใน ClickHouse
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ใช้ MergeTree เป็น Engine พื้นฐาน</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ReplacingMergeTree สำหรับการจัดการข้อมูลซ้ำ</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ORDER BY เพื่อประสิทธิภาพการอ่านข้อมูล</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>PARTITION BY ช่วยจัดการข้อมูลขนาดใหญ่</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">ออกแบบ Schema</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การ Insert และ Query<br>
+            <span class="text-yellow-300">ข้อมูลใน ClickHouse</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เทคนิคการแทรกข้อมูลจำนวนมากและดึงข้อมูลได้รวดเร็ว
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ใช้ INSERT แบบ Batch เพื่อประสิทธิภาพสูงสุด</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ออกแบบ ORDER BY ให้เหมาะกับ Query Pattern</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>ใช้ LIMIT, SAMPLE, และ INDEX เพื่อเร่งความเร็ว</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">✔</span>
+                <span>หลีกเลี่ยง UPDATE ขนาดใหญ่ ใช้การ Insert ทับแทน</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">เทคนิค Query</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Demo การใช้งานจริง<br>
+            <span class="text-yellow-300">ClickHouse OLTP</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            สาธิตการสร้างตาราง แทรกข้อมูล และ Query เหตุการณ์แบบเรียลไทม์
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>สร้างตาราง Events ด้วย MergeTree หรือ ReplacingMergeTree</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>เขียน Script Insert ข้อมูลแบบ Batch</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>Query สรุปข้อมูล: ยอดการคลิก, เหตุการณ์ล่าสุด</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>แสดงผลแบบเรียลไทม์บน Command Line</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">ตัวอย่างจริง</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Demo การใช้งานจริง<br>
+            <span class="text-yellow-300">ClickHouse OLTP</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            สาธิตการสร้างตาราง แทรกข้อมูล และ Query เหตุการณ์แบบเรียลไทม์
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>สร้างตาราง Events ด้วย MergeTree หรือ ReplacingMergeTree</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>เขียน Script Insert ข้อมูลแบบ Batch</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>Query สรุปข้อมูล: ยอดการคลิก, เหตุการณ์ล่าสุด</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">▶</span>
+                <span>แสดงผลแบบเรียลไทม์บน Command Line</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">ตัวอย่างจริง</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-3xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            สรุปและถามตอบ<br>
+            <span class="text-yellow-300">ClickHouse OLTP Workshop</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ประเด็นสำคัญและโอกาสในการนำ ClickHouse ไปใช้กับงาน OLTP-like
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <ul class="space-y-4">
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-yellow-900 font-bold text-sm">✔</span>
+                <span>ClickHouse เหมาะกับงานที่เน้น Insert & Query สูง แต่ไม่ซับซ้อนด้าน Transaction</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-yellow-900 font-bold text-sm">✔</span>
+                <span>การออกแบบ Schema และการเลือก Engine มีผลต่อประสิทธิภาพมาก</span>
+              </li>
+              <li class="flex gap-3 items-start">
+                <span class="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-yellow-900 font-bold text-sm">✔</span>
+                <span>ควรใช้ Buffer Tables และ TTL เพื่อจัดการข้อมูลแบบเรียลไทม์อย่างเหมาะสม</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-yellow-400 px-4 py-2 rounded-full cursor-pointer">ถาม-ตอบ</span>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
