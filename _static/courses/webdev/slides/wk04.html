@@ -226,6 +226,96 @@
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การรวมกลุ่มข้อมูลด้วย <span class="text-blue-300">Aggregation</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เรียนรู้การใช้ Django ORM ในการรวมกลุ่มและคำนวณข้อมูลจากฐานข้อมูล
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 text-left text-white/90">
+
+            <!-- Aggregate -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+              <h2 class="text-2xl font-semibold mb-2 text-blue-300">🔵 Aggregation</h2>
+              <pre class="bg-black/40 p-3 rounded text-sm overflow-auto">
+                <code>
+from django.db.models import Count
+
+# นับจำนวนนักเรียนทั้งหมด
+total_students = Student.objects.count()
+
+# นับจำนวนนักเรียนที่ใช้อีเมล @example.com
+example_students = Student.objects.filter(email__endswith="@example.com").count()
+
+print(f"จำนวนนักเรียนทั้งหมด: {total_students}")
+print(f"จำนวนนักเรียนที่ใช้อีเมล @example.com: {example_students}")
+                </code>
+              </pre>
+              <p class="text-sm text-gray-300">
+                * <code>Count</code> ใช้เพื่อนับจำนวน records <br/>
+                * สามารถใช้ <code>filter</code> ร่วมกับ <code>count</code> เพื่อกรองข้อมูลก่อนนับ
+              </p>
+            </div>
+
+            <!-- Annotate -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+              <h2 class="text-2xl font-semibold mb-2 text-purple-300">🟣 Annotate (Advanced)</h2>
+              <pre class="bg-black/40 p-3 rounded text-sm overflow-auto">
+                <code>
+from django.db.models import Q
+
+# กรองนักเรียนที่ชื่อขึ้นต้นด้วย 'A' หรือใช้อีเมล @example.com
+filtered_students = Student.objects.filter(
+                      Q(name__startswith='A') 
+                      | Q(email__endswith='@example.com')
+                    )
+
+# นับจำนวนนักเรียนที่ผ่านการกรอง
+filtered_count = filtered_students.count()
+
+print(f"จำนวนนักเรียนที่ชื่อขึ้นต้นด้วย 'A' หรือใช้อีเมล @example.com: {filtered_count}")
+                </code>
+              </pre>
+              <p class="text-sm text-gray-300">
+                * <code>Q</code> object ใช้เพื่อสร้างเงื่อนไขที่ซับซ้อนขึ้น (เช่น OR, AND) <br/>
+                * <code>annotate</code> สามารถใช้เพื่อเพิ่ม field ใหม่ให้กับแต่ละ object ใน QuerySet (ไม่ได้แสดงในตัวอย่างนี้ แต่เป็น concept ที่เกี่ยวข้อง)
+              </p>
+            </div>
+
+            <!-- Value and Value_list -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+              <h2 class="text-2xl font-semibold mb-2 text-orange-300">🟠 Values and Values_list</h2>
+              <pre class="bg-black/40 p-3 rounded text-sm overflow-auto">
+                <code>
+# ดึงเฉพาะชื่อและอีเมลของนักเรียนทุกคน
+student_names_emails = Student.objects.values('name', 'email')
+
+for student in student_names_emails:
+  print(f"ชื่อ: {student['name']}, อีเมล: {student['email']}")
+
+# ดึงเฉพาะชื่อและอีเมลของนักเรียนทุกคนในรูปแบบ list
+student_names_emails_list = Student.objects.values_list('name', 'email')
+
+for name, email in student_names_emails_list:
+  print(f"ชื่อ: {name}, อีเมล: {email}")
+                </code>
+              </pre>
+              <p class="text-sm text-gray-300">
+                * <code>values</code> ดึงข้อมูลเป็น dictionary <br/>
+                * <code>values_list</code> ดึงข้อมูลเป็น tuple <br/>
+                * ใช้เพื่อดึงเฉพาะ fields ที่ต้องการ ทำให้ query เร็วขึ้น
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
             ความสัมพันธ์ระหว่าง<br>
             <span class="text-yellow-300">Models</span> ใน Django
           </h1>
@@ -272,7 +362,7 @@ class Profile(models.Model):
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
@@ -321,7 +411,7 @@ titles = Book.objects.filter(author__name='Bob').values_list('title', flat=True)
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
@@ -371,7 +461,7 @@ profile = Profile.objects.create(user=user, bio='Hello Mary!')
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
@@ -422,7 +512,7 @@ physics.students.add(anna)
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
@@ -453,7 +543,7 @@ physics.students.add(anna)
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
@@ -484,7 +574,7 @@ physics.students.add(anna)
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
@@ -528,7 +618,7 @@ class Enrollment(models.Model):
         </div>
       </div>
 
-      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
 
           <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
