@@ -148,6 +148,7 @@
        - `Class-Based View <https://docs.djangoproject.com/en/5.2/topics/class-based-views/>`_
        - `Pagination <https://docs.djangoproject.com/en/5.2/topics/pagination/>`_
        - `HTML <https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML>`_
+       * **Slide** `5 - view and templates <../../_static/courses/webdev/slides/wk05.html>`_ 
        - **Code** `Github Repo <https://github.com/wichit2s/KhootClone/tree/week05>`_
    * - 6
      - ฟอร์มและการแก้ไขข้อมูล (forms)
