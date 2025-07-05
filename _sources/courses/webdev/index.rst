@@ -148,6 +148,7 @@
        - `Class-Based View <https://docs.djangoproject.com/en/5.2/topics/class-based-views/>`_
        - `Pagination <https://docs.djangoproject.com/en/5.2/topics/pagination/>`_
        - `HTML <https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML>`_
+       - `คู่มือการเขียน template <https://docs.djangoproject.com/en/5.0/ref/templates/>`_
        * **Slide** `5 - view and templates <../../_static/courses/webdev/slides/wk05.html>`_ 
        - **Code** `Github Repo <https://github.com/wichit2s/KhootClone/tree/week05>`_
    * - 6
@@ -175,6 +176,7 @@
          6. (UpdateView) class-based view สำหรับแก้ไขคำถาม
      - - `Chapter 5 Forms <https://docs.djangoproject.com/en/5.0/intro/tutorial04/>`_
        - `การสร้างฟอร์มโดยใช้คลาส <https://docs.djangoproject.com/en/5.0/topics/class-based-views/generic-editing/>`_
+       * **Slide** `6 - Forms and CRUD <../../_static/courses/webdev/slides/wk06.html>`_ 
        - **Code** `Github Repo <https://github.com/wichit2s/KhootClone/tree/week06>`_
    * - 7 
      - การกำหนดสิทธิ์เข้าใช้งาน (login,logout)
@@ -199,6 +201,7 @@
          3. เขียน RegisterView และ template สำหรับลงทะเบียนผู้ใช้
          3. เขียน LoginView และ template สำหรับลงล็อกอินสมาชิก
      - - `Chapter 6 Authentication <https://docs.djangoproject.com/en/5.0/topics/auth/default/>`_
+       * **Slide** `7 - Django Authentication <../../_static/courses/webdev/slides/wk07.html>`_ 
        - **Code** `Github Repo <https://github.com/wichit2s/KhootClone/tree/week06>`_
    * - 8 
      - ไฟล์และรูปแบบคำสั่งแสดงผล (static files and template engine)
@@ -208,7 +211,6 @@
        3. ประยุกต์ใช้ความรู้เพื่อกำหนดการแสดงผลโดยใช้ CSS เบื้องต้นได้
      - - `Chapter 7 Static files and Templates <https://docs.djangoproject.com/en/5.0/intro/tutorial06/>`_
        - `CSS เบื้องต้น <https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started>`_
-       - `คู่มือการเขียน template <https://docs.djangoproject.com/en/5.0/ref/templates/>`_
    * - 9 
      - CSS Library
         **ผลลัพธ์การเรียนรู้**
