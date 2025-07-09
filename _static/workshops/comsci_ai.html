@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computational Science and AI</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Spectral:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Spectral', sans-serif;
+    }
+
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tech-card {
+      transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    /* Style for the Agenda Items */
+    .agenda-item {
+      background-color: rgba(255, 255, 255, 0.05); /* Slightly lighter background */
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover effect */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Subtle shadow */
+    }
+
+    .agenda-item:hover {
+      transform: translateY(-3px); /* Slight lift on hover */
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Enhanced shadow on hover */
+    }
+
+    .agenda-time {
+      font-size: 1.125rem; /* Slightly larger time */
+      font-weight: 600; /* Semi-bold */
+      color: #a3b18a; /* A complementary color, feel free to change */
+      margin-bottom: 0.5rem;
+    }
+
+    .agenda-title {
+      font-size: 1.5rem; /* Larger title */
+      font-weight: 700; /* Bold */
+      margin-bottom: 0.5rem;
+    }
+
+    .agenda-description {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      color: rgba(255, 255, 255, 0.8); /* Slightly less opaque text */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) { /* Medium screens and below */
+      .grid {
+        grid-template-columns: 1fr; /* Stack agenda items on smaller screens */
+      }
+    }
+
+    /* Styles for CT Principles */
+    .ct-principle {
+      margin-bottom: 1.5rem;
+    }
+
+    .ct-principle h3 {
+      font-size: 1.75rem; /* Slightly smaller than before */
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .ct-principle p {
+      font-size: 1.125rem; /* Slightly smaller than before */
+      line-height: 1.625rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .ct-principle ul {
+      margin-left: 1.5rem;
+    }
+
+    .ct-principle li {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Teaching Materials </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/workshops/comsci_ai.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Introduction to <br>
+            <span class="text-yellow-300">Computational Thinking</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Concepts & Applications for Primary Education
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Learning Outcomes</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>Understand the Key Elements of Computational Thinking</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>Identify at Least 3 Core Computational Thinking Principles</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>Describe How CT Relates to the STEAM Fields</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>Give Real-World Examples of Computational Thinking in Action</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4">
+              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">5</div>
+              <span>Apply Unplugged Activities to Teach CT Concepts </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Today's <span class="text-yellow-300">Agenda</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            A Day of Discovery in Computational Thinking & AI
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Sessions & Activities</h2>
+            <div class="grid md:grid-cols-2 gap-6 text-left">
+
+              <div class="agenda-item">
+                <div class="agenda-time">9:00 - 9:15</div>
+                <div class="agenda-title">Warm-up Activity</div>
+                <div class="agenda-description">Spark your mind with a quick, engaging challenge.</div>
+              </div>
+
+              <div class="agenda-item">
+                <div class="agenda-time">9:15 - 10:30</div>
+                <div class="agenda-title">What is Computational Thinking?</div>
+                <div class="agenda-description">Uncover the core principles and benefits.</div>
+              </div>
+
+              <div class="agenda-item">
+                <div class="agenda-time">10:45 - 12:15</div>
+                <div class="agenda-title">Unplugged CT Activities</div>
+                <div class="agenda-description">Hands-on fun with real-world problem solving.</div>
+              </div>
+
+              <div class="agenda-item">
+                <div class="agenda-time">13:00 - 14:30</div>
+                <div class="agenda-title">Introduction to AI Concepts</div>
+                <div class="agenda-description">Explore the basics of Artificial Intelligence & its applications.</div>
+              </div>
+
+              <div class="agenda-item">
+                <div class="agenda-time">14:45 - 16:00</div>
+                <div class="agenda-title">AI Tools Workshop</div>
+                <div class="agenda-description">Hands-on with Teachable Machine & Scratch AI.</div>
+              </div>
+
+              <div class="agenda-item">
+                <div class="agenda-time">16:00 - 16:30</div>
+                <div class="agenda-title">Reflection & Q&A</div>
+                <div class="agenda-description">Discuss, ask questions, and share your insights.</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-2 leading-tight mt-8">Warm-up: Act.1</h1> 
+          <h1 class="text-6xl font-bold mb-6 leading-tight text-yellow-300">The Mystery Image</h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Practicing Pattern Recognition and Abstraction
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="grid md:grid-cols-1 gap-6 text-left">
+
+              <div class="activity-details">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Instructions</h3>
+                <p class="text-lg text-white/80">Participants are given a set of progressively more detailed versions of a blurred or pixelated image.</p>
+                <p class="text-lg text-white/80">Starting with the most obscured version, individuals must try to identify the object or scene in the image.</p>
+                <p class="text-lg text-white/80 mt-4">With each new, clearer version, they can refine their guess.</p>
+              </div>
+
+              <div class="activity-learning">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Learning Outcomes</h3>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Developing pattern recognition skills.</li>
+                  <li>Practicing abstraction by focusing on key features, even when details are missing.</li>
+                  <li>Understanding how information improves with increasing detail.</li>
+                </ul>
+              </div>
+
+            </div>
+            <div class="text-center mt-4">
+              <p class="text-lg text-white/80">Time: 2 minutes per round, 3 rounds total + 4 minutes reflection</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-2 leading-tight mt-8">Warm-up: Act.2</h1> 
+          <h1 class="text-6xl font-bold mb-6 leading-tight text-yellow-300">The Coding Dance</h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Learning Algorithms Through Movement
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="grid md:grid-cols-1 gap-6 text-left">
+
+              <div class="activity-details">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Instructions</h3>
+                <p class="text-lg text-white/80">Assign each participant to a spot. The moderator calls out an instruction, participants follow. Instructions can include</p>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Step Forward</li>
+                  <li>Turn Left</li>
+                  <li>Turn Right</li>
+                  <li>Clap</li>
+                  <li>Jump</li>
+                </ul>
+                <p class="text-lg text-white/80 mt-4">The moderator can combine several instructions as participants get familiar.</p>
+              </div>
+
+              <div class="activity-learning">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Learning Outcomes</h3>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Understanding the need for precise instructions in algorithms.</li>
+                  <li>Learning to follow a sequence of steps.</li>
+                  <li>Translating instructions into physical movement.</li>
+                </ul>
+              </div>
+
+            </div>
+            <div class="text-center mt-4">
+              <p class="text-lg text-white/80">Time: 3 minutes instruction + 7 minutes execution + 5 minutes reflection</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-2 leading-tight mt-8">Warm-up: Act.3</h1> 
+          <h1 class="text-6xl font-bold mb-6 leading-tight text-yellow-300">The Impossible Shape</h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Practicing Abstraction and Decomposition
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="grid md:grid-cols-1 gap-6 text-left">
+
+              <div class="activity-details">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Instructions</h3>
+                <p class="text-lg text-white/80">Provide participants with a set of tangrams, or pre-cut shapes that can form one square.</p>
+                <p class="text-lg text-white/80">Challenge participants to use all seven shapes to create the target object.</p>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>A Square</li>
+                  <li>A rectangle</li>
+                  <li>A parallelogram</li>
+                  <li>An isosceles triangle</li>
+                </ul>
+                <p class="text-lg text-white/80 mt-4">The target shape is shown to participants before the task.</p>
+              </div>
+
+              <div class="activity-learning">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Learning Outcomes</h3>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Thinking creatively to decompose and abstract</li>
+                  <li>Decomposing a complex picture to a series of components</li>
+                  <li>Understanding how shapes can be constructed using simpler blocks.</li>
+                </ul>
+              </div>
+
+            </div>
+            <div class="text-center mt-4">
+              <p class="text-lg text-white/80">Time: 10 minutes execution + 5 minutes reflection</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Core Principles of <span class="text-yellow-300">Computational Thinking</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Unlocking Problem-Solving Potential
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="grid md:grid-cols-2 gap-6 text-left">
+
+              <div class="ct-principle">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Decomposition</h3>
+                <p class="text-lg text-white/80">Breaking down complex problems into smaller, more manageable parts.</p>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Easier to understand.</li>
+                  <li>Simpler to solve each part.</li>
+                  <li>Can be divided among a team.</li>
+                </ul>
+              </div>
+
+              <div class="ct-principle">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Pattern Recognition</h3>
+                <p class="text-lg text-white/80">Identifying similarities, trends, and repeated sequences in data.</p>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Leads to generalizations.</li>
+                  <li>Allows for reuse of solutions.</li>
+                  <li>Helps predict future behavior.</li>
+                </ul>
+              </div>
+
+              <div class="ct-principle">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Abstraction</h3>
+                <p class="text-lg text-white/80">Focusing on essential information and ignoring irrelevant details.</p>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Simplifies the problem.</li>
+                  <li>Reduces complexity.</li>
+                  <li>Creates reusable models.</li>
+                </ul>
+              </div>
+
+              <div class="ct-principle">
+                <h3 class="text-2xl font-semibold mb-2 text-green-400">Algorithm Design</h3>
+                <p class="text-lg text-white/80">Developing a step-by-step sequence of instructions to solve a problem.</p>
+                <ul class="list-disc list-inside mt-2 text-white/80">
+                  <li>Creates a clear path to a solution.</li>
+                  <li>Can be automated by computers.</li>
+                  <li>Ensures consistent results.</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
