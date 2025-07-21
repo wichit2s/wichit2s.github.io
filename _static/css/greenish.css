@@ -1,0 +1,443 @@
+@import url('https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700;800;900&display=swap');
+
+/* CSS Variables for better maintainability - Greenish High Contrast Theme */
+:root {
+  --primary-gradient: linear-gradient(135deg, #0d4f3c 0%, #2d5a27 30%, #1a6b54 70%, #0f3a2e 100%);
+  --accent-color: #00ff88;
+  --accent-secondary: #4ade80;
+  --accent-tertiary: #10b981;
+  --text-light: rgba(255, 255, 255, 0.95);
+  --text-lighter: rgba(255, 255, 255, 1);
+  --text-green: #a7f3d0;
+  --card-bg: rgba(255, 255, 255, 0.12);
+  --card-bg-hover: rgba(255, 255, 255, 0.2);
+  --card-bg-dark: rgba(0, 0, 0, 0.3);
+  --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.5);
+  --shadow-green: 0 10px 25px rgba(16, 185, 129, 0.3);
+  --border-green: rgba(16, 185, 129, 0.3);
+  --border-green-hover: rgba(16, 185, 129, 0.6);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Spectral', serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Slide system with improved visibility */
+.slide {
+  min-height: 100vh;
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: var(--transition-smooth);
+  will-change: opacity, transform;
+}
+
+.slide.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+  animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+0% { 
+  opacity: 0; 
+  transform: translateY(30px) scale(0.98);
+}
+100% { 
+  opacity: 1; 
+  transform: translateY(0) scale(1);
+}
+}
+
+/* Enhanced gradient background with green theme */
+.gradient-bg {
+  background: var(--primary-gradient);
+  background-attachment: fixed;
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+  position: relative;
+}
+
+.gradient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(74, 222, 128, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+@keyframes gradientShift {
+0% { background-position: 0% 50%; }
+25% { background-position: 100% 25%; }
+50% { background-position: 100% 75%; }
+75% { background-position: 0% 75%; }
+100% { background-position: 0% 50%; }
+}
+
+/* Improved tech cards with green theme and high contrast */
+.tech-card {
+  transition: var(--transition-smooth);
+  background: var(--card-bg);
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--border-green);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-light);
+}
+
+.tech-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tech-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: var(--shadow-heavy), var(--shadow-green);
+  background: var(--card-bg-hover);
+  border-color: var(--border-green-hover);
+}
+
+.tech-card:hover::before {
+  opacity: 1;
+}
+
+.previous-slide {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: var(--card-bg-dark);
+  color: var(--text-lighter);
+  padding: 12px 18px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--border-green);
+  box-shadow: var(--shadow-light), var(--shadow-green);
+  transition: var(--transition-fast);
+}
+
+.previous-slide:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-heavy), 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+.next-slide {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card-bg-dark);
+  color: var(--text-lighter);
+  padding: 12px 18px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--border-green);
+  box-shadow: var(--shadow-light), var(--shadow-green);
+  transition: var(--transition-fast);
+}
+
+.next-slide:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-heavy), 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+/* Enhanced UI elements with green theme and high contrast */
+.slide-counter {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--card-bg-dark);
+  color: var(--text-lighter);
+  padding: 12px 18px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--border-green);
+  box-shadow: var(--shadow-light), var(--shadow-green);
+  transition: var(--transition-fast);
+}
+
+.slide-counter:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-heavy), 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+.home {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  color: var(--text-lighter);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  background: var(--card-bg-dark);
+  padding: 12px 18px;
+  border-radius: 25px;
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--border-green);
+  box-shadow: var(--shadow-light), var(--shadow-green);
+  transition: var(--transition-fast);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-heavy), 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+/* Enhanced agenda items with green theme and high contrast */
+.agenda-item {
+  background: var(--card-bg);
+  border-radius: 1rem;
+  padding: 2rem;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-light);
+  border: 2px solid var(--border-green);
+  backdrop-filter: blur(15px);
+  position: relative;
+  overflow: hidden;
+}
+
+.agenda-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--accent-color), var(--accent-secondary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.agenda-item:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-heavy), var(--shadow-green);
+  background: var(--card-bg-hover);
+  border-color: var(--border-green-hover);
+}
+
+.agenda-item:hover::before {
+  opacity: 1;
+}
+
+.agenda-time {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.agenda-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-lighter);
+  line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.agenda-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-light);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced CT Principles with green theme and high contrast */
+.ct-principle {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border-radius: 1rem;
+  border-left: 4px solid var(--accent-color);
+  border: 2px solid var(--border-green);
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-light);
+  backdrop-filter: blur(15px);
+}
+
+.ct-principle:hover {
+  background: var(--card-bg-hover);
+  transform: translateX(8px);
+  border-color: var(--border-green-hover);
+  border-left-color: var(--accent-secondary);
+  box-shadow: var(--shadow-heavy), var(--shadow-green);
+}
+
+.ct-principle h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-lighter);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ct-principle h3::before {
+  content: '▶';
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.ct-principle p {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ct-principle ul {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ct-principle li {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-green);
+  margin-bottom: 0.5rem;
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ct-principle li::marker {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .agenda-item {
+    padding: 1.5rem;
+  }
+
+  .agenda-title {
+    font-size: 1.25rem;
+  }
+
+  .ct-principle {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ct-principle h3 {
+    font-size: 1.5rem;
+  }
+
+  .slide-counter,
+  .home {
+    bottom: 15px;
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .agenda-item {
+    padding: 1rem;
+  }
+
+  .ct-principle {
+    padding: 0.75rem;
+  }
+
+  .slide-counter {
+    right: 15px;
+  }
+
+  .home {
+    left: 15px;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus states for better accessibility with green theme */
+.tech-card:focus,
+.agenda-item:focus,
+.ct-principle:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-heavy), 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+/* Print styles */
+@media print {
+  .slide-counter,
+  .home {
+    display: none;
+  }
+
+  .slide {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    min-height: auto;
+    page-break-inside: avoid;
+  }
+}
