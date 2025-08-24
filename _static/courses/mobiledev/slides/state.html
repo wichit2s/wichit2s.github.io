@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Dev: State Management</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+
+      <a @click="currentSlide=2" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Agenda </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="#" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Advanced State Management & Architecture</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Session Plan</h2>
+            <div class="text-left space-y-6 text-lg">
+              <div>
+                <h3 class="text-xl font-bold text-yellow-300">Lecture (1 Hour)</h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li>Flutter architecture patterns: MVVM, Clean Architecture</li>
+                  <li>State management overview: BLoC, GetX, Riverpod</li>
+                  <li>Dependency injection & modular app structure</li>
+                  <li>Navigation 2.0 & deep linking concepts</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-yellow-300">Laboratory (4 Hours)</h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li>Hands-on with GetX and Riverpod in a sample project</li>
+                  <li>Refactor an existing Flutter app using Clean Architecture</li>
+                  <li>Implement dependency injection using get_it</li>
+                  <li>Navigation practice: deep linking and nested routes</li>
+                  <li>Group activity: Code review and architecture critique</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Lecture: Advanced State Management & Architecture</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Topics Covered (1 Hour)</h2>
+            <ul class="list-disc list-inside text-left space-y-2 text-lg">
+              <li>Flutter architecture patterns: MVVM & Clean Architecture</li>
+              <li>State management comparison: BLoC, GetX, Riverpod</li>
+              <li>Dependency injection & modularization</li>
+              <li>Navigation 2.0 and deep linking concepts</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Flutter Architecture Patterns</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">MVVM & Clean Architecture</h2>
+            <ul class="list-disc list-inside text-left space-y-3 text-lg mb-6">
+              <li><span class="font-bold">MVVM:</span> UI (View) → reactive binding ↔ ViewModel → uses UseCases/Repositories.</li>
+              <li><span class="font-bold">Clean Architecture:</span> Presentation ↔ Domain ↔ Data with dependency rule inward.</li>
+            </ul>
+
+            <!-- Responsive SVG Diagram -->
+            <div class="w-full max-w-3xl mx-auto">
+              <svg viewBox="0 0 920 520" role="img" aria-labelledby="title desc" class="w-full h-auto">
+                <title id="title">MVVM + Clean Architecture Diagram</title>
+                <desc id="desc">Presentation, Domain, and Data layers with MVVM components and directional dependencies.</desc>
+
+                <!-- defs -->
+                <defs>
+                  <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.16)"/>
+                    <stop offset="100%" stop-color="rgba(255,255,255,0.08)"/>
+                  </linearGradient>
+                  <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                    <polygon points="0,0 10,5 0,10" fill="#facc15"/>
+                  </marker>
+                  <style>
+                  .panel { fill: #1f2937; stroke: #9ca3af; stroke-width: 1.5; }
+                  .box { fill: url(#panel); stroke: #facc15; stroke-width: 1.5; rx: 10; }
+                  .label { fill: #e5e7eb; font-family: ui-sans-serif, system-ui; font-size: 16px; font-weight: 600; }
+                  .sublabel { fill: #e5e7eb; font-family: ui-sans-serif, system-ui; font-size: 14px; }
+                  .title { fill: #facc15; font-family: ui-sans-serif, system-ui; font-weight: 700; }
+                  .arrow { stroke: #facc15; stroke-width: 2; marker-end: url(#arrow); fill: none; }
+                  .rule { stroke: #fbbf24; stroke-dasharray: 6 6; stroke-width: 2; }
+                  </style>
+                </defs>
+
+                <!-- Clean Architecture Layers -->
+                <!-- Presentation -->
+                <rect x="20" y="20" width="880" height="150" class="panel" rx="16"/>
+                <text x="40" y="50" class="title" font-size="18">Presentation Layer (MVVM)</text>
+
+                <!-- MVVM Boxes -->
+                <rect x="60" y="70" width="200" height="80" class="box"/>
+                <text x="160" y="115" text-anchor="middle" class="label">View (UI)</text>
+                <text x="160" y="135" text-anchor="middle" class="sublabel">Widgets / Screens</text>
+
+                <rect x="360" y="70" width="200" height="80" class="box"/>
+                <text x="460" y="110" text-anchor="middle" class="label">ViewModel</text>
+                <text x="460" y="130" text-anchor="middle" class="sublabel">State & Orchestration</text>
+
+                <rect x="660" y="70" width="200" height="80" class="box"/>
+                <text x="760" y="110" text-anchor="middle" class="label">Navigator / Routing</text>
+                <text x="760" y="130" text-anchor="middle" class="sublabel">Nav 2.0, Deep Links</text>
+
+                <!-- Domain -->
+                <rect x="20" y="200" width="880" height="140" class="panel" rx="16"/>
+                <text x="40" y="230" class="title" font-size="18">Domain Layer (Business Rules)</text>
+
+                <rect x="80" y="250" width="210" height="70" class="box"/>
+                <text x="185" y="285" text-anchor="middle" class="label">Entities</text>
+
+                <rect x="355" y="250" width="210" height="70" class="box"/>
+                <text x="460" y="280" text-anchor="middle" class="label">Use Cases</text>
+
+                <rect x="630" y="250" width="210" height="70" class="box"/>
+                <text x="735" y="280" text-anchor="middle" class="label">Repositories (Abstractions)</text>
+
+                <!-- Data -->
+                <rect x="20" y="360" width="880" height="140" class="panel" rx="16"/>
+                <text x="40" y="390" class="title" font-size="18">Data Layer (Implementations)</text>
+
+                <rect x="80" y="410" width="210" height="70" class="box"/>
+                <text x="185" y="445" text-anchor="middle" class="label">Data Sources</text>
+                <text x="185" y="465" text-anchor="middle" class="sublabel">REST / GraphQL / Local</text>
+
+                <rect x="355" y="410" width="210" height="70" class="box"/>
+                <text x="460" y="445" text-anchor="middle" class="label">Repo Impl</text>
+                <text x="460" y="465" text-anchor="middle" class="sublabel">Maps DTO ↔ Entity</text>
+
+                <rect x="630" y="410" width="210" height="70" class="box"/>
+                <text x="735" y="445" text-anchor="middle" class="label">Mappers & DTOs</text>
+                <text x="735" y="465" text-anchor="middle" class="sublabel">Validation / Parsing</text>
+
+                <!-- Arrows: MVVM flow -->
+                <line x1="260" y1="110" x2="360" y2="110" class="arrow"/>
+                <line x1="560" y1="110" x2="660" y2="110" class="arrow"/>
+                <!-- Bidirectional binding View <-> ViewModel -->
+                <path d="M360,125 C310,155 310,85 360,110" class="arrow"/>
+                <path d="M260,110 C310,85 310,155 260,125" class="arrow"/>
+
+                <!-- Presentation -> Domain -->
+                <line x1="460" y1="150" x2="460" y2="250" class="arrow"/>
+
+                <!-- Domain <-> Data (via abstractions) -->
+                <line x1="735" y1="320" x2="460" y2="410" class="arrow"/>
+                <line x1="460" y1="320" x2="735" y2="410" class="arrow"/>
+
+                <!-- Data sources feeding Repo Impl -->
+                <line x1="290" y1="445" x2="355" y2="445" class="arrow"/>
+                <line x1="565" y1="445" x2="630" y2="445" class="arrow"/>
+
+                <!-- Dependency Rule (inward only) -->
+                <line x1="20" y1="200" x2="900" y2="200" class="rule"/>
+                <line x1="20" y1="360" x2="900" y2="360" class="rule"/>
+                <text x="460" y="195" text-anchor="middle" class="sublabel" fill="#facc15">Dependencies point inward</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Default State Management</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Key Issues with setState</h2>
+            <ul class="list-disc list-inside text-lg space-y-2 mb-6">
+              <li>State tightly coupled with widgets → hard to reuse logic.</li>
+              <li>Rebuilding large widget trees on every change can hurt performance.</li>
+              <li>Testing business logic separately is difficult.</li>
+              <li>Difficult to manage state across multiple screens or modules.</li>
+              <li>No structured approach → app scales poorly as complexity grows.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mb-4">Example: Counter App using setState</h2>
+            <pre class="text-sm md:text-base overflow-x-auto p-4 bg-gray-900 rounded-xl"><code class="language-dart">
+class CounterPage extends StatefulWidget {
+  @override
+  _CounterPageState createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<CounterPage> {
+  int count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Count: $count', style: TextStyle(fontSize: 24)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () => setState(() => count--),
+                ),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () => setState(() => count++),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+            </code></pre>
+
+            <p class="text-lg mt-4 text-gray-200">
+              <span class="text-yellow-300">Takeaway:</span> Works for simple apps but becomes messy for complex state flows, multi-screen updates, or modular projects.  
+              This motivates the use of advanced state management solutions like BLoC, GetX, or Riverpod.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">State Management in Flutter</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-6">Comparison: BLoC, GetX, Riverpod</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left text-lg">
+
+              <!-- BLoC -->
+              <div class="bg-gray-800/60 p-4 rounded-xl">
+                <h3 class="text-yellow-300 font-bold text-xl mb-2">BLoC</h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li>Event → State streams</li>
+                  <li>Highly structured, testable</li>
+                  <li>Steep learning curve</li>
+                </ul>
+              </div>
+
+              <!-- GetX -->
+              <div class="bg-gray-800/60 p-4 rounded-xl">
+                <h3 class="text-yellow-300 font-bold text-xl mb-2">GetX</h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li>Reactive & lightweight</li>
+                  <li>Built-in navigation & DI</li>
+                  <li>Easy learning curve</li>
+                </ul>
+              </div>
+
+              <!-- Riverpod -->
+              <div class="bg-gray-800/60 p-4 rounded-xl">
+                <h3 class="text-yellow-300 font-bold text-xl mb-2">Riverpod</h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li>Provider’s evolution</li>
+                  <li>Type-safe & compile-time safety</li>
+                  <li>Good balance of flexibility & structure</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">State Flow: BLoC vs GetX vs Riverpod</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <svg viewBox="0 0 1100 500" class="w-full h-auto">
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                  <polygon points="0,0 10,5 0,10" fill="#facc15"/>
+                </marker>
+                <style>
+                .box { fill: #1f2937; stroke: #facc15; stroke-width: 2; rx: 8; }
+                .label { fill: #e5e7eb; font-size: 14px; font-weight: 600; font-family: ui-sans-serif, system-ui; }
+                .title { fill: #facc15; font-size: 16px; font-weight: 700; font-family: ui-sans-serif, system-ui; }
+                .arrow { stroke: #facc15; stroke-width: 2; marker-end: url(#arrowhead); fill: none; }
+                </style>
+              </defs>
+
+              <!-- Titles -->
+              <text x="180" y="30" class="title">BLoC</text>
+              <text x="520" y="30" class="title">GetX</text>
+              <text x="870" y="30" class="title">Riverpod</text>
+
+              <!-- BLoC Flow -->
+              <rect x="60" y="60" width="120" height="50" class="box"/>
+              <text x="120" y="90" text-anchor="middle" class="label">UI Event</text>
+
+              <rect x="60" y="150" width="120" height="50" class="box"/>
+              <text x="120" y="180" text-anchor="middle" class="label">BLoC</text>
+
+              <rect x="60" y="240" width="120" height="50" class="box"/>
+              <text x="120" y="270" text-anchor="middle" class="label">State</text>
+
+              <line x1="120" y1="110" x2="120" y2="150" class="arrow"/>
+              <line x1="120" y1="200" x2="120" y2="240" class="arrow"/>
+              <line x1="120" y1="290" x2="120" y2="330" class="arrow"/>
+              <text x="120" y="350" text-anchor="middle" class="label">Rebuild UI</text>
+
+              <!-- GetX Flow -->
+              <rect x="420" y="60" width="120" height="50" class="box"/>
+              <text x="480" y="90" text-anchor="middle" class="label">UI</text>
+
+              <rect x="420" y="150" width="120" height="50" class="box"/>
+              <text x="480" y="180" text-anchor="middle" class="label">Controller</text>
+
+              <rect x="420" y="240" width="120" height="50" class="box"/>
+              <text x="480" y="270" text-anchor="middle" class="label">Reactive Var</text>
+
+              <line x1="480" y1="110" x2="480" y2="150" class="arrow"/>
+              <line x1="480" y1="200" x2="480" y2="240" class="arrow"/>
+              <line x1="480" y1="290" x2="480" y2="330" class="arrow"/>
+              <text x="480" y="350" text-anchor="middle" class="label">Auto UI Update</text>
+
+              <!-- Riverpod Flow -->
+              <rect x="760" y="60" width="120" height="50" class="box"/>
+              <text x="820" y="90" text-anchor="middle" class="label">UI</text>
+
+              <rect x="760" y="150" width="120" height="50" class="box"/>
+              <text x="820" y="180" text-anchor="middle" class="label">Consumer</text>
+
+              <rect x="760" y="240" width="120" height="50" class="box"/>
+              <text x="820" y="270" text-anchor="middle" class="label">Provider</text>
+
+              <rect x="760" y="330" width="120" height="50" class="box"/>
+              <text x="820" y="360" text-anchor="middle" class="label">State</text>
+
+              <line x1="820" y1="110" x2="820" y2="150" class="arrow"/>
+              <line x1="820" y1="200" x2="820" y2="240" class="arrow"/>
+              <line x1="820" y1="290" x2="820" y2="330" class="arrow"/>
+              <line x1="820" y1="380" x2="820" y2="420" class="arrow"/>
+              <text x="820" y="440" text-anchor="middle" class="label">UI Rebuild on Change</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Example: Counter App with BLoC</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <pre class="text-sm md:text-base overflow-x-auto p-4 bg-gray-900 rounded-xl"><code class="language-dart">
+// 1. Define Events
+abstract class CounterEvent {}
+class Increment extends CounterEvent {}
+class Decrement extends CounterEvent {}
+
+// 2. Define State
+class CounterState {
+  final int count;
+  CounterState(this.count);
+}
+
+// 3. Create BLoC
+class CounterBloc extends Bloc<CounterEvent, CounterState> {
+  CounterBloc() : super(CounterState(0)) {
+    on<Increment>((event, emit) => emit(CounterState(state.count + 1)));
+    on<Decrement>((event, emit) => emit(CounterState(state.count - 1)));
+  }
+}
+
+// 4. UI Layer
+BlocBuilder<CounterBloc, CounterState>(
+  builder: (context, state) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Count: ${state.count}', style: TextStyle(fontSize: 24)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: () => context.read<CounterBloc>().add(Decrement()),
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () => context.read<CounterBloc>().add(Increment()),
+            ),
+          ],
+        ),
+      ],
+    );
+  },
+);
+            </code></pre>
+            <p class="text-lg mt-4 text-gray-200"><span class="text-yellow-300">Flow:</span> User taps → <span class="italic">Event</span> → <span class="italic">BLoC</span> → new <span class="italic">State</span> → UI rebuilds.</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Example: Counter App with GetX</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <pre class="text-sm md:text-base overflow-x-auto p-4 bg-gray-900 rounded-xl"><code class="language-dart">
+// 1. Controller
+class CounterController extends GetxController {
+  var count = 0.obs;
+
+  void increment() => count++;
+  void decrement() => count--;
+}
+
+// 2. UI Layer
+class CounterPage extends StatelessWidget {
+  final CounterController controller = Get.put(CounterController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Obx(() => Text(
+              'Count: ${controller.count}',
+              style: TextStyle(fontSize: 24),
+            )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: controller.decrement,
+                ),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: controller.increment,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+            </code></pre>
+            <p class="text-lg mt-4 text-gray-200"><span class="text-yellow-300">Flow:</span> User taps → Controller updates <span class="italic">Reactive Variable (obs)</span> → <span class="italic">Obx</span> widget rebuilds UI automatically.</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Example: Counter App with Riverpod</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <pre class="text-sm md:text-base overflow-x-auto p-4 bg-gray-900 rounded-xl"><code class="language-dart">
+// 1. Define a StateNotifier
+class CounterNotifier extends StateNotifier<int> {
+  CounterNotifier() : super(0);
+
+  void increment() => state++;
+  void decrement() => state--;
+}
+
+// 2. Create a Provider
+final counterProvider = StateNotifierProvider<CounterNotifier, int>((ref) {
+  return CounterNotifier();
+});
+
+// 3. UI Layer
+class CounterPage extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(counterProvider);
+
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Count: $count', style: TextStyle(fontSize: 24)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () => ref.read(counterProvider.notifier).decrement(),
+                ),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () => ref.read(counterProvider.notifier).increment(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+            </code></pre>
+            <p class="text-lg mt-4 text-gray-200"><span class="text-yellow-300">Flow:</span> User taps → <span class="italic">StateNotifier</span> updates state → <span class="italic">ConsumerWidget</span> rebuilds automatically.</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Dependency Injection & Modularization</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Key Concepts</h2>
+            <ul class="list-disc list-inside text-lg space-y-2 mb-6">
+              <li>Decouple class dependencies for testable, maintainable code.</li>
+              <li>Use <span class="text-yellow-300">get_it</span> or <span class="text-yellow-300">Provider</span> for service location.</li>
+              <li>Organize project into modules: Features → Domain → Data → Presentation.</li>
+              <li>Follow <span class="italic">single responsibility</span> and <span class="italic">SOLID principles</span>.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mb-4">Example: get_it Setup</h2>
+            <pre class="text-sm md:text-base overflow-x-auto p-4 bg-gray-900 rounded-xl"><code class="language-dart">
+// 1. Register services
+final getIt = GetIt.instance;
+
+void setup() {
+  getIt.registerLazySingleton<ApiService>(() => ApiService());
+  getIt.registerFactory<CounterController>(() => CounterController());
+}
+
+// 2. Use anywhere
+class MyWidget extends StatelessWidget {
+  final counterController = getIt<CounterController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Count: ${counterController.count}');
+  }
+}
+            </code></pre>
+
+            <p class="text-lg mt-4 text-gray-200">
+              <span class="text-yellow-300">Flow:</span> Services and controllers are <span class="italic">injected</span> on demand, reducing tight coupling and improving modularity.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Navigation 2.0 & Deep Linking</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Key Concepts</h2>
+            <ul class="list-disc list-inside text-lg space-y-2 mb-6">
+              <li>Navigation 2.0 separates <span class="italic">URL state</span> from UI widgets.</li>
+              <li>Supports **web-style routing**, deep linking, and nested navigation.</li>
+              <li>Pages managed via <span class="text-yellow-300">RouterDelegate</span> and <span class="text-yellow-300">RouteInformationParser</span>.</li>
+              <li>Enables **dynamic routing** for large apps and multi-role dashboards.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mb-4">Example: Simple Navigation 2.0</h2>
+            <pre class="text-sm md:text-base overflow-x-auto p-4 bg-gray-900 rounded-xl"><code class="language-dart">
+// 1. Define pages
+class MyRoutePath { final String page; MyRoutePath.home() : page = 'home'; }
+
+// 2. RouteInformationParser
+class MyRouteParser extends RouteInformationParser<MyRoutePath> {
+  @override
+  Future<MyRoutePath> parseRouteInformation(RouteInformation ri) async {
+    if (ri.location == '/about') return MyRoutePath()..page = 'about';
+    return MyRoutePath.home();
+  }
+}
+
+// 3. RouterDelegate
+class MyRouterDelegate extends RouterDelegate<MyRoutePath>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<MyRoutePath> {
+
+  String currentPage = 'home';
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      pages: [
+        if (currentPage == 'home') MaterialPage(child: HomePage()),
+        if (currentPage == 'about') MaterialPage(child: AboutPage()),
+      ],
+      onPopPage: (route, result) {
+        currentPage = 'home';
+        notifyListeners();
+        return route.didPop(result);
+      },
+    );
+  }
+
+  @override
+  Future<void> setNewRoutePath(MyRoutePath path) async {
+    currentPage = path.page;
+  }
+}
+            </code></pre>
+
+            <p class="text-lg mt-4 text-gray-200">
+              <span class="text-yellow-300">Flow:</span> URL changes → <span class="italic">RouteInformationParser</span> parses → <span class="italic">RouterDelegate</span> updates pages → Navigator rebuilds UI.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Lab 1: Project Setup & Architecture</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Create a clean Flutter project structure with <span class="text-yellow-300">multi-layered architecture</span>.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Steps</h2>
+            <ol class="list-decimal list-inside text-lg space-y-2 mb-6">
+              <li>Initialize a new project:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>flutter create advanced_app</code></pre>
+              </li>
+              <li>Create folders:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+lib/
+ ├─ core/         # Constants, utils
+ ├─ data/         # Models, repositories
+ ├─ domain/       # Entities, use cases
+ ├─ presentation/ # UI, widgets, screens
+ └─ di/           # Dependency injection
+                </code></pre>
+              </li>
+              <li>Run the app and confirm basic structure works.</li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Deliverable</h2>
+            <p class="text-lg">
+              A clean project skeleton ready for state management & DI integration.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Lab 2: State Management with BLoC</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Implement <span class="text-yellow-300">BLoC pattern</span> for a simple Counter app.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Steps</h2>
+            <ol class="list-decimal list-inside text-lg space-y-3 mb-6">
+              <li>Install packages:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+flutter pub add flutter_bloc
+                </code></pre>
+              </li>
+              <li>Create Counter BLoC:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+// counter_bloc.dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+  void increment() => emit(state + 1);
+  void decrement() => emit(state - 1);
+}
+                </code></pre>
+              </li>
+              <li>Integrate in UI:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+BlocProvider(
+  create: (_) => CounterCubit(),
+  child: BlocBuilder&lt;CounterCubit, int&gt;(
+    builder: (context, count) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Count: $count', style: TextStyle(fontSize: 24)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(icon: Icon(Icons.remove), onPressed: () =&gt; context.read&lt;CounterCubit&gt;().decrement()),
+              IconButton(icon: Icon(Icons.add), onPressed: () =&gt; context.read&lt;CounterCubit&gt;().increment()),
+            ],
+          )
+        ],
+      );
+    },
+  ),
+)
+                </code></pre>
+              </li>
+              <li>Run & test increment/decrement functionality.</li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Deliverable</h2>
+            <p class="text-lg">
+              A working Counter app using <span class="text-yellow-300">BLoC (Cubit)</span> for state management.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Lab 3: Dependency Injection with GetIt</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Learn how to use <span class="text-yellow-300">GetIt</span> for Dependency Injection (DI) to manage services and repositories.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Steps</h2>
+            <ol class="list-decimal list-inside text-lg space-y-3 mb-6">
+              <li>Install package:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+flutter pub add get_it
+                </code></pre>
+              </li>
+              <li>Create a service (e.g., CounterService):
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+// counter_service.dart
+class CounterService {
+  int value = 0;
+  void increment() => value++;
+  void decrement() => value--;
+}
+                </code></pre>
+              </li>
+              <li>Register service in GetIt:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+import 'package:get_it/get_it.dart';
+import 'counter_service.dart';
+
+final getIt = GetIt.instance;
+
+void setup() {
+  getIt.registerSingleton&lt;CounterService&gt;(CounterService());
+}
+                </code></pre>
+              </li>
+              <li>Use the service in UI:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+final counterService = getIt&lt;CounterService&gt;();
+
+Text('Count: ${counterService.value}'),
+ElevatedButton(
+  onPressed: () {
+    counterService.increment();
+  },
+  child: Text('Increment'),
+)
+                </code></pre>
+              </li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Deliverable</h2>
+            <p class="text-lg">
+              A working app where state is managed by a <span class="text-yellow-300">GetIt-registered service</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Lab 4: Combining BLoC with GetIt</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Learn to manage <span class="text-yellow-300">BLoCs via GetIt</span>, enabling scalable and modular app architecture.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Steps</h2>
+            <ol class="list-decimal list-inside text-lg space-y-3 mb-6">
+              <li>Install packages:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+flutter pub add flutter_bloc get_it
+                </code></pre>
+              </li>
+              <li>Create a simple Counter BLoC:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class CounterCubit extends Cubit&lt;int&gt; {
+  CounterCubit() : super(0);
+  void increment() =&gt; emit(state + 1);
+  void decrement() =&gt; emit(state - 1);
+}
+                </code></pre>
+              </li>
+              <li>Register BLoC in GetIt:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+import 'package:get_it/get_it.dart';
+import 'counter_cubit.dart';
+
+final getIt = GetIt.instance;
+
+void setup() {
+  getIt.registerFactory&lt;CounterCubit&gt;(() =&gt; CounterCubit());
+}
+                </code></pre>
+              </li>
+              <li>Provide BLoC in the widget tree:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+BlocProvider(
+  create: (context) =&gt; getIt&lt;CounterCubit&gt;(),
+  child: CounterPage(),
+)
+                </code></pre>
+              </li>
+              <li>Use the BLoC in the UI:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+BlocBuilder&lt;CounterCubit, int&gt;(
+  builder: (context, count) {
+    return Column(
+      children: [
+        Text('Count: $count'),
+        ElevatedButton(
+          onPressed: () =&gt; context.read&lt;CounterCubit&gt;().increment(),
+          child: Text('Increment'),
+        )
+      ],
+    );
+  },
+)
+                </code></pre>
+              </li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Deliverable</h2>
+            <p class="text-lg">
+              A modular app where <span class="text-yellow-300">BLoC state management</span> is injected using <span class="text-yellow-300">GetIt</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-green-300">GetX State Management</span><br/> Pokémon GO Team Builder
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Use <span class="text-green-300">GetX</span> to manage Pokémon selection in a <span class="text-green-300">team of 3</span>.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Steps</h2>
+            <ol class="list-decimal list-inside text-lg space-y-3 mb-6">
+
+              <li>Install package:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+flutter pub add get
+                </code></pre>
+              </li>
+
+              <li>Create a Team Controller:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+import 'package:get/get.dart';
+
+class TeamController extends GetxController {
+  var team = &lt;String&gt;[].obs;
+
+  void addPokemon(String pokemon) {
+    if (team.length &lt; 3) team.add(pokemon);
+  }
+
+  void removePokemon(String pokemon) {
+    team.remove(pokemon);
+  }
+}
+                </code></pre>
+              </li>
+
+              <li>Register Controller:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+final TeamController teamCtrl = Get.put(TeamController());
+                </code></pre>
+              </li>
+
+              <li>Display Pokémon list (example):
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+ListView(
+  children: ['Pikachu','Charmander','Squirtle','Bulbasaur']
+    .map((poke) =&gt; ListTile(
+      title: Text(poke),
+      trailing: ElevatedButton(
+        onPressed: () =&gt; teamCtrl.addPokemon(poke),
+        child: Text('Add'),
+      ),
+    )).toList(),
+)
+                </code></pre>
+              </li>
+
+              <li>Show current team:
+                <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+Obx(() =&gt; Column(
+  children: [
+    Text("Your Team:"),
+    ...teamCtrl.team.map((p) =&gt; Text(p)).toList(),
+  ],
+))
+                </code></pre>
+              </li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Deliverable</h2>
+            <p class="text-lg">
+              An interactive <span class="text-green-300">Pokémon Team Builder</span> where students can select up to <span class="text-green-300">3 Pokémon</span> using <span class="text-green-300">GetX state management</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-green-300">GetX</span> – Team Validation & Preview
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Add <span class="text-green-300">validation</span> for team rules (max 3, no duplicates) and use 
+              <span class="text-green-300">GetX Navigation</span> to preview the team.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Validation in Controller</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+class TeamController extends GetxController {
+  var team = &lt;String&gt;[].obs;
+
+  void addPokemon(String pokemon) {
+    if (team.length &gt;= 3) {
+      Get.snackbar("Limit Reached", "You can only choose 3 Pokémon!");
+    } else if (team.contains(pokemon)) {
+      Get.snackbar("Duplicate", "$pokemon already in your team!");
+    } else {
+      team.add(pokemon);
+    }
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">Navigation to Preview</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+// Navigate to preview screen
+ElevatedButton(
+  onPressed: () =&gt; Get.to(() =&gt; TeamPreviewPage()),
+  child: Text("Preview Team"),
+)
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">Team Preview Page</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm"><code>
+class TeamPreviewPage extends StatelessWidget {
+  final TeamController teamCtrl = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Team Preview")),
+      body: Obx(() =&gt; Column(
+        children: [
+          Text("Your Pokémon Team:"),
+          ...teamCtrl.team.map((p) =&gt; ListTile(title: Text(p))).toList(),
+        ],
+      )),
+    );
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mt-6 mb-2">Deliverable</h2>
+            <p class="text-lg">
+              Students will build a <span class="text-green-300">validated team builder</span> and use 
+              <span class="text-green-300">GetX Navigation</span> to show a preview screen.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Persisting Team with <span class="text-yellow-300">GetStorage</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Save and restore the <span class="text-yellow-300">Pokémon team</span> using 
+              <span class="text-yellow-300">GetStorage</span> for persistent state management.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Setup</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+// pubspec.yaml
+dependencies:
+  get: ^4.6.6
+  get_storage: ^2.1.1
+
+// main.dart
+void main() async {
+  await GetStorage.init();
+  runApp(MyApp());
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">Controller with GetStorage</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+class TeamController extends GetxController {
+  var team = &lt;String&gt;[].obs;
+  final storage = GetStorage();
+
+  @override
+  void onInit() {
+    super.onInit();
+    team.value = List&lt;String&gt;.from(storage.read('team') ?? []);
+    ever(team, (_) =&gt; storage.write('team', team));
+  }
+
+  void addPokemon(String pokemon) {
+    if (team.length &gt;= 3) {
+      Get.snackbar("Limit Reached", "Only 3 Pokémon allowed!");
+    } else if (team.contains(pokemon)) {
+      Get.snackbar("Duplicate", "$pokemon already in your team!");
+    } else {
+      team.add(pokemon);
+    }
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">Key Idea</h2>
+            <ul class="list-disc list-inside text-lg space-y-2">
+              <li>⚡ <code>GetStorage.init()</code> initializes persistent storage.</li>
+              <li>📦 Automatically save team whenever it changes using <code>ever()</code>.</li>
+              <li>🔄 Restore saved team on app restart.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mt-6 mb-2">Deliverable</h2>
+            <p class="text-lg">
+              Students will implement a <span class="text-yellow-300">persistent Pokémon team builder</span>
+              that remembers selections even after the app is closed and reopened.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Dependency Injection with <span class="text-green-300">GetX</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">What is Dependency Injection?</h2>
+            <p class="text-lg mb-6">
+              A technique to provide <span class="text-green-300">objects/services</span> 
+              to classes instead of creating them inside.  
+              GetX simplifies DI with <code>Get.put()</code>, <code>Get.lazyPut()</code>, 
+              and <code>Get.find()</code>.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Example in Pokémon Team Builder</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+// Register Controller
+void main() {
+  Get.put(TeamController());       // Creates immediately
+  Get.lazyPut(() =&gt; ApiService()); // Creates only when needed
+  runApp(MyApp());
+}
+
+// Retrieve Controller
+class TeamView extends StatelessWidget {
+  final teamCtrl = Get.find&lt;TeamController&gt;();
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() =&gt; ListView(
+      children: teamCtrl.team
+          .map((pokemon) =&gt; Text(pokemon))
+          .toList(),
+    ));
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">Key Methods</h2>
+            <ul class="list-disc list-inside text-lg space-y-2">
+              <li>⚡ <code>Get.put()</code> → creates and stores instance immediately.</li>
+              <li>💤 <code>Get.lazyPut()</code> → creates only when first used.</li>
+              <li>🔍 <code>Get.find()</code> → retrieves an existing instance.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mt-6 mb-2">Deliverable</h2>
+            <p class="text-lg">
+              Students will implement <span class="text-green-300">dependency injection</span> 
+              to separate concerns:  
+              <b>TeamController</b> for state, <b>ApiService</b> for Pokémon data, 
+              injected seamlessly with GetX.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Fetching Data with <span class="text-blue-300">PokeAPI + GetX</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Steps to Fetch Pokémon Data</h2>
+            <ol class="list-decimal list-inside text-lg space-y-2 mb-6">
+              <li>📡 Create <b>ApiService</b> to fetch from <code>https://pokeapi.co/api/v2/pokemon</code>.</li>
+              <li>🗂️ Inject <b>ApiService</b> into <b>TeamController</b> with <code>Get.lazyPut()</code>.</li>
+              <li>🔄 Store Pokémon list in an <code>RxList</code> and update UI with <code>Obx</code>.</li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Example Code</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+// Service to fetch Pokémon
+class ApiService {
+  final client = GetConnect();
+
+  Future&lt;List&lt;String&gt;&gt; fetchPokemons() async {
+    final response = await client.get("https://pokeapi.co/api/v2/pokemon?limit=20");
+    if (response.statusCode == 200) {
+      return (response.body['results'] as List)
+        .map((p) =&gt; p['name'].toString())
+        .toList();
+    }
+    return [];
+  }
+}
+
+// TeamController
+class TeamController extends GetxController {
+  var pokemons = &lt;String&gt;[].obs;
+  final ApiService api = Get.find();
+
+  void loadPokemons() async {
+    pokemons.value = await api.fetchPokemons();
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">UI Binding</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+class PokemonList extends StatelessWidget {
+  final teamCtrl = Get.find&lt;TeamController&gt;();
+
+  @override
+  Widget build(BuildContext context) {
+    teamCtrl.loadPokemons();
+    return Obx(() =&gt; ListView.builder(
+      itemCount: teamCtrl.pokemons.length,
+      itemBuilder: (ctx, i) =&gt; ListTile(
+        title: Text(teamCtrl.pokemons[i]),
+      ),
+    ));
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-2">Deliverable</h2>
+            <p class="text-lg">
+              Students will fetch live Pokémon data from <b>PokeAPI</b> 
+              and display it dynamically in their app using 
+              <span class="text-blue-300">GetX reactivity</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Managing <span class="text-green-300">Team State</span> with GetX
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Allow user to select up to <b>3 Pokémon</b> from the list and build their team.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Controller Update</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+class TeamController extends GetxController {
+  var pokemons = &lt;String&gt;[].obs;
+  var team = &lt;String&gt;[].obs;
+
+  void togglePokemon(String name) {
+    if (team.contains(name)) {
+      team.remove(name);
+    } else if (team.length &lt; 3) {
+      team.add(name);
+    } else {
+      Get.snackbar("Limit Reached", "You can only select 3 Pokémon!");
+    }
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-4">UI Example</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+class PokemonList extends StatelessWidget {
+  final teamCtrl = Get.find&lt;TeamController&gt;();
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() =&gt; ListView.builder(
+      itemCount: teamCtrl.pokemons.length,
+      itemBuilder: (ctx, i) {
+        final name = teamCtrl.pokemons[i];
+        final selected = teamCtrl.team.contains(name);
+        return ListTile(
+          title: Text(name),
+          trailing: Icon(
+            selected ? Icons.check_circle : Icons.add_circle_outline,
+            color: selected ? Colors.green : Colors.grey,
+          ),
+          onTap: () =&gt; teamCtrl.togglePokemon(name),
+        );
+      },
+    ));
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-2">Deliverable</h2>
+            <p class="text-lg">
+              Students will implement a <b>3-Pokémon team restriction</b> using 
+              <span class="text-green-300">reactive lists in GetX</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-blue-300">Team Preview Screen</span>
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Display the user-selected Pokémon team in a separate screen using <span class="text-blue-300">GetX reactivity</span>.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Team Preview Controller</h2>
+            <p class="text-lg mb-4">
+              We reuse the <b>TeamController</b> registered with GetX for reactive updates.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Preview Screen Example</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+class TeamPreviewPage extends StatelessWidget {
+  final TeamController teamCtrl = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Your Pokémon Team")),
+      body: Obx(() =&gt; Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text("Team Members:", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          ),
+          ...teamCtrl.team.map((poke) =&gt; Card(
+            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: ListTile(
+              leading: Icon(Icons.catching_pokemon, color: Colors.redAccent),
+              title: Text(poke, style: TextStyle(fontSize: 18)),
+            ),
+          )).toList(),
+        ],
+      )),
+    );
+  }
+}
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-2">Key Points</h2>
+            <ul class="list-disc list-inside text-lg space-y-2">
+              <li>🟢 Reactive UI using <code>Obx()</code> automatically updates when team changes.</li>
+              <li>🔗 TeamController instance is shared across screens via <code>Get.find()</code>.</li>
+              <li>📦 Clean separation: List selection screen & Team Preview screen.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mt-6 mb-2">Deliverable</h2>
+            <p class="text-lg">
+              Students will display a <span class="text-blue-300">dynamic team preview</span> 
+              reflecting their selections in real-time on a separate screen.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Full <span class="text-yellow-300">Pokémon Team Builder</span> App
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Combine all previous steps into a fully functional Pokémon GO Team Builder app:
+              <b>list view → select up to 3 Pokémon → team preview screen</b> with <span class="text-yellow-300">GetX state management</span>.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">App Flow</h2>
+            <ol class="list-decimal list-inside text-lg space-y-2 mb-6">
+              <li>Fetch Pokémon data from <b>PokeAPI</b>.</li>
+              <li>Display Pokémon in a reactive <code>ListView</code>.</li>
+              <li>Use <code>TeamController.togglePokemon()</code> to select/deselect up to 3 Pokémon.</li>
+              <li>Navigate to <b>Team Preview</b> screen using <code>Get.to()</code>.</li>
+              <li>Preview updates reactively with <code>Obx()</code>.</li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mb-4">Main Widgets Example</h2>
+            <pre class="bg-gray-900 p-3 rounded-lg text-sm mb-6"><code>
+// MainPage.dart
+class MainPage extends StatelessWidget {
+  final TeamController teamCtrl = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Pokémon Team Builder")),
+      body: Column(
+        children: [
+          Expanded(child: PokemonList()), // List of Pokémons
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ElevatedButton(
+              onPressed: () =&gt; Get.to(() =&gt; TeamPreviewPage()),
+              child: Text("Preview Team"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// TeamController manages both list & selected team (as shown in Slide 20)
+            </code></pre>
+
+            <h2 class="text-2xl font-semibold mb-2">Deliverable</h2>
+            <p class="text-lg">
+              A fully functional <span class="text-yellow-300">Pokémon GO Team Builder</span> app:  
+              ✅ Select Pokémon from API list  
+              ✅ Limit to 3 Pokémon  
+              ✅ Preview team on separate screen  
+              ✅ Reactive updates using <span class="text-yellow-300">GetX</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-pink-300">Exercise:</span> Enhance Your Pokémon Team Builder
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Objective</h2>
+            <p class="text-lg mb-6">
+              Extend your Week 1 Pokémon GO Team Builder app with optional features to make it more interactive and professional.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Suggested Enhancements</h2>
+            <ul class="list-disc list-inside text-lg space-y-3 mb-6">
+              <li>🖼️ Display Pokémon images fetched from <b>PokeAPI</b> beside each name.</li>
+              <li>✏️ Allow users to <b>edit team name</b> and save it using <code>GetStorage</code>.</li>
+              <li>🎨 Add visual feedback or animations when selecting/deselecting Pokémon.</li>
+              <li>📦 Persist the full team (names + images) so it loads on app restart.</li>
+              <li>🔗 Add a “Reset Team” button to clear selections.</li>
+              <li>💡 Optional: Add a search bar to filter Pokémon in the list.</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mb-4">Exercise Guidelines</h2>
+            <ol class="list-decimal list-inside text-lg space-y-2 mb-6">
+              <li>Implement one enhancement at a time and test functionality.</li>
+              <li>Use <code>Obx()</code> and reactive state management for UI updates.</li>
+              <li>Store persistent data with <code>GetStorage</code> for a better user experience.</li>
+              <li>Follow clean code and modular architecture principles.</li>
+            </ol>
+
+            <h2 class="text-2xl font-semibold mt-6 mb-2">Deliverable</h2>
+            <p class="text-lg">
+              An enhanced <span class="text-pink-300">Pokémon GO Team Builder</span> with at least one new feature implemented.  
+              Bonus points for adding multiple enhancements creatively.
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

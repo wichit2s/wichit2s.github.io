@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning with Pytorch</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="file:///Users/paul/GitWork/wichit2s/build/html/_static/css/greenish.css" rel="stylesheet" />
+    <link href="/_static/css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a @click="currentSlide=2" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Agenda </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/workshops/comsci_ai.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">Deep Learning</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <img src="/_static/images/comsci_ai_qrcode.png" alt="qrcode" class="w-full h-auto" />
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Introduction to <br>
+            <span class="text-yellow-300">Deep Learning & Deployment</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Foundations of PyTorch and Deployment
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Learning Outcomes</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>Understand the basics of Deep Learning and its applications</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>Get familiar with PyTorch tensors and automatic differentiation</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>Set up the environment for PyTorch and Django deployment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Core Concepts of <br>
+            <span class="text-yellow-300">Deep Learning</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Understanding the Building Blocks of Neural Networks
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Key Topics</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>What is a Neural Network? Layers, neurons, and weights</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>Forward Pass & Backpropagation explained intuitively</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>Loss Functions: measuring errors in predictions</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">4</div>
+                <span>Optimizers: gradient descent and its variants</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4">
+              <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">5</div>
+              <span>Why Deep Learning Works: data, computation, and representation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+
+    <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+      What is a <br>
+      <span class="text-yellow-300">Neural Network?</span>
+    </h1>
+
+    <div class="text-xl text-white/90 mb-8 font-light">
+      From Biological Neurons to Artificial Intelligence
+    </div>
+
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Key Idea</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-pink-400 rounded-full flex items-center justify-center text-pink-900 font-bold text-sm mt-1">1</div>
+          <span>The human brain has billions of neurons that process information</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-pink-400 rounded-full flex items-center justify-center text-pink-900 font-bold text-sm mt-1">2</div>
+          <span>Each neuron receives signals (inputs), processes them, and passes outputs forward</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-pink-400 rounded-full flex items-center justify-center text-pink-900 font-bold text-sm mt-1">3</div>
+          <span>Artificial Neural Networks (ANNs) mimic this process using math and computation</span>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 mt-4">
+        <div class="w-6 h-6 bg-pink-400 rounded-full flex items-center justify-center text-pink-900 font-bold text-sm mt-1">4</div>
+        <span>They are the foundation of Deep Learning</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Artificial Neuron <br>
+            <span class="text-yellow-300">(Perceptron)</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            The Basic Building Block of Neural Networks
+          </div>
+
+          <div class="grid grid-col-1 md:grid-col2-2 bg-cover rounded-2xl" style="background-image: url('./images/neuron.jpg');">
+            <div class="bg-green-900/20 backdrop-blur-sm w-full h-full rounded-2xl p-6 mb-8 text-white">
+              <h2 class="col-span-2 text-2xl font-semibold mb-4">Structure</h2>
+              <div class="grid gap-4 text-left">
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-indigo-400 rounded-full flex items-center justify-center text-indigo-900 font-bold text-sm mt-1">1</div>
+                  <span>Inputs: features or data values (<code>x₁, x₂, …</code>)</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-indigo-400 rounded-full flex items-center justify-center text-indigo-900 font-bold text-sm mt-1">2</div>
+                  <span>Weights: importance assigned to each input (<code>w₁, w₂, …</code>)</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-indigo-400 rounded-full flex items-center justify-center text-indigo-900 font-bold text-sm mt-1">3</div>
+                  <span>Bias: adjusts the threshold for activation</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-indigo-400 rounded-full flex items-center justify-center text-indigo-900 font-bold text-sm mt-1">4</div>
+                  <span>Activation Function: introduces non-linearity (e.g. ReLU, Sigmoid)</span>
+                </div>
+                <div class="flex items-start gap-3 mt-4">
+                  <div class="w-6 h-6 bg-indigo-400 rounded-full flex items-center justify-center text-indigo-900 font-bold text-sm mt-1">5</div>
+                  <span>Output: <code>y = f( Σ (wᵢ·xᵢ) + b )</code></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Perceptron <br>
+            <span class="text-yellow-300">Visualization & Equations</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Linear Combination + Bias → Activation
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 flex flex-col items-center">
+            <!-- SVG: Perceptron Diagram with Equations -->
+            <svg width="720" height="320" viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Perceptron diagram with inputs, weights, bias, and activation equation">
+              <!-- Inputs -->
+              <circle cx="90" cy="70" r="22" fill="#34d399" />
+              <text x="90" y="75" text-anchor="middle" fill="white" font-size="16" font-weight="bold">x₁</text>
+
+              <circle cx="90" cy="150" r="22" fill="#34d399" />
+              <text x="90" y="155" text-anchor="middle" fill="white" font-size="16" font-weight="bold">x₂</text>
+
+              <circle cx="90" cy="230" r="22" fill="#34d399" />
+              <text x="90" y="235" text-anchor="middle" fill="white" font-size="16" font-weight="bold">x₃</text>
+
+              <!-- Weights labels on edges -->
+              <text x="190" y="60" fill="white" font-size="14">w₁</text>
+              <text x="190" y="150" fill="white" font-size="14">w₂</text>
+              <text x="190" y="240" fill="white" font-size="14">w₃</text>
+
+              <!-- Bias node -->
+              <rect x="80" y="280" width="20" height="20" rx="4" ry="4" fill="#fde68a" />
+              <text x="90" y="295" text-anchor="middle" fill="#78350f" font-size="14" font-weight="bold">b</text>
+              <text x="120" y="295" fill="white" font-size="12">bias</text>
+
+              <!-- Neuron (summation) -->
+              <circle cx="320" cy="150" r="38" fill="#60a5fa" />
+              <text x="320" y="155" text-anchor="middle" fill="white" font-size="18" font-weight="bold">Σ</text>
+
+              <!-- Activation node -->
+              <circle cx="520" cy="150" r="34" fill="#f472b6" />
+              <text x="520" y="155" text-anchor="middle" fill="white" font-size="16" font-weight="bold">f(·)</text>
+
+              <!-- Output -->
+              <circle cx="640" cy="150" r="22" fill="#f87171" />
+              <text x="640" y="155" text-anchor="middle" fill="white" font-size="16" font-weight="bold">y</text>
+
+              <!-- Edges from inputs to Σ -->
+              <defs>
+                <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
+                  <polygon points="0,0 8,4 0,8" fill="#93c5fd" />
+                </marker>
+                <marker id="arrow2" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
+                  <polygon points="0,0 8,4 0,8" fill="#fbcfe8" />
+                </marker>
+                <marker id="arrow3" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
+                  <polygon points="0,0 8,4 0,8" fill="#fecaca" />
+                </marker>
+              </defs>
+
+              <line x1="112" y1="70" x2="282" y2="135" stroke="#93c5fd" stroke-width="3" marker-end="url(#arrow)"/>
+              <line x1="112" y1="150" x2="282" y2="150" stroke="#93c5fd" stroke-width="3" marker-end="url(#arrow)"/>
+              <line x1="112" y1="230" x2="282" y2="165" stroke="#93c5fd" stroke-width="3" marker-end="url(#arrow)"/>
+
+              <!-- Bias edge to Σ -->
+              <line x1="100" y1="290" x2="300" y2="178" stroke="#fde68a" stroke-width="3" marker-end="url(#arrow)"/>
+
+              <!-- Σ to activation -->
+              <line x1="358" y1="150" x2="486" y2="150" stroke="#fbcfe8" stroke-width="3" marker-end="url(#arrow2)"/>
+
+              <!-- Activation to output -->
+              <line x1="554" y1="150" x2="618" y2="150" stroke="#fecaca" stroke-width="3" marker-end="url(#arrow3)"/>
+
+              <!-- Equation block -->
+              <rect x="230" y="12" width="460" height="90" rx="12" ry="12" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.25)"/>
+              <text x="252" y="42" fill="white" font-size="18">Linear combination (pre-activation):</text>
+              <text x="252" y="72" fill="#e5e7eb" font-size="20" font-weight="bold">z = w₁x₁ + w₂x₂ + w₃x₃ + b = Σ (wᵢ xᵢ) + b</text>
+
+              <rect x="230" y="214" width="460" height="90" rx="12" ry="12" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.25)"/>
+              <text x="252" y="244" fill="white" font-size="18">Activation & output:</text>
+              <text x="252" y="274" fill="#e5e7eb" font-size="20" font-weight="bold">y = f(z)</text>
+
+              <!-- Notes -->
+              <text x="320" y="200" text-anchor="middle" fill="#dbeafe" font-size="12">Weighted sum</text>
+              <text x="520" y="200" text-anchor="middle" fill="#ffe4e6" font-size="12">Non-linearity (e.g., ReLU, Sigmoid)</text>
+            </svg>
+
+
+
+            <p class="text-white/80 mt-6 text-lg font-light">
+              A perceptron computes a weighted sum of inputs plus a bias, <br/>
+              then applies an activation function: <br/>
+              <span class="font-semibold">y = f(Σ wᵢxᵢ + b)</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Implementing a <span class="text-yellow-300">Perceptron</span> in Python
+          </h1>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Python + NumPy Implementation</h2>
+            <pre class="bg-black/40 text-green-200 p-4 rounded-xl text-sm overflow-x-auto">
+<code>import numpy as np
+
+class Perceptron:
+    def __init__(self, size, learning_rate=0.01):
+        self.size = size
+        self.learning_rate = learning_rate
+        self.weights = np.random.randn(size)
+        self.bias = 0.0
+
+    def z(self, x):
+        return np.dot(self.weights, x) + self.bias
+
+    def f(self, x):
+        return 1 if self.z(x) >= 0 else 0
+
+    def fit(self, X, y, epochs=10):
+        for _ in range(epochs):
+            for xi, target in zip(X, y):
+                pred = self.f(xi)
+                error = target - pred
+                self.weights += self.learning_rate * error * xi
+                self.bias += self.learning_rate * error
+</code></pre>
+          </div>
+
+          <div class="text-xl text-white/90 font-light">
+            Attributes: <span class="text-yellow-300">size</span>, <span class="text-yellow-300">learning_rate</span><br>
+            Function: <span class="text-yellow-300">z()</span> → computes weighted sum
+          </div>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      Training on <span class="text-yellow-300">MNIST (0 vs 1)</span>
+    </h1>
+
+    <div class="grid grid-cols-2 gap-6">
+
+      <!-- Code Block -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+        <h2 class="text-2xl font-semibold mb-4">Binary Classification with Perceptron</h2>
+        <pre class="bg-black/40 text-green-200 p-4 rounded-xl text-sm overflow-x-auto">
+<code>from sklearn.datasets import fetch_openml
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load MNIST
+X, y = fetch_openml('mnist_784', version=1, return_X_y=True, as_frame=False)
+y = y.astype(int)
+
+# Filter 0 and 1
+mask = (y == 0) | (y == 1)
+X, y = X[mask], y[mask]
+X = X / 255.0  # normalize
+
+# Train perceptron
+p = Perceptron(size=X.shape[1], learning_rate=0.01)
+p.fit(X, y, epochs=10)
+
+# Evaluate
+preds = np.array([p.f(xi) for xi in X])
+print("Accuracy:", np.mean(preds == y))
+</code></pre>
+      </div>
+
+      <!-- Sample Digits -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+        <h2 class="text-2xl font-semibold mb-4">Example Digits</h2>
+        <div class="grid grid-cols-4 gap-2">
+          <a href="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png" class="w-16 h-16 rounded-lg bg-white p-1 object-cover" alt="Digit 1">
+          </a>
+          <a href="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png" class="w-16 h-16 rounded-lg bg-white p-1 object-cover" alt="Digit sample">
+          </a>
+          <a href="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png" class="w-16 h-16 rounded-lg bg-white p-1 object-cover" alt="Digit sample">
+          </a>
+          <a href="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png" class="w-16 h-16 rounded-lg bg-white p-1 object-cover" alt="Digit sample">
+          </a>
+        </div>
+        <p class="mt-4 text-white/80 text-lg">
+          Perceptron learns to separate <span class="text-yellow-300">zeros</span> and <span class="text-yellow-300">ones</span>
+        </p>
+        <pre class="bg-black/40 text-left text-green-200 p-4 rounded-xl text-sm overflow-x-auto">
+<code>import matplotlib.pyplot as plt
+
+def plot_digit(xi, label=None):
+    plt.imshow(xi.reshape(28, 28), cmap="gray")
+    if label is not None:
+        plt.title(f"Digit: {label}")
+    plt.axis("off")
+    plt.show()
+
+plot_digit(X[0], y[0])</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      Perceptron with <span class="text-yellow-300">TensorFlow / Keras</span>
+    </h1>
+
+    <div class="grid grid-cols-2 gap-6">
+
+      <!-- Code Block -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+        <h2 class="text-2xl font-semibold mb-4">Keras Implementation</h2>
+        <pre class="bg-black/40 text-green-200 p-4 rounded-xl text-sm overflow-x-auto">
+<code>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.datasets import fetch_openml
+import numpy as np
+
+# Load MNIST (only 0 and 1)
+X, y = fetch_openml('mnist_784', version=1, return_X_y=True, as_frame=False)
+y = y.astype(int)
+mask = (y == 0) | (y == 1)
+X, y = X[mask] / 255.0, y[mask]
+
+# Build Perceptron (single layer)
+model = Sequential([
+    Dense(1, input_shape=(28*28,), activation="sigmoid")
+])
+
+# Compile
+model.compile(optimizer="sgd", loss="binary_crossentropy", metrics=["accuracy"])
+
+# Train
+model.fit(X, y, epochs=10, batch_size=32, verbose=1)
+
+# Evaluate
+loss, acc = model.evaluate(X, y, verbose=0)
+print("Accuracy:", acc)</code></pre>
+      </div>
+
+      <!-- Visualization Note -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+        <h2 class="text-2xl font-semibold mb-4">Highlights</h2>
+        <ul class="text-left text-lg leading-relaxed space-y-3">
+          <li>✅ <code>Sequential</code> defines a simple feedforward model.</li>
+          <li>✅ One <code>Dense</code> layer → equivalent to a perceptron.</li>
+          <li>✅ <code>sigmoid</code> approximates the step activation function.</li>
+          <li>✅ Keras automates gradient descent & weight updates.</li>
+        </ul>
+        <p class="mt-6 text-yellow-300 font-semibold text-xl">
+          🚀 Just a few lines replace manual implementation!
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      Perceptron with <span class="text-orange-300">PyTorch</span>
+    </h1>
+
+    <div class="grid grid-cols-2 gap-6">
+
+      <!-- Code Block -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+        <h2 class="text-2xl font-semibold mb-4">PyTorch Implementation</h2>
+        <pre class="bg-black/40 text-green-200 p-4 rounded-xl text-sm overflow-x-auto">
+<code>import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms
+
+# MNIST (only digits 0 and 1)
+transform = transforms.Compose([transforms.ToTensor(), 
+                                transforms.Lambda(lambda x: x.view(-1))])
+
+trainset = datasets.MNIST(root='./data', train=True, 
+                          download=True, transform=transform)
+mask = (trainset.targets == 0) | (trainset.targets == 1)
+trainset.data, trainset.targets = trainset.data[mask], trainset.targets[mask]
+
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True)
+
+# Perceptron model
+class Perceptron(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc = nn.Linear(28*28, 1)
+
+    def forward(self, x):
+        return torch.sigmoid(self.fc(x))
+
+model = Perceptron()
+criterion = nn.BCELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.1)
+
+# Training loop
+for epoch in range(5):
+    for data, target in trainloader:
+        y = target.float().unsqueeze(1)  # match shape
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, y)
+        loss.backward()
+        optimizer.step()
+
+print("Training complete!")</code></pre>
+      </div>
+
+      <!-- Explanation -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+        <h2 class="text-2xl font-semibold mb-4">Key Notes</h2>
+        <ul class="text-left text-lg leading-relaxed space-y-3">
+          <li>✅ <code>nn.Linear(28*28,1)</code> → perceptron layer</li>
+          <li>✅ <code>torch.sigmoid()</code> → activation</li>
+          <li>✅ <code>BCELoss</code> → binary classification loss</li>
+          <li>✅ <code>SGD</code> → gradient descent optimizer</li>
+        </ul>
+        <p class="mt-6 text-orange-300 font-semibold text-xl">
+          🔥 PyTorch gives full control over training loop!
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Layers of a <br>
+            <span class="text-yellow-300">Neural Network</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            From Single Neurons to Powerful Architectures
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Types of Layers</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center text-teal-900 font-bold text-sm mt-1">1</div>
+                <span><b>Input Layer:</b> receives raw data (features, images, text, etc.)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center text-teal-900 font-bold text-sm mt-1">2</div>
+                <span><b>Hidden Layers:</b> multiple neurons process and transform inputs</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center text-teal-900 font-bold text-sm mt-1">3</div>
+                <span><b>Output Layer:</b> produces final prediction (e.g., class probabilities)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center text-teal-900 font-bold text-sm mt-1">4</div>
+                <span>Data flows forward (Forward Pass), errors flow backward (Backpropagation)</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4">
+              <div class="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center text-teal-900 font-bold text-sm mt-1">5</div>
+              <span>Stacking layers creates Deep Neural Networks (DNNs)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Neural Network Structure <br>
+            <span class="text-yellow-300">Input → Hidden → Output</span>
+          </h1>
+
+          <div class="text-lg text-white/90 mb-6 font-light">
+            Visualising how neurons in layers connect (fully connected example)
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="flex justify-center">
+              <!-- SVG diagram -->
+              <svg viewBox="0 0 900 320" class="max-w-full" role="img" aria-label="Diagram of input, hidden and output layers">
+                <!-- defs for gradients -->
+                <defs>
+                  <linearGradient id="g1" x1="0" x2="1">
+                    <stop offset="0" stop-color="#facc15"/>
+                    <stop offset="1" stop-color="#f97316"/>
+                  </linearGradient>
+                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.25"/>
+                  </filter>
+                </defs>
+
+                <!-- column labels -->
+                <text x="140"  y="30"  font-family="Inter, system-ui, sans-serif" font-size="16" fill="#ffffffcc" text-anchor="middle">Input Layer</text>
+                <text x="450"  y="30"  font-family="Inter, system-ui, sans-serif" font-size="16" fill="#ffffffcc" text-anchor="middle">Hidden Layer</text>
+                <text x="760"  y="30"  font-family="Inter, system-ui, sans-serif" font-size="16" fill="#ffffffcc" text-anchor="middle">Output Layer</text>
+
+                <!-- positions -->
+                <!-- Input neurons (3) -->
+                <g id="input">
+                  <circle cx="140" cy="90" r="20" fill="white" fill-opacity="0.08" stroke="url(#g1)" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="140" y="95" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">x₁</text>
+
+                  <circle cx="140" cy="160" r="20" fill="white" fill-opacity="0.08" stroke="url(#g1)" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="140" y="165" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">x₂</text>
+
+                  <circle cx="140" cy="230" r="20" fill="white" fill-opacity="0.08" stroke="url(#g1)" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="140" y="235" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">x₃</text>
+                </g>
+
+                <!-- Hidden neurons (4) -->
+                <g id="hidden">
+                  <circle cx="450" cy="60"  r="22" fill="white" fill-opacity="0.06" stroke="#60a5fa" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="450" y="65"  text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">h₁</text>
+
+                  <circle cx="450" cy="120" r="22" fill="white" fill-opacity="0.06" stroke="#60a5fa" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="450" y="125" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">h₂</text>
+
+                  <circle cx="450" cy="180" r="22" fill="white" fill-opacity="0.06" stroke="#60a5fa" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="450" y="185" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">h₃</text>
+
+                  <circle cx="450" cy="240" r="22" fill="white" fill-opacity="0.06" stroke="#60a5fa" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="450" y="245" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">h₄</text>
+                </g>
+
+                <!-- Output neurons (2) -->
+                <g id="output">
+                  <circle cx="760" cy="120" r="24" fill="white" fill-opacity="0.08" stroke="#34d399" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="760" y="125" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">y₁</text>
+
+                  <circle cx="760" cy="200" r="24" fill="white" fill-opacity="0.08" stroke="#34d399" stroke-width="2" filter="url(#shadow)"/>
+                  <text x="760" y="205" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">y₂</text>
+                </g>
+
+                <!-- connections: input -> hidden -->
+                <g stroke="white" stroke-opacity="0.18" stroke-width="1">
+                  <!-- from x1 -->
+                  <line x1="160" y1="90"  x2="428" y2="60"  />
+                  <line x1="160" y1="90"  x2="428" y2="120" />
+                  <line x1="160" y1="90"  x2="428" y2="180" />
+                  <line x1="160" y1="90"  x2="428" y2="240" />
+                  <!-- from x2 -->
+                  <line x1="160" y1="160" x2="428" y2="60"  />
+                  <line x1="160" y1="160" x2="428" y2="120" />
+                  <line x1="160" y1="160" x2="428" y2="180" />
+                  <line x1="160" y1="160" x2="428" y2="240" />
+                  <!-- from x3 -->
+                  <line x1="160" y1="230" x2="428" y2="60"  />
+                  <line x1="160" y1="230" x2="428" y2="120" />
+                  <line x1="160" y1="230" x2="428" y2="180" />
+                  <line x1="160" y1="230" x2="428" y2="240" />
+                </g>
+
+                <!-- connections: hidden -> output -->
+                <g stroke="white" stroke-opacity="0.22" stroke-width="1.2">
+                  <!-- from h1 -->
+                  <line x1="472" y1="60"  x2="736" y2="120" />
+                  <line x1="472" y1="60"  x2="736" y2="200" />
+                  <!-- from h2 -->
+                  <line x1="472" y1="120" x2="736" y2="120" />
+                  <line x1="472" y1="120" x2="736" y2="200" />
+                  <!-- from h3 -->
+                  <line x1="472" y1="180" x2="736" y2="120" />
+                  <line x1="472" y1="180" x2="736" y2="200" />
+                  <!-- from h4 -->
+                  <line x1="472" y1="240" x2="736" y2="120" />
+                  <line x1="472" y1="240" x2="736" y2="200" />
+                </g>
+
+                <!-- small legend -->
+                <rect x="20" y="260" width="180" height="42" rx="10" fill="#ffffff0a" stroke="#ffffff10"/>
+                <text x="32" y="281" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">● Input neuron</text>
+                <text x="32" y="298" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">● Hidden neuron</text>
+                <text x="32" y="315" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#fff">● Output neuron</text>
+              </svg>
+            </div>
+
+            <div class="mt-6 text-left text-sm text-white/80">
+              <p class="mb-2"><strong>Notes:</strong> Each connection represents a weight (w). During training these weights are adjusted so the network maps inputs to desired outputs. This example shows a fully connected (dense) network: every neuron from one layer connects to every neuron in the next layer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Implementing a Neural Network <br>
+            <span class="text-yellow-300">with PyTorch</span>
+          </h1>
+
+          <div class="text-lg text-white/90 mb-6 font-light">
+            A simple Feedforward Network Example
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left font-mono text-sm leading-relaxed overflow-x-auto">
+            <pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Define the model
+class SimpleNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(3, 4)   # input: 3 → hidden: 4
+        self.fc2 = nn.Linear(4, 2)   # hidden: 4 → output: 2
+    
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))  # activation function
+        x = self.fc2(x)
+        return x
+
+# Instantiate model, loss, optimizer
+model = SimpleNN()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+            </code></pre>
+          </div>
+
+          <div class="mt-6 text-left text-sm text-white/80 max-w-3xl mx-auto">
+            <p>⚡ This network has:</p>
+            <ul class="list-disc list-inside">
+              <li>3 input features → 4 hidden neurons → 2 outputs</li>
+              <li>ReLU activation for hidden layer</li>
+              <li>CrossEntropyLoss for classification</li>
+              <li>SGD optimizer for weight updates</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Getting Started with <br>
+            <span class="text-yellow-300">PyTorch</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            The Essential Deep Learning Framework
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Key Topics</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">1</div>
+                <span>Tensors: the core data structure of PyTorch</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">2</div>
+                <span>Automatic Differentiation with <code>autograd</code></span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">3</div>
+                <span>Creating simple neural networks using <code>torch.nn</code></span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">4</div>
+                <span>Training Loop: forward pass, loss, backward pass, and update</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4">
+              <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">5</div>
+              <span>Why PyTorch is widely used in research & production</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            What is a <span class="text-yellow-300">Tensor</span>?
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            The fundamental data structure in PyTorch
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-3">Definition</h2>
+            <p class="text-white/90 leading-relaxed">
+              A <span class="font-semibold">tensor</span> is a multi-dimensional array with a single data type. 
+              It generalizes scalars (0D), vectors (1D), and matrices (2D) to higher dimensions (3D+). 
+              In PyTorch, tensors are like NumPy arrays but with support for <span class="font-semibold">GPU acceleration</span> 
+              and <span class="font-semibold">automatic differentiation</span>.
+            </p>
+          </div>
+
+          <!-- Inline SVG Illustration -->
+          <div class="w-full bg-white/5 rounded-2xl p-6">
+            <h3 class="text-xl font-semibold mb-4 text-left">Tensor Ranks at a Glance</h3>
+            <div class="w-full overflow-x-auto">
+              <svg viewBox="0 0 1200 320" class="w-full h-auto" fill="none" stroke="currentColor" stroke-width="2">
+                <!-- 0D: Scalar -->
+                <g transform="translate(40,40)">
+                  <text x="0" y="-10" font-size="18">0D — Scalar</text>
+                  <circle cx="50" cy="50" r="16"></circle>
+                  <text x="80" y="56" font-size="16">e.g., 7</text>
+                  <text x="0" y="110" font-size="14" opacity="0.8">shape: []</text>
+                </g>
+
+                <!-- 1D: Vector -->
+                <g transform="translate(300,40)">
+                  <text x="0" y="-10" font-size="18">1D — Vector</text>
+                  <!-- boxes -->
+                  <rect x="0" y="20" width="40" height="40"></rect>
+                  <rect x="45" y="20" width="40" height="40"></rect>
+                  <rect x="90" y="20" width="40" height="40"></rect>
+                  <rect x="135" y="20" width="40" height="40"></rect>
+                  <rect x="180" y="20" width="40" height="40"></rect>
+                  <text x="0" y="110" font-size="14" opacity="0.8">shape: [5]</text>
+                </g>
+
+                <!-- 2D: Matrix -->
+                <g transform="translate(640,40)">
+                  <text x="0" y="-10" font-size="18">2D — Matrix</text>
+                  <!-- grid 3x4 -->
+                  <g>
+                    <!-- rows -->
+                    <rect x="0" y="20" width="40" height="40"></rect>
+                    <rect x="45" y="20" width="40" height="40"></rect>
+                    <rect x="90" y="20" width="40" height="40"></rect>
+                    <rect x="135" y="20" width="40" height="40"></rect>
+
+                    <rect x="0" y="65" width="40" height="40"></rect>
+                    <rect x="45" y="65" width="40" height="40"></rect>
+                    <rect x="90" y="65" width="40" height="40"></rect>
+                    <rect x="135" y="65" width="40" height="40"></rect>
+
+                    <rect x="0" y="110" width="40" height="40"></rect>
+                    <rect x="45" y="110" width="40" height="40"></rect>
+                    <rect x="90" y="110" width="40" height="40"></rect>
+                    <rect x="135" y="110" width="40" height="40"></rect>
+                  </g>
+                  <text x="0" y="170" font-size="14" opacity="0.8">shape: [3, 4]</text>
+                </g>
+
+                <!-- 3D: Tensor (cube of matrices) -->
+                <g transform="translate(940,40)">
+                  <text x="0" y="-10" font-size="18">3D — Tensor</text>
+                  <!-- back slice -->
+                  <g opacity="0.5">
+                    <rect x="30" y="0" width="120" height="120"></rect>
+                    <line x1="30" y1="40" x2="150" y2="40"></line>
+                    <line x1="30" y1="80" x2="150" y2="80"></line>
+                    <line x1="70" y1="0" x2="70" y2="120"></line>
+                    <line x1="110" y1="0" x2="110" y2="120"></line>
+                  </g>
+                  <!-- front slice -->
+                  <g>
+                    <rect x="0" y="20" width="120" height="120"></rect>
+                    <line x1="0" y1="60" x2="120" y2="60"></line>
+                    <line x1="0" y1="100" x2="120" y2="100"></line>
+                    <line x1="40" y1="20" x2="40" y2="140"></line>
+                    <line x1="80" y1="20" x2="80" y2="140"></line>
+                  </g>
+                  <!-- connecting edges -->
+                  <line x1="0" y1="20" x2="30" y2="0"></line>
+                  <line x1="120" y1="20" x2="150" y2="0"></line>
+                  <line x1="120" y1="140" x2="150" y2="120"></line>
+                  <line x1="0" y1="140" x2="30" y2="120"></line>
+
+                  <text x="0" y="170" font-size="14" opacity="0.8">shape: [2, 3, 3] (illustrative)</text>
+                </g>
+              </svg>
+            </div>
+            <p class="mt-4 text-sm text-white/80">
+              Rule of thumb: the number of dimensions is called the <span class="font-semibold">rank</span> of the tensor.
+            </p>
+          </div>
+
+          <div class="text-white/80 text-sm">
+            Example dtypes: <code class="px-2 py-1 bg-white/10 rounded">float32</code>, 
+            <code class="px-2 py-1 bg-white/10 rounded">int64</code>, 
+            <code class="px-2 py-1 bg-white/10 rounded">bool</code>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            First Steps with <span class="text-yellow-300">PyTorch</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Simple Use Cases with Code Examples
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Example 1: Tensor Operations</h2>
+<pre class="bg-black/60 text-green-300 rounded-lg p-4 text-sm overflow-x-auto">
+import torch
+
+# create tensors
+x = torch.tensor([1.0, 2.0, 3.0])
+y = torch.tensor([4.0, 5.0, 6.0])
+
+# element-wise operations
+print(x + y)   # tensor([5., 7., 9.])
+print(x * y)   # tensor([ 4., 10., 18.])
+</pre>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Example 2: Automatic Differentiation</h2>
+            <pre class="bg-black/60 text-green-300 rounded-lg p-4 text-sm overflow-x-auto">
+# requires_grad lets PyTorch track computations
+x = torch.tensor(2.0, requires_grad=True)
+y = x ** 2 + 3 * x + 1
+
+# compute gradient
+y.backward()
+print(x.grad)   # dy/dx = 2x + 3 → 7 at x=2
+            </pre>
+          </div>
+
+          <div class="text-white/80 text-sm">
+            🔑 PyTorch makes <span class="font-semibold">tensor math</span> and <span class="font-semibold">gradient computation</span> simple and efficient.
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            More <span class="text-yellow-300">PyTorch Examples</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Expanding Hands-On Knowledge
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Example 3: Creating a Simple Neural Network</h2>
+            <pre class="bg-black/60 text-green-300 rounded-lg p-4 text-sm overflow-x-auto">
+import torch
+import torch.nn as nn
+
+# simple feedforward network
+class SimpleNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(2, 4)
+        self.fc2 = nn.Linear(4, 1)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        return self.fc2(x)
+
+model = SimpleNN()
+print(model)
+            </pre>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Example 4: Training a Model</h2>
+            <pre class="bg-black/60 text-green-300 rounded-lg p-4 text-sm overflow-x-auto">
+# toy dataset
+x = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+y = torch.tensor([[1.0], [0.0]])
+
+loss_fn = nn.MSELoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+
+# forward + backward
+pred = model(x)
+loss = loss_fn(pred, y)
+loss.backward()
+optimizer.step()
+
+print(loss.item())
+            </pre>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+            <h2 class="text-2xl font-semibold mb-4">Example 5: Using GPU</h2>
+            <pre class="bg-black/60 text-green-300 rounded-lg p-4 text-sm overflow-x-auto">
+# check if GPU is available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+x = torch.tensor([1.0, 2.0, 3.0]).to(device)
+y = x * 2
+print(y, "on device:", y.device)
+            </pre>
+          </div>
+
+          <div class="text-white/80 text-sm mt-4">
+            🔑 Students can now: create networks, run training loops, and utilize GPU acceleration.
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Understanding <br>
+            <span class="text-yellow-300">Conv2d in PyTorch</span>
+          </h1>
+
+          <div class="text-lg text-white/90 mb-6 font-light">
+            How convolution extracts features from an image
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 overflow-x-auto">
+            <svg viewBox="0 0 900 300" width="100%" height="300">
+              <!-- Input image -->
+              <rect x="50" y="60" width="100" height="100" fill="#facc15" fill-opacity="0.3" stroke="#facc15" stroke-width="2"/>
+              <text x="100" y="180" text-anchor="middle" fill="#fff" font-size="14" font-family="Inter, sans-serif">Input Image</text>
+
+              <!-- Kernel -->
+              <rect x="180" y="80" width="40" height="40" fill="#60a5fa" fill-opacity="0.5" stroke="#60a5fa" stroke-width="2"/>
+              <text x="200" y="135" text-anchor="middle" fill="#fff" font-size="14" font-family="Inter, sans-serif">Kernel</text>
+
+              <!-- Convolution arrows -->
+              <line x1="150" y1="110" x2="180" y2="100" stroke="#fff" stroke-width="2" stroke-dasharray="4 2"/>
+              <line x1="150" y1="150" x2="180" y2="120" stroke="#fff" stroke-width="2" stroke-dasharray="4 2"/>
+              <line x1="150" y1="190" x2="180" y2="140" stroke="#fff" stroke-width="2" stroke-dasharray="4 2"/>
+
+              <!-- Feature map -->
+              <rect x="250" y="80" width="100" height="100" fill="#34d399" fill-opacity="0.3" stroke="#34d399" stroke-width="2"/>
+              <text x="300" y="200" text-anchor="middle" fill="#fff" font-size="14" font-family="Inter, sans-serif">Feature Map</text>
+
+              <!-- Description text -->
+              <text x="50" y="270" font-size="12" fill="#fff" font-family="Inter, sans-serif">
+                Conv2d slides the kernel over the input image, computing dot products to extract features.
+              </text>
+              <text x="50" y="285" font-size="12" fill="#fff" font-family="Inter, sans-serif">
+                Multiple kernels produce multiple feature maps.
+              </text>
+            </svg>
+          </div>
+
+          <div class="mt-4 text-left text-sm text-white/80 max-w-3xl mx-auto">
+            <ul class="list-disc list-inside">
+              <li><b>Input Image:</b> The raw data (e.g., 28×28 pixels)</li>
+              <li><b>Kernel/Filter:</b> Small weight matrix (e.g., 3×3) that slides over the image</li>
+              <li><b>Feature Map:</b> Output of convolution highlighting patterns/features</li>
+              <li>Conv2d in PyTorch: <code>nn.Conv2d(in_channels, out_channels, kernel_size)</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Understanding <br>
+            <span class="text-yellow-300">MaxPool2d</span>
+          </h1>
+
+          <div class="text-lg text-white/90 mb-6 font-light">
+            Reducing spatial dimensions while keeping key features
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 overflow-x-auto">
+            <svg viewBox="0 0 900 300" width="100%" height="300">
+              <!-- Feature Map before pooling -->
+              <rect x="50" y="60" width="120" height="120" fill="#60a5fa" fill-opacity="0.3" stroke="#60a5fa" stroke-width="2"/>
+              <text x="110" y="200" text-anchor="middle" fill="#fff" font-size="14" font-family="Inter, sans-serif">Feature Map</text>
+
+              <!-- Max pooling window -->
+              <rect x="70" y="80" width="40" height="40" fill="#facc15" fill-opacity="0.5" stroke="#facc15" stroke-width="2"/>
+              <text x="90" y="105" text-anchor="middle" fill="#fff" font-size="12" font-family="Inter, sans-serif">2×2 Window</text>
+
+              <!-- Arrow to output pooled map -->
+              <line x1="180" y1="120" x2="250" y2="100" stroke="#fff" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Pooled Feature Map -->
+              <rect x="250" y="80" width="60" height="60" fill="#34d399" fill-opacity="0.3" stroke="#34d399" stroke-width="2"/>
+              <text x="280" y="155" text-anchor="middle" fill="#fff" font-size="14" font-family="Inter, sans-serif">Pooled Map</text>
+
+              <!-- Arrowhead marker -->
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#fff" />
+                </marker>
+              </defs>
+
+              <!-- Description text -->
+              <text x="50" y="270" font-size="12" fill="#fff" font-family="Inter, sans-serif">
+                MaxPool2d slides a window (e.g., 2×2) over the feature map and keeps the maximum value.
+              </text>
+              <text x="50" y="285" font-size="12" fill="#fff" font-family="Inter, sans-serif">
+                This reduces spatial dimensions while preserving important features.
+              </text>
+            </svg>
+          </div>
+
+          <div class="mt-4 text-left text-sm text-white/80 max-w-3xl mx-auto">
+            <ul class="list-disc list-inside">
+              <li>Input: Feature map from previous Conv layer</li>
+              <li>Window/Kernel size: typically 2×2 or 3×3</li>
+              <li>Stride: how far the window moves</li>
+              <li>Output: Smaller feature map keeping strongest signals</li>
+              <li>PyTorch: <code>nn.MaxPool2d(kernel_size=2, stride=2)</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Convolutional Neural Network (CNN) <br>
+            <span class="text-yellow-300">with PyTorch</span>
+          </h1>
+
+          <div class="text-lg text-white/90 mb-6 font-light">
+            A Simple CNN for Image Classification
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left font-mono text-sm leading-relaxed overflow-x-auto">
+            <pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.fc1 = nn.Linear(64 * 7 * 7, 128)
+        self.fc2 = nn.Linear(128, 10)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))   # Conv1 -> ReLU -> Pool
+        x = self.pool(F.relu(self.conv2(x)))   # Conv2 -> ReLU -> Pool
+        x = x.view(-1, 64 * 7 * 7)             # Flatten
+        x = F.relu(self.fc1(x))                # FC1
+        return self.fc2(x)                     # FC2 (logits)
+            </code></pre>
+          </div>
+
+          <div class="mt-6 text-left text-sm text-white/80 max-w-3xl mx-auto">
+            <p>This CNN architecture includes:</p>
+            <ul class="list-disc list-inside">
+              <li><b>Conv layers</b>: Feature extraction</li>
+              <li><b>Pooling layers</b>: Dimensionality reduction</li>
+              <li><b>Fully connected layers</b>: Classification</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      PyTorch Implementation:<br>
+      <span class="text-yellow-300">Step 2: Train & Evaluate on MNIST</span>
+    </h1>
+
+    <div class="bg-black/40 rounded-2xl p-6 mb-8 text-left overflow-x-auto max-h-[450px]">
+      <pre class="text-sm leading-relaxed text-green-200"><code>
+from torchvision import datasets, transforms
+import torch.optim as optim
+
+# Load dataset
+transform = transforms.Compose([transforms.ToTensor()])
+train_loader = torch.utils.data.DataLoader(
+    datasets.MNIST('./data', train=True, download=True, transform=transform),
+    batch_size=64, shuffle=True)
+test_loader = torch.utils.data.DataLoader(
+    datasets.MNIST('./data', train=False, transform=transform),
+    batch_size=1000, shuffle=False)
+
+# Training & evaluation
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = SimpleCNN().to(device)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(1, 3):
+    model.train()
+    for data, target in train_loader:
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = F.cross_entropy(output, target)
+        loss.backward()
+        optimizer.step()
+    print(f"Epoch {epoch}: Loss={loss.item():.4f}")
+
+# Evaluate
+model.eval()
+correct = 0
+with torch.no_grad():
+    for data, target in test_loader:
+        data, target = data.to(device), target.to(device)
+        pred = model(data).argmax(dim=1)
+        correct += pred.eq(target).sum().item()
+
+print(f"Test Accuracy: {100. * correct / len(test_loader.dataset):.2f}%")
+      </code></pre>
+    </div>
+
+    <div class="text-left text-sm text-white/80 max-w-3xl mx-auto">
+      <ul class="list-disc list-inside">
+        <li>Train on <span class="text-yellow-300">MNIST dataset</span>.</li>
+        <li>Use <span class="text-yellow-300">Adam optimizer</span> & cross-entropy loss.</li>
+        <li>Evaluate on test set → accuracy in %.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      Saving & Loading a Model in PyTorch
+    </h1>
+
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <!-- Save Model -->
+      <div class="bg-black/40 rounded-2xl p-6 overflow-x-auto">
+        <h2 class="text-xl font-semibold text-yellow-300 mb-4">Step 1: Save Model</h2>
+        <pre class="text-sm leading-relaxed text-green-200"><code>
+torch.save(model.state_dict(), "simplecnn.pth")
+        </code></pre>
+        <p class="text-white/80 mt-2">
+          Saves only <span class="text-yellow-300">learned weights</span> (recommended).
+        </p>
+      </div>
+
+      <!-- Load Model -->
+      <div class="bg-black/40 rounded-2xl p-6 overflow-x-auto">
+        <h2 class="text-xl font-semibold text-yellow-300 mb-4">Step 2: Load Model</h2>
+        <pre class="text-sm leading-relaxed text-green-200"><code>
+# Reload the model
+model = SimpleCNN()
+model.load_state_dict(torch.load("simplecnn.pth"))
+model.eval()
+        </code></pre>
+        <p class="text-white/80 mt-2">
+          Always call <span class="text-yellow-300">model.eval()</span> before inference.
+        </p>
+      </div>
+    </div>
+
+    <p class="text-lg text-white/80 mt-8">
+      Use <span class="text-yellow-300">state_dict()</span> to save/load parameters.<br>
+      This ensures reproducibility & easier deployment.
+    </p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+
+    <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+      🔄 Server-Sent Events (SSE) Flow with Training Updates
+    </h1>
+
+    <div class="grid grid-cols-2 gap-8 items-center">
+
+      <!-- Left: Explanation -->
+      <div class="text-left">
+        <h2 class="text-2xl font-semibold text-yellow-300 mb-4">How it works?</h2>
+        <ol class="list-decimal list-inside space-y-3 text-lg text-white/90">
+          <li> Client subscribes to <code>/events</code></li>
+          <li> Server keeps connection open</li>
+          <li> Server streams multiple events:
+            <ul class="list-disc list-inside ml-6 space-y-1 text-white/80">
+              <li>Epoch start</li>
+              <li>Batch loss</li>
+              <li>Validation accuracy</li>
+              <li>Final model saved</li>
+            </ul>
+          </li>
+          <li> htmx/JS updates DOM dynamically</li>
+        </ol>
+      </div>
+
+      <!-- Right: Visualization -->
+      <div class="bg-black/40 rounded-2xl p-6">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 350" class="w-full h-72">
+          <!-- Client -->
+          <rect x="40" y="120" width="160" height="120" rx="12" fill="#2563eb" />
+          <text x="120" y="170" text-anchor="middle" fill="white" font-size="18">Client</text>
+          <text x="120" y="195" text-anchor="middle" fill="white" font-size="14">(Browser + htmx)</text>
+
+          <!-- Server -->
+          <rect x="440" y="120" width="160" height="120" rx="12" fill="#16a34a" />
+          <text x="520" y="170" text-anchor="middle" fill="white" font-size="18">Server</text>
+          <text x="520" y="195" text-anchor="middle" fill="white" font-size="14">(Django + PyTorch)</text>
+
+          <!-- Connection -->
+          <line x1="200" y1="160" x2="440" y2="160" stroke="white" stroke-width="2" marker-end="url(#arrow)" />
+          <text x="320" y="145" text-anchor="middle" fill="white" font-size="14">Subscribe</text>
+
+          <!-- SSE Stream (multiple updates) -->
+          <line x1="440" y1="190" x2="200" y2="190" stroke="yellow" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)" />
+          <line x1="440" y1="210" x2="200" y2="210" stroke="yellow" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)" />
+          <line x1="440" y1="230" x2="200" y2="230" stroke="yellow" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)" />
+
+          <!-- Labels -->
+          <text x="320" y="185" text-anchor="middle" fill="yellow" font-size="13">Event: Epoch 1 Start</text>
+          <text x="320" y="205" text-anchor="middle" fill="yellow" font-size="13">Event: Batch 32 Loss=0.45</text>
+          <text x="320" y="225" text-anchor="middle" fill="yellow" font-size="13">Event: Val Acc=92%</text>
+
+          <!-- Arrow Definition -->
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="white" />
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+    </div>
+
+    <p class="text-lg text-white/80 mt-8">
+      Server streams <span class="text-yellow-300">continuous training updates</span> → client updates UI instantly.
+    </p>
+
+  </div>
+</div>
+
+
+
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+      Django Project with htmx SSE for Training Updates
+    </h1>
+
+    <!-- Commands -->
+    <div class="bg-black/40 rounded-2xl p-6 mb-6 text-left">
+      <h2 class="text-xl font-semibold text-yellow-300 mb-2">Step 1: Create Project & App</h2>
+      <pre class="text-green-200 text-sm"><code>
+mkdir mysite
+cd mysite
+python -m venv .venv 
+.\.venv\scripts\activate
+django-admin startproject mysite .
+python manage.py startapp myapp
+      </code></pre>
+    </div>
+
+    <!-- View -->
+    <div class="bg-black/40 rounded-2xl p-6 mb-6 text-left overflow-x-auto">
+      <h2 class="text-xl font-semibold text-yellow-300 mb-2">Step 2: Training View with SSE</h2>
+      <pre class="text-green-200 text-sm"><code>
+# myapp/views.py
+from django.http import StreamingHttpResponse
+import time
+
+def train_model(request):
+    def event_stream():
+        for epoch in range(1, 6):
+            # simulate training
+            time.sleep(1)
+            yield f"data: Epoch {epoch} completed\n\n"
+        yield "data: Training Finished!\n\n"
+    return StreamingHttpResponse(
+        event_stream(), content_type="text/event-stream"
+    )
+      </code></pre>
+    </div>
+
+    <!-- Template -->
+    <div class="bg-black/40 rounded-2xl p-6 text-left overflow-x-auto">
+      <h2 class="text-xl font-semibold text-yellow-300 mb-2">Step 3: HTML with htmx SSE</h2>
+      <pre class="text-green-200 text-sm"><code>
+<!-- myapp/templates/train.html -->
+&lt;button 
+  hx-get="/train/" 
+  hx-ext="sse" 
+  sse-connect="/train/"
+  sse-swap="message"
+  hx-swap="beforeend"
+&gt;Start Training&lt;/button&gt;
+
+&lt;div id="logs"&gt;&lt;/div&gt;
+      </code></pre>
+    </div>
+
+    <p class="text-lg text-white/80 mt-6">
+      SSE lets server push <span class="text-yellow-300">real-time logs</span> into the page while training runs.
+    </p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+
+    <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+      Hands-On Project: Real-Time Digit Recognition Website
+    </h1>
+
+    <div class="bg-black/40 rounded-2xl p-6 mb-6 text-left">
+      <h2 class="text-2xl font-semibold text-yellow-300 mb-4">Goal</h2>
+      <ul class="list-disc list-inside space-y-2 text-lg text-white/90">
+        <li>Build a <span class="text-yellow-300">Django + PyTorch web app</span></li>
+        <li>Train a <span class="text-yellow-300">SimpleCNN</span> model on MNIST dataset</li>
+        <li>Use <span class="text-yellow-300">htmx + SSE</span> to stream training progress</li>
+        <li>Allow users to <span class="text-yellow-300">draw digits on canvas</span></li>
+        <li>Send drawings to server → <span class="text-yellow-300">predict digit in real-time</span></li>
+      </ul>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 mt-8">
+      <!-- Training Section -->
+      <div class="bg-black/30 rounded-xl p-4">
+        <h3 class="text-xl font-semibold text-green-300 mb-2"> Training Page</h3>
+        <p class="text-white/80">Start training CNN model and watch live updates streamed via SSE.</p>
+      </div>
+
+      <!-- Prediction Section -->
+      <div class="bg-black/30 rounded-xl p-4">
+        <h3 class="text-xl font-semibold text-blue-300 mb-2"> Prediction Page</h3>
+        <p class="text-white/80">Draw a digit on canvas → server predicts → instant feedback on screen.</p>
+      </div>
+    </div>
+
+    <p class="text-lg text-white/80 mt-8">
+      By the end, you’ll have a <span class="text-yellow-300">working full-stack AI web app</span> that trains and predicts digits in real-time 
+    </p>
+  </div>
+</div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
