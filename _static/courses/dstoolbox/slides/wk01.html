@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชุดเครื่องมือสำหรับวิทยาการข้อมูล - สัปดาห์ 1</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tech-card {
+      transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/dstoolbox/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/dstoolbox/slides/wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            บทนำสู่<br>
+            <span class="text-yellow-300">ชุดเครื่องมือสำหรับวิทยาการข้อมูล</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Python • Git • Docker • Jupyter Notebook • MCP • Agent AI
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>อธิบายแนวคิดพื้นฐานของวิทยาการข้อมูลได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>ระบุเครื่องมือสำคัญที่ใช้ในงานวิทยาการข้อมูลได้อย่างน้อย 3 รายการ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>เข้าใจการใช้ Git และ GitHub สำหรับจัดการโค้ดและโครงการ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>ติดตั้งและใช้งานสภาพแวดล้อมสำหรับการวิเคราะห์ข้อมูลเบื้องต้นได้</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 mt-4 justify-center">
+              <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">5</div>
+              <span>เชื่อมโยงแนวคิดของ MCP และ Agent AI เข้ากับงานวิทยาการข้อมูลเบื้องต้นได้</span>
+            </div>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 1</span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            ภาพรวมของ<br>
+            <span class="text-yellow-300">วิทยาการข้อมูลและการใช้งานในโลกจริง</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            จากข้อมูลสู่ความรู้ • จากความรู้สู่การตัดสินใจ • จากการตัดสินใจสู่นวัตกรรม
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">สาระสำคัญของสัปดาห์ที่ 1 (ตอนที่ 2)</h2>
+            <ul class="list-disc pl-6 space-y-3 text-white/90">
+              <li>ทำความเข้าใจองค์ประกอบของวงจรการทำงานด้านวิทยาการข้อมูล (Data Science Workflow)</li>
+              <li>สำรวจบทบาทของนักวิทยาการข้อมูล (Data Scientist), นักวิเคราะห์ข้อมูล (Data Analyst), และวิศวกรข้อมูล (Data Engineer)</li>
+              <li>เรียนรู้ตัวอย่างการประยุกต์ใช้วิทยาการข้อมูลในธุรกิจ เช่น การตลาด การเงิน และสุขภาพ</li>
+              <li>แนะนำเครื่องมือยอดนิยม เช่น Python, R, SQL, Jupyter, และ Cloud-based Tools</li>
+              <li>อภิปรายถึงความสำคัญของความถูกต้องและจริยธรรมของข้อมูล</li>
+            </ul>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้ย่อย</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>อธิบายวงจรการทำงานของวิทยาการข้อมูลได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>ระบุบทบาทของผู้ที่เกี่ยวข้องในทีมวิทยาการข้อมูลได้อย่างถูกต้อง</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ยกตัวอย่างการประยุกต์ใช้วิทยาการข้อมูลในสถานการณ์จริงได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>ตระหนักถึงความสำคัญของจริยธรรมในการใช้ข้อมูล</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            เครื่องมือหลักใน<br>
+            <span class="text-yellow-300">ชุดเครื่องมือวิทยาการข้อมูล</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เครื่องมือสำคัญที่ช่วยให้นักวิทยาการข้อมูลทำงานได้อย่างมีประสิทธิภาพ
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">เครื่องมือพื้นฐานที่ต้องรู้จัก</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-yellow-300 font-semibold mb-2">🔹 ภาษาโปรแกรม</h3>
+                <ul class="list-disc pl-6 space-y-2 text-white/90">
+                  <li>Python — ภาษาหลักของงาน Data Science</li>
+                  <li>R — การวิเคราะห์เชิงสถิติ</li>
+                  <li>SQL — การดึงและจัดการข้อมูลจากฐานข้อมูล</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-yellow-300 font-semibold mb-2">🔹 เครื่องมือพัฒนาและวิเคราะห์</h3>
+                <ul class="list-disc pl-6 space-y-2 text-white/90">
+                  <li>Jupyter Notebook — สำหรับทดลองและนำเสนอการวิเคราะห์</li>
+                  <li>Google Colab — เครื่องมือบนคลาวด์สำหรับการคำนวณข้อมูล</li>
+                  <li>VS Code — เครื่องมือพัฒนาโค้ดที่ยืดหยุ่น</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-yellow-300 font-semibold mb-2 mt-4">🔹 การควบคุมเวอร์ชัน</h3>
+                <ul class="list-disc pl-6 space-y-2 text-white/90">
+                  <li>Git & GitHub — จัดการเวอร์ชันของโค้ดและทำงานร่วมกัน</li>
+                  <li>GitHub Copilot — ใช้ AI ช่วยเขียนโค้ด</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-yellow-300 font-semibold mb-2 mt-4">🔹 การจำลองสภาพแวดล้อม</h3>
+                <ul class="list-disc pl-6 space-y-2 text-white/90">
+                  <li>Docker — จัดการสภาพแวดล้อมการทำงานแบบพกพา</li>
+                  <li>Virtual Environments (venv, conda) — แยก dependencies ของโปรเจกต์</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้ย่อย</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ระบุเครื่องมือสำคัญใน Data Science Toolbox ได้อย่างน้อย 5 รายการ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>อธิบายหน้าที่ของแต่ละเครื่องมือในกระบวนการทำงานข้อมูลได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ตั้งค่าสภาพแวดล้อมสำหรับการวิเคราะห์ข้อมูลด้วย Python และ Jupyter ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>ใช้ Git เพื่อบันทึกและติดตามการเปลี่ยนแปลงของโค้ดได้</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การติดตั้งสภาพแวดล้อมสำหรับ<br>
+            <span class="text-yellow-300">วิทยาการข้อมูล</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เตรียมเครื่องมือพื้นฐานสำหรับเริ่มต้นงานด้าน Data Science
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">ขั้นตอนการติดตั้งและตั้งค่าสภาพแวดล้อม</h2>
+            <ol class="list-decimal pl-6 space-y-3 text-white/90">
+              <li><span class="font-semibold text-yellow-300">ติดตั้ง Python:</span> ดาวน์โหลดจาก <a href="https://www.python.org/downloads/" class="underline text-yellow-200">python.org</a> และตรวจสอบด้วยคำสั่ง <code>python --version</code>.</li>
+              <li><span class="font-semibold text-yellow-300">ติดตั้ง Anaconda หรือ Miniconda:</span> เพื่อจัดการแพ็กเกจและสภาพแวดล้อมการทำงาน.</li>
+              <li><span class="font-semibold text-yellow-300">ติดตั้ง VS Code:</span> ใช้เป็นเครื่องมือหลักในการพัฒนาโค้ด พร้อมติดตั้งส่วนขยาย <code>Python</code> และ <code>Jupyter</code>.</li>
+              <li><span class="font-semibold text-yellow-300">ติดตั้ง Git และสร้างบัญชี GitHub:</span> เพื่อควบคุมเวอร์ชันและทำงานร่วมกันกับทีม.</li>
+              <li><span class="font-semibold text-yellow-300">ติดตั้ง Jupyter Notebook / JupyterLab:</span> สำหรับเขียนและนำเสนอการวิเคราะห์ข้อมูล.</li>
+              <li><span class="font-semibold text-yellow-300">ติดตั้ง Docker (เสริม):</span> สำหรับจำลองสภาพแวดล้อมที่เหมือนกันทุกเครื่อง.</li>
+            </ol>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">คำสั่งเบื้องต้นที่ควรรู้</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-yellow-300 font-semibold mb-2">🐍 Python / Conda</h3>
+                <ul class="list-disc pl-6 space-y-2 text-white/90">
+                  <li><code>conda create -n dsenv python=3.11</code> — สร้างสภาพแวดล้อมใหม่</li>
+                  <li><code>conda activate dsenv</code> — เปิดใช้งานสภาพแวดล้อม</li>
+                  <li><code>pip install numpy pandas matplotlib</code> — ติดตั้งไลบรารีพื้นฐาน</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-yellow-300 font-semibold mb-2">🧰 Git / Jupyter</h3>
+                <ul class="list-disc pl-6 space-y-2 text-white/90">
+                  <li><code>git init</code> — สร้าง repository ใหม่</li>
+                  <li><code>git clone &lt;url&gt;</code> — คัดลอกโปรเจกต์จาก GitHub</li>
+                  <li><code>jupyter notebook</code> — เปิดใช้งาน Jupyter Notebook</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้ย่อย</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ติดตั้งและตั้งค่าสภาพแวดล้อม Python สำหรับ Data Science ได้สำเร็จ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>ใช้ Jupyter Notebook เพื่อทดลองโค้ดและวิเคราะห์ข้อมูลได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ใช้ Git เพื่อจัดการโครงการและอัปโหลดโค้ดขึ้น GitHub ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">4</div>
+                <span>เข้าใจแนวคิดของ Docker และสามารถใช้งานเบื้องต้นได้</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            สรุปและแบบฝึกหัดท้ายบท<br>
+            <span class="text-yellow-300">บทนำสู่ชุดเครื่องมือวิทยาการข้อมูล</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ทบทวนเนื้อหาและฝึกใช้เครื่องมือจริง เพื่อเตรียมพร้อมสำหรับสัปดาห์ถัดไป
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">สรุปประเด็นสำคัญของสัปดาห์ที่ 1</h2>
+            <ul class="list-disc pl-6 space-y-3 text-white/90">
+              <li>เข้าใจภาพรวมของวิทยาการข้อมูลและบทบาทในโลกยุคดิจิทัล</li>
+              <li>รู้จักวงจรการทำงานของ Data Science (Data → Knowledge → Action)</li>
+              <li>แนะนำเครื่องมือสำคัญ เช่น Python, Git, Docker, Jupyter Notebook</li>
+              <li>สามารถติดตั้งและตั้งค่าสภาพแวดล้อมเบื้องต้นสำหรับการทำงานข้อมูลได้</li>
+              <li>เริ่มต้นใช้ Git และ GitHub สำหรับการจัดการโค้ดและโครงงานกลุ่มได้</li>
+            </ul>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">แบบทดสอบทบทวนความเข้าใจ (Quick Quiz)</h2>
+            <ol class="list-decimal pl-6 space-y-3 text-white/90">
+              <li>เครื่องมือใดใช้สำหรับควบคุมเวอร์ชันของโค้ดในงานวิทยาการข้อมูล?</li>
+              <li>Docker มีประโยชน์อย่างไรในงาน Data Science?</li>
+              <li>เหตุใด Jupyter Notebook จึงเป็นที่นิยมในการวิเคราะห์ข้อมูล?</li>
+              <li>จงยกตัวอย่างการประยุกต์ใช้วิทยาการข้อมูลในชีวิตประจำวัน 1 ตัวอย่าง</li>
+              <li>Model Context Protocol (MCP) และ Agent AI เกี่ยวข้องกับ Data Science อย่างไร?</li>
+            </ol>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">แบบฝึกหัดปฏิบัติ (Assignment)</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-yellow-300 text-yellow-900 font-bold flex items-center justify-center rounded-full text-sm mt-1">1</div>
+                <span>ติดตั้ง Python, VS Code, Git และ Jupyter Notebook บนเครื่องของคุณ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-yellow-300 text-yellow-900 font-bold flex items-center justify-center rounded-full text-sm mt-1">2</div>
+                <span>สร้างโฟลเดอร์โปรเจกต์ชื่อ <code>ds-toolbox-week1</code> และเริ่มต้น repository ด้วย Git</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-yellow-300 text-yellow-900 font-bold flex items-center justify-center rounded-full text-sm mt-1">3</div>
+                <span>เขียนโค้ด Python สั้น ๆ ใน Jupyter Notebook เพื่ออ่านและแสดงข้อมูลจากไฟล์ CSV</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-yellow-300 text-yellow-900 font-bold flex items-center justify-center rounded-full text-sm mt-1">4</div>
+                <span>อัปโหลดโปรเจกต์ขึ้น GitHub และแชร์ลิงก์ในห้องเรียน</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-green-500/20 backdrop-blur-sm rounded-2xl p-4 mb-8 text-lg font-light">
+            🎯 <span class="font-semibold">ภารกิจ:</span> สร้างสภาพแวดล้อมที่พร้อมสำหรับการเรียนรู้ Data Science  
+            และเตรียมโครงงานขนาดเล็กสำหรับสัปดาห์ถัดไป “Version Control System”
+          </div>
+
+        </div>
+      </div>
+
+      <!-- === -->
+
+    </div>
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
