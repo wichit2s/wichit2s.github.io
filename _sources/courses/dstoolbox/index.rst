@@ -17,6 +17,9 @@
 แผนการสอนรายสัปดาห์ (15 สัปดาห์)
 ------------------------------------
 
+.. warning:
+   เพิ่มลไลด์รายสัปดาห์
+
 .. list-table:: แผนการสอน
    :header-rows: 1
    :widths: 5 35 40 20
@@ -37,98 +40,84 @@
      - ติดตั้ง Python, Jupyter, Docker
 
        * สาธิตการใช้ MCP ในการตั้งค่าสภาพแวดล้อม
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk02.html>`_
      - การบ้าน
    * - 3
      - ระบบควบคุมเวอร์ชัน (Git, GitHub)
      - ฝึกใช้ branching, merging, pull requests
 
        * ใช้ Copilot สร้าง commit message อัตโนมัติ
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk03.html>`_
      - แบบทดสอบ
    * - 4
      - การทำงานร่วมกันในโครงการ Open Source
      - จัดทำ repo โครงการร่วมกัน
 
        * ใช้ metadata จาก MCP เพื่อจัดเก็บข้อมูลโครงการ
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk04.html>`_
      - โครงงานย่อย
    * - 5
      - ภาษาโปรแกรมสำหรับวิทยาการข้อมูล (Python)
      - ใช้ Pandas, NumPy, Matplotlib
 
        * ใช้ AI ช่วยในการสำรวจข้อมูล (EDA)
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk05.html>`_
      - การบ้าน
    * - 6
      - แนะนำ MCP และ Agent AI
      - บรรยาย + สาธิตการสร้าง context ผ่าน MCP
 
        * สร้าง context prompt สำหรับชุดข้อมูล
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk06.html>`_
      - แบบฝึกหัด
    * - 7
      - โครงงานย่อย Midterm (MCP Workflow)
      - ทำงานกลุ่มออกแบบ pipeline ด้วย MCP
 
        * ประยุกต์ใช้ context layers เพื่อจัดการข้อมูล
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk07.html>`_
      - โครงงานกลางภาค
    * - 8
      - โมดูลสำหรับวิทยาการข้อมูล
      - พัฒนา workflow ด้วย Scikit-Learn, PyCaret
 
        * ใช้ Agent AI ประเมินโมเดลอัตโนมัติ
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk08.html>`_
      - การบ้าน
    * - 9
      - Docker และการทำซ้ำงาน (Reproducibility)
      - สร้าง image สำหรับ data project
 
        * ฝัง metadata ของ MCP ใน Docker build
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk09.html>`_
      - แบบฝึกหัด
    * - 10
      - แนะนำ Agent Development Kit (ADK)
      - เรียนรู้การสร้าง agent สำหรับ query ข้อมูล
 
        *  สร้าง command-based data agent
-       *  `สไลด์ <../../_static/courses/dstoolbox/slides/wk10.html>`_
      - แบบทดสอบ
    * - 11
      - การประยุกต์ใช้ Agent AI ในโครงงานวิทยาการข้อมูล
      - ใช้ ADK สร้าง agent จัดการข้อมูล
 
        * ออกแบบ chatbot สำหรับสอบถามชุดข้อมูล
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk11.html>`_
      - โครงงานย่อย
    * - 12
      - การจัดการโครงงานวิทยาการข้อมูล
      - วางแผน sprint, milestone, issue tracking
 
        * ใช้ AI agent ช่วยตรวจโค้ดและวิเคราะห์ issue
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk12.html>`_
      - การสังเกตพฤติกรรม
    * - 13
      - การพัฒนาและทดสอบโครงงาน
      - พัฒนาและทดสอบระบบพร้อม Agent AI
 
        * รวม MCP metadata ในรายงานโครงงาน
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk13.html>`_
      - รายงาน
    * - 14
      - การทำงานเป็นทีมและการนำเสนอ
      - ซ้อมนำเสนอและแลกเปลี่ยน feedback
 
        * ใช้ MCP สร้างสรุปข้อมูลอัตโนมัติ
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk14.html>`_
      - ซ้อมนำเสนอ
    * - 15
      - การนำเสนอผลงานและสรุปผล
      - นำเสนอผลงานและสะท้อนการเรียนรู้
 
        * ประเมินความสามารถเชิงบูรณาการ MCP + ADK
-       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk15.html>`_
      - นำเสนอปลายภาค
 
 
