@@ -40,12 +40,14 @@
      - ติดตั้ง Python, Jupyter, Docker
 
        * สาธิตการใช้ MCP ในการตั้งค่าสภาพแวดล้อม
+       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk02.html>`_
      - การบ้าน
    * - 3
      - ระบบควบคุมเวอร์ชัน (Git, GitHub)
      - ฝึกใช้ branching, merging, pull requests
 
        * ใช้ Copilot สร้าง commit message อัตโนมัติ
+       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk03.html>`_
      - แบบทดสอบ
    * - 4
      - การทำงานร่วมกันในโครงการ Open Source
