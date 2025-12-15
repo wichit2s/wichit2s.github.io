@@ -67,6 +67,7 @@
      - บรรยาย + สาธิตการสร้าง context ผ่าน MCP
 
        * สร้าง context prompt สำหรับชุดข้อมูล
+       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk05.html>`_
      - แบบฝึกหัด
    * - 7
      - โครงงานย่อย Midterm (MCP Workflow)
