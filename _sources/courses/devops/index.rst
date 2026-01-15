@@ -34,6 +34,8 @@ DevOps
      - บรรยาย (1 ชั่วโมง)
      - ปฏิบัติการ (2 ชั่วโมง)
    * - **สัปดาห์ที่ 1**
+
+       * `slides <../../_static/courses/devops/slides/wk01.html>`_
      - **บทนำสู่ DevOps และวัฒนธรรม (Introduction to DevOps & Culture)**
 
        * DevOps คืออะไร? ความหมาย, ที่มา, ประโยชน์

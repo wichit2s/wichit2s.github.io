@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องมือทางวิทยาการข้อมูล - สัปดาห์ 5ความรู้เพิ่มเติมเกี่ยวกับโมเดล - สัปดาห์ 4</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Kanit', sans-serif;
+}
+
+    .slide {
+      min-height: 100vh;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tech-card {
+      transition: all 0.3s ease;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <!-- แผนการสอน -->
+    <div class="home flex items-center gap-4">
+      <a href="https://wichit2s.github.io/courses/webdev/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <!-- ปุ่มก่อนหน้า -->
+      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
+      <div class="flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/webdev/slides/wk04.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- ปุ่มถัดไป -->
+      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            การทำงานร่วมกันในโครงการ<br>
+            <span class="text-yellow-300">ด้วย GitHub</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Pull Request • Issue • Collaboration Workflow
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+              <div class="flex items-start gap-3"><div class="badge">1</div><span>สร้าง repository ร่วมกันกับทีมได้</span></div>
+              <div class="flex items-start gap-3"><div class="badge">2</div><span>ใช้ pull request และ issue สำหรับการจัดการงานกลุ่มได้</span></div>
+              <div class="flex items-start gap-3"><div class="badge">3</div><span>ใช้ branch workflow เพื่อหลีกเลี่ยงความขัดแย้งของโค้ดได้</span></div>
+              <div class="flex items-start gap-3"><div class="badge">4</div><span>บันทึกและติดตามการเปลี่ยนแปลงของโครงการอย่างเป็นระบบ</span></div>
+            </div>
+          </div>
+
+          <div class="text-lg text-white/80">
+            <span class="week-label">สัปดาห์ที่ 4</span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การสร้างโปรเจกต์ & โฟลว์การทำงานร่วมกัน<br>
+            <span class="text-yellow-300">บน GitHub</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Repository • Branch • Pull Request Workflow
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อสำคัญของวันนี้</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>การสร้าง repository สำหรับงานกลุ่มและกำหนดโครงสร้างไฟล์</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>การสร้าง branch ตามหน้าที่ เช่น feature, bugfix, hotfix</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>การเปิด Pull Request (PR) พร้อมคำอธิบายและการ Review</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>การใช้ Issue เพื่อวางแผนงานและจัดลำดับความสำคัญ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>การเชื่อมโยง Issue ↔ Pull Request เพื่อการติดตามงาน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>การ Resolve conflict แบบพื้นฐานก่อน merge</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            ทำความเข้าใจ<br>
+            <span class="text-yellow-300">Git Branch Workflow</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Feature Branch • Main/Dev Branch • Merge Strategy
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">แนวทางการทำงาน</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>ใช้ <strong>Main Branch</strong> เป็นโค้ดเวอร์ชันเสถียรที่สุด</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>ใช้ <strong>Dev Branch</strong> สำหรับโค้ดที่กำลังพัฒนา</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>สร้าง <strong>Feature Branch</strong> สำหรับงานแต่ละฟีเจอร์</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>รวมงานผ่าน <strong>Pull Request</strong> พร้อมการ Review</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>ใช้ commit message แบบสั้น ชัดเจน และสม่ำเสมอ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>แก้ conflict ก่อน merge เพื่อป้องกันปัญหาระยะยาว</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            ขั้นตอนการส่งงานด้วย<br>
+            <span class="text-yellow-300">Pull Request (PR)</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            From Branch → Pull Request → Review → Merge
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">กระบวนการทำงาน</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>สร้าง branch ใหม่สำหรับงานที่รับผิดชอบ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>เขียนโค้ดและ commit พร้อมข้อความที่อธิบายชัดเจน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>เปิด Pull Request และเลือก branch ที่ต้องการ merge เข้า</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>ระบุคำอธิบายงาน เช่น ทำอะไร แก้บั๊กไหน หรือเพิ่มฟีเจอร์ใด</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>ให้เพื่อนร่วมทีมตรวจสอบ (Review) และแสดงความคิดเห็น</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>แก้ไขตามคำแนะนำแล้วกด “Update PR”</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">7</div>
+                <span>เมื่อทุกอย่างสมบูรณ์แล้ว กด Merge PR เพื่อรวมเข้ากับ branch หลัก</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การจัดการงานด้วย<br>
+            <span class="text-yellow-300">GitHub Issues</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Task Tracking • Discussion • Project Planning
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">สิ่งที่ควรรู้</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>Issue ใช้สำหรับสร้าง “งาน” ที่ต้องทำ เช่น ฟีเจอร์ บั๊ก หรือไอเดีย</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>ตั้งชื่อ Issue ให้ชัดเจนและมีคำอธิบายที่เข้าใจง่าย</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>กำหนดผู้รับผิดชอบงาน (Assignee) และป้ายกำกับ (Labels)</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>ใช้ Checklists เพื่อติดตามความคืบหน้าแต่ละขั้นตอน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>เชื่อมโยง Issue กับ Pull Request เพื่อให้เห็นว่าใครแก้อะไรอยู่</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>ปิด Issue เมื่อโค้ดที่เกี่ยวข้องถูก merged เรียบร้อยแล้ว</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การแก้ไขปัญหา<br>
+            <span class="text-yellow-300">Merge Conflict</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Why Conflicts Happen • How to Resolve • Best Practices
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">แนวทางการจัดการ</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>Conflict เกิดขึ้นเมื่อไฟล์เดียวกันถูกแก้ไขในตำแหน่งเดียวกัน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>ใช้คำสั่ง <code>git pull</code> เพื่อดึงโค้ดล่าสุดก่อนเริ่มทำงาน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>เมื่อเกิด conflict ให้เปิดไฟล์เพื่อดูส่วนที่ Git ทำเครื่องหมายไว้</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>เลือกว่าจะใช้โค้ดของตัวเอง ของเพื่อน หรือรวมเข้าด้วยกัน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>แก้ไขเสร็จแล้วให้ commit ใหม่เพื่อยืนยันการแก้ conflict</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>หลีกเลี่ยง conflict ด้วยการซิงก์โค้ดบ่อย ๆ และใช้ branch แยกงาน</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            แนวทางการทำงานร่วมกัน<br>
+            <span class="text-yellow-300">อย่างมีประสิทธิภาพ</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Communication • Workflow Discipline • Responsibility
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">ข้อควรปฏิบัติ</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>กำหนดมาตรฐานการตั้งชื่อ branch, commit และ PR ให้เหมือนกันทั้งทีม</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>อัปเดตสถานะงานใน Issue หรือ Project Board อยู่เสมอ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>เปิด PR เล็ก ๆ บ่อย ๆ แทน PR ใหญ่ที่ตรวจสอบยาก</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>Review โค้ดของเพื่อนด้วยความสุภาพ พร้อมคำแนะนำที่สร้างสรรค์</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>แก้ conflict ให้เร็วที่สุดเมื่อมีคำขอจากผู้ร่วมงาน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>ร่วมสื่อสารผ่านช่องทางกลาง เช่น Discord, LINE Group, GitHub Discussions</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            กิจกรรมปฏิบัติ<br>
+            <span class="text-yellow-300">Workshop: GitHub Collaboration</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Branch • Issue • Pull Request • Conflict Resolution
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">สิ่งที่นักศึกษาต้องทำ</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>สร้าง repository กลุ่มพร้อม README เบื้องต้น</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>เปิด Issue เพื่อแบ่งงานตามความรับผิดชอบของแต่ละคน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>สร้าง feature branch และพัฒนาโค้ดอย่างน้อย 1 ส่วน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>เปิด Pull Request พร้อมคำอธิบายงานที่ทำ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>ให้เพื่อน review PR และแสดงความคิดเห็น</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>แก้ conflict (ถ้ามี) และ merge PR เข้าสู่ branch หลัก</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            การวางแผนงานด้วย<br>
+            <span class="text-yellow-300">GitHub Project Board</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Kanban • Task Flow • Tracking Progress
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">สิ่งที่ควรใช้งาน</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>สร้างบอร์ดแบบ <strong>Kanban</strong> (To Do / In Progress / Done)</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>เชื่อมโยง Issue กับการ์ดบนบอร์ดเพื่อการติดตามที่ง่ายขึ้น</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>ย้ายการ์ดเมื่อเริ่มทำ–กำลังทำ–เสร็จสิ้น เพื่ออัพเดตสถานะ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>ใช้ Labels เพื่อแบ่งหมวดงาน เช่น feature, bug, documentation</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>มอบหมายงานให้สมาชิกทีมผ่านการ์ดอย่างชัดเจน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>ใช้ Automation ของ GitHub เพื่อย้ายการ์ดอัตโนมัติเมื่อ PR ถูก merged</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            สรุปสาระสำคัญของการทำงานร่วมกันด้วย<br>
+            <span class="text-yellow-300">Git & GitHub</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Collaboration • Workflow • Productivity
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">จุดสำคัญที่ต้องจำ</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>ใช้ branch แยกงานเสมอเพื่อหลีกเลี่ยง conflict และทำงานคู่ขนาน</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>Pull Request คือหัวใจของการตรวจสอบคุณภาพโค้ด (Review)</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>Issue ช่วยให้การแบ่งงานและติดตามความคืบหน้าเป็นระบบ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>Project Board ทำให้เห็นภาพรวมของงานทั้งหมดในทีม</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>สื่อสารกันเสมอเพื่อลดความคลาดเคลื่อนและทำงานได้รวดเร็วขึ้น</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>Commit บ่อย ๆ เขียนข้อความให้ชัดเจนและมีความหมาย</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            มอบหมายงานกลุ่ม<br>
+            <span class="text-yellow-300">GitHub Collaboration Project</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Repository • Project Board • Agile Planning
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">รายละเอียดงานที่ต้องทำ</h2>
+
+            <div class="space-y-4 text-lg leading-relaxed">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>สร้างกลุ่ม <strong>4–5 คน</strong></span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>ให้ตัวแทนสร้าง <strong>private Repository</strong> ชื่อ <code>dstoolbox68prj</code></span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>เพิ่มสมาชิกทุกคนเป็น <strong>collaborator</strong> และเพิ่ม <strong>wichit2s</strong></span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>สร้าง <strong>GitHub Project</strong> ชื่อเดียวกับ repository และเชื่อม/นำเข้า <strong>issues</strong> จาก <code>dstoolbox68prj</code></span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>ตั้งค่าบทบาทสมาชิกใน Project ให้ทุกคน (รวม <strong>wichit2s</strong>) เป็น <strong>admin</strong></span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>เลือกเว็บไซต์ประกาศหางานที่ต้องการ <strong>scrape</strong> ข้อมูล</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">7</div>
+                <span>เขียนแผนการดำเนินโครงงานและการแบ่งงานตามหลัก <strong>SCRUM / Agile</strong></span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">8</div>
+                <span>เขียนข้อมูลโครงงาน รายชื่อสมาชิก เว็บประกาศงาน และการแบ่งงานลงใน <code>README.md</code></span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            ทำความรู้จัก<br>
+            <span class="text-yellow-300">Agile Development</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Flexible • Fast Delivery • Continuous Improvement
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">แนวคิดสำคัญของ Agile</h2>
+
+            <div class="space-y-4 text-lg">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>การพัฒนาแบบยืดหยุ่น ปรับเปลี่ยนตามความต้องการได้</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>แบ่งงานออกเป็นรอบสั้น ๆ (Iterations / Sprints)</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>เน้นการสื่อสารร่วมกันในทีมอย่างต่อเนื่อง</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>ส่งมอบงานได้เร็ว มองเห็นความคืบหน้าชัดเจน</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Scrum Framework<br>
+            <span class="text-yellow-300">Roles • Events • Artifacts</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Simple Yet Powerful Team Process
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-4">องค์ประกอบหลักของ Scrum</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3"><div class="badge">1</div><span><strong>Product Owner</strong> – กำหนดความต้องการและลำดับความสำคัญ</span></div>
+              <div class="flex items-start gap-3"><div class="badge">2</div><span><strong>Scrum Master</strong> – สนับสนุนทีมและแก้ปัญหาอุปสรรค</span></div>
+              <div class="flex items-start gap-3"><div class="badge">3</div><span><strong>Development Team</strong> – ลงมือทำงานจริง</span></div>
+
+              <div class="flex items-start gap-3"><div class="badge">4</div><span><strong>Sprint</strong> – รอบการทำงาน 1–2 สัปดาห์</span></div>
+              <div class="flex items-start gap-3"><div class="badge">5</div><span><strong>Daily Scrum</strong> – ประชุมรายวัน 15 นาที</span></div>
+              <div class="flex items-start gap-3"><div class="badge">6</div><span><strong>Review & Retrospective</strong> – ตรวจงานและวางแผนพัฒนา</span></div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            Backlogs<br>
+            <span class="text-yellow-300">Product vs Sprint</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Organizing Work with Priority
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">สอง Backlog สำคัญ</h2>
+
+            <div class="space-y-4 text-lg">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span><strong>Product Backlog:</strong> รายการงานทั้งหมดของโปรเจกต์ จัดลำดับโดย Product Owner</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span><strong>Sprint Backlog:</strong> งานที่ทีมเลือกมาทำใน Sprint นั้น ๆ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>Backlog ควรมีคำอธิบายชัดเจน พร้อม Acceptance Criteria</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            User Stories<br>
+            <span class="text-yellow-300">& Acceptance Criteria</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Clear • Simple • User-Focused
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">รูปแบบของ User Story</h2>
+
+            <div class="space-y-4 text-lg">
+
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <strong>As a</strong> (user type)<br>
+                <strong>I want</strong> (functionality)<br>
+                <strong>So that</strong> (benefit)
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>ควรสั้น กระชับ และเน้นผู้ใช้เป็นศูนย์กลาง</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span><strong>Acceptance Criteria</strong> คือเงื่อนไขการทำงานที่ถือว่าทำสำเร็จแล้ว</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>ควรเขียนเป็นข้อ ๆ เช่น “ระบบต้องแสดงรายการงานทั้งหมดได้”</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            GitHub Project Management<br>
+            <span class="text-yellow-300">แบบ Agile / Scrum</span>
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Boards • Issues • Milestones • Automation
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
+
+            <h2 class="text-2xl font-semibold mb-4">GitHub ช่วยทีมได้อย่างไร?</h2>
+
+            <div class="grid md:grid-cols-2 gap-5 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="badge">1</div>
+                <span>ใช้ <strong>Project Board (Kanban)</strong> ติดตามงานของ Sprint</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">2</div>
+                <span>ใช้ <strong>Issues</strong> แทน User Stories/Tasks</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">3</div>
+                <span>สร้าง <strong>Milestones</strong> เพื่อกำหนดรอบ Sprint</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">4</div>
+                <span>เชื่อมโยง PR ↔ Issues เพื่อดูความคืบหน้าอัตโนมัติ</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">5</div>
+                <span>ใช้ Automation เพื่อย้ายการ์ดเมื่อ PR ถูก merged</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="badge">6</div>
+                <span>ทบทวนงานหลัง Sprint ผ่าน Review & Retrospective</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

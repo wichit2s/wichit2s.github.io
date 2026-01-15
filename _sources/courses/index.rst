@@ -11,6 +11,7 @@ Courses
    mobiledev/index
    datawarehousing/index
    dstoolbox/index
+   oop/index
    devops/index
 
 
