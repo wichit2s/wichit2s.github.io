@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a @click="currentSlide=2" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Agenda </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/devops/wk02.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            <span class="text-yellow-300">DevOps - 02 Git</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl mb-8">
+            <img src="qrcodes/wk02.png" alt="qrcode" class="h-full w-auto mx-auto" />
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การควบคุมเวอร์ชันด้วย Git</h2>
+            <p class="text-xl text-white/90 mb-8 leading-relaxed">
+              Git คือระบบควบคุมเวอร์ชันแบบกระจายศูนย์ (Distributed VCS) ที่ช่วยให้ทีมพัฒนาซอฟต์แวร์สามารถบันทึกการเปลี่ยนแปลงของโค้ด ติดตามประวัติ และทำงานร่วมกันได้อย่างมีประสิทธิภาพสูงสุด
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">หัวใจสำคัญ</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>การติดตามประวัติ (History):</strong> บันทึกทุกการเปลี่ยนแปลง (Snapshots) และสามารถย้อนกลับไปยังเวอร์ชันก่อนหน้าได้</li>
+                <li><strong>ระบบกระจายศูนย์ (Distributed):</strong> นักพัฒนาทุกคนมีสำเนาของ Repository ทั้งหมด ทำให้ทำงานได้แม้ไม่มีอินเทอร์เน็ต</li>
+                <li><strong>Branching & Merging:</strong> รองรับการแยกสาขาเพื่อพัฒนาฟีเจอร์ใหม่และการรวมโค้ดที่รวดเร็ว</li>
+                <li><strong>การทำงานร่วมกัน (Collaboration):</strong> เชื่อมต่อกับ Remote Repository (เช่น GitHub) เพื่อการทำงานเป็นทีม</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 2: บรรยาย</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 2: What is Version Control? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ระบบควบคุมเวอร์ชันคืออะไร? (What is Version Control?)</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            ระบบที่ทำหน้าที่บันทึกการเปลี่ยนแปลงของไฟล์หรือชุดไฟล์เมื่อเวลาผ่านไป เพื่อให้คุณสามารถเรียกดูเวอร์ชันเฉพาะในอดีตกลับมาได้ [1]
+          </p>
+          <div class="grid md:grid-cols-2 gap-6 mt-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-3">ทำไมต้องใช้?</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2">
+                <li><strong>ย้อนกลับ (Revert):</strong> กู้คืนไฟล์หรือทั้งโปรเจกต์กลับสู่สถานะก่อนหน้า [1]</li>
+                <li><strong>เปรียบเทียบ (Compare):</strong> ดูความเปลี่ยนแปลงที่เกิดขึ้นเมื่อเวลาผ่านไป [1]</li>
+                <li><strong>ตรวจสอบ (Audit):</strong> ดูว่าใครเป็นคนแก้ไขและแก้ไขเมื่อไหร่ [1]</li>
+                <li><strong>กู้คืน (Recover):</strong> ป้องกันความเสียหายจากการลบไฟล์ผิดพลาด [1]</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 flex items-center justify-center">
+              <p class="text-lg italic">
+                "ถ้าคุณเป็นกราฟิกดีไซเนอร์หรือนักพัฒนาเว็บ คุณย่อมต้องการเก็บทุกเวอร์ชันของงานไว้ VCS คือสิ่งที่ฉลาดที่สุดที่จะนำมาใช้" [1]
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Evolution of VCS -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">วิวัฒนาการของระบบ VCS</h2>
+          <div class="space-y-6">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-2xl font-semibold mb-2 text-yellow-300">1. Local VCS (เช่น RCS)</h3>
+              <p class="text-lg">เก็บฐานข้อมูลการเปลี่ยนแปลงไว้บนเครื่องคอมพิวเตอร์เพียงเครื่องเดียว ง่ายแต่เสี่ยงต่อการสูญหายหากฮาร์ดดิสก์พัง [2]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-2xl font-semibold mb-2 text-blue-300">2. Centralized VCS (เช่น Subversion, CVS)</h3>
+              <p class="text-lg">มีเซิร์ฟเวอร์กลางเก็บไฟล์ทุกเวอร์ชัน ทุกคนดึงไฟล์จากที่นี่ ข้อดีคือจัดการง่าย แต่ถ้าเซิร์ฟเวอร์ล่ม ทุกคนทำงานต่อไม่ได้ [2]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-2xl font-semibold mb-2 text-green-300">3. Distributed VCS (เช่น Git, Mercurial)</h3>
+              <p class="text-lg">ไคลเอนต์ไม่ได้แค่ดึงไฟล์ล่าสุด แต่ "โคลน" (Mirror) ฐานข้อมูลทั้งหมดมาไว้ที่เครื่องตัวเอง ทำให้ทำงานได้แม้ไม่มีอินเทอร์เน็ตและสำรองข้อมูลได้สมบูรณ์ [3]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: What is Git? -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Git คืออะไร?</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            ถือกำเนิดขึ้นในปี 2005 โดย Linus Torvalds เพื่อใช้พัฒนา Linux Kernel โดยเน้นแก้ปัญหาของระบบแบบเดิม [3]
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+            <h3 class="text-2xl font-semibold mb-6">เป้าหมายหลักของการออกแบบ</h3>
+            <div class="grid grid-cols-2 gap-4 text-left text-lg">
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🚀</span>
+                <span><strong>ความเร็ว (Speed):</strong> ทำงานได้รวดเร็วมาก</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">Simple</span>
+                <span><strong>การออกแบบที่เรียบง่าย:</strong> โครงสร้างไม่ซับซ้อน</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🌿</span>
+                <span><strong>Branching:</strong> รองรับการแตกสาขาแบบ Non-linear ได้ดีเยี่ยม</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">Distributed</span>
+                <span><strong>กระจายศูนย์:</strong> ทำงานแบบ Distributed เต็มรูปแบบ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Git Architecture (Snapshots) -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สถาปัตยกรรม Git: Snapshots ไม่ใช่ Deltas</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            ความแตกต่างที่สำคัญที่สุดของ Git คือวิธีการเก็บข้อมูล [4]
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 mt-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-3 text-red-300">ระบบอื่น (Deltas)</h3>
+              <p class="text-lg mb-4">เก็บข้อมูลเป็นรายการของ "ความเปลี่ยนแปลง" (Changeset) ของแต่ละไฟล์ตามลำดับเวลา</p>
+              <div class="text-sm opacity-75">File A (v1) -> Change -> Change</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-2 border-green-400">
+              <h3 class="text-2xl font-semibold mb-3 text-green-300">Git (Snapshots)</h3>
+              <p class="text-lg mb-4">เก็บภาพรวม (Snapshot) ของไฟล์ทั้งหมด ณ ขณะนั้น ถ้าไฟล์ไหนไม่เปลี่ยน Git จะไม่ออกไฟล์ใหม่ แต่จะชี้ลิงก์ไปที่ไฟล์เดิม [4]</p>
+              <div class="text-sm opacity-75">Snapshot A -> Snapshot B -> Snapshot C</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: The Three States -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">3 สถานะหลักของ Git (The Three States)</h2>
+          <p class="text-xl text-white/90 mb-8">ไฟล์ใน Git จะอยู่ในสถานะใดสถานะหนึ่งต่อไปนี้เสมอ [5]</p>
+
+          <div class="flex flex-col space-y-4">
+            <div class="flex items-center bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+              <div class="bg-red-500 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-6">1</div>
+              <div class="text-left">
+                <h3 class="text-2xl font-bold">Modified (แก้ไขแล้ว)</h3>
+                <p class="text-lg">คุณได้แก้ไขไฟล์แล้ว แต่ยังไม่ได้บันทึกลงในฐานข้อมูล (Working Directory)</p>
+              </div>
+            </div>
+
+            <div class="flex items-center bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+              <div class="bg-yellow-500 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-6">2</div>
+              <div class="text-left">
+                <h3 class="text-2xl font-bold">Staged (เตรียมจัดเก็บ)</h3>
+                <p class="text-lg">คุณได้เลือกไฟล์ที่แก้ไขแล้ว เพื่อเตรียมไว้สำหรับการ Commit ครั้งต่อไป (Staging Area)</p>
+              </div>
+            </div>
+
+            <div class="flex items-center bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+              <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-6">3</div>
+              <div class="text-left">
+                <h3 class="text-2xl font-bold">Committed (บันทึกแล้ว)</h3>
+                <p class="text-lg">ข้อมูลถูกบันทึกลงในฐานข้อมูลของ Git อย่างปลอดภัยแล้ว (.git directory)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: First-Time Setup -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การตั้งค่าเริ่มต้น (First-Time Setup)</h2>
+          <p class="text-xl text-white/90 mb-8">
+            สิ่งแรกที่ต้องทำหลังติดตั้ง Git คือการระบุตัวตนของคุณ เพราะข้อมูลนี้จะถูกฝังอยู่ในทุก Commit [5]
+          </p>
+
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-8 font-mono text-left space-y-4 shadow-xl border border-white/20">
+            <div>
+              <p class="text-gray-400 mb-1"># ตั้งชื่อผู้ใช้</p>
+              <p class="text-green-400">$ git config --global user.name "John Doe"</p>
+            </div>
+            <div>
+              <p class="text-gray-400 mb-1"># ตั้งอีเมล (สำคัญสำหรับ GitHub/GitLab)</p>
+              <p class="text-green-400">$ git config --global user.email johndoe@example.com</p>
+            </div>
+            <div>
+              <p class="text-gray-400 mb-1"># ตรวจสอบค่าที่ตั้งไว้</p>
+              <p class="text-green-400">$ git config --list</p>
+            </div>
+          </div>
+          <p class="text-sm text-white/70 mt-6">หมายเหตุ: ใช้ --global เพื่อตั้งค่าเพียงครั้งเดียวสำหรับทุกโปรเจกต์ในเครื่องนี้ [5]</p>
+        </div>
+      </div>
+
+      <!-- Slide 8: Getting a Repository -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การเริ่มต้น Repository</h2>
+          <div class="grid md:grid-cols-2 gap-8 mt-4">
+
+            <!-- Option 1: Git Init -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 flex flex-col items-center">
+              <div class="text-6xl mb-4">📂</div>
+              <h3 class="text-2xl font-bold mb-4">สร้างใหม่ (Initialize)</h3>
+              <p class="text-lg mb-4 text-center">สำหรับเริ่มโปรเจกต์ใหม่ หรือนำโฟลเดอร์ที่มีอยู่เข้าสู่ Git</p>
+              <div class="bg-black/50 p-4 rounded-lg w-full font-mono text-left">
+                <p class="text-green-400">$ git init --bare djrepo.git</p>
+              </div>
+              <p class="text-sm mt-4 text-white/70">คำสั่งนี้จะสร้างโฟลเดอร์ย่อย .git ขึ้นมา [5]</p>
+            </div>
+
+            <!-- Option 2: Git Clone -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 flex flex-col items-center">
+              <div class="text-6xl mb-4">☁️</div>
+              <h3 class="text-2xl font-bold mb-4">คัดลอก (Clone)</h3>
+              <p class="text-lg mb-4 text-center">สำหรับดาวน์โหลดโปรเจกต์ที่มีอยู่แล้วจาก Server (เช่น GitHub)</p>
+              <div class="bg-black/50 p-4 rounded-lg w-full font-mono text-left">
+                <p class="text-green-400">$ git clone &lt;url&gt;</p>
+              </div>
+              <p class="text-sm mt-4 text-white/70">คุณจะได้สำเนาประวัติทั้งหมดของโปรเจกต์นั้นมา [5]</p>
+              <div class="bg-black/50 p-4 rounded-lg w-full font-mono text-left">
+                <p class="text-green-400">$ git clone djrepo.git djlocal</p>
+              </div>
+              <p class="text-sm mt-4 text-white/70">คำสั่งนี้จะสร้างโคัดลอกต้นฉบับมาพัฒนาต่อยอดไว้ในโฟล์เดอร์ชื่อ djlocal</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: File Lifecycle -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">วงจรชีวิตของไฟล์ (The Lifecycle of a File)</h2>
+          <div class="bg-white text-gray-900 rounded-xl p-6 mb-8 shadow-2xl">
+            <div class="flex justify-between items-center text-center font-bold text-lg md:text-xl space-x-2">
+              <div class="flex-1 py-4 bg-red-100 rounded-lg">Untracked</div>
+              <div class="text-2xl">→</div>
+              <div class="flex-1 py-4 bg-green-100 rounded-lg">Unmodified</div>
+              <div class="text-2xl">→</div>
+              <div class="flex-1 py-4 bg-yellow-100 rounded-lg">Modified</div>
+              <div class="text-2xl">→</div>
+              <div class="flex-1 py-4 bg-blue-100 rounded-lg">Staged</div>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+            <h3 class="text-2xl font-semibold mb-4">ตรวจสอบสถานะด้วย <code class="bg-black/30 px-2 py-1 rounded font-mono">git status</code></h3>
+            <ul class="list-disc list-inside text-lg space-y-3">
+              <li><strong>Untracked:</strong> ไฟล์ใหม่ที่ Git ยังไม่ได้เริ่มเก็บข้อมูล</li>
+              <li><strong>Unmodified:</strong> ไฟล์ที่มีในฐานข้อมูลแล้ว และยังไม่มีการแก้ไข</li>
+              <li><strong>Modified:</strong> ไฟล์เดิมที่มีการแก้ไขเนื้อหา แต่ยังไม่ได้ Stage</li>
+              <li><strong>Staged:</strong> ไฟล์ที่พร้อมจะถูก Commit ในรอบถัดไป [6]</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Tracking and Staging -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การติดตามและเตรียมไฟล์ (Tracking & Staging)</h2>
+          <p class="text-xl text-white/90 mb-8">
+            คำสั่ง <code class="font-mono bg-white/20 px-2 py-1 rounded">git add</code> เป็นคำสั่งอเนกประสงค์ที่สำคัญมาก [7]
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">หน้าที่ของ git add</h3>
+              <ul class="space-y-4 text-lg text-left">
+                <li class="flex items-start">
+                  <span class="mr-2">✅</span> 
+                  <span>เริ่มติดตามไฟล์ใหม่ (Untracked → Staged)</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="mr-2">✅</span> 
+                  <span>เตรียมไฟล์ที่แก้ไขแล้ว (Modified → Staged)</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="mr-2">✅</span> 
+                  <span>ยืนยันการแก้ไขไฟล์ที่ชนกัน (Merge Conflicts)</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-center text-left font-mono">
+              <div class="mb-4">
+                <p class="text-gray-400"># เพิ่มไฟล์เดียว</p>
+                <p class="text-green-400">$ git add README.md</p>
+              </div>
+              <div>
+                <p class="text-gray-400"># เพิ่มทุกไฟล์ในโฟลเดอร์ปัจจุบัน</p>
+                <p class="text-green-400">$ git add .</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-lg mt-8 bg-white/10 p-4 rounded-xl inline-block">
+            💡 คิดซะว่าเป็นการ "เพิ่มเนื้อหานี้ลงใน Commit ถัดไป" ไม่ใช่แค่การเพิ่มไฟล์เข้าโปรเจกต์ [7]
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 11: Viewing Changes -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ดูความเปลี่ยนแปลง (Viewing Changes)</h2>
+          <p class="text-xl text-white/90 mb-8">
+            คำสั่ง <code class="font-mono bg-white/20 px-2 py-1 rounded">git status</code> บอกแค่ชื่อไฟล์ แต่ <code class="font-mono bg-white/20 px-2 py-1 rounded">git diff</code> บอกเนื้อหาที่เปลี่ยน [1]
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-l-4 border-yellow-400">
+              <h3 class="text-2xl font-bold mb-2">Unstaged Changes</h3>
+              <p class="mb-4">ดูสิ่งที่แก้ไปแต่ยังไม่ได้ Add</p>
+              <div class="bg-black/50 p-3 rounded font-mono text-sm">
+                <p class="text-green-400">$ git diff</p>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-l-4 border-green-400">
+              <h3 class="text-2xl font-bold mb-2">Staged Changes</h3>
+              <p class="mb-4">ดูสิ่งที่จะถูก Commit (เทียบกับ Commit ล่าสุด)</p>
+              <div class="bg-black/50 p-3 rounded font-mono text-sm">
+                <p class="text-green-400">$ git diff --staged</p>
+                <p class="text-gray-500"># หรือ --cached [2]</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Committing Changes -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การบันทึก (Committing Changes)</h2>
+          <p class="text-xl text-white/90 mb-6">
+            การ Commit คือการบันทึก Snapshot ของ Staging Area ลงในประวัติ [3]
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6">
+            <div>
+              <h3 class="text-2xl font-semibold mb-2">คำสั่งพื้นฐาน</h3>
+              <code class="block bg-black/50 p-4 rounded font-mono text-green-400">$ git commit -m "ข้อความอธิบายสิ่งที่ทำ"</code>
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold mb-2">ทางลัด (ข้าม git add)</h3>
+              <p class="text-white/80 mb-2">ใช้ <code class="font-mono bg-white/20 px-1 rounded">-a</code> เพื่อ Stage ไฟล์ที่ถูก Track อยู่แล้วทั้งหมดอัตโนมัติ [3]</p>
+              <code class="block bg-black/50 p-4 rounded font-mono text-green-400">$ git commit -a -m "Update existing files"</code>
+            </div>
+            <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-400/30">
+              <strong class="text-blue-300">Best Practice:</strong> ใช้ประโยคคำสั่ง (Imperative) เช่น "Fix bug" ไม่ใช่ "Fixed bug" [4]
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: What is a Branch? -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Branch คืออะไร?</h2>
+          <div class="flex flex-col md:flex-row items-center gap-8 mt-8">
+            <div class="flex-1 text-left">
+              <ul class="space-y-6 text-lg">
+                <li class="flex items-start">
+                  <span class="text-3xl mr-4">ptr</span>
+                  <span><strong>ตัวชี้ (Pointer):</strong> ใน Git, Branch เป็นเพียงตัวชี้เบาๆ ไปยัง Commit หนึ่ง [5]</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="text-3xl mr-4">🏷️</span>
+                  <span><strong>Default:</strong> ชื่อ Branch หลักเริ่มต้นมักชื่อว่า <code class="font-mono bg-white/20 px-1 rounded">master</code> (หรือ main) [6]</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="text-3xl mr-4">👀</span>
+                  <span><strong>HEAD:</strong> คือตัวชี้พิเศษที่บอกว่า "ตอนนี้เราอยู่ที่ Branch ไหน" [7]</span>
+                </li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl w-full md:w-1/3 font-mono text-sm">
+              <div class="flex justify-center space-x-2 mb-4">
+                <div class="bg-gray-500 p-2 rounded">C1</div>
+                <div>←</div>
+                <div class="bg-gray-500 p-2 rounded">C2</div>
+                <div>←</div>
+                <div class="bg-green-600 p-2 rounded relative">
+                  C3
+                  <div class="absolute -top-10 left-0 bg-red-500 text-white text-xs px-2 py-1 rounded">master</div>
+                  <div class="absolute -bottom-10 left-0 bg-blue-500 text-white text-xs px-2 py-1 rounded">HEAD</div>
+                </div>
+              </div>
+              <p class="text-center text-white/70 mt-8">HEAD ชี้ที่ master, master ชี้ที่ C3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Creating and Switching Branches -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การสร้างและสลับ Branch</h2>
+          <div class="grid gap-6 text-left">
+            <!-- Create -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-xl font-bold text-green-300 mb-2">1. สร้าง Branch ใหม่</h3>
+              <code class="block bg-black/50 p-3 rounded font-mono text-green-400 mb-2">$ git branch testing</code>
+              <p class="text-sm text-white/70">สร้างตัวชี้ใหม่ชื่อ testing แต่ยังไม่ได้ย้ายไปที่นั่น [6]</p>
+            </div>
+
+            <!-- Switch -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-xl font-bold text-blue-300 mb-2">2. สลับ (Switch) ไปยัง Branch</h3>
+              <code class="block bg-black/50 p-3 rounded font-mono text-green-400 mb-2">$ git checkout testing</code>
+              <p class="text-sm text-white/70">ย้าย HEAD ไปชี้ที่ testing และเปลี่ยนไฟล์ใน Directory ให้ตรงกับ snapshot นั้น [8]</p>
+            </div>
+
+            <!-- Combo -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-500/50">
+              <h3 class="text-xl font-bold text-purple-300 mb-2">🚀 ทางลัด: สร้างและสลับในคำสั่งเดียว</h3>
+              <code class="block bg-black/50 p-3 rounded font-mono text-green-400">$ git checkout -b feature-login</code>
+              <p class="text-sm text-white/70 mt-2">นิยมใช้มากที่สุด [9]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Why Branch? -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ทำไมต้อง Branch? (Use Cases)</h2>
+          <p class="text-xl text-white/90 mb-8">
+            การ Branch ใน Git ทำได้เร็วและ "ราคาถูก" (ใช้ทรัพยากรน้อย) จึงควรทำบ่อยๆ [10]
+          </p>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-bold mb-3">🛠️ Feature Branch</h3>
+              <p>แยกการพัฒนาฟีเจอร์ใหม่ออกมา (เช่น <code>iss53</code>) เพื่อไม่ให้กระทบกับโค้ดหลักที่ใช้งานอยู่ จนกว่าจะเสร็จสมบูรณ์ [9]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-bold mb-3">🚑 Hotfix Branch</h3>
+              <p>เมื่อเจอบั๊กใน Production สามารถสลับกลับมาที่ master สร้าง branch <code>hotfix</code> แก้ไขด่วน แล้ว Merge กลับ โดยไม่ต้องรอฟีเจอร์อื่นเสร็จ [11]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-bold mb-3">🧪 Experiment</h3>
+              <p>ทดลองไอเดียใหม่ๆ ถ้าไม่เวิร์คก็แค่ลบทิ้ง (<code>git branch -d</code>) โดยไม่ทำให้ history หลักสกปรก [10]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-bold mb-3">🔄 Context Switching</h3>
+              <p>สลับไปมาระหว่างงานต่างๆ ได้ทันทีโดยไม่ต้องกังวลเรื่องไฟล์ตีกัน [10]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Merging -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การรวมโค้ด (Merging)</h2>
+          <p class="text-xl text-white/90 mb-6">เมื่อทำงานใน Branch เสร็จแล้ว เราจะนำกลับมารวมที่ Branch หลัก</p>
+
+          <div class="space-y-6 text-left">
+            <div class="bg-black/40 p-4 rounded-xl font-mono">
+              <p class="text-gray-400"># 1. กลับไปที่ branch หลัก</p>
+              <p class="text-green-400">$ git checkout master</p>
+              <p class="text-gray-400 mt-2"># 2. สั่ง merge branch ที่ต้องการเข้ามารวม</p>
+              <p class="text-green-400">$ git merge hotfix</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-white/10 p-4 rounded-xl">
+                <h3 class="text-xl font-bold text-green-300">Fast-forward</h3>
+                <p class="text-sm mt-2">ถ้าประวัติเป็นเส้นตรง Git แค่เลื่อนตัวชี้ master ไปข้างหน้า (ไม่ต้องสร้าง Commit ใหม่) [12]</p>
+              </div>
+              <div class="bg-white/10 p-4 rounded-xl">
+                <h3 class="text-xl font-bold text-yellow-300">Three-way Merge</h3>
+                <p class="text-sm mt-2">ถ้าประวัติแยกขาดจากกัน Git จะสร้าง "Merge Commit" ใหม่ที่มีพ่อแม่ 2 ทาง เพื่อรวมผลลัพธ์ [13]</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Merge Conflicts -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ปัญหาการชนกัน (Merge Conflicts)</h2>
+          <p class="text-xl text-white/90 mb-6">
+            เกิดขึ้นเมื่อบรรทัดเดียวกันในไฟล์เดียวกัน ถูกแก้ไขต่างกันในสอง Branch [14]
+          </p>
+
+          <div class="bg-red-900/30 border border-red-500/50 p-6 rounded-2xl text-left font-mono text-lg">
+            <p class="text-gray-300">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:index.html</p>
+            <p class="text-green-300">&lt;div id="footer"&gt;contact : email.support@github.com&lt;/div&gt;</p>
+            <p class="text-gray-300">=======</p>
+            <p class="text-blue-300">&lt;div id="footer"&gt;</p>
+            <p class="text-blue-300"> please contact us at support@github.com</p>
+            <p class="text-blue-300">&lt;/div&gt;</p>
+            <p class="text-gray-300">&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</p>
+          </div>
+
+          <p class="mt-6 text-white/80">
+            Git จะหยุดกระบวนการ Merge และใส่เครื่องหมายไว้ในไฟล์เพื่อให้คุณตัดสินใจ [15]
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 18: Resolving Conflicts -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การแก้ไข Conflict</h2>
+          <div class="space-y-4">
+            <div class="flex items-center bg-white/10 rounded-xl p-4">
+              <div class="bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">1</div>
+              <div class="text-left">
+                <h3 class="text-xl font-bold">แก้ไขไฟล์ (Manually Edit)</h3>
+                <p>เปิดไฟล์ที่มีปัญหา เลือกว่าจะใช้โค้ดส่วนไหน แล้วลบเครื่องหมาย <code>&lt;&lt;&lt;</code>, <code>===</code>, <code>&gt;&gt;&gt;</code> ออกให้หมด [16]</p>
+              </div>
+            </div>
+
+            <div class="flex items-center bg-white/10 rounded-xl p-4">
+              <div class="bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">2</div>
+              <div class="text-left">
+                <h3 class="text-xl font-bold">Mark as Resolved</h3>
+                <p>ใช้คำสั่ง <code class="font-mono bg-black/30 px-2 rounded">git add &lt;filename&gt;</code> เพื่อบอก Git ว่าแก้เสร็จแล้ว [16]</p>
+              </div>
+            </div>
+
+            <div class="flex items-center bg-white/10 rounded-xl p-4">
+              <div class="bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">3</div>
+              <div class="text-left">
+                <h3 class="text-xl font-bold">Commit</h3>
+                <p>ใช้คำสั่ง <code class="font-mono bg-black/30 px-2 rounded">git commit</code> เพื่อยืนยันการ Merge ให้สมบูรณ์ [17]</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Remote Repositories -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การทำงานกับ Remote </h2>
+          <p class="text-xl text-white/90 mb-8">
+            Remote คือเวอร์ชันของโปรเจกต์ที่โฮสต์อยู่บนอินเทอร์เน็ตหรือเครือข่ายอื่น (เช่น GitHub, GitLab) [18]
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-bold mb-4">แสดงรายชื่อ Remote</h3>
+              <code class="block bg-black/50 p-4 rounded font-mono text-green-400 mb-2">$ git remote -v</code>
+              <p class="text-sm opacity-70">output:</p>
+              <pre class="text-xs font-mono text-gray-300">origin  https://github.com/user/repo.git (fetch)
+origin  https://github.com/user/repo.git (push)</pre>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-center">
+              <h3 class="text-2xl font-bold mb-2">origin คืออะไร?</h3>
+              <p class="text-lg">
+                เป็นชื่อเรียกเล่น (Shortname) มาตรฐานที่ Git ตั้งให้โดยอัตโนมัติเมื่อคุณสั่ง <code>git clone</code> จาก Server [18]
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Fetching and Pulling -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Fetching vs Pulling</h2>
+          <p class="text-xl text-white/90 mb-8">การนำข้อมูลจาก Server ลงมาที่เครื่อง</p>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-t-4 border-yellow-400">
+              <h3 class="text-3xl font-bold mb-4">git fetch</h3>
+              <ul class="text-left space-y-2">
+                <li>✅ ดาวน์โหลดข้อมูลใหม่ทั้งหมดจาก Server</li>
+                <li>❌ <strong>ไม่</strong>รวม (Merge) เข้ากับงานของคุณ</li>
+                <li>❌ ไฟล์ในเครื่อง <strong>ไม่</strong>เปลี่ยน</li>
+                <li>💡 ปลอดภัย ใช้เพื่อ "ดู" ว่ามีอะไรใหม่ [18]</li>
+              </ul>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-t-4 border-green-400">
+              <h3 class="text-3xl font-bold mb-4">git pull</h3>
+              <ul class="text-left space-y-2">
+                <li>✅ ทำ <code>git fetch</code></li>
+                <li>✅ ทำ <code>git merge</code> ทันที</li>
+                <li>⚠️ ไฟล์ในเครื่อง <strong>เปลี่ยน</strong></li>
+                <li>💡 สะดวก แต่ต้องระวัง Conflict [19]</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Pushing -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">การส่งงานขึ้น Server (Pushing)</h2>
+          <p class="text-xl text-white/90 mb-8">
+            เมื่อคุณพร้อมแบ่งปันงานกับทีม คุณต้อง "Push"
+          </p>
+
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-8 font-mono text-left text-xl">
+            <p class="text-gray-400 mb-2"># รูปแบบคำสั่ง</p>
+            <p class="text-green-400 mb-6">$ git push &lt;remote&gt; &lt;branch&gt;</p>
+
+            <p class="text-gray-400 mb-2"># ตัวอย่างการใช้งานจริง</p>
+            <p class="text-green-400">$ git push origin master</p>
+          </div>
+
+          <div class="mt-8 bg-red-900/30 border border-red-500/30 p-4 rounded-xl text-left">
+            <h3 class="font-bold text-red-300">ข้อควรระวัง:</h3>
+            <p>คำสั่งนี้จะทำงานได้ก็ต่อเมื่อ:</p>
+            <ol class="list-decimal list-inside mt-2 text-sm">
+              <li>คุณมีสิทธิ์เขียน (Write access) บน Server</li>
+              <li>ไม่มีใคร Push ตัดหน้าคุณ (ถ้ามี คุณต้อง <code>pull</code> มา Merge ก่อน) [20]</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Summary -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สรุปคำสั่งสำคัญ (Summary)</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git init</code>
+              <span class="text-sm">เริ่มสร้าง Repo ใหม่</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git clone</code>
+              <span class="text-sm">คัดลอก Repo จาก Server</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git add</code>
+              <span class="text-sm">เตรียมไฟล์ (Stage)</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git commit</code>
+              <span class="text-sm">บันทึกประวัติ</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git status</code>
+              <span class="text-sm">เช็คสถานะไฟล์</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git branch</code>
+              <span class="text-sm">จัดการ Branch</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git merge</code>
+              <span class="text-sm">รวม Branch</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git pull</code>
+              <span class="text-sm">ดึงงานจาก Server</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <code class="text-green-300 font-bold block mb-1">git push</code>
+              <span class="text-sm">ส่งงานขึ้น Server</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Intro to Branching Strategies -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">กลยุทธ์การแตกสาขา </h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            Git ให้เครื่องมือ แต่ไม่ได้ให้ "กฎ" ในการใช้งาน หากไม่มีกลยุทธ์ที่ตกลงกัน ทีมจะเจอปัญหา Merge Conflict และการ Deploy ที่ล่าช้า [1, 2]
+          </p>
+          <div class="grid md:grid-cols-3 gap-6 mt-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-t-4 border-blue-400">
+              <h3 class="text-2xl font-bold mb-2">GitFlow</h3>
+              <p class="text-sm">โครงสร้างชัดเจน เหมาะกับการปล่อยซอฟต์แวร์เป็นเวอร์ชัน (Versioned Software) [3]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-t-4 border-green-400">
+              <h3 class="text-2xl font-bold mb-2">GitHub Flow</h3>
+              <p class="text-sm">เรียบง่าย เน้นความเร็ว เหมาะสำหรับ Web Apps และ CI/CD [4]</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-t-4 border-purple-400">
+              <h3 class="text-2xl font-bold mb-2">Trunk-Based</h3>
+              <p class="text-sm">ขั้นสูง รวมโค้ดบ่อยที่สุด ลด Conflict เหมาะกับทีมที่มีระบบ Automated Test แข็งแกร่ง [5]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Git Flow Concept -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">1. GitFlow Strategy</h2>
+          <p class="text-lg text-white/90 mb-6">
+            โมเดลแบบดั้งเดิม (The Old Guard) ที่แยก Master (Production) ออกจาก Develop (Integration) อย่างชัดเจน [6]
+          </p>
+
+          <!-- Visual Representation -->
+          <div class="bg-white/5 p-6 flex rounded-xl mb-6 font-mono text-sm text-left relative overflow-hidden">
+            <img class="mx-auto" src="https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fpede31r6etqh61g9b14p.png" alt="GitFlow" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-left text-sm">
+            <ul class="list-disc list-inside space-y-1">
+              <li><strong>Master:</strong> เก็บโค้ดที่อยู่บน Production เท่านั้น [7]</li>
+              <li><strong>Develop:</strong> สาขาหลักสำหรับการรวมโค้ด (Integration) [8]</li>
+              <li><strong>Feature:</strong> แยกออกมาจาก Develop เพื่อทำฟีเจอร์ใหม่ [8]</li>
+            </ul>
+            <ul class="list-disc list-inside space-y-1">
+              <li><strong>Release:</strong> แยกจาก Develop เพื่อเตรียมปล่อยเวอร์ชัน (QA/Docs) [9]</li>
+              <li><strong>Hotfix:</strong> แยกจาก Master เพื่อแก้บั๊กเร่งด่วน แล้วรวมกลับทั้ง Master/Develop [10]</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Git Flow Pros/Cons -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">GitFlow: ข้อดีและข้อเสีย</h2>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- Pros -->
+            <div class="bg-green-900/30 border border-green-500/30 p-6 rounded-2xl">
+              <h3 class="text-2xl font-bold text-green-400 mb-4">ข้อดี (Pros)</h3>
+              <ul class="space-y-3 text-left">
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>โครงสร้างชัดเจน:</strong> ทุกคนรู้ว่า Branch ไหนทำหน้าที่อะไร [11]</span></li>
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>Safe for Versions:</strong> เหมาะมากสำหรับซอฟต์แวร์ที่ต้อง Support หลายเวอร์ชันพร้อมกัน [3]</span></li>
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>ความเสถียร:</strong> Master Branch สะอาดและเสถียรเสมอ เพราะผ่านการทดสอบจาก Release Branch มาแล้ว [12]</span></li>
+              </ul>
+            </div>
+
+            <!-- Cons -->
+            <div class="bg-red-900/30 border border-red-500/30 p-6 rounded-2xl">
+              <h3 class="text-2xl font-bold text-red-400 mb-4">ข้อเสีย (Cons)</h3>
+              <ul class="space-y-3 text-left">
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ซับซ้อน (Complexity):</strong> มี Overhead ในการจัดการ Branch เยอะเกินไปสำหรับทีมเล็ก [13]</span></li>
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>Merge Hell:</strong> Feature Branch ที่แยกตัวนานๆ (Long-lived) ทำให้เกิด Conflict มหาศาลเมื่อต้องรวมโค้ด [14]</span></li>
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ไม่เหมาะกับ CI/CD:</strong> ออกแบบมาเพื่อการปล่อยของเป็นรอบๆ (Scheduled Release) ไม่ใช่การปล่อยรายวัน [14]</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: GitHub Flow Concept -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">2. GitHub Flow Strategy</h2>
+          <p class="text-lg text-white/90 mb-6">
+            แนวคิด "Simple Sandwich" ที่ลดความซับซ้อนเหลือแค่ Master และ Feature Branches เหมาะสำหรับ Web/SaaS [15]
+          </p>
+
+          <!-- Visual Representation -->
+          <div class="bg-white/5 p-6 flex rounded-xl mb-6 font-mono text-sm relative flex items-center justify-center">
+            <img class="mx-auto" src="https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fbb40qnow3wcz85rp1akd.png" alt="Github Flow" />
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+            <h3 class="text-xl font-bold mb-3 text-yellow-300">กฎทอง (Golden Rule):</h3>
+            <p class="text-lg mb-4">"อะไรก็ตามที่อยู่ใน Main Branch จะต้องพร้อม Deploy เสมอ" [15]</p>
+            <ol class="list-decimal list-inside space-y-2 text-sm md:text-base">
+              <li>สร้าง Branch ใหม่จาก Main สำหรับทุกงาน</li>
+              <li>เปิด <strong>Pull Request</strong> เพื่อคุยและรีวิวโค้ด [16]</li>
+              <li>เมื่อผ่านการรีวิวและเทส ให้ Merge กลับ Main และ <strong>Deploy ทันที</strong> [4]</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: GitHub Flow Pros/Cons -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">GitHub Flow: ข้อดีและข้อเสีย</h2>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- Pros -->
+            <div class="bg-green-900/30 border border-green-500/30 p-6 rounded-2xl">
+              <h3 class="text-2xl font-bold text-green-400 mb-4">ข้อดี (Pros)</h3>
+              <ul class="space-y-3 text-left">
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>รวดเร็วและเรียบง่าย:</strong> ลดขั้นตอนพิธีการ ไม่ต้องจัดการ Release Branch [4]</span></li>
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>CI/CD Friendly:</strong> ออกแบบมาเพื่อ Continuous Deployment โดยเฉพาะ [17]</span></li>
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>เหมาะกับ Web Apps:</strong> ที่มีการอัปเดตตลอดเวลาและมี Production เวอร์ชันเดียว [4]</span></li>
+              </ul>
+            </div>
+
+            <!-- Cons -->
+            <div class="bg-red-900/30 border border-red-500/30 p-6 rounded-2xl">
+              <h3 class="text-2xl font-bold text-red-400 mb-4">ข้อเสีย (Cons)</h3>
+              <ul class="space-y-3 text-left">
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ไม่มี Versioning:</strong> จัดการยากหากต้อง Support ลูกค้าที่ใช้ซอฟต์แวร์เวอร์ชันเก่า [18]</span></li>
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ความเสี่ยงสูง:</strong> หากเทสไม่ดีพอ การ Merge เข้า Main อาจทำให้ Production ล่มได้ทันที [19]</span></li>
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ต้องมีวินัยสูง:</strong> ทีมต้องเคร่งครัดเรื่อง Code Review และ Automated Test [18]</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Trunk-Based Development Concept -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">3. Trunk-Based Development</h2>
+          <p class="text-lg text-white/90 mb-6">
+            ระดับ Elite: นักพัฒนาทุกคน Commit โค้ดเข้าสู่ Main (Trunk) บ่อยๆ (วันละหลายครั้ง) [20]
+          </p>
+
+          <div class="bg-white/5 p-6 rounded-xl flex flex-col justify-center items-center">
+            <img class="mx-auto" src="https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fr41x8746jkz5c8j9eof7.png" alt="Trunk-Based" />
+            <p class="text-sm text-blue-300 mt-2">Main Branch (The Trunk)</p>
+            <div class="mt-6 text-sm text-gray-400">
+              <p>⬇️ Short-lived branches (hours)</p>
+              <p>⬇️ No long integration hell</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Trunk-Based Pros/Cons -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">Trunk-Based: ข้อดีและข้อเสีย</h2>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- Pros -->
+            <div class="bg-green-900/30 border border-green-500/30 p-6 rounded-2xl">
+              <h3 class="text-2xl font-bold text-green-400 mb-4">ข้อดี (Pros)</h3>
+              <ul class="space-y-3 text-left">
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>ความเร็วสูงสุด:</strong> Feedback loop สั้นมาก รู้ผลทันทีว่าโค้ดพังหรือไม่ [22]</span></li>
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>Zero Merge Hell:</strong> เพราะรวมโค้ดทีละนิดตลอดเวลา จึงไม่มี Conflict ก้อนโต [22]</span></li>
+                <li class="flex items-start"><span class="mr-2">✅</span> <span><strong>บังคับทำ Automation:</strong> ทีม "จำเป็น" ต้องมีระบบ Test ที่ดีเยี่ยม [23]</span></li>
+              </ul>
+            </div>
+
+            <!-- Cons -->
+            <div class="bg-red-900/30 border border-red-500/30 p-6 rounded-2xl">
+              <h3 class="text-2xl font-bold text-red-400 mb-4">ข้อเสีย (Cons)</h3>
+              <ul class="space-y-3 text-left">
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ยากสำหรับมือใหม่:</strong> Junior Developer อาจทำ Production พังได้ง่ายๆ [23]</span></li>
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>ต้องใช้เครื่องมือสูง:</strong> ต้องมีระบบ Feature Flags และ Automated Testing ที่ครอบคลุม (High Maturity) [22]</span></li>
+                <li class="flex items-start"><span class="mr-2">❌</span> <span><strong>Culture Shock:</strong> ต้องเปลี่ยนวัฒนธรรมการทำงานจากการ "ทำเสร็จค่อยส่ง" เป็น "ส่งตลอดเวลา" [23]</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Summary / Selection Guide -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">ควรเลือกกลยุทธ์ไหน? </h2>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-white/20 text-lg">
+                  <th class="p-4 rounded-tl-xl">Strategy</th>
+                  <th class="p-4">Release Frequency</th>
+                  <th class="p-4">Team Maturity</th>
+                  <th class="p-4 rounded-tr-xl">Best For</th>
+                </tr>
+              </thead>
+              <tbody class="text-white/80">
+                <tr class="border-b border-white/10 hover:bg-white/5">
+                  <td class="p-4 font-bold text-blue-300">Git Flow</td>
+                  <td class="p-4">รายเดือน / ไตรมาส</td>
+                  <td class="p-4">ปานกลาง - สูง</td>
+                  <td class="p-4">Open Source, ซอฟต์แวร์ที่ต้องติดตั้ง (Mobile Apps) [24]</td>
+                </tr>
+                <tr class="border-b border-white/10 hover:bg-white/5">
+                  <td class="p-4 font-bold text-green-300">GitHub Flow</td>
+                  <td class="p-4">รายวัน / ต่อเนื่อง</td>
+                  <td class="p-4">เริ่มต้น - ปานกลาง</td>
+                  <td class="p-4">Web Apps, SaaS, ทีมขนาดเล็ก-กลาง [4]</td>
+                </tr>
+                <tr class="hover:bg-white/5">
+                  <td class="p-4 font-bold text-purple-300">Trunk-Based</td>
+                  <td class="p-4">หลายครั้งต่อวัน</td>
+                  <td class="p-4">สูง (Elite)</td>
+                  <td class="p-4">ทีม DevOps ที่เชี่ยวชาญ, องค์กรใหญ่ (Google/Netflix) [20]</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-8 bg-blue-900/30 p-4 rounded-xl border border-blue-400/30">
+            <p class="text-lg">
+              💡 <strong>คำแนะนำ:</strong> เริ่มต้นด้วย <strong>GitHub Flow</strong> หากคุณเป็นทีมเว็บทั่วไป เพราะสมดุลดีที่สุดระหว่างความง่ายและความเร็ว [25]
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab Assignment: Django & Git Collaboration</h2>
+          <p class="text-xl text-white/90 mb-8">
+            ปฏิบัติการ: จำลองการทำงานร่วมกันด้วย Git, GitHub และ PythonAnywhere
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-yellow-300">ภารกิจ (Mission)</h3>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>☁️ <strong>Cloud:</strong> สร้าง Django App บน PythonAnywhere</li>
+              <li>📦 <strong>Repository:</strong> สร้างและตั้งค่า GitHub Repo สำหรับโปรเจกต์</li>
+              <li>🤝 <strong>Collaborator:</strong> เพิ่มเพื่อนและอาจารย์เป็นผู้ร่วมงาน</li>
+              <li>🔀 <strong>Workflow:</strong> ฝึกฝนการ Fork, Clone, Edit, Commit, Push</li>
+              <li>🔄 <strong>Integration:</strong> ส่ง Pull Request (PR) และทำการ Merge</li>
+            </ul>
+          </div>
+          <p class="mt-6 text-white/70">จับคู่ 2 คน เพื่อเริ่มทำปฏิบัติการนี้</p>
+        </div>
+      </div>
+
+      <!-- Slide 32: PythonAnywhere Setup -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 1: PythonAnywhere Setup</h2>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-green-300 mb-2">1. สร้าง Web App</h3>
+              <ul class="list-decimal list-inside text-sm md:text-base space-y-1">
+                <li>สมัคร/Login ที่ <a href="https://www.pythonanywhere.com" class="underline">pythonanywhere.com</a></li>
+                <li>ไปที่แท็บ <strong>Web</strong> -> <strong>Add a new web app</strong></li>
+                <li>เลือก <strong>Django</strong> และ Python <strong>3.13</strong></li>
+                <li>ตั้งชื่อโปรเจกต์ว่า <code>mysite</code> (ค่า Default)</li>
+              </ul>
+            </div>
+
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-blue-300 mb-2">2. เตรียมไฟล์ Source Code</h3>
+              <p class="mb-2 text-sm">เปิด <strong>Bash Console</strong> บน PythonAnywhere แล้วรันคำสั่ง:</p>
+              <code class="block bg-black/50 p-3 rounded font-mono text-green-400 mb-2">
+                $ zip -r mysite.zip mysite
+              </code>
+              <ul class="list-decimal list-inside text-sm md:text-base space-y-1">
+                <li>ไปที่แท็บ <strong>Files</strong></li>
+                <li>ดาวน์โหลดไฟล์ <code>mysite.zip</code> ลงมาที่เครื่องคอมพิวเตอร์ของคุณ</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: GitHub Repo & README -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 2: GitHub Repository Setup</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="text-xl font-bold mb-2">1. สร้าง Repository</h3>
+              <p class="text-sm mb-2">สร้าง <strong>Public Repository</strong> ชื่อ <code>mysite</code> บน GitHub</p>
+              <p class="text-sm mb-2">เพิ่มไฟล์ <code>README.md</code> โดยระบุข้อมูลดังนี้:</p>
+              <div class="bg-black/40 p-3 rounded font-mono text-xs text-gray-300">
+                1,ชื่อ-สกุล,GitHubUser,user.pythonanywhere.com<br>
+                2,
+              </div>
+              <p class="text-xs mt-2 text-red-300">*บรรทัดที่ 2 เว้นว่างไว้สำหรับเพื่อน</p>
+            </div>
+
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="text-xl font-bold mb-2">2. เพิ่ม Collaborators</h3>
+              <p class="text-sm mb-2">ไปที่ Settings -> Collaborators ของ Repo ที่เพิ่งสร้าง</p>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>เพิ่มบัญชี GitHub ของ <strong>คู่หูของคุณ</strong></li>
+                <li>เพิ่มบัญชี: <code>wichit2s</code> (อาจารย์)</li>
+              </ul>
+            </div>
+
+          </div>
+          <div class="mt-6 bg-blue-900/30 border border-blue-400/30 p-4 rounded-xl">
+            <p class="text-lg">💡 <strong>สำคัญ:</strong> ทำทั้ง 2 คน (ต่างคนต่างสร้าง Repo ของตัวเอง)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Local VS Code Setup -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-4">
+          <h2 class="text-4xl font-bold mb-4">Step 3: Local Setup (VS Code)</h2>
+          <div class="space-y-4 text-left text-sm md:text-base">
+            <div class="bg-white/10 p-4 rounded-lg">
+              <strong>1. Clone:</strong> เปิด VS Code แล้ว Clone Repo ของคุณมาที่เครื่อง
+              <code class="block bg-black/50 p-1 mt-1 rounded font-mono text-green-400">$ git clone https://github.com/YourUser/mysite.git</code>
+            </div>
+
+            <div class="bg-white/10 p-4 rounded-lg">
+              <strong>2. Unzip Code:</strong> แตกไฟล์ <code>mysite.zip</code> แล้วนำไฟล์ทั้งหมดในโฟลเดอร์ mysite ไปใส่ในโฟลเดอร์ที่ Clone มา
+            </div>
+
+            <div class="bg-white/10 p-4 rounded-lg">
+              <strong>3. Git Ignore:</strong> สร้างไฟล์ <code>.gitignore</code> แล้วนำเนื้อหาจาก Link นี้ไปใส่
+              <a href="https://gist.githubusercontent.com/santoshpy/6f982faf1eacdac153ffd86a3a694239/raw/eb64869b93d4a3dc9f77245893672fe9818750a8/.gitignore" target="_blank" class="text-blue-300 underline block mt-1 truncate">
+                gist.githubusercontent.com/.../.gitignore
+              </a>
+            </div>
+
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <div>
+                <strong>4. Push:</strong> ส่ง Code ขึ้น Server
+              </div>
+              <div class="text-right font-mono text-xs md:text-sm">
+                <span class="text-green-400 block">$ git add .</span>
+                <span class="text-green-400 block">$ git commit -m "Initial Django App"</span>
+                <span class="text-green-400 block">$ git push</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 35: The Forking Workflow -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 4: Cross-Collaboration (Fork & Edit)</h2>
+          <p class="mb-4 text-white/90">สลับบทบาท! ตอนนี้ให้ไปทำงานบน Repo ของเพื่อน</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <!-- Action 1 -->
+            <div class="bg-purple-900/30 border border-purple-500/30 p-5 rounded-xl text-left">
+              <h3 class="text-xl font-bold mb-2">1. Fork Repo เพื่อน</h3>
+              <p class="text-sm">ไปที่หน้า GitHub ของเพื่อน กดปุ่ม <span class="bg-white/20 px-2 rounded">Fork</span> เพื่อสร้างสำเนามาเป็นของเรา</p>
+            </div>
+
+            <!-- Action 2 -->
+            <div class="bg-purple-900/30 border border-purple-500/30 p-5 rounded-xl text-left">
+              <h3 class="text-xl font-bold mb-2">2. Clone Fork มาแก้</h3>
+              <code class="block bg-black/50 p-2 rounded font-mono text-green-400 text-xs mb-2">
+                $ git clone https://github.com/YourUser/FriendRepo.git
+              </code>
+              <p class="text-sm">แก้ไขไฟล์ <code>README.md</code> โดยเติมข้อมูลของคุณลงในบรรทัดที่ 2</p>
+            </div>
+          </div>
+
+          <div class="mt-6 bg-white/10 p-6 rounded-xl text-left">
+            <h3 class="text-xl font-bold mb-2">3. Commit & Push (To Your Fork)</h3>
+            <div class="font-mono text-sm space-y-1">
+              <p class="text-green-400">$ git add README.md</p>
+              <p class="text-green-400">$ git commit -m "Add collaborator info"</p>
+              <p class="text-green-400">$ git push</p>
+            </div>
+            <p class="text-xs mt-2 opacity-70">*ตอนนี้ข้อมูลอยู่ที่ Fork ของเรา ยังไม่ไปที่ต้นฉบับของเพื่อน</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 36: Pull Request & Merge -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 5: Pull Request & Merge</h2>
+
+          <div class="space-y-6">
+            <div class="flex items-center bg-white/10 p-6 rounded-2xl border-l-8 border-green-400">
+              <div class="text-4xl mr-6">🔀</div>
+              <div class="text-left">
+                <h3 class="text-2xl font-bold">ส่ง Pull Request (PR)</h3>
+                <p class="text-lg">ไปที่หน้า Fork ของคุณบน GitHub กดปุ่ม <strong>"Compare & pull request"</strong> ส่งคำขอรวมโค้ดไปยัง Repo ต้นฉบับของเพื่อน</p>
+              </div>
+            </div>
+
+            <div class="flex items-center bg-white/10 p-6 rounded-2xl border-l-8 border-purple-400">
+              <div class="text-4xl mr-6">👀</div>
+              <div class="text-left">
+                <h3 class="text-2xl font-bold">Review & Merge</h3>
+                <p class="text-lg">เจ้าของ Repo (เพื่อน) เข้าไปดู PR ตรวจสอบความถูกต้อง แล้วกดปุ่ม <strong>"Merge pull request"</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <p class="mt-8 text-xl font-semibold text-yellow-300">
+            🎉 เมื่อเสร็จสิ้น ใน README.md ของทั้งคู่จะมีข้อมูลครบ 2 คน
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 37: Submission -->
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-8">การส่งงาน (Submission)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border-2 border-white/20">
+            <div class="text-6xl mb-6">🚀</div>
+            <h3 class="text-3xl font-bold mb-4">สิ่งที่ต้องส่ง</h3>
+            <p class="text-xl mb-8">
+              ส่งลิงก์ <strong>GitHub Repository ของตัวเอง</strong><br>
+              (ที่มี Code Django และ README.md ที่มีชื่อครบ 2 คนแล้ว)
+            </p>
+            <div class="bg-black/40 p-4 rounded-xl inline-block text-lg font-mono text-green-300">
+              https://github.com/YourUsername/mysite
+            </div>
+          </div>
+          <div class="mt-8 text-white/60">
+            ตรวจสอบให้แน่ใจว่า Repo เป็น Public และเพิ่ม Collaborators ครบถ้วน
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

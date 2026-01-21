@@ -48,6 +48,8 @@ DevOps
        * ติดตั้ง Git, VS Code
        * ทดลองใช้คำสั่ง Git พื้นฐาน (init, add, commit, status) ใน local repository
    * - **สัปดาห์ที่ 2**
+
+       * `slides <../../_static/courses/devops/slides/wk02.html>`_
      - **การควบคุมเวอร์ชันด้วย Git (Version Control with Git)**
 
        * แนวคิดของ Version Control System (VCS)
