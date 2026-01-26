@@ -80,6 +80,7 @@
      - พัฒนา workflow ด้วย Scikit-Learn, PyCaret
 
        * ใช้ Agent AI ประเมินโมเดลอัตโนมัติ
+       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk08.html>`_
      - การบ้าน
    * - 9
      - Docker และการทำซ้ำงาน (Reproducibility)
