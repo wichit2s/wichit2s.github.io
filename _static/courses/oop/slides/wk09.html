@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP: Wk-09 OOP Review</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/oop/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/oop/slides/wk09.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+<!-- Slide 1: Title Slide -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      <span>การเขียนโปรแกรมเชิงวัตถุ</span> <br>
+      <span class="mt-8 text-yellow-300">ทบทวนเนื้อหาและเตรียมทำโปรเจกต์</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      สัปดาห์ที่ 9: สรุปแนวคิด OOP, UML และ GitHub สำหรับการพัฒนา
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">วัตถุประสงค์การเรียนรู้</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+          <span>ทบทวนความเข้าใจในแนวคิด 4 ประการของ OOP</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+          <span>ทบทวนความสัมพันธ์ระหว่างคลาสและแผนภาพ UML</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+          <span>เตรียมโครงสร้างโปรเจกต์โดยใช้ GitHub</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: The Foundation -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      พื้นฐานสำคัญ: <span class="text-yellow-300">Class vs. Object</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-4 border-green-400">
+        <h3 class="text-3xl font-semibold mb-4">Class (แม่พิมพ์)</h3>
+        <ul class="list-disc pl-5 space-y-2 text-lg text-white/90">
+          <li>นิยามเชิงตรรกะหรือต้นแบบ (Template)</li>
+          <li>กำหนด <strong>คุณลักษณะ (attributes)</strong> และ <strong>พฤติกรรม (methods)</strong></li>
+          <li>ยังไม่ใช้หน่วยความจำจนกว่าจะถูกสร้าง (Instantiate)</li>
+          <li class="italic text-yellow-200">ตัวอย่าง: `class Dog:`</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-4 border-blue-400">
+        <h3 class="text-3xl font-semibold mb-4">Object (วัตถุ)</h3>
+        <ul class="list-disc pl-5 space-y-2 text-lg text-white/90">
+          <li>สิ่งที่จับต้องได้ (Concrete Entity) ที่สร้างจากคลาส</li>
+          <li>มี <strong>สถานะ (state)</strong> และ <strong>เอกลักษณ์ (identity)</strong> เฉพาะตัว</li>
+          <li>ใช้หน่วยความจำขณะรันโปรแกรม (Runtime)</li>
+          <li class="italic text-yellow-200">ตัวอย่าง: `my_dog = Dog("Buddy")`</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: The 4 Pillars of OOP -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-10">
+      แนวคิด 4 ประการของ <span class="text-yellow-300">OOP</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-2xl font-bold text-green-300 mb-2">1. Encapsulation (การห่อหุ้ม)</h3>
+        <p class="text-white/90">การรวมข้อมูลและเมธอดไว้ด้วยกัน และจำกัดการเข้าถึงข้อมูลภายในจากภายนอกโดยตรง (เช่น การใช้ private variables)</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-2xl font-bold text-green-300 mb-2">2. Inheritance (การสืบทอด)</h3>
+        <p class="text-white/90">การสร้างคลาสใหม่จากคลาสที่มีอยู่เดิมเพื่อนำโค้ดกลับมาใช้ใหม่ (ความสัมพันธ์แบบ "Is-A")</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-2xl font-bold text-green-300 mb-2">3. Polymorphism (การพ้องรูป)</h3>
+        <p class="text-white/90">ความสามารถของวัตถุต่างชนิดในการตอบสนองต่อการเรียกเมธอดเดียวกันในรูปแบบที่ต่างกัน (เช่น Method Overriding)</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-2xl font-bold text-green-300 mb-2">4. Abstraction (นามธรรม)</h3>
+        <p class="text-white/90">การซ่อนรายละเอียดการทำงานที่ซับซ้อน และแสดงเฉพาะสิ่งที่จำเป็นต้องใช้งาน (เช่น Abstract Classes)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Designing Relationships -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การออกแบบความสัมพันธ์: <br><span class="text-yellow-300">Inheritance vs. Composition</span>
+    </h1>
+    <div class="space-y-6">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 flex items-center gap-6 text-left">
+        <div class="bg-blue-500/20 p-4 rounded-lg min-w-[120px] text-center font-bold text-xl">Inheritance</div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-1">ความสัมพันธ์แบบ "Is-A" (เป็น)</h3>
+          <p class="text-white/80">ผูกพันกันแน่นแฟ้น (Tightly coupled) ใช้เมื่อคลาสลูกเป็นรูปแบบเฉพาะของคลาสแม่</p>
+          <pre class="w-full text-sm bg-black/30 px-2 py-1 rounded mt-2 block w-fit">
+class Car(Vehicle): 
+   pass
+          </pre>
+        </div>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 flex items-center gap-6 text-left">
+        <div class="bg-green-500/20 p-4 rounded-lg min-w-[120px] text-center font-bold text-xl">Composition</div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-1">ความสัมพันธ์แบบ "Has-A" (มี)</h3>
+          <p class="text-white/80">ยืดหยุ่นกว่า (Loosely coupled) ใช้เมื่อวัตถุที่ซับซ้อนประกอบขึ้นจากวัตถุอื่น ๆ</p>
+          <pre class="w-full text-sm bg-black/30 px-2 py-1 rounded mt-2 block w-fit">
+class Car: 
+   def __init__(self):
+      self.engine = Engine()
+         </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: Project Readiness -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      ความพร้อมโปรเจกต์ & <span class="text-yellow-300">Version Control</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <h2 class="text-3xl font-semibold mb-6 border-b border-white/20 pb-4">สิ่งที่ต้องทำในสัปดาห์ที่ 9</h2>
+      <div class="space-y-4 text-xl">
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 bg-green-400 rounded text-green-900 flex items-center justify-center font-bold">✓</div>
+          <span><strong>GitHub Repo:</strong> สร้าง Repository ชื่อ OOP682 เป็น public และตั้งค่าไฟล์ `.gitignore` สำหรับ Python</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 bg-green-400 rounded text-green-900 flex items-center justify-center font-bold">✓</div>
+          <span><strong>Structure:</strong> จัดโครงสร้างชุดคำสั่งตามสัปดาห์เช่นน `project/`, `week09/`, `week10/` </span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 bg-green-400 rounded text-green-900 flex items-center justify-center font-bold">✓</div>
+          <span><strong>Folder Environment:</strong> เพิ่มไฟล์ `requirements.txt` เพื่อบอก package ที่จำเป็นสำำหรับ folder นั้น ๆ เมื่อใช้ `pip`</span>
+          <span>หรือจัดการโครงงานทั้งหมดใน folder ด้วย <strong>uv</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Encapsulation -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      แนวคิดที่ 1: <span class="text-yellow-300">Encapsulation</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left space-y-6">
+        <p class="text-xl text-white/90">
+          การรวมข้อมูลและเมธอดเข้าด้วยกันเป็นหน่วยเดียว และจำกัดการเข้าถึงสถานะภายในของวัตถุ (Information Hiding)
+        </p>
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-green-300">ระดับการเข้าถึงใน Python</h3>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3">
+              <span class="bg-blue-500/20 px-2 py-1 rounded font-mono text-sm">public</span>
+              <span>เข้าถึงได้จากทุกที่ (ค่าเริ่มต้น)</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="bg-yellow-500/20 px-2 py-1 rounded font-mono text-sm">_protected</span>
+              <span>เป็นข้อตกลงร่วมกัน ควรใช้แค่ภายในคลาสหรือคลาสลูก</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="bg-red-500/20 px-2 py-1 rounded font-mono text-sm">__private</span>
+              <span>ถูกเปลี่ยนชื่อ (Mangling) เป็น <code>_Class__var</code></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border-l-4 border-yellow-300">
+<pre>class BankAccount:
+    def __init__(self, balance):
+        self._balance = balance  # Protected
+        self.__secret = "Key"    # Private
+
+    def deposit(self, amount):
+        if amount > 0:
+            self._balance += amount
+
+account = BankAccount(100)
+# account.__secret  <-- AttributeError
+# account._BankAccount__secret  <-- เข้าถึงได้ถ้ารู้ชื่อ</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: Python Properties -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      วิถีแห่ง Python: <span class="text-yellow-300">@property</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      หลีกเลี่ยง Getter/Setter แบบ Java ให้ใช้ Property เพื่อเพิ่มลอจิกในการเข้าถึงข้อมูล
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+        <h3 class="text-2xl font-bold text-green-300 mb-2">The Getter</h3>
+        <p class="mb-4 text-sm text-white/80">เรียกใช้เมธอดเสมือนเป็น Attribute ตัวหนึ่ง</p>
+        <code class="block bg-black/30 p-3 rounded font-mono text-sm">
+@property<br>
+def radius(self):<br>
+&nbsp;&nbsp;return self._radius
+        </code>
+      </div>
+      
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+        <h3 class="text-2xl font-bold text-blue-300 mb-2">The Setter</h3>
+        <p class="mb-4 text-sm text-white/80">เพิ่มลอจิกตรวจสอบความถูกต้องเมื่อมีการกำหนดค่า</p>
+        <code class="block bg-black/30 p-3 rounded font-mono text-sm">
+@radius.setter<br>
+def radius(self, value):<br>
+&nbsp;&nbsp;if value < 0: raise ValueError<br>
+&nbsp;&nbsp;self._radius = value
+        </code>
+      </div>
+    </div>
+    <div class="mt-8 bg-black/20 p-4 rounded-lg inline-block">
+      <span class="font-mono text-yellow-200">obj.radius = 10</span> &nbsp;⟶&nbsp; เรียกใช้ Setter อัตโนมัติ
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Inheritance -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      แนวคิดที่ 2: <span class="text-yellow-300">Inheritance</span>
+    </h1>
+    <div class="flex gap-8 items-start">
+      <div class="w-1/2 text-left space-y-6">
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-l-4 border-green-400">
+          <h3 class="text-2xl font-semibold mb-2">การใช้โค้ดซ้ำ ("Is-A")</h3>
+          <p class="text-white/90">
+            คลาสลูก (Child) รับคุณลักษณะและเมธอดมาจากคลาสแม่ (Parent) สามารถ <strong>ขยาย (extend)</strong> หรือ <strong>เขียนทับ (override)</strong> การทำงานได้
+          </p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-l-4 border-blue-400">
+          <h3 class="text-2xl font-semibold mb-2">ฟังก์ชัน <code>super()</code></h3>
+          <p class="text-white/90">
+            ส่งคืนออบเจกต์ตัวแทนเพื่อเรียกใช้เมธอดของคลาสแม่ จำเป็นมากสำหรับการเรียกใช้เมธอดที่ถูก Override
+          </p>
+        </div>
+      </div>
+      
+      <div class="w-1/2 bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre>class Animal:
+    def speak(self):
+        print("เสียงสัตว์ทั่วไป")
+
+class Dog(Animal):  # สืบทอด
+    def speak(self):
+        # เขียนทับ (Override)
+        print("โฮ่ง!")
+
+class SuperDog(Dog):
+    def speak(self):
+        # เรียกใช้ speak() ของคลาสแม่
+        super().speak() 
+        print("...และบินได้ด้วย!")</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Multiple Inheritance & MRO -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      การสืบทอดหลายทาง & <span class="text-yellow-300">MRO</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+      Python รองรับการสืบทอดจากหลายคลาสแม่ ลำดับมีความสำคัญเพื่อหลีกเลี่ยง "Diamond Problem"
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left h-full flex flex-col justify-center">
+        <h3 class="text-2xl font-bold text-green-300 mb-4">Method Resolution Order (MRO)</h3>
+        <p class="mb-4">อัลกอริทึม (C3 Linearization) ที่ Python ใช้กำหนดลำดับในการค้นหาเมธอด</p>
+        <div class="bg-black/30 p-4 rounded font-mono text-sm text-yellow-200">
+          >>> ClassName.__mro__<br>
+          (Child, Parent1, Parent2, object)
+        </div>
+        <p class="mt-4 text-sm italic opacity-80">Python ค้นหาจาก ซ้ายไปขวา, ลึกไปตื้น (โดยส่วนใหญ่)</p>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border-l-4 border-yellow-300">
+<pre>class A:
+    def do_task(self): print("A")
+
+class B(A): pass
+
+class C(A):
+    def do_task(self): print("C")
+
+# Multiple Inheritance
+class D(B, C): pass
+
+d = D()
+d.do_task()  
+# ผลลัพธ์: "C" 
+# MRO: D -> B -> C -> A</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Polymorphism -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      แนวคิดที่ 3: <span class="text-yellow-300">Polymorphism</span>
+    </h1>
+    <div class="text-left bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+      <h3 class="text-3xl font-semibold mb-4 border-b border-white/20 pb-2">"หลายรูปแบบ"</h3>
+      <p class="text-xl leading-relaxed mb-6">
+        ความสามารถของวัตถุต่างชนิดในการตอบสนองต่อการเรียกเมธอดเดียวกัน ใน Python มักใช้หลักการ <strong>Duck Typing</strong>
+      </p>
+      
+      <div class="flex items-center gap-6 bg-black/20 p-4 rounded-xl">
+        <div class="text-5xl">🦆</div>
+        <div class="italic text-lg text-yellow-100">
+          "ถ้ามันเดินเหมือนเป็ด และร้องเหมือนเป็ด ก็ถือว่ามันเป็นเป็ด"
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-left font-mono text-sm">
+      <div class="bg-black/40 p-4 rounded-lg">
+<pre>class PDFReader:
+    def read(self):
+        return "Reading PDF..."</pre>
+      </div>
+      <div class="bg-black/40 p-4 rounded-lg">
+<pre>class WordReader:
+    def read(self):
+        return "Reading Doc..."</pre>
+      </div>
+    </div>
+    <div class="mt-4 bg-green-500/20 p-3 rounded text-sm font-mono">
+      def scan(reader): print(reader.read()) <span class="text-green-300"># ทำงานได้ทั้งคู่!</span>
+    </div>
+  </div>
+</div>
+<!-- Slide 11: Abstraction -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      แนวคิดที่ 4: <span class="text-yellow-300">Abstraction (นามธรรม)</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left space-y-6">
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+          <h3 class="text-2xl font-bold text-green-300 mb-3">การซ่อนความซับซ้อน</h3>
+          <p class="text-white/90 mb-4">
+            Abstraction ช่วยให้เรากำหนดโครงร่าง (Interface) โดยซ่อนรายละเอียดการทำงานที่ซับซ้อนไว้ บังคับให้คลาสลูกต้องปฏิบัติตามสัญญาที่ระบุไว้
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li><strong>ABC:</strong> Abstract Base Classes (จากโมดูล <code>abc</code>)</li>
+            <li><strong>@abstractmethod:</strong> เมธอดที่ <em>ต้อง</em> ถูกเขียนทับ (Implement) ในคลาสลูก</li>
+            <li><strong>การบังคับใช้:</strong> Python จะแจ้งข้อผิดพลาดหากพยายามสร้าง Object จาก Abstract Class ที่ยังไม่สมบูรณ์</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border-l-4 border-blue-400">
+<pre>from abc import ABC, abstractmethod
+
+class PaymentGateway(ABC):
+    @abstractmethod
+    def process(self, amount):
+        pass
+
+class PayPal(PaymentGateway):
+    def process(self, amount):
+        print(f"Paid ${amount} via PayPal")
+
+# pg = PaymentGateway() # Error! สร้างไม่ได้
+p = PayPal()
+p.process(100) # Output: Paid $100 via PayPal</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Composition vs Inheritance -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Composition <span class="text-white/60">เหนือกว่า</span> Inheritance
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-3xl font-semibold mb-4 text-red-300">Inheritance (เป็น Is-A)</h3>
+          <p class="mb-4">ใช้เมื่อคลาสลูกเป็น "รูปแบบเฉพาะ" ของคลาสแม่</p>
+          <div class="bg-black/30 p-4 rounded font-mono text-sm">
+            class Manager(Employee):<br>
+            &nbsp;&nbsp;...
+          </div>
+          <p class="mt-2 text-sm italic opacity-70">ผูกมัดแน่น (Rigid) การเปลี่ยนแปลงในคลาสแม่กระทบลูกทั้งหมด</p>
+        </div>
+        <div class="border-l border-white/20 pl-8">
+          <h3 class="text-3xl font-semibold mb-4 text-green-300">Composition (มี Has-A)</h3>
+          <p class="mb-4">ใช้สร้างวัตถุที่ซับซ้อนจากส่วนประกอบย่อยๆ ที่เป็นอิสระต่อกัน</p>
+          <div class="bg-black/30 p-4 rounded font-mono text-sm">
+            class Car:<br>
+            &nbsp;&nbsp;def __init__(self):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;self.engine = Engine()
+          </div>
+          <p class="mt-2 text-sm italic opacity-70">ยืดหยุ่นกว่า (Flexible) สามารถสลับเปลี่ยนส่วนประกอบได้ขณะทำงาน</p>
+        </div>
+      </div>
+    </div>
+    <div class="text-xl font-light text-yellow-200">
+      "จงเลือกใช้ Object Composition มากกว่า Class Inheritance" - Design Patterns (GoF)
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Reviewing UML Class Diagrams -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-10">
+      การแสดงภาพการออกแบบ: <span class="text-yellow-300">UML Class Diagrams</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      วางแผนโครงสร้างคลาสก่อนเริ่มเขียนโค้ดจริง
+    </p>
+    
+    <div class="grid grid-cols-3 gap-6 text-left">
+      <!-- The Class Box -->
+      <div class="bg-white text-black rounded-lg overflow-hidden shadow-lg col-span-1">
+        <div class="bg-yellow-100 p-2 font-bold text-center border-b border-black">ClassName</div>
+        <div class="p-3 border-b border-black text-sm">
+          + public_attr<br>
+          - private_attr
+        </div>
+        <div class="p-3 text-sm">
+          + method()<br>
+          + get_status()
+        </div>
+      </div>
+
+      <!-- Relationships -->
+      <div class="col-span-2 space-y-4">
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center gap-4">
+          <div class="w-16 h-0.5 bg-white relative">
+            <div class="absolute right-0 -top-1.5 w-3 h-3 border-r-2 border-b-2 border-white rotate-[-45deg]"></div>
+          </div>
+          <div>
+            <strong class="text-blue-300">Inheritance (Generalization)</strong><br>
+            <span class="text-sm">เส้นทึบ หัวลูกศรสามเหลี่ยมโปร่ง "Is-A" (เป็น)</span>
+          </div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center gap-4">
+          <div class="w-16 h-0.5 bg-white relative">
+            <div class="absolute right-0 -top-1.5 w-3 h-3 bg-white rotate-45 transform origin-center"></div>
+          </div>
+          <div>
+            <strong class="text-green-300">Composition</strong><br>
+            <span class="text-sm">เส้นทึบ หัวเพชรทึบ "Part-of" (เป็นส่วนหนึ่งที่ขาดไม่ได้ วงจรชีวิตขึ้นต่อกัน)</span>
+          </div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center gap-4">
+          <div class="w-16 h-0.5 bg-white relative">
+            <div class="absolute right-0 -top-1.5 w-3 h-3 border-2 border-white rotate-45 transform origin-center"></div>
+          </div>
+          <div>
+            <strong class="text-yellow-300">Aggregation</strong><br>
+            <span class="text-sm">เส้นทึบ หัวเพชรโปร่ง "Has-A" (มีส่วนประกอบ แต่วงจรชีวิตแยกกันได้)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Project Structure -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การจัดโครงสร้าง <span class="text-yellow-300">โปรเจกต์ Python</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-10 items-start">
+      <div class="text-left">
+        <p class="text-xl mb-6">หลีกเลี่ยงการเขียนโค้ดทั้งหมดในไฟล์เดียว (Monolithic) ควรแบ่งโค้ดเป็นส่วนๆ ตามหน้าที่</p>
+        <ul class="space-y-4">
+          <li class="flex items-center gap-3">
+            <span class="bg-blue-500/20 p-2 rounded">📁</span>
+            <span><strong>Modules:</strong> ไฟล์ <code>.py</code> แต่ละไฟล์ที่มีคลาสหรือฟังก์ชันที่เกี่ยวข้องกัน</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="bg-yellow-500/20 p-2 rounded">📦</span>
+            <span><strong>Packages:</strong> โฟลเดอร์ที่มีไฟล์ <code>__init__.py</code> ใช้รวมหลายโมดูล</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="bg-green-500/20 p-2 rounded">🚀</span>
+            <span><strong>Entry Point:</strong> ไฟล์หลัก เช่น <code>main.py</code> หรือ <code>app.py</code> สำหรับเริ่มโปรแกรม</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/10">
+        <div class="text-green-400">my_project/</div>
+        <div class="pl-4 text-blue-300">├── main.py</div>
+        <div class="pl-4 text-blue-300">├── requirements.txt</div>
+        <div class="pl-4 text-blue-300">├── README.md</div>
+        <div class="pl-4 text-yellow-200">├── models/</div>
+        <div class="pl-8 text-white">├── __init__.py</div>
+        <div class="pl-8 text-white">├── user.py</div>
+        <div class="pl-8 text-white">└── product.py</div>
+        <div class="pl-4 text-yellow-200">├── services/</div>
+        <div class="pl-8 text-white">├── __init__.py</div>
+        <div class="pl-8 text-white">└── database.py</div>
+        <div class="pl-4 text-gray-400">└── tests/</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Version Control (Git) -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      การจัดการเวอร์ชันด้วย <span class="text-yellow-300">GitHub</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      คำสั่งพื้นฐานที่จำเป็นสำหรับการทำงานร่วมกัน
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-xl font-bold text-green-300 mb-2">1. เริ่มต้น (Setup)</h3>
+        <code class="block bg-black/30 p-2 rounded mb-2">git init</code>
+        <code class="block bg-black/30 p-2 rounded">git remote add origin &lt;url&gt;</code>
+      </div>
+      
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-xl font-bold text-blue-300 mb-2">2. บันทึกงาน (Staging & Committing)</h3>
+        <code class="block bg-black/30 p-2 rounded mb-2">git add .</code>
+        <code class="block bg-black/30 p-2 rounded">git commit -m "เพิ่มฟีเจอร์ User class"</code>
+      </div>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <h3 class="text-xl font-bold text-yellow-300 mb-2">3. ซิงค์ข้อมูล (Syncing)</h3>
+        <code class="block bg-black/30 p-2 rounded mb-2">git pull origin main</code>
+        <code class="block bg-black/30 p-2 rounded">git push origin main</code>
+      </div>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-l-4 border-red-400">
+        <h3 class="text-xl font-bold text-white mb-2">⚠️ ไฟล์ .gitignore</h3>
+        <p class="text-sm">สิ่งที่ไม่ควรอัปโหลด:</p>
+        <ul class="list-disc pl-5 text-sm mt-1 text-white/80">
+          <li><code>__pycache__/</code></li>
+          <li><code>venv/</code> หรือไฟล์ <code>.env</code></li>
+          <li>ไฟล์ระบบ (<code>.DS_Store</code>)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Method Types -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ประเภทเมธอด: <span class="text-yellow-300">Instance vs Class vs Static</span>
+    </h1>
+    <div class="grid grid-cols-3 gap-6 text-left">
+      <!-- Instance Method -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-t-4 border-green-400">
+        <h3 class="text-2xl font-bold mb-2">Instance Methods</h3>
+        <p class="text-sm text-white/80 mb-4">เมธอดปกติ ทำงานกับข้อมูลของออบเจกต์ (State)</p>
+        <ul class="text-sm space-y-2 mb-4">
+          <li><strong>อาร์กิวเมนต์แรก:</strong> <code>self</code></li>
+          <li><strong>เข้าถึง:</strong> ทั้ง Instance และ Class</li>
+        </ul>
+        <code class="block bg-black/30 p-2 rounded text-xs font-mono">
+def work(self):<br>
+&nbsp;&nbsp;self.data = 1
+        </code>
+      </div>
+
+      <!-- Class Method -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-t-4 border-blue-400">
+        <h3 class="text-2xl font-bold mb-2">Class Methods</h3>
+        <p class="text-sm text-white/80 mb-4">ผูกกับคลาส ไม่ใช่อินแตนซ์ มักใช้สร้าง Factory Methods</p>
+        <ul class="text-sm space-y-2 mb-4">
+          <li><strong>Decorator:</strong> <code>@classmethod</code></li>
+          <li><strong>อาร์กิวเมนต์แรก:</strong> <code>cls</code></li>
+        </ul>
+        <code class="block bg-black/30 p-2 rounded text-xs font-mono">
+@classmethod<br>
+def from_string(cls, s):<br>
+&nbsp;&nbsp;return cls(s)
+        </code>
+      </div>
+
+      <!-- Static Method -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-t-4 border-yellow-400">
+        <h3 class="text-2xl font-bold mb-2">Static Methods</h3>
+        <p class="text-sm text-white/80 mb-4">ฟังก์ชันยูทิลิตี้ที่อยู่ในคลาสแต่ไม่ยุ่งกับข้อมูลภายใน</p>
+        <ul class="text-sm space-y-2 mb-4">
+          <li><strong>Decorator:</strong> <code>@staticmethod</code></li>
+          <li><strong>อาร์กิวเมนต์แรก:</strong> ไม่มี</li>
+        </ul>
+        <code class="block bg-black/30 p-2 rounded text-xs font-mono">
+@staticmethod<br>
+def is_valid(x):<br>
+&nbsp;&nbsp;return x > 0
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Managed Attributes -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การจัดการแอททริบิวต์ด้วย <span class="text-yellow-300">@property</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-10 items-center">
+      <div class="text-left space-y-6">
+        <p class="text-xl leading-relaxed">
+          หลีกเลี่ยงการเขียน <code>get_variable()</code> และ <code>set_variable()</code> แบบ Java ให้ใช้ <strong>Property</strong> เพื่อตรวจสอบข้อมูลหรือคำนวณค่าโดยไม่ต้องเปลี่ยน Interface เดิม
+        </p>
+        <div class="bg-white/10 p-4 rounded-lg">
+          <h4 class="font-bold text-green-300 mb-2">ประโยชน์</h4>
+          <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li><strong>Validation:</strong> ตรวจสอบค่าก่อนบันทึก (เช่น อายุห้ามติดลบ)</li>
+            <li><strong>Computed Fields:</strong> คำนวณค่าสดใหม่เสมอ (เช่น <code>area</code> จาก <code>width * height</code>)</li>
+            <li><strong>Backward Compatibility:</strong> เปลี่ยนโค้ดภายในโดยไม่กระทบคนเรียกใช้</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/10 shadow-2xl">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">Circle</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, radius):
+        self._radius = radius
+
+    <span class="text-orange-400">@property</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">diameter</span>(self):
+        <span class="text-gray-400"># แอททริบิวต์แบบคำนวณ</span>
+        <span class="text-purple-400">return</span> self._radius * <span class="text-green-300">2</span>
+
+    <span class="text-orange-400">@diameter.setter</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">diameter</span>(self, value):
+        <span class="text-gray-400"># ตรวจสอบความถูกต้อง</span>
+        <span class="text-purple-400">if</span> value < <span class="text-green-300">0</span>:
+            <span class="text-purple-400">raise</span> <span class="text-yellow-300">ValueError</span>
+        self._radius = value / <span class="text-green-300">2</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Magic Methods (Dunder Methods) -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      เมธอดพิเศษ <span class="text-yellow-300">(__dunder__)</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      กำหนดพฤติกรรมของออบเจกต์เมื่อทำงานร่วมกับตัวดำเนินการ (Operators) และฟังก์ชันของ Python
+    </p>
+    
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <!-- String Representation -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+        <h3 class="text-xl font-bold text-green-300 mb-2">การแสดงผล (String Representation)</h3>
+        <ul class="space-y-3 font-mono text-sm">
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__str__(self)</span>
+            <span class="text-white/60">สำหรับผู้ใช้ทั่วไป (print)</span>
+          </li>
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__repr__(self)</span>
+            <span class="text-white/60">สำหรับนักพัฒนา (debugging)</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Operator Overloading -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+        <h3 class="text-xl font-bold text-blue-300 mb-2">ตัวดำเนินการ (Operators)</h3>
+        <ul class="space-y-3 font-mono text-sm">
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__add__(self, other)</span>
+            <span class="text-white/60">obj1 + obj2</span>
+          </li>
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__eq__(self, other)</span>
+            <span class="text-white/60">obj1 == obj2</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Container Emulation -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+        <h3 class="text-xl font-bold text-purple-300 mb-2">การเป็นคอนเทนเนอร์</h3>
+        <ul class="space-y-3 font-mono text-sm">
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__len__(self)</span>
+            <span class="text-white/60">len(obj)</span>
+          </li>
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__getitem__(self, key)</span>
+            <span class="text-white/60">obj[key]</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Comparison -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+        <h3 class="text-xl font-bold text-yellow-300 mb-2">Context Managers</h3>
+        <ul class="space-y-3 font-mono text-sm">
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__enter__(self)</span>
+            <span class="text-white/60">with obj:</span>
+          </li>
+          <li class="flex justify-between border-b border-white/10 pb-1">
+            <span>__exit__(self, ...)</span>
+            <span class="text-white/60">เมื่อจบการทำงาน</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Preparing for Next Week -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      มองไปข้างหน้า: <span class="text-yellow-300">Design Patterns</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6">
+      <p class="text-xl">
+        สัปดาห์หน้า (Week 10) เราจะเปลี่ยนจาก "เขียนคลาสอย่างไร" ไปสู่ "ออกแบบระบบอย่างไร" เราจะเรียนรู้หลักการ <strong>SOLID</strong> และ <strong>Design Patterns</strong> มาตรฐาน
+      </p>
+      
+      <div class="grid grid-cols-2 gap-6 mt-6">
+        <div class="p-4 border border-white/20 rounded-lg bg-black/20">
+          <h3 class="text-lg font-bold text-green-300 mb-2">S.O.L.I.D.</h3>
+          <p class="text-sm text-white/80">5 หลักการออกแบบเพื่อให้ซอฟต์แวร์เข้าใจง่าย ยืดหยุ่น และดูแลรักษาง่าย</p>
+        </div>
+        <div class="p-4 border border-white/20 rounded-lg bg-black/20">
+          <h3 class="text-lg font-bold text-blue-300 mb-2">Design Patterns</h3>
+          <p class="text-sm text-white/80">วิธีการแก้ปัญหามาตรฐานที่ใช้ซ้ำได้ (เช่น Singleton, Factory, Observer)</p>
+        </div>
+      </div>
+
+      <div class="bg-yellow-500/20 p-4 rounded-lg mt-6">
+        <strong class="text-yellow-200">การเตรียมตัว:</strong> ตรวจสอบ GitHub repository ของคุณให้เป็นปัจจุบัน คุณจะต้องทำการ Refactor โปรเจกต์โดยใช้รูปแบบเหล่านี้ในเร็วๆ นี้
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Summary & Q&A -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      จบการบรรยาย <span class="text-yellow-300">สัปดาห์ที่ 9</span>
+    </h1>
+    <div class="text-2xl mb-12 font-light">
+      มีคำถามเพิ่มเติมไหมครับ?
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 text-left max-w-3xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
+        <h3 class="text-xl font-bold border-b border-white/20 pb-2 mb-4">สรุปเนื้อหา</h3>
+        <ul class="list-disc pl-5 space-y-2 text-white/80">
+          <li>Encapsulation, Inheritance, Polymorphism</li>
+          <li>Composition ดีกว่า Inheritance ในหลายกรณี</li>
+          <li>โครงสร้างโปรเจกต์ Python ที่ดี</li>
+          <li>กระบวนการ Git/GitHub เบื้องต้น</li>
+        </ul>
+      </div>
+      
+      <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
+        <h3 class="text-xl font-bold border-b border-white/20 pb-2 mb-4">แหล่งข้อมูล</h3>
+        <ul class="space-y-2 text-white/80 text-sm">
+          <li>📘 Python 3 Documentation (Classes)</li>
+          <li>📗 GitHub Guides</li>
+          <li>📙 เอกสารประกอบรายวิชา (wichit2s)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 text-sm opacity-60">
+      "Simple is better than complex." — The Zen of Python
+    </div>
+  </div>
+</div>
+
+<!-- Slide 1: Lab Title -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+      ชั่วโมงปฏิบัติการ: <br>
+      <span class="text-yellow-300">การพัฒนา Python GUI สมัยใหม่</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      การตั้งค่าสภาพแวดล้อมด้วย Scoop & uv + สร้างเว็บเบราว์เซอร์ด้วย PySide6
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">วาระการปฏิบัติการ (Agenda)</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+          <span><strong>เครื่องมือ (Tooling):</strong> ติดตั้ง Scoop, Git และ uv</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+          <span><strong>การตั้งค่า (Setup):</strong> เริ่มต้น Workspace และติดตั้ง PySide6</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+          <span><strong>การพัฒนา (Development):</strong> สร้างเว็บเบราว์เซอร์ที่ใช้งานได้จริง</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: Installing Scoop -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ขั้นตอนที่ 1: การติดตั้ง <span class="text-yellow-300">Scoop</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left space-y-6">
+        <p class="text-xl text-white/90">
+          Scoop เป็นตัวติดตั้งแบบ command-line สำหรับ Windows เราจะใช้เพื่อจัดการเครื่องมือพัฒนาต่างๆ ได้อย่างง่ายดาย
+        </p>
+        <div class="bg-red-500/20 p-4 rounded-xl border-l-4 border-red-400">
+          <h4 class="font-bold mb-2">ข้อกำหนดเบื้องต้น</h4>
+          <p class="text-sm">เปิด <strong>PowerShell</strong> (ไม่ใช่ CMD) ในฐานะ Administrator</p>
+        </div>
+      </div>
+      
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/10">
+        <div class="mb-4 text-gray-400"># 1. กำหนดนโยบายการรันคำสั่ง (Execution Policy)</div>
+        <code class="block text-green-300 mb-6">Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code>
+        
+        <div class="mb-4 text-gray-400"># 2. ติดตั้ง Scoop</div>
+        <code class="block text-green-300">irm get.scoop.sh | iex</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Git and UV -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ขั้นตอนที่ 2: ติดตั้ง <span class="text-yellow-300">Git & uv</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      เราต้องการ <strong>Git</strong> สำหรับการจัดการเวอร์ชัน และ <strong>uv</strong> สำหรับจัดการแพ็คเกจ Python ที่มีความเร็วสูงมาก
+    </p>
+    
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <h3 class="text-2xl font-bold text-blue-300 mb-4">คำสั่งติดตั้ง</h3>
+      <div class="bg-black/40 p-4 rounded-lg font-mono text-lg mb-6">
+        scoop install git uv
+      </div>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="p-4 border border-white/20 rounded bg-white/5">
+          <strong class="text-yellow-300">ทำไมต้อง uv?</strong><br>
+          ใช้ทดแทน pip และ virtualenv เขียนด้วยภาษา Rust ทำงานเร็วกว่าเครื่องมือเดิม 10-100 เท่า
+        </div>
+        <div class="p-4 border border-white/20 rounded bg-white/5">
+          <strong class="text-yellow-300">ทำไมต้อง Git?</strong><br>
+          จำเป็นสำหรับการดาวน์โหลดซอร์สโค้ด (Clone) และจัดการประวัติการแก้ไขงาน
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Project Initialization -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ขั้นตอนที่ 3: <span class="text-yellow-300">เริ่มต้น Workspace</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-10 items-start">
+      <div class="text-left space-y-4">
+        <p class="text-lg">เราจะสร้างโฟลเดอร์สำหรับโปรเจกต์และเริ่มต้นสภาพแวดล้อม Python โดยใช้ `uv`</p>
+        <ul class="list-decimal pl-5 space-y-2 text-white/80">
+          <li>สร้างโฟลเดอร์โปรเจกต์</li>
+          <li>เริ่มต้นโปรเจกต์ Python (Initialize)</li>
+          <li>เพิ่มไลบรารี <strong>PySide6</strong> (Qt for Python)</li>
+        </ul>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border-l-4 border-green-400">
+        <div class="text-gray-500"># สร้างและเข้าไปในโฟลเดอร์</div>
+        <div class="text-white mb-4">mkdir browser_lab<br>cd browser_lab</div>
+
+        <div class="text-gray-500"># เริ่มต้นโปรเจกต์ uv</div>
+        <div class="text-white mb-4">uv init</div>
+
+        <div class="text-gray-500"># ติดตั้ง PySide6 (สร้าง venv ให้อัตโนมัติ)</div>
+        <div class="text-green-300">uv add pyside6</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: Browser App Structure -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-10">
+      เป้าหมาย: <span class="text-yellow-300">เว็บเบราว์เซอร์อย่างง่าย</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 relative">
+      <!-- Mock UI -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden shadow-2xl border border-gray-600 w-full aspect-video flex flex-col">
+        <!-- Toolbar -->
+        <div class="bg-gray-700 h-12 flex items-center px-4 gap-2 border-b border-gray-600">
+          <div class="w-8 h-8 bg-gray-500 rounded hover:bg-gray-400 cursor-pointer flex items-center justify-center">←</div>
+          <div class="w-8 h-8 bg-gray-500 rounded hover:bg-gray-400 cursor-pointer flex items-center justify-center">→</div>
+          <div class="w-8 h-8 bg-gray-500 rounded hover:bg-gray-400 cursor-pointer flex items-center justify-center">↻</div>
+          <div class="flex-1 bg-white rounded h-8 ml-2"></div>
+        </div>
+        <!-- Web View -->
+        <div class="flex-1 bg-white flex items-center justify-center text-black">
+          <span class="text-2xl font-bold text-gray-400">Central Widget (QWebEngineView)</span>
+        </div>
+      </div>
+      
+      <div class="mt-6 text-left">
+        <h3 class="text-xl font-bold text-green-300">ส่วนประกอบหลัก (Core Components):</h3>
+        <ul class="list-disc pl-5 mt-2 space-y-1">
+          <li><strong>QMainWindow:</strong> โครงหลักของแอปพลิเคชัน</li>
+          <li><strong>QToolBar:</strong> แถบนำทางด้านบน (Back, Forward, Reload)</li>
+          <li><strong>QWebEngineView:</strong> วิดเจ็ตหลักตรงกลางสำหรับเรนเดอร์หน้าเว็บ HTML</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: The Skeleton Code -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      การเขียนโค้ด: <span class="text-yellow-300">โครงสร้างหลัก (Skeleton)</span>
+    </h1>
+    <p class="mb-6 text-white/80">สร้างไฟล์ชื่อ <code>main.py</code> เริ่มต้นด้วยการสืบทอดจาก <code>QMainWindow</code></p>
+    
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/10 h-[400px] overflow-auto">
+<pre><span class="text-purple-400">import</span> sys
+<span class="text-purple-400">from</span> PySide6.QtWidgets <span class="text-purple-400">import</span> QApplication, QMainWindow
+
+<span class="text-gray-500"># 1. สร้างคลาสย่อยของ QMainWindow เพื่อสร้างหน้าต่างแอป</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">BrowserWindow</span>(QMainWindow):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        <span class="text-purple-400">super</span>().__init__()
+        
+        self.setWindowTitle(<span class="text-green-300">"My PySide6 Browser"</span>)
+        self.resize(<span class="text-green-300">1024</span>, <span class="text-green-300">768</span>)
+
+<span class="text-gray-500"># 2. ตั้งค่าลูปการทำงานของแอปพลิเคชัน (Application Loop)</span>
+<span class="text-purple-400">if</span> __name__ == <span class="text-green-300">"__main__"</span>:
+    app = QApplication(sys.argv)
+    window = BrowserWindow()
+    window.show()
+    sys.exit(app.exec())</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: Adding the Web Engine -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      เพิ่มส่วนแสดงผลเว็บ <span class="text-yellow-300">(Web View)</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left">
+        <p class="text-xl mb-4"><code>QWebEngineView</code> เป็นวิดเจ็ตทรงพลังที่ทำงานบนพื้นฐานของ Chromium</p>
+        <div class="bg-blue-500/20 p-4 rounded-lg border-l-4 border-blue-400">
+          <h4 class="font-bold">ขั้นตอนสำคัญ:</h4>
+          <ol class="list-decimal pl-5 mt-2 space-y-2">
+            <li>Import <code>QWebEngineView</code></li>
+            <li>Import <code>QUrl</code> สำหรับจัดการ URL</li>
+            <li>กำหนดให้เป็น <strong>Central Widget</strong> ของหน้าต่าง</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/10">
+<pre><span class="text-purple-400">from</span> PySide6.QtWebEngineWidgets <span class="text-purple-400">import</span> QWebEngineView
+<span class="text-purple-400">from</span> PySide6.QtCore <span class="text-purple-400">import</span> QUrl
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">BrowserWindow</span>(QMainWindow):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        <span class="text-purple-400">super</span>().__init__()
+        self.setWindowTitle(<span class="text-green-300">"My PySide6 Browser"</span>)
+
+        <span class="text-gray-500"># สร้าง Web View</span>
+        self.browser = QWebEngineView()
+        
+        <span class="text-gray-500"># กำหนด URL เริ่มต้น</span>
+        self.browser.setUrl(QUrl(<span class="text-green-300">"http://www.google.com"</span>))
+        
+        <span class="text-gray-500"># วางไว้ตรงกลางหน้าต่าง</span>
+        self.setCentralWidget(self.browser)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: The Navigation Bar -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      สร้าง <span class="text-yellow-300">แถบนำทาง (Navigation Bar)</span>
+    </h1>
+    <div class="text-left space-y-4">
+      <p class="text-lg">เราต้องการแถบเครื่องมือด้านบน ใน Qt เราจะเพิ่ม <code>QAction</code> ลงใน <code>QToolBar</code></p>
+      
+      <div class="bg-black/40 rounded-xl p-6 font-mono text-sm border-l-4 border-yellow-300">
+<pre><span class="text-purple-400">from</span> PySide6.QtWidgets <span class="text-purple-400">import</span> QToolBar, QStyle
+
+<span class="text-gray-500"># ภายใน __init__ ...</span>
+    <span class="text-gray-500"># สร้าง Toolbar</span>
+    nav_bar = QToolBar()
+    self.addToolBar(nav_bar)
+
+    <span class="text-gray-500"># สร้างปุ่มคำสั่ง (Actions)</span>
+    back_btn = QAction(<span class="text-green-300">"Back"</span>, self)
+    back_btn.triggered.connect(self.browser.back)
+    nav_bar.addAction(back_btn)
+
+    forward_btn = QAction(<span class="text-green-300">"Forward"</span>, self)
+    forward_btn.triggered.connect(self.browser.forward)
+    nav_bar.addAction(forward_btn)
+
+    reload_btn = QAction(<span class="text-green-300">"Reload"</span>, self)
+    reload_btn.triggered.connect(self.browser.reload)
+    nav_bar.addAction(reload_btn)</pre>
+      </div>
+      <div class="text-sm italic opacity-80 mt-2">
+        *หมายเหตุ: ต้อง import <code>QAction</code> จาก <code>PySide6.QtGui</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: The Address Bar -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      ลอจิกของ <span class="text-yellow-300">แถบที่อยู่ (Address Bar)</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8">
+      <div class="text-left">
+        <p class="mb-4">เราต้องการช่องกรอกข้อความ (QLineEdit) เพื่อพิมพ์ URL และเชื่อมต่อกับเบราว์เซอร์</p>
+        <ul class="list-disc pl-5 space-y-2 text-sm text-white/80">
+          <li><strong>Input:</strong> เมื่อกด Enter ให้โหลด URL นั้น</li>
+          <li><strong>Feedback:</strong> เมื่อหน้าเว็บเปลี่ยน ให้อัปเดตข้อความในช่อง URL</li>
+        </ul>
+      </div>
+      
+      <div class="bg-black/40 rounded-xl p-5 text-left font-mono text-xs overflow-auto">
+<pre><span class="text-purple-400">from</span> PySide6.QtWidgets <span class="text-purple-400">import</span> QLineEdit
+
+    <span class="text-gray-500"># ภายใน __init__...</span>
+    self.url_bar = QLineEdit()
+    self.url_bar.returnPressed.connect(self.navigate_to_url)
+    nav_bar.addWidget(self.url_bar)
+
+    <span class="text-gray-500"># ซิงค์ URL เมื่อเว็บเปลี่ยน</span>
+    self.browser.urlChanged.connect(self.update_url)
+
+<span class="text-gray-500"># สร้างเมธอดใหม่ในคลาส</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">navigate_to_url</span>(self):
+    url = self.url_bar.text()
+    <span class="text-purple-400">if not</span> url.startswith(<span class="text-green-300">"http"</span>):
+        url = <span class="text-green-300">"http://"</span> + url
+    self.browser.setUrl(QUrl(url))
+
+<span class="text-purple-400">def</span> <span class="text-blue-300">update_url</span>(self, q):
+    self.url_bar.setText(q.toString())</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Run and Verify -->
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      <span class="text-yellow-300">จบแล็บ! (Lab Complete)</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      รันโปรแกรมเพื่อตรวจสอบความถูกต้องของสภาพแวดล้อม
+    </p>
+
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+      <h3 class="text-2xl font-bold mb-4">คำสั่งรันโปรแกรม</h3>
+      <div class="bg-black/40 p-4 rounded font-mono text-green-300 text-xl">
+        uv run main.py
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="p-4 border border-green-400/30 rounded bg-green-900/20">
+        <strong class="text-green-300">โจทย์ท้าทาย 1</strong><br>
+        เพิ่มปุ่ม "Stop" เพื่อหยุดการโหลดหน้าเว็บ
+      </div>
+      <div class="p-4 border border-blue-400/30 rounded bg-blue-900/20">
+        <strong class="text-blue-300">โจทย์ท้าทาย 2</strong><br>
+        ตกแต่ง Toolbar ด้วย CSS (StyleSheet)
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

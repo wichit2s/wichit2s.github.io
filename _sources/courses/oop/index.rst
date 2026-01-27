@@ -87,6 +87,7 @@
      - `UML Introduction <https://www.geeksforgeeks.org/unified-modeling-language-uml-introduction/>`_
    * - **9**
      - ทบทวนเนื้อหา OOP และ UML เพื่อการพัฒนาโปรเจกต์
+        * `สไลด์ <../../_static/courses/oop/slides/wk09.html>`_
         * `Github <https://github.com/>`_
      - * อธิบายความรู้เพื่อเตรียมพร้อมสำหรับการประยุกต์ใช้ในโปรเจกต์ 
         :icon:`fa-solid fa-person-running` `แบบฝึกหัด <./overview_exercise.html>`_
