@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP: Wk-10 OOP Design Patterns</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/oop/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="https://wichit2s.github.io/_static/courses/oop/slides/wk10.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+<!-- Slide 1: Title Slide -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+      Design Patterns และ <br>
+      <span class="text-yellow-300">หลักการ SOLID</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      สัปดาห์ที่ 10: สถาปัตยกรรมซอฟต์แวร์ที่ยั่งยืนและดูแลรักษาได้
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">หัวข้อการบรรยาย</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+          <span><strong>ปัญหา:</strong> ทำไมซอฟต์แวร์ถึงกลายเป็น "สปาเก็ตตี้โค้ด" (Spaghetti Code) [1]</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+          <span><strong>SOLID:</strong> 5 บัญญัติของการออกแบบเชิงวัตถุ (SRP, OCP, LSP, ISP, DIP) [2]</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+          <span><strong>Design Patterns:</strong> แนะนำรูปแบบ Creational, Structural และ Behavioral [3]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: Why Design Patterns? -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ทำไมเราถึงต้องการ <span class="text-yellow-300">Patterns?</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-4 border-red-400">
+        <h3 class="text-3xl font-semibold mb-4">วิกฤตของซอฟต์แวร์</h3>
+        <p class="text-lg mb-4">เมื่อซอฟต์แวร์โตขึ้น ความยุ่งเหยิงมักจะตามมา (Entropy):</p>
+        <ul class="list-disc pl-5 space-y-2 text-white/90">
+          <li><strong>ความแข็งกระด้าง (Rigidity):</strong> แก้จุดหนึ่ง กระทบไปพังอีกจุดหนึ่ง [4]</li>
+          <li><strong>ความเปราะบาง (Fragility):</strong> ระบบพังง่ายเมื่อมีการเปลี่ยนแปลง</li>
+          <li><strong>การยึดติด (Immobility):</strong> โค้ดนำกลับมาใช้ใหม่ (Reuse) ไม่ได้เพราะผูกติดกันแน่นเกินไป</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-4 border-green-400">
+        <h3 class="text-3xl font-semibold mb-4">ทางออก (Solution)</h3>
+        <p class="text-lg mb-4">Design Patterns คือแนวทางแก้ปัญหาที่ผ่านการพิสูจน์แล้ว [3]:</p>
+        <ul class="list-disc pl-5 space-y-2 text-white/90">
+          <li><strong>ภาษากลาง (Shared Vocabulary):</strong> นักพัฒนาสื่อสารกันได้ง่ายขึ้น เช่น "ใช้ Factory ตรงนี้สิ" แทนที่จะอธิบายโค้ดยาวๆ</li>
+          <li><strong>แนวปฏิบัติที่ดี (Best Practices):</strong> พิมพ์เขียวที่บังคับให้โค้ดมีความยืดหยุ่นและแยกส่วนกันชัดเจน (Decoupling)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Introduction to SOLID -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      หลักการ <span class="text-yellow-300">S.O.L.I.D.</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      บัญญัติโดย Robert C. Martin ("Uncle Bob") เพื่อเป็นรากฐานของการออกแบบเชิงวัตถุที่ดี (Clean Object-Oriented Design) [2, 5]
+    </div>
+    
+    <div class="grid grid-cols-1 gap-4 text-left">
+      <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+        <span class="text-4xl font-bold text-yellow-300 w-12">S</span>
+        <div><strong class="text-xl">Single Responsibility Principle (SRP)</strong><br><span class="text-sm text-white/70">หนึ่งคลาสควรมีเหตุผลเดียวในการเปลี่ยนแปลง (หน้าที่เดียว) [6]</span></div>
+      </div>
+      <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+        <span class="text-4xl font-bold text-yellow-300 w-12">O</span>
+        <div><strong class="text-xl">Open/Closed Principle (OCP)</strong><br><span class="text-sm text-white/70">เปิดรับการขยายความสามารถ แต่ปิดกั้นการแก้ไขโค้ดเดิม [7]</span></div>
+      </div>
+      <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+        <span class="text-4xl font-bold text-yellow-300 w-12">L</span>
+        <div><strong class="text-xl">Liskov Substitution Principle (LSP)</strong><br><span class="text-sm text-white/70">คลาสลูกต้องสามารถแทนที่คลาสแม่ได้โดยไม่ทำให้โปรแกรมทำงานผิดพลาด [8]</span></div>
+      </div>
+      <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+        <span class="text-4xl font-bold text-yellow-300 w-12">I</span>
+        <div><strong class="text-xl">Interface Segregation Principle (ISP)</strong><br><span class="text-sm text-white/70">ไม่ควรบังคับให้ Client พึ่งพา Interface ที่พวกเขาไม่ได้ใช้งาน [9]</span></div>
+      </div>
+      <div class="bg-white/10 p-4 rounded-lg flex items-center gap-4">
+        <span class="text-4xl font-bold text-yellow-300 w-12">D</span>
+        <div><strong class="text-xl">Dependency Inversion Principle (DIP)</strong><br><span class="text-sm text-white/70">โมดูลระดับสูงไม่ควรขึ้นกับโมดูลระดับต่ำ ทั้งคู่ควรขึ้นอยู่กับ Abstraction [10]</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Single Responsibility Principle (SRP) -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">S</span>RP: ความรับผิดชอบเดียว
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-start">
+      <div class="text-left space-y-4">
+        <div class="bg-red-500/20 p-6 rounded-xl border border-red-400/30">
+          <h3 class="text-2xl font-bold text-red-300 mb-2">การละเมิด (God Object)</h3>
+          <p class="mb-4 text-sm">คลาสนี้ทำทั้งคำนวณ, แสดงผล, และบันทึกข้อมูล [6]</p>
+<pre class="text-xs bg-black/40 p-3 rounded font-mono">
+class Report:
+  def calculate_data(self):
+    ...
+  def format_html(self):
+    ...
+  def save_to_db(self):
+    ...</pre>
+          <p class="mt-2 text-xs italic text-red-200">ถ้า HTML เปลี่ยน ก็ต้องแก้คลาสนี้ ถ้า DB เปลี่ยน ก็ต้องแก้คลาสนี้</p>
+        </div>
+      </div>
+
+      <div class="text-left space-y-4">
+        <div class="bg-green-500/20 p-6 rounded-xl border border-green-400/30">
+          <h3 class="text-2xl font-bold text-green-300 mb-2">แนวทางที่ถูกต้อง</h3>
+          <p class="mb-4 text-sm">แยกความรับผิดชอบออกเป็นคลาสเฉพาะทาง [7]</p>
+<pre class="text-xs bg-black/40 p-3 rounded font-mono">
+class ReportData:
+  def calculate(self): ...
+
+class ReportFormatter:
+  def to_html(self, data): ...
+
+class ReportRepository:
+  def save(self, data): ...</pre>
+          <p class="mt-2 text-xs italic text-green-200">แต่ละคลาสมีเหตุผลเดียวที่จะเปลี่ยนแปลง</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: Open/Closed Principle (OCP) -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">O</span>CP: เปิด/ปิด
+    </h1>
+    <p class="text-xl mb-8">
+      "ซอฟต์แวร์ควร <strong class="text-green-300">เปิดกว้างต่อการขยาย</strong> แต่ <strong class="text-red-300">ปิดต่อการแก้ไข</strong>" [7]
+    </p>
+    
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+      <h3 class="text-2xl font-semibold mb-4 text-blue-300">สถานการณ์: เพิ่มรูปทรงใหม่ (Shape)</h3>
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h4 class="font-bold text-red-400 mb-2">การละเมิด (ต้องแก้ไขโค้ดเดิม)</h4>
+          <p class="text-sm mb-2">ต้องแก้ฟังก์ชัน `get_area` ทุกครั้งที่มีรูปทรงใหม่ [7]</p>
+<pre class="text-xs bg-black/40 p-3 rounded font-mono">
+def get_area(shapes):
+  for s in shapes:
+    if type(s) == Rectangle:
+       ...
+    elif type(s) == Circle:
+       ...
+    # ต้องแก้ตรงนี้ถ้ามี Triangle!</pre>
+        </div>
+        <div>
+          <h4 class="font-bold text-green-400 mb-2">ทำตามหลักการ (ขยายด้วยคลาสใหม่)</h4>
+          <p class="text-sm mb-2">ใช้ Abstract Base Class เพื่อขยาย ไม่ต้องแตะโค้ดเดิม [8]</p>
+<pre class="text-xs bg-black/40 p-3 rounded font-mono">
+class Shape(ABC):
+  @abstractmethod
+  def area(self): pass
+
+# เพิ่ม Triangle โดยไม่กระทบโค้ดเดิม
+class Triangle(Shape):
+  def area(self): ...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Liskov Substitution Principle (LSP) -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      <span class="text-yellow-300">L</span>SP: การแทนที่ของ Liskov
+    </h1>
+    <div class="text-left space-y-6">
+      <p class="text-xl">
+        "ถ้า S เป็นคลาสลูกของ T, ออบเจกต์ประเภท T จะต้องถูกแทนที่ด้วยออบเจกต์ประเภท S ได้ โดยไม่ทำให้โปรแกรมทำงานผิดพลาด" [8]
+      </p>
+      
+      <div class="bg-black/40 rounded-xl p-6 border-l-4 border-yellow-400">
+        <h3 class="text-2xl font-bold mb-2">กับดักคลาสสิก: สี่เหลี่ยมจัตุรัส "เป็น" สี่เหลี่ยมผืนผ้า?</h3>
+        <p class="mb-4 text-sm text-white/80">ทางคณิตศาสตร์ใช่ แต่ในเชิงพฤติกรรม (Behavior) ไม่ใช่! [11]</p>
+        
+        <div class="grid grid-cols-2 gap-4">
+<pre class="text-xs font-mono text-gray-300">
+class Rectangle:
+  def set_w(self, w): ...
+  def set_h(self, h): ...
+
+class Square(Rectangle):
+  def set_w(self, w):
+     self.width = w
+     self.height = w # Side effect!</pre>
+     
+<pre class="text-xs font-mono text-gray-300">
+def resize(rect):
+  rect.set_w(10)
+  rect.set_h(20)
+  # คาดหวังพื้นที่ 200
+  # ถ้าส่ง Square มา พื้นที่จะเป็น 400!
+  assert rect.area() == 200</pre>
+        </div>
+        <p class="mt-4 text-sm text-yellow-200"><strong>บทเรียน:</strong> การสืบทอด (Inheritance) คือเรื่องของพฤติกรรม ไม่ใช่แค่โครงสร้าง ควรใช้ Composition หรือแยกเป็นคลาส Shape ที่อิสระต่อกัน [12]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: Interface Segregation Principle (ISP) -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">I</span>SP: การแยกอินเทอร์เฟซ
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      "ไม่ควรบังคับให้ Client พึ่งพาเมธอดที่พวกเขาไม่ได้ใช้งาน" (อย่าทำ Interface ที่เทอะทะ) [9]
+    </p>
+
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="bg-white/10 p-6 rounded-xl relative">
+        <div class="absolute -top-4 left-4 bg-red-500 text-white px-3 py-1 rounded text-sm font-bold">Fat Interface</div>
+        <code class="block text-left font-mono text-sm mb-2 text-red-200">class Machine:</code>
+        <ul class="text-left font-mono text-xs space-y-1 ml-4 text-white/70">
+          <li>def print(self)</li>
+          <li>def fax(self)</li>
+          <li>def scan(self)</li>
+        </ul>
+        <div class="mt-4 text-left text-sm">
+          คลาส <code class="text-yellow-300">OldPrinter</code> ต้อง Implement <code class="text-yellow-300">scan()</code> ทั้งที่สแกนไม่ได้ [12]
+        </div>
+      </div>
+
+      <div class="bg-white/10 p-6 rounded-xl relative">
+        <div class="absolute -top-4 left-4 bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">แยกส่วนแล้ว</div>
+        <div class="space-y-4 text-left">
+          <div>
+            <code class="block font-mono text-sm text-green-200">class Printer:</code>
+            <span class="text-xs ml-4">def print(self)</span>
+          </div>
+          <div>
+            <code class="block font-mono text-sm text-green-200">class Scanner:</code>
+            <span class="text-xs ml-4">def scan(self)</span>
+          </div>
+        </div>
+        <div class="mt-4 text-sm">
+          คลาสสามารถเลือกสืบทอดเฉพาะสิ่งที่ทำได้: <br>
+          <code class="text-sm bg-black/30 px-1">class AllInOne(Printer, Scanner):</code> [13]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Dependency Inversion Principle (DIP) -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      <span class="text-yellow-300">D</span>IP: การกลับด้านความขึ้นต่อกัน
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <p class="text-lg mb-6">
+        โมดูลระดับสูงไม่ควรขึ้นกับโมดูลระดับต่ำ ทั้งคู่ควรขึ้นอยู่กับ <strong>Abstractions (นามธรรม)</strong> [10]
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-bold text-red-300 mb-2">ผูกมัดแน่น (Tightly Coupled)</h3>
+          <pre class="text-xs bg-black/40 p-4 rounded font-mono overflow-x-auto">
+class App:
+  def __init__(self):
+    # พึ่งพา MySQL โดยตรง!
+    self.db = MySQLDatabase()
+
+  def get_data(self):
+    self.db.query()</pre>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-green-300 mb-2">กลับด้าน (Dependency Injection)</h3>
+          <pre class="text-xs bg-black/40 p-4 rounded font-mono overflow-x-auto">
+class App:
+  # พึ่งพา Abstraction
+  def __init__(self, db: DataSource):
+    self.db = db
+
+# ส่งสิ่งที่ต้องใช้เข้าไป (Injection)
+app = App(MySQLDatabase())
+app = App(PostgresDatabase())</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Introduction to Design Patterns -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Patterns: <span class="text-yellow-300">The Gang of Four</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-10">
+      โซลูชันสำหรับปัญหาที่พบบ่อยในการออกแบบซอฟต์แวร์ แบ่งออกเป็น 3 ประเภท: [3]
+    </p>
+    
+    <div class="grid grid-cols-3 gap-6 text-left">
+      <div class="bg-blue-500/20 p-6 rounded-xl border border-blue-400/30">
+        <h3 class="text-2xl font-bold text-blue-200 mb-2">Creational (การสร้าง)</h3>
+        <p class="text-sm mb-4">เกี่ยวกับการสร้างออบเจกต์</p>
+        <ul class="list-disc pl-4 text-sm space-y-1">
+          <li>Singleton</li>
+          <li>Factory Method</li>
+          <li>Builder</li>
+        </ul>
+      </div>
+      
+      <div class="bg-purple-500/20 p-6 rounded-xl border border-purple-400/30">
+        <h3 class="text-2xl font-bold text-purple-200 mb-2">Structural (โครงสร้าง)</h3>
+        <p class="text-sm mb-4">เกี่ยวกับการประกอบคลาสและออบเจกต์</p>
+        <ul class="list-disc pl-4 text-sm space-y-1">
+          <li>Adapter</li>
+          <li>Decorator</li>
+          <li>Facade</li>
+        </ul>
+      </div>
+
+      <div class="bg-orange-500/20 p-6 rounded-xl border border-orange-400/30">
+        <h3 class="text-2xl font-bold text-orange-200 mb-2">Behavioral (พฤติกรรม)</h3>
+        <p class="text-sm mb-4">เกี่ยวกับการสื่อสารระหว่างออบเจกต์</p>
+        <ul class="list-disc pl-4 text-sm space-y-1">
+          <li>Observer</li>
+          <li>Strategy</li>
+          <li>Command</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Creational: Singleton & Factory -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Creational Patterns (รูปแบบการสร้าง)
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <!-- Singleton -->
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold text-yellow-300 mb-2">The Singleton</h3>
+        <p class="text-sm mb-4">รับประกันว่าคลาสจะมี Instance เพียงอันเดียว และให้จุดเข้าถึงระดับ Global [3]</p>
+        <div class="bg-black/30 p-3 rounded font-mono text-xs">
+          class Database:<br>
+          &nbsp;&nbsp;_instance = None<br><br>
+          &nbsp;&nbsp;def __new__(cls):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;if not cls._instance:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cls._instance = super().__new__(cls)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;return cls._instance
+        </div>
+      </div>
+
+      <!-- Factory -->
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold text-yellow-300 mb-2">The Factory Method</h3>
+        <p class="text-sm mb-4">สร้างออบเจกต์โดยไม่ต้องระบุคลาสที่แน่นอน ให้คลาสลูกตัดสินใจว่าจะสร้างอะไร [3]</p>
+        <div class="bg-black/30 p-3 rounded font-mono text-xs">
+          class Dialog:<br>
+          &nbsp;&nbsp;def create_button(self):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;return Button() # Default<br><br>
+          class WindowsDialog(Dialog):<br>
+          &nbsp;&nbsp;def create_button(self):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;return WindowsButton()
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Structural Patterns - Adapter -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Structural Patterns: <span class="text-yellow-300">Adapter</span>
+    </h1>
+    <div class="flex gap-8 items-center">
+      <div class="w-1/2 text-left space-y-6">
+        <p class="text-xl">
+          <strong>Adapter Pattern (ตัวแปลง):</strong> ทำหน้าที่เป็นสะพานเชื่อมระหว่าง 2 อินเทอร์เฟซที่ไม่เข้ากัน ให้สามารถทำงานร่วมกันได้
+        </p>
+        <div class="bg-white/10 p-6 rounded-xl border-l-4 border-blue-400">
+          <h4 class="font-bold mb-2">ตัวอย่างในโลกจริง</h4>
+          <p class="text-sm text-white/80">
+            หัวปลั๊กไฟ (US Plug) เสียบกับเต้ารับไทยไม่ได้ เราจึงต้องใช้ <strong>Adapter</strong> ตัวแปลงเพื่อเชื่อมต่อ
+          </p>
+        </div>
+      </div>
+      <div class="w-1/2 bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre>class OldSystem:
+    def legacy_method(self):
+        return "DATA_XML"
+
+class NewSystem:
+    def request(self):
+        return "DATA_JSON"
+
+class Adapter(NewSystem):
+    def __init__(self, old_obj):
+        self.old_obj = old_obj
+
+    def request(self):
+        # แปลงข้อมูลเก่าให้เข้ากับระบบใหม่
+        data = self.old_obj.legacy_method()
+        return convert_xml_to_json(data)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Structural Patterns - Decorator -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Structural Patterns: <span class="text-yellow-300">Decorator</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="space-y-4">
+        <p class="text-lg">
+          ใช้สำหรับเพิ่มพฤติกรรม (Behavior) ให้กับวัตถุแบบไดนามิก โดยไม่ต้องแก้ไขโค้ดเดิมหรือสร้าง Subclass ใหม่ที่ซับซ้อน
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-white/90">
+          <li>ยืดหยุ่นกว่าการสืบทอด (Inheritance)</li>
+          <li>ใน Python เราใช้ Syntax <code>@decorator</code> ได้โดยตรง</li>
+        </ul>
+      </div>
+      <div class="bg-black/40 rounded-xl p-6 font-mono text-xs">
+<pre># Base Component
+class Coffee:
+    def cost(self): return 50
+
+# Decorator
+class MilkDecorator:
+    def __init__(self, coffee):
+        self._coffee = coffee
+    
+    def cost(self):
+        return self._coffee.cost() + 10
+
+my_coffee = Coffee()
+my_coffee = MilkDecorator(my_coffee) 
+print(my_coffee.cost()) # 60</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Behavioral Patterns - Observer -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Behavioral: <span class="text-yellow-300">Observer Pattern</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <h3 class="text-2xl font-semibold mb-4 text-green-300">กลไกการแจ้งเตือน (Publisher/Subscriber)</h3>
+      <p class="text-lg mb-6">
+        เมื่อวัตถุหลัก (Subject) เปลี่ยนแปลงสถานะ มันจะแจ้งเตือนไปยังผู้สังเกตการณ์ (Observers) ทั้งหมดโดยอัตโนมัติ
+      </p>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-black/20 p-4 rounded-lg border border-white/10">
+          <strong class="text-blue-200">การใช้งานทั่วไป</strong>
+          <ul class="list-disc pl-4 text-sm mt-2 text-white/80">
+            <li>ระบบแจ้งเตือนข่าวสาร (Newsletter)</li>
+            <li>Event Listeners ใน JavaScript</li>
+          </ul>
+        </div>
+        <div class="bg-black/20 p-4 rounded-lg border border-white/10">
+          <strong class="text-yellow-200">ใน Python GUI (PySide6)</strong>
+          <p class="text-sm mt-2 text-white/80">
+            ระบบ <strong>Signals & Slots</strong> คือการประยุกต์ใช้ Observer Pattern (ปุ่มถูกกด -> ฟังก์ชันทำงาน)
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Behavioral Patterns - Strategy -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Behavioral: <span class="text-yellow-300">Strategy Pattern</span>
+    </h1>
+    <div class="flex gap-10 items-start">
+      <div class="text-left w-1/2">
+        <p class="text-xl mb-4">
+          ช่วยให้คุณกำหนดกลุ่มของอัลกอริทึม (Algorithms) และทำให้มันสลับสับเปลี่ยนกันได้ (Interchangeable) ขณะโปรแกรมทำงาน
+        </p>
+        <div class="bg-purple-500/20 p-4 rounded-xl border-l-4 border-purple-400">
+          <h4 class="font-bold mb-1">ตัวอย่าง: ระบบจ่ายเงิน</h4>
+          <p class="text-sm">
+            ลูกค้าเลือกจ่ายผ่าน <code>CreditCard</code> หรือ <code>PayPal</code> โค้ดส่วนประมวลผลไม่ต้องแก้ แค่เปลี่ยน Strategy Object
+          </p>
+        </div>
+      </div>
+      
+      <div class="w-1/2 bg-black/40 rounded-xl p-6 text-left font-mono text-xs overflow-x-auto">
+<pre>class PaymentContext:
+    def __init__(self, strategy):
+        self.strategy = strategy
+    
+    def pay(self, amount):
+        self.strategy.execute(amount)
+
+# Strategies
+class CreditCardStrategy:
+    def execute(self, amount): 
+        print(f"Paid {amount} via Card")
+
+class PayPalStrategy:
+    def execute(self, amount): 
+        print(f"Paid {amount} via PayPal")
+
+# Usage
+context = PaymentContext(CreditCardStrategy())
+context.pay(100) # Paid 100 via Card</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Composition over Inheritance -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-10">
+      Composition <span class="text-white/60">เหนือกว่า</span> Inheritance?
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/30">
+        <h3 class="text-2xl font-bold text-red-300 mb-3">Inheritance (เป็น Is-A)</h3>
+        <ul class="list-disc pl-5 space-y-2 text-sm text-white/80">
+          <li>กำหนดตายตัวตอน Compile (Static)</li>
+          <li>ลูกต้องรับมรดกทั้งหมด (แม้ไม่ต้องการ)</li>
+          <li>เกิดปัญหา Class Explosion (คลาสเยอะเกินไป)</li>
+        </ul>
+      </div>
+      
+      <div class="bg-green-500/10 p-6 rounded-xl border border-green-500/30">
+        <h3 class="text-2xl font-bold text-green-300 mb-3">Composition (มี Has-A)</h3>
+        <ul class="list-disc pl-5 space-y-2 text-sm text-white/80">
+          <li>ปรับเปลี่ยนได้ตอน Runtime (Dynamic)</li>
+          <li>ประกอบความสามารถจากชิ้นส่วนเล็กๆ</li>
+          <li>ลดความผูกมัด (Decoupling)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-8 text-yellow-200 text-lg font-light">
+      "เปลี่ยนพฤติกรรมด้วยการเปลี่ยนชิ้นส่วน ไม่ใช่การสร้างคลาสใหม่"
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Dependency Injection (DIP) -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Dependency Injection (DI)
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      เทคนิคสำคัญในการทำตามหลักการ <span class="text-yellow-300">DIP (Dependency Inversion)</span>
+    </p>
+    
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-bold text-red-300 mb-2">แบบเดิม (Hard Coded)</h3>
+          <p class="text-sm mb-2 text-white/70">คลาสสร้าง Dependencies เองภายใน ผูกติดกันแน่น</p>
+          <pre class="bg-black/40 p-3 rounded font-mono text-xs">
+class App:
+  def __init__(self):
+    # ผูกติดกับ MySQL
+    self.db = MySQLDatabase()</pre>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-green-300 mb-2">แบบ DI (Injection)</h3>
+          <p class="text-sm mb-2 text-white/70">รับ Dependencies เข้ามาทาง Constructor</p>
+          <pre class="bg-black/40 p-3 rounded font-mono text-xs">
+class App:
+  def __init__(self, db):
+    # ยืดหยุ่น รับอะไรก็ได้ที่เป็น DB
+    self.db = db
+
+app = App(PostgresDatabase())</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Pythonic Way - Protocols -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      วิถีแห่ง Python: <span class="text-yellow-300">Duck Typing & Protocols</span>
+    </h1>
+    <div class="text-left space-y-6">
+      <div class="bg-white/10 p-6 rounded-xl flex items-center gap-6">
+        <div class="text-5xl">🦆</div>
+        <div>
+          <h3 class="text-2xl font-bold">Duck Typing</h3>
+          <p class="text-white/80">"ถ้ามันเดินเหมือนเป็ด และร้องเหมือนเป็ด ก็ถือว่ามันเป็นเป็ด"</p>
+          <p class="text-sm text-yellow-200 mt-1">Python ไม่เช็คชนิดตัวแปร (Type) แต่เช็คพฤติกรรม (Behavior/Method) ว่ามีให้เรียกใช้หรือไม่</p>
+        </div>
+      </div>
+
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-2 text-blue-300">Protocols (Python 3.8+)</h3>
+        <p class="text-sm mb-4">วิธีกำหนด Interface แบบ Static Type Checking โดยไม่ต้องสืบทอดจริง (Structural Subtyping)</p>
+        <code class="block bg-black/30 p-3 rounded font-mono text-sm">
+from typing import Protocol<br><br>
+class Drawable(Protocol):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;def draw(self) -> None: ...<br><br>
+def render(obj: Drawable):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;obj.draw() # ไม่ต้องสืบทอดจาก Drawable แค่มี method draw ก็พอ
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Anti-Patterns -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8 text-red-400">
+      สิ่งที่ควรระวัง (Anti-Patterns)
+    </h1>
+    <div class="grid grid-cols-3 gap-6 text-left">
+      <div class="bg-white/10 p-6 rounded-xl border-t-4 border-red-500">
+        <h3 class="text-xl font-bold mb-2">God Object</h3>
+        <p class="text-sm text-white/80">
+          คลาสรู้ทุกอย่าง ทำทุกอย่าง (ละเมิด SRP) ไฟล์เดียวยาวพันบรรทัด ยากต่อการแก้ไข
+        </p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl border-t-4 border-red-500">
+        <h3 class="text-xl font-bold mb-2">Spaghetti Code</h3>
+        <p class="text-sm text-white/80">
+          การไหลของโปรแกรมยุ่งเหยิง ขาดโครงสร้าง (Structure) พึ่งพา if-else ซ้อนกันลึกๆ แทนการใช้ Polymorphism
+        </p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl border-t-4 border-red-500">
+        <h3 class="text-xl font-bold mb-2">Copy-Paste Coding</h3>
+        <p class="text-sm text-white/80">
+          คัดลอกโค้ดซ้ำๆ ไปหลายที่ (ละเมิด DRY - Don't Repeat Yourself) เมื่อต้องแก้บั๊ก ต้องตามแก้ทุกที่
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Summary -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      สรุปบทเรียน: <span class="text-yellow-300">Design Patterns</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+      <div class="flex items-center gap-4">
+        <div class="bg-green-500 w-3 h-3 rounded-full"></div>
+        <p class="text-lg"><strong>SOLID Principles</strong> คือเข็มทิศ ช่วยให้โค้ดแข็งแรงและยืดหยุ่น</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="bg-green-500 w-3 h-3 rounded-full"></div>
+        <p class="text-lg"><strong>Design Patterns</strong> คือเครื่องมือ (Tools) แก้ปัญหาที่พบบ่อย</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="bg-green-500 w-3 h-3 rounded-full"></div>
+        <p class="text-lg">เลือกใช้ <strong>Composition</strong> มากกว่า Inheritance เพื่อลดความซับซ้อน</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="bg-green-500 w-3 h-3 rounded-full"></div>
+        <p class="text-lg">ใน Python, ใช้ <strong>Duck Typing</strong> และ <strong>Decorators</strong> เพื่อโค้ดที่กระชับแบบ Pythonic</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Next Steps (Lab Preview) -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      เข้าสู่ <span class="text-yellow-300">ห้องปฏิบัติการ</span>
+    </h1>
+    <p class="text-2xl mb-12 font-light text-white/90">
+      การสร้าง "Log Viewer Application" ด้วย PySide6
+    </p>
+
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-blue-300 mb-2">ภารกิจ (Mission)</h3>
+        <p class="text-sm text-white/80">
+          ออกแบบแอปพลิเคชัน GUI ที่สามารถอ่านข้อมูล Log จากแหล่งต่างๆ (ไฟล์ Text, Mock API) ได้โดยใช้หลักการ SOLID
+        </p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-green-300 mb-2">สิ่งที่จะได้ฝึก</h3>
+        <ul class="list-disc pl-5 text-sm text-white/80 space-y-1">
+          <li>การใช้ <strong>Abstract Base Class</strong> สร้าง Interface</li>
+          <li>การทำ <strong>Dependency Injection</strong> เพื่อแยกส่วนแสดงผลและข้อมูล</li>
+          <li>การใช้ <strong>Signals (Observer)</strong> ใน PySide6</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 1: Lab Title -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+      ชั่วโมงปฏิบัติการ: <br>
+      <span class="text-yellow-300">SOLID Principles in Action</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      สร้างแอปพลิเคชัน "Log Viewer" ด้วย PySide6 และสถาปัตยกรรมที่ยั่งยืน
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">ภารกิจวันนี้</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+          <span>สร้าง Interface สำหรับแหล่งข้อมูล (Data Source) ตามหลัก <strong>DIP</strong> & <strong>OCP</strong></span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+          <span>ประยุกต์ใช้ <strong>Dependency Injection</strong> เพื่อแยก UI ออกจาก Logic</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+          <span>ใช้ <strong>Factory Pattern</strong> และ <strong>Strategy Pattern</strong> ในการจัดการข้อมูล</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 2: Project Architecture -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      สถาปัตยกรรม <span class="text-yellow-300">โปรเจกต์</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      เราจะไม่เขียนทุกอย่างใน `main.py` แต่จะแยกส่วนประกอบตามหน้าที่ (SRP)
+    </p>
+    
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-black/40 rounded-xl p-6 border border-white/10 font-mono text-sm">
+        <div class="text-green-400">log_viewer/</div>
+        <div class="pl-4 text-yellow-200">├── interfaces/</div>
+        <div class="pl-8 text-white">└── data_source.py <span class="text-gray-400"># Abstract Class</span></div>
+        <div class="pl-4 text-yellow-200">├── services/</div>
+        <div class="pl-8 text-white">├── file_source.py <span class="text-gray-400"># Concrete Class</span></div>
+        <div class="pl-8 text-white">└── mock_source.py <span class="text-gray-400"># Concrete Class</span></div>
+        <div class="pl-4 text-yellow-200">├── ui/</div>
+        <div class="pl-8 text-white">└── main_window.py <span class="text-gray-400"># View (PySide6)</span></div>
+        <div class="pl-4 text-blue-300">└── main.py <span class="text-gray-400"># Composition Root</span></div>
+      </div>
+      
+      <div class="space-y-4">
+        <div class="bg-white/10 p-4 rounded-lg border-l-4 border-green-400">
+          <strong class="text-lg">Abstraction (Interfaces)</strong>
+          <p class="text-sm opacity-80">กำหนดสัญญาว่า "แหล่งข้อมูล" ต้องทำอะไรได้บ้าง</p>
+        </div>
+        <div class="bg-white/10 p-4 rounded-lg border-l-4 border-blue-400">
+          <strong class="text-lg">Implementation (Services)</strong>
+          <p class="text-sm opacity-80">การทำงานจริง (อ่านไฟล์, สุ่มข้อมูล) ที่สับเปลี่ยนได้</p>
+        </div>
+        <div class="bg-white/10 p-4 rounded-lg border-l-4 border-yellow-400">
+          <strong class="text-lg">Presentation (UI)</strong>
+          <p class="text-sm opacity-80">แสดงผลอย่างเดียว ไม่ยุ่งกับ Business Logic</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 3: Step 1 - Defining the Interface -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 1: สร้าง <span class="text-yellow-300">Abstraction</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-10 items-center">
+      <div class="text-left">
+        <p class="text-lg mb-4">
+          ตามหลัก <strong>DIP</strong> และ <strong>OCP</strong> เราเริ่มที่การกำหนด Interface ก่อน เพื่อให้ UI ไม่ผูกติดกับแหล่งข้อมูลจริง
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-white/80">
+          <li>สร้างไฟล์ <code>interfaces/data_source.py</code></li>
+          <li>ใช้ <code>ABC</code> (Abstract Base Class)</li>
+          <li>กำหนดเมธอด <code>get_logs()</code> ที่ทุกคลาสต้องมี</li>
+        </ul>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border-l-4 border-purple-400 shadow-2xl">
+<pre><span class="text-purple-400">from</span> abc <span class="text-purple-400">import</span> ABC, abstractmethod
+<span class="text-purple-400">from</span> typing <span class="text-purple-400">import</span> List
+
+<span class="text-gray-500"># Interface (Contract)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">ILogSource</span>(ABC):
+    
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_logs</span>(self) -> List[str]:
+        <span class="text-green-300">"""ดึงข้อมูล Logs กลับมาเป็น List ของ String"""</span>
+        <span class="text-purple-400">pass</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 4: Step 2 - Concrete Implementations -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 2: สร้าง <span class="text-yellow-300">Concrete Classes</span>
+    </h1>
+    <p class="mb-6 text-white/80">สร้างคลาสที่ทำงานจริง 2 แบบ (ไฟล์ <code>services/file_source.py</code> และ <code>services/mock_source.py</code>)</p>
+    
+    <div class="grid grid-cols-2 gap-6 text-left font-mono text-xs">
+      <div class="bg-black/40 p-5 rounded-xl border border-white/10">
+        <h3 class="text-green-300 font-bold mb-2">1. FileLogSource (อ่านไฟล์จริง)</h3>
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">FileLogSource</span>(ILogSource):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, filepath):
+        self.filepath = filepath
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_logs</span>(self) -> List[str]:
+        <span class="text-purple-400">try</span>:
+            <span class="text-purple-400">with</span> open(self.filepath, 'r') <span class="text-purple-400">as</span> f:
+                <span class="text-purple-400">return</span> f.readlines()
+        <span class="text-purple-400">except</span> FileNotFoundError:
+            <span class="text-purple-400">return</span> [<span class="text-green-300">"Error: File not found"</span>]</pre>
+      </div>
+
+      <div class="bg-black/40 p-5 rounded-xl border border-white/10">
+        <h3 class="text-blue-300 font-bold mb-2">2. MockLogSource (ข้อมูลจำลอง)</h3>
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">MockLogSource</span>(ILogSource):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_logs</span>(self) -> List[str]:
+        <span class="text-purple-400">return</span> [
+            <span class="text-green-300">"[INFO] System started"</span>,
+            <span class="text-green-300">"[WARN] Memory usage high"</span>,
+            <span class="text-green-300">"[ERROR] Connection lost"</span>
+        ]</pre>
+      </div>
+    </div>
+    <div class="mt-4 text-center text-yellow-200 text-sm">
+      *สังเกต: ทั้งคู่สืบทอดจาก ILogSource ทำให้แทนที่กันได้ทันที (Liskov Substitution)*
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 5: Step 3 - Dependency Injection in UI -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 3: <span class="text-yellow-300">Dependency Injection</span> ใน UI
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left space-y-4">
+        <p class="text-lg">
+          ในไฟล์ <code>ui/main_window.py</code> เราจะไม่สร้าง <code>FileLogSource</code> โดยตรง (ห้ามใช้ <code>new</code> ภายในคลาส)
+        </p>
+        <div class="bg-white/10 p-4 rounded-xl border-l-4 border-red-400">
+          <h4 class="font-bold text-red-200">แบบที่ผิด (Tightly Coupled):</h4>
+          <code class="text-xs block mt-1">self.source = FileLogSource("log.txt")</code>
+        </div>
+        <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+          <h4 class="font-bold text-green-200">แบบที่ถูก (Dependency Injection):</h4>
+          <p class="text-sm mt-1">รับ <code>source</code> เข้ามาผ่าน Constructor</p>
+        </div>
+      </div>
+
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/10">
+<pre><span class="text-purple-400">from</span> PySide6.QtWidgets <span class="text-purple-400">import</span> *
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">MainWindow</span>(QMainWindow):
+    <span class="text-gray-500"># รับ Abstraction เข้ามา (DIP)</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, source: ILogSource):
+        <span class="text-purple-400">super</span>().__init__()
+        self.source = source  <span class="text-gray-500"># Composition</span>
+        self.init_ui()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">load_data</span>(self):
+        <span class="text-gray-500"># UI ไม่รู้ว่าข้อมูลมาจากไหน รู้แค่ get_logs()</span>
+        logs = self.source.get_logs()
+        self.list_widget.addItems(logs)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 6: Step 4 - Factory Pattern -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 4: <span class="text-yellow-300">Factory Pattern</span>
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      สร้าง Simple Factory เพื่อเลือกแหล่งข้อมูลตาม Configuration
+    </p>
+    
+    <div class="flex gap-8 items-center">
+      <div class="w-1/2 bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">SourceFactory</span>:
+    <span class="text-orange-400">@staticmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">create_source</span>(source_type: str) -> ILogSource:
+        <span class="text-purple-400">if</span> source_type == <span class="text-green-300">"file"</span>:
+            <span class="text-purple-400">return</span> FileLogSource(<span class="text-green-300">"app.log"</span>)
+        <span class="text-purple-400">elif</span> source_type == <span class="text-green-300">"mock"</span>:
+            <span class="text-purple-400">return</span> MockLogSource()
+        <span class="text-purple-400">else</span>:
+            <span class="text-purple-400">raise</span> ValueError(<span class="text-green-300">"Unknown type"</span>)</pre>
+      </div>
+      
+      <div class="w-1/2 text-left space-y-6">
+        <div class="bg-white/10 p-6 rounded-xl">
+          <h3 class="text-xl font-bold text-purple-300 mb-2">ประโยชน์</h3>
+          <p>
+            Client code (<code>main.py</code>) ไม่จำเป็นต้องรู้ว่าต้อง <code>import</code> คลาสไหน หรือต้องกำหนดค่าเริ่มต้น (filepath) อย่างไร Factory จัดการให้หมด
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 7: Step 5 - Strategy Pattern (Filtering) -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 5: <span class="text-yellow-300">Strategy Pattern</span>
+    </h1>
+    <div class="text-left bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6">
+      <p class="text-lg">
+        เราต้องการฟีเจอร์ "กรองข้อมูล" (Filter) แทนที่จะเขียน <code>if-else</code> ใน UI ให้เราสร้าง Strategy
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 text-left font-mono text-xs">
+      <div class="bg-black/40 p-4 rounded-xl">
+<pre><span class="text-gray-500"># Strategy Interface</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">IFilterStrategy</span>(ABC):
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">filter</span>(self, logs: List[str]) -> List[str]:
+        <span class="text-purple-400">pass</span>
+
+<span class="text-gray-500"># Concrete Strategies</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">ErrorOnlyFilter</span>(IFilterStrategy):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">filter</span>(self, logs):
+        <span class="text-purple-400">return</span> [l <span class="text-purple-400">for</span> l <span class="text-purple-400">in</span> logs <span class="text-purple-400">if</span> <span class="text-green-300">"ERROR"</span> <span class="text-purple-400">in</span> l]
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">NoFilter</span>(IFilterStrategy):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">filter</span>(self, logs):
+        <span class="text-purple-400">return</span> logs</pre>
+      </div>
+      
+      <div class="bg-white/5 p-4 rounded-xl flex flex-col justify-center">
+        <h4 class="text-green-300 font-bold mb-2">การใช้งานใน MainWindow</h4>
+        <p class="mb-4">เพิ่ม method <code>set_filter_strategy</code> ให้ UI</p>
+        <code class="block bg-black/30 p-2 rounded mb-2">self.filter_strategy = NoFilter()</code>
+        <code class="block bg-black/30 p-2 rounded">
+          logs = self.source.get_logs()<br>
+          filtered = self.filter_strategy.filter(logs)
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 8: Wiring it all up (Main) -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 6: รวมร่าง (<span class="text-yellow-300">Composition Root</span>)
+    </h1>
+    <p class="text-xl text-white/90 mb-8">
+      ใน <code>main.py</code> เราจะเชื่อมต่อทุกส่วนเข้าด้วยกัน
+    </p>
+    
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/10 shadow-2xl">
+<pre><span class="text-purple-400">import</span> sys
+<span class="text-purple-400">from</span> PySide6.QtWidgets <span class="text-purple-400">import</span> QApplication
+<span class="text-purple-400">from</span> ui.main_window <span class="text-purple-400">import</span> MainWindow
+<span class="text-purple-400">from</span> services.factory <span class="text-purple-400">import</span> SourceFactory
+
+<span class="text-purple-400">if</span> __name__ == <span class="text-green-300">"__main__"</span>:
+    app = QApplication(sys.argv)
+
+    <span class="text-gray-500"># 1. เลือก Source (เปลี่ยนแค่ตรงนี้ก็เปลี่ยนทั้งแอปได้)</span>
+    <span class="text-gray-500"># ลองเปลี่ยนเป็น "file" หรือ "mock"</span>
+    source = SourceFactory.create_source(<span class="text-green-300">"mock"</span>)
+
+    <span class="text-gray-500"># 2. Inject เข้าไปใน UI (Dependency Injection)</span>
+    window = MainWindow(source)
+    window.show()
+
+    sys.exit(app.exec())</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 9: Challenge -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      ภารกิจท้าทาย <span class="text-yellow-300">(Challenge)</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-12 font-light">
+      ทดสอบความเข้าใจเรื่อง <strong>OCP (Open/Closed Principle)</strong>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 text-left max-w-3xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm p-8 rounded-xl border-l-8 border-green-400">
+        <h3 class="text-2xl font-bold mb-4">โจทย์: เพิ่ม CSV Source</h3>
+        <p class="text-lg mb-4">
+          จงเพิ่มความสามารถให้แอปอ่านไฟล์ <code>.csv</code> โดยที่:
+        </p>
+        <ul class="list-disc pl-6 space-y-3 text-lg">
+          <li><strong>ห้ามแก้ไข</strong> ไฟล์ <code>main_window.py</code> (UI)</li>
+          <li><strong>ห้ามแก้ไข</strong> คลาส <code>FileLogSource</code> เดิม</li>
+          <li>สร้างคลาสใหม่ <code>CsvLogSource</code> ที่สืบทอดจาก <code>ILogSource</code></li>
+          <li>แก้ไข Factory หรือ Main เพื่อเรียกใช้คลาสใหม่</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 10: Conclusion -->
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      สรุปการเรียนรู้
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6">
+      <div class="flex items-start gap-4">
+        <div class="bg-green-500 p-2 rounded-lg min-w-[50px] text-center font-bold">DIP</div>
+        <div>
+          <h3 class="text-xl font-bold text-green-300">Dependency Inversion</h3>
+          <p>UI ไม่ขึ้นกับคลาสอ่านไฟล์โดยตรง แต่ขึ้นกับ Interface <code>ILogSource</code> ทำให้สลับเปลี่ยนแหล่งข้อมูลได้ง่าย</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-blue-500 p-2 rounded-lg min-w-[50px] text-center font-bold">SRP</div>
+        <div>
+          <h3 class="text-xl font-bold text-blue-300">Single Responsibility</h3>
+          <p>แยกการอ่านข้อมูล (Service) ออกจากการแสดงผล (View) อย่างชัดเจน</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-yellow-500 p-2 rounded-lg min-w-[50px] text-center font-bold text-black">OCP</div>
+        <div>
+          <h3 class="text-xl font-bold text-yellow-300">Open/Closed</h3>
+          <p>เพิ่มฟีเจอร์ใหม่ (เช่น CSV Source หรือ Filter แบบใหม่) ได้โดยไม่ต้องแก้โค้ดเก่า</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-12 text-sm opacity-60">
+      "Good architecture pays off in the long run."
+    </div>
+  </div>
+</div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

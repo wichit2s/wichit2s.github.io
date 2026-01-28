@@ -86,15 +86,17 @@
         :icon:`fa-solid fa-person-running` `แบบฝึกหัด <./overview_exercise.html>`_
      - `UML Introduction <https://www.geeksforgeeks.org/unified-modeling-language-uml-introduction/>`_
    * - **9**
+
+       :icon:`fa fa-link` `สไลด์ <../../_static/courses/oop/slides/wk09.html>`_
      - ทบทวนเนื้อหา OOP และ UML เพื่อการพัฒนาโปรเจกต์
-        * `สไลด์ <../../_static/courses/oop/slides/wk09.html>`_
-        * `Github <https://github.com/>`_
      - * อธิบายความรู้เพื่อเตรียมพร้อมสำหรับการประยุกต์ใช้ในโปรเจกต์ 
         :icon:`fa-solid fa-person-running` `แบบฝึกหัด <./overview_exercise.html>`_
      - * `OOP Concepts <./concepts/index.html>`_
        * `UML Introduction <https://www.geeksforgeeks.org/unified-modeling-language-uml-introduction/>`_
        * `Github Guide <https://www.geeksforgeeks.org/ultimate-guide-git-github/>`_
    * - **10**
+
+       :icon:`fa fa-link` `สไลด์ <../../_static/courses/oop/slides/wk10.html>`_
      - บทนำสู่ Design Patterns ในโปรแกรมเชิงวัตถุ
         * Design Patterns
         * SOLID Principles
