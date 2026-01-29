@@ -100,26 +100,25 @@
    * - **11,12,13**
      - พัฒนาโปรเจกต์และประยุกต์ใช้แนวคิดเชิงวัตถุ
         Object-Oriented Application Frameworks
-       1. `pygame note <./oop-in-pygame/index.html>`_  /  `pygame <https://pygame.org/docs>`_ 
-       2. `pyside6 note <./oop-in-pyside/index.html>`_ /  `pyside6 <https://doc.qt.io/qtforpython-6/gettingstarted.html>`_
-       3. `machine learning note <./oop-in-ml/index.html>`_  / `scikitlearn iris svc plot <https://scikit-learn.org/stable/auto_examples/svm/plot_iris_svc.html>`_
-       4. `fastapi <https://fastapi.tiangolo.com/tutorial/>`_
-       5. `AI (transformer models) <https://huggingface.co/docs/transformers/index>`_
+       1. :icon:`fa fa-link` `สไลด์ PyGame <../../_static/courses/oop/slides/pygame.html>`_
+       2. :icon:`fa fa-link` `สไลด์ PySide6 <../../_static/courses/oop/slides/pyside6.html>`_
+       3. :icon:`fa fa-link` `สไลด์ ScikitLearn <../../_static/courses/oop/slides/sklearn.html>`_
+       4. :icon:`fa fa-link` `สไลด์ FastAPI <../../_static/courses/oop/slides/fastapi.html>`_
      - 1. เข้าใจหลักการพัฒนาชุดคำสั่งเสริมที่ใช้แนวคิดเชิงวัตถุ
        2. อธิบายหลักการใช้งานชุดคำสั่งเสริมที่ใช้แนวคิดเชิงวัตถุเพื่อนำมาแก้ปัญหาโจทย์ที่กำหนดให้ได้ 
         :icon:`fa-solid fa-person-running` `เกณฑ์การประเมิน <./project_criteria.html>`_
-     - * `pygame note <./oop-in-pygame/index.html>`_  /  `pygame <https://pygame.org/docs>`_ 
-       * `pyside6 note <./oop-in-pyside/index.html>`_ /  `pyside6 <https://doc.qt.io/qtforpython-6/gettingstarted.html>`_
-       * `machine learning note <./oop-in-ml/index.html>`_  / `scikitlearn iris svc plot <https://scikit-learn.org/stable/auto_examples/svm/plot_iris_svc.html>`_
+     - * `pygame <https://pygame.org/docs>`_ 
+       * `pyside6 <https://doc.qt.io/qtforpython-6/gettingstarted.html>`_
+       * `scikitlearn iris svc plot <https://scikit-learn.org/stable/auto_examples/svm/plot_iris_svc.html>`_
        * `fastapi <https://fastapi.tiangolo.com/tutorial/>`_
-       * `AI (transformer models) <https://huggingface.co/docs/transformers/index>`_
    * - **14**
      - เตรียมการนำเสนอโปรเจกต์ และสรุปความรู้ OOP ที่ได้เรียนรู้
      - เตรียมการนำเสนอและสรุปผลการเรียนรู้ในโปรเจกต์
-     - `Project Preparation <https://example.com/14>`_
+     - Project Preparation
    * - **15**
-     - การนำเสนอโปรเจกต์และตอบข้อซักถาม สรุปผลการเรียนรู้ทั้งหมด
-     - 1. สามารถนำเสนอให้เข้าใจโครงงานได้ง่าย สื่อสารโดยใช้เทคโนโลยีที่เหมาะสม ตอบคำถามด้วยความเข้าใจและมีหลักการ
+     - ส่งโครงงานรายวิชา
+        :icon:`fa-solid fa-person-running` `คำสั่งมอบหมาย <./project_instruction.html>`_
+     - 1. สามารถนำเสนอให้เข้าใจโครงงานได้ง่าย สื่อสารโดยใช้เทคโนโลยีที่เหมาะสม ด้วยความเข้าใจและมีหลักการ
         :icon:`fa-solid fa-person-running` `เกณฑ์การประเมิน <./project_criteria.html>`_
      - Final Presentation
 

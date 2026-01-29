@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP: ScikitLearn</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/oop/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./sklearn.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+<!-- Slide 1: Title -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      OOP & Design Patterns <br>
+      <span class="text-yellow-300">ใน Scikit-learn</span>
+    </h1>
+    <div class="text-2xl text-white/90 mb-8 font-light">
+      วิเคราะห์สถาปัตยกรรม Machine Learning Library ระดับโลกผ่านเลนส์ OOP
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-lg">
+      <p>🎯 <strong>เป้าหมาย:</strong> เข้าใจโครงสร้าง BaseEstimator, Mixins และการใช้ SOLID Principles ในการออกแบบ ML Pipeline</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: Why Scikit-learn Architecture? -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ทำไมต้องศึกษา <span class="text-yellow-300">Scikit-learn?</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-blue-500/20 p-6 rounded-xl border border-blue-400">
+        <h3 class="text-2xl font-bold mb-4 text-blue-300">ความสม่ำเสมอ (Consistency)</h3>
+        <p>ไม่ว่าจะเป็น Linear Regression, SVM หรือ Random Forest ทุกอย่างมีวิธีเรียกใช้เหมือนกัน:</p>
+        <code class="block mt-4 bg-black/40 p-2 rounded">model.fit(X, y)<br>model.predict(X)</code>
+      </div>
+      <div class="bg-green-500/20 p-6 rounded-xl border border-green-400">
+        <h3 class="text-2xl font-bold mb-4 text-green-300">พลังของ OOP</h3>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Inheritance:</strong> ใช้ Base Class ร่วมกัน</li>
+          <li><strong>Polymorphism:</strong> สลับเปลี่ยนโมเดลได้ทันทีโดยไม่ต้องแก้โค้ดส่วนอื่น</li>
+          <li><strong>Composition:</strong> สร้าง Pipeline ที่ซับซ้อนจากชิ้นส่วนย่อย</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: The Three Main Interfaces -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      3 เสาหลักของ <span class="text-yellow-300">Scikit-learn Objects</span>
+    </h1>
+    <div class="grid grid-cols-3 gap-6 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <strong class="text-purple-300 text-2xl block mb-2">1. Estimator</strong>
+        <p class="text-sm opacity-80">วัตถุที่เรียนรู้จากข้อมูล</p>
+        <code class="block mt-2 bg-black/30 p-2 rounded text-xs">estimator.fit(data)</code>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <strong class="text-yellow-300 text-2xl block mb-2">2. Transformer</strong>
+        <p class="text-sm opacity-80">วัตถุที่แปลงข้อมูล (Data Processing)</p>
+        <code class="block mt-2 bg-black/30 p-2 rounded text-xs">transformer.transform(data)</code>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <strong class="text-green-300 text-2xl block mb-2">3. Predictor</strong>
+        <p class="text-sm opacity-80">วัตถุที่ทำนายผลลัพธ์</p>
+        <code class="block mt-2 bg-black/30 p-2 rounded text-xs">predictor.predict(data)</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: BaseEstimator Implementation -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">BaseEstimator</span>: แม่ของทุกสรรพสิ่ง
+    </h1>
+    <p class="text-xl mb-6">
+      คลาสแม่แบบ (Parent Class) ที่ทุกโมเดลใน Scikit-learn สืบทอดมา [1]
+    </p>
+    <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">from</span> sklearn.base <span class="text-purple-400">import</span> BaseEstimator
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">MyModel</span>(BaseEstimator):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, param1=1):
+        self.param1 = param1  <span class="text-gray-500"># เก็บค่าพารามิเตอร์</span></pre>
+    </div>
+    <div class="mt-6 text-left bg-white/10 p-4 rounded-lg">
+      <strong class="text-green-300">สิ่งที่ได้จากการสืบทอด:</strong>
+      <ul class="list-disc pl-5 mt-2 text-sm">
+        <li><code>get_params()</code>: ดึงค่าพารามิเตอร์ทั้งหมด (ใช้ตอนจูนโมเดล)</li>
+        <li><code>set_params()</code>: ตั้งค่าพารามิเตอร์ใหม่</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: Mixins for Interface Segregation -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การใช้ <span class="text-yellow-300">Mixins</span>
+    </h1>
+    <p class="text-xl mb-8">
+      Scikit-learn ใช้ Multiple Inheritance เพื่อแยกความสามารถ (ISP Principle)
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-blue-300 mb-2">ClassifierMixin</h3>
+        <p>สำหรับโมเดลจำแนกประเภท (Classification)</p>
+        <ul class="list-disc pl-5 mt-2 text-sm">
+          <li>บังคับใช้เมธอด <code>score()</code> ที่คืนค่า Accuracy</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-green-300 mb-2">TransformerMixin</h3>
+        <p>สำหรับตัวแปลงข้อมูล</p>
+        <ul class="list-disc pl-5 mt-2 text-sm">
+          <li>เพิ่มเมธอด <code>fit_transform()</code> ให้อัตโนมัติ</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-4 font-mono text-sm bg-black/40 p-2 rounded">
+      class LogisticRegression(BaseEstimator, LinearClassifierMixin, SparseCoefMixin): ...
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: SOLID - Single Responsibility Principle -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      SOLID: <span class="text-yellow-300">SRP</span> ใน Scikit-learn
+    </h1>
+    <div class="bg-white/10 p-8 rounded-2xl text-left">
+      <p class="text-2xl mb-6">
+        "แยกการเตรียมข้อมูล (Preprocessing) ออกจากตัวโมเดล (Model)"
+      </p>
+      <div class="grid grid-cols-2 gap-8">
+        <div class="border-r border-white/20 pr-4">
+          <strong class="text-red-300 block mb-2">❌ แบบรวมศูนย์ (God Class)</strong>
+          <p class="text-sm opacity-80">
+            เขียนโค้ด Scaling ข้อมูล, เติมค่าว่าง, และเทรนโมเดล รวมอยู่ในคลาสเดียว
+          </p>
+        </div>
+        <div>
+          <strong class="text-green-300 block mb-2">✅ แบบ Scikit-learn</strong>
+          <ul class="list-disc pl-5 text-sm space-y-2 opacity-80">
+            <li><strong>Imputer:</strong> รับผิดชอบแค่เติมค่าว่าง</li>
+            <li><strong>StandardScaler:</strong> รับผิดชอบแค่ปรับสเกล</li>
+            <li><strong>SVC:</strong> รับผิดชอบแค่หา Hyperplane</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: SOLID - Open/Closed Principle -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      SOLID: <span class="text-yellow-300">OCP</span>
+    </h1>
+    <p class="text-xl mb-8">
+      "เปิดรับการขยาย (Extension) แต่ปิดกั้นการแก้ไข (Modification)"
+    </p>
+    <div class="flex gap-8 items-center text-left">
+      <div class="w-1/2">
+        <p class="mb-4">
+          Scikit-learn อนุญาตให้คุณสร้าง <strong>Custom Estimator</strong> ได้เอง
+        </p>
+        <p class="text-sm opacity-80">
+          คุณสามารถสร้างอัลกอริทึมใหม่ หรือวิธีการแปลงข้อมูลแบบใหม่ โดยการสืบทอดจาก <code>BaseEstimator</code> แล้วนำไปใช้ร่วมกับฟังก์ชันมาตรฐานอย่าง <code>GridSearchCV</code> หรือ <code>Pipeline</code> ได้ทันที โดยไม่ต้องแก้โค้ดของ Library [1]
+        </p>
+      </div>
+      <div class="w-1/2 bg-black/40 p-4 rounded-xl font-mono text-xs">
+<pre>class OutlierRemover(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    def transform(self, X):
+        # Logic การตัด Outlier ของเราเอง
+        return X[X < 100]</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: SOLID - Liskov Substitution Principle -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      SOLID: <span class="text-yellow-300">LSP</span>
+    </h1>
+    <p class="text-xl mb-8">
+      "ความสามารถในการแทนที่กันได้ (Interchangeability)"
+    </p>
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <h3 class="text-2xl font-bold mb-4 text-blue-300">Polymorphism ในการกระทำ</h3>
+      <p class="mb-4">
+        เนื่องจากทุก Estimator มีเมธอด <code>fit()</code> และ <code>predict()</code> เหมือนกัน เราจึงสามารถเขียนโค้ดตรวจสอบผลลัพธ์ (Evaluation Code) เพียงชุดเดียว แล้วส่งโมเดลใดก็ได้เข้าไป
+      </p>
+      <div class="bg-black/30 p-4 rounded-lg font-mono text-sm border-l-4 border-yellow-400">
+<pre>def evaluate_model(model, X, y):
+    model.fit(X, y)
+    print(model.score(X, y))
+
+# ส่งอะไรไปก็ได้
+evaluate_model(SVC(), X, y)
+evaluate_model(RandomForestClassifier(), X, y)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: SOLID - Dependency Inversion Principle -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      SOLID: <span class="text-yellow-300">DIP</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+      <h3 class="text-3xl font-bold text-center mb-6">Pipeline ไม่ขึ้นกับ Concrete Class</h3>
+      <p class="text-lg text-left">
+        <code>Pipeline</code> ของ Scikit-learn ไม่ได้ผูกติดกับคลาส <code>StandardScaler</code> หรือ <code>SVC</code> โดยตรง แต่ผูกติดกับ <strong>Abstraction</strong> (วัตถุที่มีเมธอด fit/transform)
+      </p>
+    </div>
+    <div class="text-center text-sm font-mono text-green-300">
+      pipeline = Pipeline([('scaler', AnyTransformer), ('model', AnyEstimator)])
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Composite Pattern (Pipeline) -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Composite</span>
+    </h1>
+    <p class="text-xl mb-8">
+      การมองกลุ่มของวัตถุ ให้เป็นวัตถุเดียว (Treating a group of objects as a single object)
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left items-center">
+      <div>
+        <p class="text-lg mb-4">
+          <code>Pipeline</code> คือตัวอย่างที่ชัดเจนที่สุด มันเก็บ List ของ Estimators ไว้ข้างใน
+        </p>
+        <p>
+          เมื่อเราเรียก <code>pipeline.fit()</code> มันจะวนลูปเรียก <code>fit_transform()</code> ของทุกตัว แล้วส่งผลลัพธ์ต่อไปเป็นทอดๆ
+        </p>
+      </div>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-xs">
+<pre>pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('pca', PCA()),
+    ('svc', SVC())
+])
+
+# เรียกครั้งเดียว ทำงานทั้ง 3 ขั้นตอน
+pipe.fit(X, y)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Strategy Pattern -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Strategy</span>
+    </h1>
+    <p class="text-xl mb-8">
+      การสลับเปลี่ยนอัลกอริทึมภายใน Object
+    </p>
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <p class="mb-4">
+        ใน Scikit-learn เราเห็นสิ่งนี้ผ่าน Hyperparameters ที่เปลี่ยนพฤติกรรมของโมเดล
+      </p>
+      <div class="bg-black/30 p-4 rounded-lg font-mono text-sm">
+        <code class="text-purple-400"># เปลี่ยน Strategy ของ Kernel</code><br>
+        model_linear = SVC(kernel=<span class="text-green-300">'linear'</span>)<br>
+        model_rbf = SVC(kernel=<span class="text-green-300">'rbf'</span>)<br>
+        <br>
+        <code class="text-gray-400"># ภายในคลาส SVC จะมี Logic เพื่อเลือกใช้สมการคณิตศาสตร์ที่ต่างกันตาม Strategy ที่เลือก [2]</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Template Method Pattern -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Template Method</span>
+    </h1>
+    <div class="text-left space-y-6">
+      <p class="text-xl">
+        Base Class กำหนดโครงสร้าง แต่ให้ Subclass เติมเต็มส่วนที่ขาด
+      </p>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-sm border border-white/20">
+        <p class="text-yellow-200 mb-2">ใน BaseEstimator:</p>
+        <p>มีการเตรียมเมธอด <code>get_params()</code> และ <code>set_params()</code> ไว้ให้แล้ว โดยอาศัยการ Introspect (ตรวจสอบ) <code>__init__</code> arguments [1]</p>
+        <p class="text-yellow-200 mt-4 mb-2">ใน Custom Estimator:</p>
+        <p>เราแค่เขียน <code>__init__</code> ให้ถูกต้องตามกฎ Scikit-learn ก็จะได้ฟีเจอร์เหล่านั้นไปใช้ทันที</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Rules of __init__ in Scikit-learn -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      กฎเหล็กของ <span class="text-yellow-300">__init__</span>
+    </h1>
+    <p class="text-xl mb-8">
+      เพื่อให้ OOP ของ Scikit-learn (เช่นการโคลนโมเดล) ทำงานได้ ต้องปฏิบัติตามนี้ [3]:
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-red-500/20 p-6 rounded-xl border border-red-400">
+        <h3 class="text-2xl font-bold text-red-300 mb-2">ห้ามทำ ❌</h3>
+        <ul class="list-disc pl-5 space-y-2">
+          <li>ห้ามใส่ Logic หรือ Validation ใน <code>__init__</code></li>
+          <li>ห้ามเปลี่ยนชื่อพารามิเตอร์ (Input arg ต้องตรงกับ Self attribute)</li>
+          <li>ห้ามรับ <code>*args</code> หรือ <code>**kwargs</code></li>
+        </ul>
+      </div>
+      <div class="bg-green-500/20 p-6 rounded-xl border border-green-400">
+        <h3 class="text-2xl font-bold text-green-300 mb-2">สิ่งที่ควรทำ ✅</h3>
+        <pre class="font-mono text-xs mt-2">
+def __init__(self, param1=1):
+    self.param1 = param1
+        </pre>
+        <p class="mt-2 text-sm">รับค่าแล้วเก็บใส่ตัวแปรชื่อเดียวกันทันที</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Duck Typing in Python/Scikit-learn -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">Duck Typing</span> คือหัวใจ
+    </h1>
+    <p class="text-xl mb-6">
+      "ถ้ามันเดินเหมือนเป็ด และร้องเหมือนเป็ด มันก็คือเป็ด"
+    </p>
+    <div class="bg-black/40 p-6 rounded-xl text-left border-l-4 border-purple-400">
+      <p class="mb-4">
+        Scikit-learn ไม่ได้เช็ค Type อย่างเข้มงวดตลอดเวลา (เช่น <code>isinstance(obj, Classifier)</code>) แต่เช็คว่าวัตถุนั้นมีเมธอดที่ต้องการหรือไม่ [4]
+      </p>
+      <ul class="list-disc pl-6 space-y-2 text-lg">
+        <li>ถ้ามี <code>transform()</code> ถือว่าเป็น Transformer</li>
+        <li>ถ้ามี <code>predict()</code> ถือว่าเป็น Estimator/Predictor</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Creating a Custom Transformer -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การสร้าง Custom Transformer
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div>
+        <p class="text-lg mb-4">
+          เราจะสร้างคลาสที่สืบทอดจาก <code>BaseEstimator</code> และ <code>TransformerMixin</code>
+        </p>
+        <p class="text-sm opacity-80">
+          <code>TransformerMixin</code> จะแถมเมธอด <code>fit_transform()</code> มาให้ฟรี ซึ่งมันก็คือการเรียก <code>fit()</code> แล้วตามด้วย <code>transform()</code> นั่นเอง
+        </p>
+      </div>
+      <div class="bg-black/40 p-4 rounded-xl font-mono text-xs">
+<pre><span class="text-purple-400">from</span> sklearn.base <span class="text-purple-400">import</span> BaseEstimator, TransformerMixin
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">MyScaler</span>(BaseEstimator, TransformerMixin):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, factor=1):
+        self.factor = factor
+        
+    <span class="text-purple-400">def</span> <span class="text-blue-300">fit</span>(self, X, y=None):
+        <span class="text-gray-500"># เรียนรู้ค่า mean, etc (ถ้ามี)</span>
+        <span class="text-purple-400">return</span> self
+        
+    <span class="text-purple-400">def</span> <span class="text-blue-300">transform</span>(self, X):
+        <span class="text-purple-400">return</span> X * self.factor</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: ColumnTransformer (Composition) -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      จัดการข้อมูลที่ซับซ้อนด้วย <span class="text-yellow-300">ColumnTransformer</span>
+    </h1>
+    <p class="text-xl mb-8">
+      ในโลกความเป็นจริง ข้อมูลมักมีทั้งตัวเลข (Numerical) และตัวหนังสือ (Categorical)
+    </p>
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <p class="mb-4">
+        <code>ColumnTransformer</code> ช่วยให้เราแยก (Split) การประมวลผลตามคอลัมน์ แล้วรวม (Combine) กลับมาใหม่
+      </p>
+      <div class="flex justify-center my-4">
+        <div class="bg-blue-500 px-4 py-2 rounded-l">Numeric Cols -> Scaler</div>
+        <div class="bg-green-500 px-4 py-2 rounded-r">Categorical Cols -> OneHot</div>
+      </div>
+      <p class="text-center text-2xl">⬇️ รวมร่าง ⬇️</p>
+      <p class="text-center bg-gray-700 p-2 mt-2 rounded">Model Input Vector</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Model Persistence (Serialization) -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การบันทึกวัตถุ (Persistence)
+    </h1>
+    <p class="text-xl mb-8">
+      OOP ช่วยให้เราบันทึกสถานะของ Object (Model ที่เทรนแล้ว) ลงไฟล์ได้
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold text-blue-300 mb-2">Pickle / Joblib</h3>
+        <p>Python ใช้กลไก Serialization เพื่อแปลง Object ใน Memory ให้เป็น Binary File</p>
+        <code class="block mt-2 bg-black/30 p-2 rounded text-xs">joblib.dump(model, 'model.pkl')</code>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold text-yellow-300 mb-2">Production Use</h3>
+        <p>เราสามารถโหลดไฟล์นี้กลับมาเป็น Object พร้อมใช้งานได้ทันที (State ของ self.coef_ ถูกบันทึกไว้ครบ)</p>
+        <code class="block mt-2 bg-black/30 p-2 rounded text-xs">model = joblib.load('model.pkl')</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Recap Principles -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      สรุปหลักการก่อนเข้า Lab
+    </h1>
+    <div class="grid grid-cols-2 gap-6 text-left text-lg">
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span><strong>Inheritance:</strong> สืบทอด <code>BaseEstimator</code> เพื่อฟีเจอร์มาตรฐาน</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span><strong>Mixins:</strong> ใช้ <code>TransformerMixin</code> เพื่อ <code>fit_transform</code></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span><strong>Encapsulation:</strong> เก็บ Logic และ Parameters ใน Class</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span><strong>Composition:</strong> ใช้ <code>Pipeline</code> เชื่อมต่อ Object หลายตัว</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Prepare for Lab -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      เข้าสู่ <span class="text-yellow-300">ห้องปฏิบัติการ</span>
+    </h1>
+    <p class="text-2xl mb-12 font-light text-white/90">
+      สร้าง Custom Transformer และ Pipeline สำหรับข้อมูล Iris Dataset
+    </p>
+    <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+      <h3 class="text-xl font-bold text-blue-300 mb-2">ภารกิจ (Mission)</h3>
+      <p class="text-sm text-white/80">
+        เราจะสร้าง Class <code>OutlierRemover</code> เพื่อตัดข้อมูลที่ผิดปกติ แล้วนำไปต่อกับ SVM เพื่อจำแนกพันธุ์ดอกไม้
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- PART 2: Laboratory Slides (21-35) -->
+
+<!-- Lab Slide 1: Lab Setup -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 1: เตรียม Environment
+    </h1>
+    <p class="text-xl mb-8">ติดตั้ง Library ที่จำเป็น</p>
+    <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-lg border border-white/20">
+      <code class="text-green-300">pip install scikit-learn pandas numpy matplotlib</code>
+    </div>
+    <p class="my-2">หรือกรณีที่ใช้ <code>uv</code></p>
+    <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-lg border border-white/20">
+      <code class="text-green-300">uv add scikit-learn pandas numpy matplotlib</code>
+    </div>
+    <div class="mt-8 text-left space-y-4">
+      <p>สร้างไฟล์ <code>lab_sklearn_oop.py</code> แล้ว import:</p>
+      <pre class="bg-black/40 p-4 rounded font-mono text-sm">
+import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+      </pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 2: Load Data -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 2: โหลดข้อมูล (The Iris Dataset)
+    </h1>
+    <div class="flex gap-8 items-start">
+      <div class="w-1/2 text-left">
+        <p class="mb-4">ใช้ Dataset มาตรฐาน Iris (ดอกไม้ 3 สายพันธุ์)</p>
+        <ul class="list-disc pl-5 text-sm space-y-2">
+          <li>Features: Sepal Length, Sepal Width, Petal Length, Petal Width</li>
+          <li>Target: Setosa, Versicolor, Virginica</li>
+        </ul>
+      </div>
+      <div class="w-1/2 bg-black/40 rounded-xl p-4 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-gray-500"># โหลดข้อมูล</span>
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+<span class="text-gray-500"># แบ่ง Train/Test (80/20)</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 3: Custom Transformer Structure -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 3: โครงสร้าง Custom Transformer
+    </h1>
+    <p class="mb-6 text-white/80">
+      สร้างคลาส <code>OutlierClipper</code> ที่สืบทอดจาก <code>BaseEstimator</code> และ <code>TransformerMixin</code>
+    </p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">OutlierClipper</span>(BaseEstimator, TransformerMixin):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, factor=1.5):
+        self.factor = factor  <span class="text-gray-500"># ตัวคูณ IQR</span>
+        
+    <span class="text-purple-400">def</span> <span class="text-blue-300">fit</span>(self, X, y=None):
+        <span class="text-gray-500"># คำนวณขอบเขตล่างและบน (Lower/Upper Bound)</span>
+        <span class="text-gray-500"># เดี๋ยวเราจะเติมโค้ดตรงนี้</span>
+        <span class="text-purple-400">return</span> self
+        
+    <span class="text-purple-400">def</span> <span class="text-blue-300">transform</span>(self, X):
+        <span class="text-gray-500"># แทนที่ค่าที่เกินขอบเขต</span>
+        <span class="text-gray-500"># เดี๋ยวเราจะเติมโค้ดตรงนี้</span>
+        <span class="text-purple-400">return</span> X_clipped</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 4: Implementing Fit Logic -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 4: Implement <span class="text-yellow-300">fit()</span>
+    </h1>
+    <p class="text-left mb-4">
+      ในเมธอด <code>fit</code> เราจะเรียนรู้จากข้อมูล (X) ว่าขอบเขตของข้อมูลควรเป็นเท่าไหร่ (ใช้ IQR Technique)
+    </p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/20">
+<pre>    <span class="text-purple-400">def</span> <span class="text-blue-300">fit</span>(self, X, y=None):
+        <span class="text-gray-500"># X เป็น numpy array</span>
+        <span class="text-gray-500"># คำนวณ Quartile 1 และ 3</span>
+        Q1 = np.percentile(X, 25, axis=0)
+        Q3 = np.percentile(X, 75, axis=0)
+        IQR = Q3 - Q1
+        
+        <span class="text-gray-500"># บันทึก State ลงใน Object (Attributes มี _ ต่อท้ายตามธรรมเนียม)</span>
+        self.lower_bound_ = Q1 - (self.factor * IQR)
+        self.upper_bound_ = Q3 + (self.factor * IQR)
+        
+        <span class="text-purple-400">return</span> self  <span class="text-gray-500"># ต้องคืนค่า self เสมอเพื่อให้ Chain ได้</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 5: Implementing Transform Logic -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 5: Implement <span class="text-yellow-300">transform()</span>
+    </h1>
+    <p class="text-left mb-4">
+      ใช้ค่า <code>lower_bound_</code> และ <code>upper_bound_</code> ที่เรียนรู้มา เพื่อจำกัดค่า (Clip) ข้อมูล
+    </p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/20">
+<pre>    <span class="text-purple-400">def</span> <span class="text-blue-300">transform</span>(self, X):
+        <span class="text-gray-500"># ตรวจสอบว่า fit หรือยัง? (Optional แต่ดี)</span>
+        <span class="text-purple-400">if not hasattr</span>(self, <span class="text-green-300">"lower_bound_"</span>):
+            <span class="text-purple-400">raise</span> RuntimeError(<span class="text-green-300">"This OutlierClipper instance is not fitted yet."</span>)
+            
+        <span class="text-gray-500"># ใช้ np.clip เพื่อจำกัดค่าให้อยู่ในช่วง</span>
+        <span class="text-purple-400">return</span> np.clip(X, self.lower_bound_, self.upper_bound_)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 6: Building the Pipeline -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 6: สร้าง <span class="text-yellow-300">Pipeline</span>
+    </h1>
+    <p class="mb-6 text-white/80">
+      เชื่อมต่อ Custom Transformer ของเราเข้ากับ SVM Classifier
+    </p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/20 shadow-2xl">
+<pre><span class="text-gray-500"># สร้าง Pipeline: (Preprocessing) -> (Model)</span>
+pipeline = Pipeline([
+    (<span class="text-green-300">'clipper'</span>, OutlierClipper(factor=1.5)),
+    (<span class="text-green-300">'svm'</span>, SVC(kernel=<span class="text-green-300">'linear'</span>))
+])
+
+<span class="text-gray-500"># สั่งเทรนทีเดียว (จะเรียก clipper.fit -> clipper.transform -> svm.fit)</span>
+pipeline.fit(X_train, y_train)
+
+<span class="text-green-300">print</span>(<span class="text-green-300">"Training Complete!"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 7: Evaluation -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 7: ประเมินผล (Evaluation)
+    </h1>
+    <p class="text-xl mb-8">
+      ทดสอบ Pipeline กับ Test Set
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left font-mono text-sm">
+      <div class="bg-black/40 p-6 rounded-xl">
+<pre><span class="text-gray-500"># ทำนายผล</span>
+<span class="text-gray-500"># (เรียก clipper.transform -> svm.predict)</span>
+y_pred = pipeline.predict(X_test)
+
+<span class="text-gray-500"># ตรวจสอบความแม่นยำ</span>
+score = pipeline.score(X_test, y_test)
+<span class="text-green-300">print</span>(f<span class="text-green-300">"Accuracy: {score:.2f}"</span>)</pre>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-yellow-300 mb-2">ทำไมถึงดี?</h3>
+        <p>
+          เราไม่ต้องเขียนโค้ดเพื่อ Transform X_test แยกต่างหาก Pipeline จัดการให้เราเอง ทำให้ลดความเสี่ยงเรื่อง <strong>Data Leakage</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 8: Changing Estimator (LSP in action) -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 8: เปลี่ยนโมเดล (LSP Test)
+    </h1>
+    <p class="mb-6 text-white/80">
+      ลองเปลี่ยนจาก <code>SVC</code> เป็น <code>RandomForestClassifier</code> โดยไม่แก้ Pipeline Logic
+    </p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">from</span> sklearn.ensemble <span class="text-purple-400">import</span> RandomForestClassifier
+
+<span class="text-gray-500"># เปลี่ยนแค่ตัวสุดท้ายของ Pipeline</span>
+pipeline.steps.pop()  <span class="text-gray-500"># เอา SVM ออก</span>
+pipeline.steps.append((<span class="text-green-300">'rf'</span>, RandomForestClassifier()))
+
+<span class="text-gray-500"># Fit ใหม่ได้เลย</span>
+pipeline.fit(X_train, y_train)
+<span class="text-green-300">print</span>(f<span class="text-green-300">"New Accuracy: {pipeline.score(X_test, y_test):.2f}"</span>)</pre>
+    </div>
+    <div class="mt-4 text-yellow-200 text-sm">
+      *นี่คือพลังของ Liskov Substitution Principle: เราสามารถสลับ Subclass ของ BaseEstimator ได้อย่างอิสระ*
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 9: Get/Set Params -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 9: การเข้าถึงพารามิเตอร์
+    </h1>
+    <p class="mb-4 text-white/80">
+      เนื่องจากเราสืบทอด <code>BaseEstimator</code> เราจึงใช้ <code>get_params()</code> ได้ทันที
+    </p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre><span class="text-gray-500"># ดูพารามิเตอร์ทั้งหมดใน Pipeline</span>
+params = pipeline.get_params()
+<span class="text-green-300">print</span>(params)
+
+<span class="text-gray-500"># เราจะเห็น 'clipper__factor' อยู่ในนั้น</span>
+<span class="text-gray-500"># ลองเปลี่ยนค่า factor ผ่าน Pipeline</span>
+pipeline.set_params(clipper__factor=2.0)
+pipeline.fit(X_train, y_train)  <span class="text-gray-500"># เทรนใหม่ด้วย factor ใหม่</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 10: Conclusion -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      Lab Completed!
+    </h1>
+    <p class="text-xl mb-12 text-white/90">
+      "คุณได้สร้าง OOP Component ที่ทำงานร่วมกับ Standard Library ระดับโลกได้"
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left max-w-2xl mx-auto">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-lg font-bold border-b border-white/20 pb-2 mb-2">Key Takeaways</h3>
+        <ul class="text-sm space-y-1 opacity-80">
+          <li><code>fit()</code> เพื่อเรียนรู้, <code>transform()</code> เพื่อแปลง</li>
+          <li><code>BaseEstimator</code> ให้ฟีเจอร์พื้นฐาน</li>
+          <li><code>Mixin</code> ให้ Interface มาตรฐาน</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-lg font-bold border-b border-white/20 pb-2 mb-2">Next Steps</h3>
+        <ul class="text-sm space-y-1 opacity-80">
+          <li>ลองใช้ GridSearch เพื่อหาค่า factor ที่ดีที่สุด</li>
+          <li>ลองสร้าง Custom Classifier</li>
+          <li>นำไป Deploy ด้วย FastAPI [6, 7]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

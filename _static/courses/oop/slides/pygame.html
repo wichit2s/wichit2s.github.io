@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP: Pygame</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/oop/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./pygame.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+    <!-- Slide 1: Title -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      OOP & SOLID <br>
+      <span class="text-yellow-300">ในการพัฒนาเกมด้วย Pygame</span>
+    </h1>
+    <div class="text-2xl text-white/90 mb-8 font-light">
+      สถาปัตยกรรมซอฟต์แวร์สำหรับนักพัฒนาเกม: จาก Spaghetti Code สู่ Structured Design
+    </div>
+    <div class="flex justify-center gap-4 text-sm font-mono opacity-80">
+      <span>Week 11-13</span>
+      <span>•</span>
+      <span>Pygame Framework</span>
+      <span>•</span>
+      <span>Design Patterns</span>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: The Problem with Game Dev -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ทำไมต้องใช้ OOP ในการทำเกม?
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-red-500/20 p-6 rounded-xl border border-red-400">
+        <h3 class="text-2xl font-bold mb-4 text-red-300">ปัญหาแบบเดิม (Procedural)</h3>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+          <li><strong>Global Variables:</strong> ตัวแปร `player_x`, `enemy_list` กระจายทั่วไฟล์</li>
+          <li><strong>God Loop:</strong> `while True:` ยาว 500 บรรทัดที่ทำทุกอย่าง</li>
+          <li><strong>Hard to Extend:</strong> การเพิ่มศัตรูแบบใหม่ต้องแก้ code เดิมหลายจุด</li>
+        </ul>
+      </div>
+      <div class="bg-green-500/20 p-6 rounded-xl border border-green-400">
+        <h3 class="text-2xl font-bold mb-4 text-green-300">ทางออกด้วย OOP</h3>
+        <ul class="list-disc pl-5 space-y-2 text-sm">
+          <li><strong>Encapsulation:</strong> ตัวละครจัดการสถานะ (HP, Pos) ของตัวเอง</li>
+          <li><strong>Polymorphism:</strong> ศัตรูทุกตัวมี method `update()` แต่พฤติกรรมต่างกัน</li>
+          <li><strong>Maintenance:</strong> แยก Logic, Rendering และ Input ออกจากกัน</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Pygame OOP Core -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      หัวใจของ Pygame: <span class="text-yellow-300">The Sprite Class</span>
+    </h1>
+    <p class="text-xl mb-6">
+      Pygame เตรียมคลาส <code>pygame.sprite.Sprite</code> มาให้แล้ว ซึ่งรองรับ OOP โดยธรรมชาติ
+    </p>
+    <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">GameObject</span>(pygame.sprite.Sprite):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        <span class="text-gray-500"># ต้องเรียก super().__init__() เสมอ!</span>
+        <span class="text-purple-400">super</span>().__init__()
+        <span class="text-gray-500"># 2 สิ่งที่ขาดไม่ได้สำหรับ Sprite:</span>
+        self.image = pygame.Surface((32, 32)) <span class="text-gray-500"># หน้าตา</span>
+        self.rect = self.image.get_rect()     <span class="text-gray-500"># ตำแหน่งและขนาด</span>
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">update</span>(self):
+        <span class="text-gray-500"># ใส่ Logic การเคลื่อนที่ที่นี่</span>
+        pass</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Game Loop Pattern -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      The <span class="text-yellow-300">Game Loop</span> Pattern
+    </h1>
+    <p class="text-xl mb-8">
+      รูปแบบมาตรฐานของการทำงานเกม แยกเป็น 3 ขั้นตอนวนซ้ำ
+    </p>
+    <div class="flex justify-center items-center gap-4">
+      <div class="w-64 h-64 bg-blue-500/20 rounded-full flex flex-col justify-center items-center border-4 border-blue-400 relative">
+        <h3 class="text-2xl font-bold">1. Input</h3>
+        <p class="text-sm opacity-80">รับค่าจากผู้เล่น</p>
+        <div class="absolute -right-4 top-1/2 -translate-y-1/2 text-4xl">➡</div>
+      </div>
+      <div class="w-64 h-64 bg-yellow-500/20 rounded-full flex flex-col justify-center items-center border-4 border-yellow-400 relative">
+        <h3 class="text-2xl font-bold">2. Update</h3>
+        <p class="text-sm opacity-80">คำนวณฟิสิกส์/สถานะ</p>
+        <div class="absolute -right-4 top-1/2 -translate-y-1/2 text-4xl">➡</div>
+      </div>
+      <div class="w-64 h-64 bg-green-500/20 rounded-full flex flex-col justify-center items-center border-4 border-green-400">
+        <h3 class="text-2xl font-bold">3. Draw</h3>
+        <p class="text-sm opacity-80">วาดภาพขึ้นจอ</p>
+      </div>
+    </div>
+    <div class="mt-8 text-yellow-200 text-sm">
+      *ควรแยก 3 ส่วนนี้ออกจากกันให้ชัดเจนในแต่ละ Class (SRP)
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: SRP in Games -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      SRP: <span class="text-yellow-300">Single Responsibility Principle</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-red-900/40 p-6 rounded-xl border border-red-500/50">
+        <h3 class="text-xl font-bold text-red-300 mb-2">❌ การละเมิด SRP</h3>
+        <code class="text-xs block bg-black/30 p-2 rounded">
+          class Player:<br>
+          &nbsp;&nbsp;def update(self):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;# รับ Input<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;keys = pygame.key.get_pressed()<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;# คำนวณฟิสิกส์<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;self.rect.x += 5<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;# เล่นเสียง<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;pygame.mixer.Sound("jump.wav").play()
+        </code>
+        <p class="text-xs mt-2 text-red-200">Player ทำทุกอย่าง: Input, Logic, Audio</p>
+      </div>
+      <div class="bg-green-900/40 p-6 rounded-xl border border-green-500/50">
+        <h3 class="text-xl font-bold text-green-300 mb-2">✅ ทำตาม SRP</h3>
+        <code class="text-xs block bg-black/30 p-2 rounded">
+          class Player(Sprite):<br>
+          &nbsp;&nbsp;def update(self, inputs):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;# สนใจแค่ Logic การขยับ<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;self.rect.x += self.speed * inputs.x<br><br>
+          class InputHandler:<br>
+          &nbsp;&nbsp;# จัดการ Input แยกต่างหาก
+        </code>
+        <p class="text-xs mt-2 text-green-200">แยก InputHandler และ SoundManager ออกมา</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: OCP in Games -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      OCP: <span class="text-yellow-300">Open/Closed Principle</span>
+    </h1>
+    <p class="text-xl mb-6">
+      "เปิดรับการขยาย (เพิ่มศัตรูใหม่) แต่ปิดการแก้ไข (ไม่ต้องแก้โค้ดลูปหลัก)"
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl text-left">
+      <h3 class="text-2xl font-bold text-blue-300 mb-4">ตัวอย่าง: ระบบ Enemy</h3>
+      <div class="flex gap-4 items-start">
+        <div class="w-1/2">
+          <p class="mb-2 font-bold">Base Class (Abstract)</p>
+          <pre class="bg-black/30 p-3 rounded text-xs">
+class Enemy(ABC):
+    @abstractmethod
+    def attack(self): pass</pre>
+        </div>
+        <div class="w-1/2">
+          <p class="mb-2 font-bold">Extensions</p>
+          <pre class="bg-black/30 p-3 rounded text-xs">
+class Zombie(Enemy):
+    def attack(self): bite()
+
+class Alien(Enemy):
+    def attack(self): shoot_laser()</pre>
+        </div>
+      </div>
+      <div class="mt-4 p-3 bg-green-500/20 rounded border border-green-400/30 text-sm">
+        <strong>Game Loop:</strong> <code>for e in enemies: e.attack()</code> <br>
+        (ทำงานได้กับศัตรูทุกประเภทโดยไม่ต้องแก้โค้ดลูป)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: LSP in Games -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      LSP: <span class="text-yellow-300">Liskov Substitution Principle</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl text-left">
+      <p class="text-xl mb-4">
+        "คลาสลูกต้องแทนที่คลาสแม่ได้โดยเกมไม่พัง"
+      </p>
+      <div class="bg-red-500/10 border-l-4 border-red-500 p-4 mb-4">
+        <h4 class="font-bold text-red-300">ตัวอย่างที่ผิด (Violation)</h4>
+        <p class="text-sm">
+          คลาส <code>Turret (ป้อมปืน)</code> สืบทอดจาก <code>Enemy</code> แต่ในเมธอด <code>move()</code> ดันโยน Error เพราะป้อมปืนเดินไม่ได้ <br>
+          --> ทำให้ Game Loop ที่เรียก <code>enemy.move()</code> พัง
+        </p>
+      </div>
+      <div class="bg-green-500/10 border-l-4 border-green-500 p-4">
+        <h4 class="font-bold text-green-300">วิธีแก้ไข (Solution)</h4>
+        <p class="text-sm">
+          แยก Interface: <code>MovableEnemy</code> และ <code>StaticEnemy</code> หรือใช้เทคนิค <strong>Composition</strong> (มี component Movement หรือไม่)
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: ISP in Games -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ISP: <span class="text-yellow-300">Interface Segregation</span>
+    </h1>
+    <p class="text-xl mb-8">
+      "อย่าบังคับให้ Game Object ต้อง Implement เมธอดที่ไม่ได้ใช้"
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left font-mono text-sm">
+      <div class="bg-white/5 p-6 rounded-xl">
+        <h3 class="text-lg font-bold text-red-300 mb-2">Fat Interface</h3>
+        <pre class="opacity-80">
+class IGameObject:
+  def update()
+  def draw()
+  def play_sound()
+  def handle_input()
+  def collide()</pre>
+        <p class="mt-2 text-xs text-white/60">ต้นไม้ (Tree) ต้อง implement play_sound() หรอ?</p>
+      </div>
+      <div class="bg-white/5 p-6 rounded-xl">
+        <h3 class="text-lg font-bold text-green-300 mb-2">Segregated</h3>
+        <pre class="opacity-80">
+class IDrawable:
+  def draw()
+
+class IUpdatable:
+  def update()
+
+class Tree(IDrawable): ...</pre>
+        <p class="mt-2 text-xs text-white/60">ต้นไม้เลือกเป็นแค่สิ่งที่วาดได้ (Drawable)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: DIP in Games -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      DIP: <span class="text-yellow-300">Dependency Inversion</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <h3 class="text-2xl font-bold mb-4">ตัวอย่าง: ระบบควบคุม (Input System)</h3>
+      <p class="mb-4">
+        ตัวละคร (High Level) ไม่ควรผูกติดกับ Keyboard (Low Level) โดยตรง เพราะเราอาจจะอยากใช้ JoyStick ในอนาคต
+      </p>
+      <div class="bg-black/30 p-4 rounded-xl">
+<pre class="text-sm"><span class="text-purple-400">class</span> <span class="text-yellow-300">Player</span>:
+    <span class="text-gray-500"># ผิด: ผูกกับ Pygame Keyboard โดยตรง (Tight Coupling)</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">handle_input</span>(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]: jump()
+
+    <span class="text-gray-500"># ถูก: รับ Command เข้ามา (Dependency Injection)</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">handle_input</span>(self, command: ICommand):
+        command.execute(self)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Composition in Games -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">Composition</span> Over Inheritance
+    </h1>
+    <div class="flex items-center gap-8 justify-center">
+      <div class="bg-white/10 p-6 rounded-xl text-left w-1/2">
+        <h3 class="text-xl font-bold mb-2">Entity-Component Idea</h3>
+        <p class="text-sm mb-4">แทนที่จะสร้าง Class ลึกๆ ให้สร้าง Object จากการประกอบชิ้นส่วน (Components)</p>
+        <ul class="text-sm space-y-2 list-disc pl-4">
+          <li><strong>Player</strong> = Sprite + Control + Health + Weapon</li>
+          <li><strong>Bullet</strong> = Sprite + Velocity + Damage</li>
+        </ul>
+      </div>
+      <div class="bg-black/40 p-6 rounded-xl text-left w-1/2 font-mono text-xs">
+      <pre style="font-family:monospace;color: rgb(248, 248, 242); font-weight: 400; "><span style="color: rgb(220, 198, 224); font-weight: 400;">class</span> <span style="color: rgb(0, 224, 224); font-weight: 400;">GameObject</span>(pygame.sprite.Sprite):
+    <span style="color: rgb(220, 198, 224); font-weight: 400;">def</span> <span style="color: rgb(0, 224, 224); font-weight: 400;">__init__</span>(<span style="color: rgb(245, 171, 53); font-weight: 400;">self</span>):
+        <span style="color: rgb(245, 171, 53); font-weight: 400;">super</span>().__init__()
+        <span style="color: rgb(212, 208, 171); font-weight: 400;"># Has-A relationships</span>
+        self.transform = Transform()
+        self.renderer = SpriteRenderer()
+        self.audio = AudioSource()
+        self.physics = RigidBody()
+</pre>
+            </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Design Pattern - Factory -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Pattern 1: <span class="text-yellow-300">Factory Method</span>
+    </h1>
+    <p class="text-xl mb-8">
+      ใช้สำหรับสร้าง Game Objects (Spawning) จำนวนมากและหลากหลาย
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div>
+        <h3 class="text-2xl font-bold text-green-300 mb-2">Enemy Spawner</h3>
+        <p class="text-sm opacity-80 mb-4">
+          แทนที่จะ <code>new Zombie()</code> กระจายไปทั่วโค้ด ให้ใช้ Factory จัดการ การสุ่มประเภทและตำแหน่งเกิด
+        </p>
+      </div>
+      <div class="bg-black/40 p-4 rounded-xl font-mono text-xs">
+<pre style="font-family:monospace;color: rgb(248, 248, 242); font-weight: 400; "><span style="color: rgb(220, 198, 224); font-weight: 400;">class</span> <span style="color: rgb(0, 224, 224); font-weight: 400;">EnemyFactory</span>:
+<span style="color: rgb(245, 171, 53); font-weight: 400;">    @staticmethod</span>
+    <span style="color: rgb(220, 198, 224); font-weight: 400;">def</span> <span style="color: rgb(0, 224, 224); font-weight: 400;">create_enemy</span>(<span style="color: rgb(245, 171, 53); font-weight: 400;"><span style="color: rgb(245, 171, 53); font-weight: 400;">type</span>, x, y</span>):
+        <span style="color: rgb(220, 198, 224); font-weight: 400;">if</span> <span style="color: rgb(245, 171, 53); font-weight: 400;">type</span> == <span style="color: rgb(171, 227, 56); font-weight: 400;">"ZOMBIE"</span>:
+            <span style="color: rgb(220, 198, 224); font-weight: 400;">return</span> Zombie(x, y)
+        <span style="color: rgb(220, 198, 224); font-weight: 400;">elif</span> <span style="color: rgb(245, 171, 53); font-weight: 400;">type</span> == <span style="color: rgb(171, 227, 56); font-weight: 400;">"ALIEN"</span>:
+            <span style="color: rgb(220, 198, 224); font-weight: 400;">return</span> Alien(x, y)
+            
+<span style="color: rgb(212, 208, 171); font-weight: 400;"># Usage</span>
+enemies.add(EnemyFactory.create_enemy(<span style="color: rgb(171, 227, 56); font-weight: 400;">"ZOMBIE"</span>, <span style="color: rgb(245, 171, 53); font-weight: 400;">100</span>, <span style="color: rgb(245, 171, 53); font-weight: 400;">200</span>))</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Design Pattern - Observer -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Pattern 2: <span class="text-yellow-300">Observer</span>
+    </h1>
+    <p class="text-xl mb-8">
+      จัดการ Events: ทำอย่างไรให้ HP Bar ลดลงเมื่อ Player โดนโจมตี โดยที่ Player ไม่ต้องรู้จัก HP Bar?
+    </p>
+    <div class="bg-white/10 p-6 rounded-2xl relative">
+      <div class="flex justify-between items-center mb-4">
+        <div class="bg-blue-500 p-4 rounded-lg">Subject (Player)</div>
+        <div class="text-4xl">➡ Notify() ➡</div>
+        <div class="flex flex-col gap-2">
+          <div class="bg-green-500 p-2 rounded-lg text-sm">Observer (UI HP Bar)</div>
+          <div class="bg-green-500 p-2 rounded-lg text-sm">Observer (Sound System)</div>
+          <div class="bg-green-500 p-2 rounded-lg text-sm">Observer (Achievement)</div>
+        </div>
+      </div>
+      <p class="text-sm text-left">
+        Player ทำหน้าที่แค่ <code>notify_observers("DAMAGE")</code> ใครที่ Subscribe อยู่ก็จะทำงานของตัวเอง (Decoupling)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Design Pattern - State -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Pattern 3: <span class="text-yellow-300">State Pattern</span>
+    </h1>
+    <p class="text-xl mb-8">
+      จัดการสถานะของเกม (Menu, Playing, Paused, GameOver)
+    </p>
+    <div class="flex gap-4 justify-center text-left">
+      <div class="bg-black/40 p-5 rounded-xl w-1/3">
+        <h4 class="font-bold text-yellow-300">GameState (Abstract)</h4>
+        <ul class="text-xs list-disc pl-4 mt-2">
+          <li>handle_input()</li>
+          <li>update()</li>
+          <li>draw()</li>
+        </ul>
+      </div>
+      <div class="w-2/3 grid grid-cols-2 gap-2">
+        <div class="bg-white/10 p-3 rounded">MenuState</div>
+        <div class="bg-white/10 p-3 rounded">PlayState</div>
+        <div class="bg-white/10 p-3 rounded">PauseState</div>
+        <div class="bg-white/10 p-3 rounded">GameOverState</div>
+      </div>
+    </div>
+    <div class="mt-6 bg-blue-500/20 p-4 rounded-lg text-sm">
+      ใน Game Loop หลัก เราเรียกแค่ <code>current_state.update()</code> <br>
+      ตัวแปร current_state จะเปลี่ยนไปตามเหตุการณ์ในเกม
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Pygame Project Structure -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      โครงสร้างโปรเจกต์ที่ดี (Best Practice)
+    </h1>
+    <div class="grid grid-cols-2 gap-10 text-left">
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-sm border border-white/20">
+        my_game/<br>
+        ├── main.py  <span class="text-gray-400"># Entry Point</span><br>
+        ├── config.py <span class="text-gray-400"># Constants</span><br>
+        ├── assets/ <span class="text-gray-400"># Images/Sounds</span><br>
+        ├── src/<br>
+        │   ├── __init__.py<br>
+        │   ├── game.py <span class="text-gray-400"># Game Manager</span><br>
+        │   ├── entities/ <span class="text-gray-400"># Player, Enemy</span><br>
+        │   ├── systems/ <span class="text-gray-400"># Input, Physics</span><br>
+        │   └── utils/ <span class="text-gray-400"># Helper funcs</span>
+      </div>
+      <div class="flex flex-col justify-center space-y-4">
+        <p>✅ แยกไฟล์ตามหน้าที่ (Modularity)</p>
+        <p>✅ รวมค่าคงที่ไว้ที่เดียว (Config)</p>
+        <p>✅ แยก Assets ออกจาก Code</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Managers / Controllers -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Managers & Controllers
+    </h1>
+    <p class="text-xl mb-8">
+      คลาสที่ทำหน้าที่ควบคุมระบบย่อยต่างๆ (มักใช้ Singleton หรือ Static)
+    </p>
+    <div class="grid grid-cols-3 gap-6 text-sm text-left">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong class="text-blue-300">SpriteManager</strong>
+        <p class="mt-2 opacity-80">จัดการ Group ของ Sprite ทั้งหมด (All_sprites, Enemies, Bullets)</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong class="text-green-300">CollisionManager</strong>
+        <p class="mt-2 opacity-80">ตรวจสอบการชนกันและสั่งการเมื่อเกิดการชน (แยก Logic นี้ออกจาก Game Loop)</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong class="text-yellow-300">ResourceManager</strong>
+        <p class="mt-2 opacity-80">โหลดและเก็บภาพ/เสียง (Cache) เพื่อไม่ให้โหลดซ้ำซ้อน (Flyweight Pattern)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Events & Signals in Pygame -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การจัดการ Events
+    </h1>
+    <div class="text-left space-y-6">
+      <p>Pygame มีระบบ Event Queue ของตัวเอง เราสามารถสร้าง Custom Event ได้</p>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-sm border-l-4 border-purple-400">
+        <span class="text-gray-500"># กำหนด Event ID ใหม่</span><br>
+        EVENT_ENEMY_DIED = pygame.USEREVENT + 1<br><br>
+        <span class="text-gray-500"># เมื่อศัตรูตาย (ใน Enemy Class)</span><br>
+        pygame.event.post(pygame.event.Event(EVENT_ENEMY_DIED))<br><br>
+        <span class="text-gray-500"># ใน Main Loop (หรือ ScoreManager)</span><br>
+        if event.type == EVENT_ENEMY_DIED:<br>
+        &nbsp;&nbsp;score += 100
+      </div>
+      <p class="text-sm bg-yellow-500/20 p-2 rounded">
+        เทคนิคนี้ช่วยลดการผูกมัด (Decoupling) ระหว่าง Enemy และ Score System
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Abstract Base Class for Games -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การใช้ Abstract Base Class (ABC)
+    </h1>
+    <p class="text-xl mb-6">
+      บังคับให้ Game Object ทุกตัวต้องมีโครงสร้างตามสัญญา (Contract)
+    </p>
+    <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-sm">
+<pre><span class="text-purple-400">from</span> abc <span class="text-purple-400">import</span> ABC, abstractmethod
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">Entity</span>(pygame.sprite.Sprite, ABC):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, groups):
+        <span class="text-purple-400">super</span>().__init__(groups)
+
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">movement</span>(self):
+        <span class="text-purple-400">pass</span>
+
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">attack</span>(self):
+        <span class="text-purple-400">pass</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Mixins in Python -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      <span class="text-yellow-300">Mixins</span> for Reusability
+    </h1>
+    <p class="text-xl mb-8">
+      ใช้ Multiple Inheritance เพื่อแปะความสามารถให้ Class (Composition via Inheritance)
+    </p>
+    <div class="flex gap-6 items-start text-left">
+      <div class="w-1/2 bg-white/10 p-4 rounded-xl">
+        <h4 class="font-bold mb-2">AnimatedMixin</h4>
+        <p class="text-xs">มี method <code>animate()</code> สำหรับสลับเฟรมภาพ</p>
+      </div>
+      <div class="w-1/2 bg-white/10 p-4 rounded-xl">
+        <h4 class="font-bold mb-2">ShooterMixin</h4>
+        <p class="text-xs">มี method <code>shoot()</code> และจัดการ Cooldown</p>
+      </div>
+    </div>
+    <div class="mt-6 bg-black/40 p-4 rounded-xl font-mono text-sm">
+      class Player(Entity, AnimatedMixin, ShooterMixin):<br>
+      &nbsp;&nbsp;pass
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Recap Principles -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      สรุปหลักการก่อนลงมือทำ
+    </h1>
+    <div class="grid grid-cols-2 gap-6 text-left text-lg">
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span>ใช้ <strong>Class</strong> แทน Global Variables</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span>ใช้ <strong>Sprite Group</strong> จัดการ Object จำนวนมาก</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span>แยก <strong>Update</strong> (Logic) ออกจาก <strong>Draw</strong> (Render)</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span>ใช้ <strong>Inheritance</strong> เมื่อเป็นประเภทเดียวกัน (Is-A)</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-green-400">✔</span>
+        <span>ใช้ <strong>Composition</strong> เพื่อเพิ่มความสามารถ (Has-A)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Lab Intro -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      เข้าสู่ <span class="text-yellow-300">ห้องปฏิบัติการ</span>
+    </h1>
+    <p class="text-2xl mb-12 font-light text-white/90">
+      Workshop: สร้างเกม "Space Shooter" ด้วยสถาปัตยกรรม OOP
+    </p>
+    <div class="grid grid-cols-3 gap-6 text-center">
+      <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <div class="text-4xl mb-2">🚀</div>
+        <h3>Player & Movement</h3>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <div class="text-4xl mb-2">👾</div>
+        <h3>Enemy Factory</h3>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <div class="text-4xl mb-2">🔫</div>
+        <h3>Weapon System</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PART 2: Laboratory Slides (21-30) -->
+
+<!-- Slide 21: Lab Step 1 - Project Setup -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 1: โครงสร้างหลัก (The Game Class)
+    </h1>
+    <p class="mb-4 text-left text-white/80">
+      สร้างคลาส <code>Game</code> เพื่อเป็น Manager หลัก (แทนที่จะเขียน loop ลอยๆ)
+    </p>
+    <div class="bg-black/40 rounded-xl p-4 text-left font-mono text-xs overflow-auto h-[400px] border border-white/20">
+<pre><span class="text-purple-400">import</span> pygame, sys
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">Game</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((800, 600))
+        self.clock = pygame.time.Clock()
+        self.running = True
+        
+        <span class="text-gray-500"># Groups: หัวใจของการจัดการ Sprite ใน Pygame</span>
+        self.all_sprites = pygame.sprite.Group()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">handle_input</span>(self):
+        <span class="text-purple-400">for</span> event <span class="text-purple-400">in</span> pygame.event.get():
+            <span class="text-purple-400">if</span> event.type == pygame.QUIT:
+                self.running = False
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">update</span>(self):
+        self.all_sprites.update() <span class="text-gray-500"># Polymorphism: เรียก update ของทุกตัว</span>
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">draw</span>(self):
+        self.screen.fill((30, 30, 30))
+        self.all_sprites.draw(self.screen)
+        pygame.display.flip()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">run</span>(self):
+        <span class="text-purple-400">while</span> self.running:
+            self.handle_input()
+            self.update()
+            self.draw()
+            self.clock.tick(60)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 22: Lab Step 2 - The Player Class -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 2: ผู้เล่น (Player Class)
+    </h1>
+    <div class="flex gap-8 items-start">
+      <div class="w-1/2 text-left">
+        <p class="mb-4">สืบทอดจาก <code>pygame.sprite.Sprite</code> เพื่อใช้ความสามารถของ Pygame</p>
+        <ul class="list-disc pl-5 text-sm space-y-2">
+          <li><strong>image:</strong> พื้นผิวของรูปภาพ (Surface)</li>
+          <li><strong>rect:</strong> กรอบสี่เหลี่ยมระบุตำแหน่ง (x, y)</li>
+          <li><strong>update():</strong> เมธอดที่จะถูกเรียกทุกเฟรม</li>
+        </ul>
+      </div>
+      <div class="w-1/2 bg-black/40 rounded-xl p-4 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">Player</span>(pygame.sprite.Sprite):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, groups):
+        <span class="text-purple-400">super</span>().__init__(groups) <span class="text-gray-500"># Add to groups auto</span>
+        self.image = pygame.Surface((50, 40))
+        self.image.fill('red')
+        self.rect = self.image.get_rect(center=(400, 500))
+        self.speed = 5
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">input</span>(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]: self.rect.x += self.speed
+        if keys[pygame.K_LEFT]: self.rect.x -= self.speed
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">update</span>(self):
+        self.input() <span class="text-gray-500"># SRP: แยกรับค่าอินพุต</span>
+        self.constraint() <span class="text-gray-500"># SRP: แยกการจำกัดขอบเขต</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 23: Lab Step 3 - Composition (Weapon) -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 3: อาวุธ (Composition)
+    </h1>
+    <p class="mb-6 text-left text-white/80">
+      แทนที่จะเขียนโค้ดยิงปืนใน Player ให้สร้างคลาส <code>Weapon</code> (Has-A relationship)
+    </p>
+    <div class="bg-black/40 rounded-xl p-4 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">Laser</span>(pygame.sprite.Sprite):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, pos, groups):
+        <span class="text-purple-400">super</span>().__init__(groups)
+        self.image = pygame.Surface((4, 20))
+        self.image.fill('yellow')
+        self.rect = self.image.get_rect(midbottom=pos)
+        self.speed = -10
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">update</span>(self):
+        self.rect.y += self.speed
+        if self.rect.bottom < 0: self.kill() <span class="text-gray-500"># ทำลายตัวเองเมื่อออกนอกจอ</span>
+
+<span class="text-gray-500"># ใน Player Class เพิ่ม:</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">shoot</span>(self):
+    <span class="text-gray-500"># Player สร้าง Laser แต่ Laser จัดการการเคลื่อนที่เอง</span>
+    Laser(self.rect.midtop, self.groups)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 24: Lab Step 4 - Enemy Factory -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 4: ศัตรู (Factory Pattern)
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left font-mono text-xs">
+      <div class="bg-black/40 p-4 rounded-xl">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">Enemy</span>(pygame.sprite.Sprite):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, pos, type, groups):
+        <span class="text-purple-400">super</span>().__init__(groups)
+        <span class="text-purple-400">if</span> type == 'A':
+             self.image = ...
+             self.speed = 2
+        <span class="text-purple-400">elif</span> type == 'B':
+             self.image = ...
+             self.speed = 5
+        self.rect = self.image.get_rect(topleft=pos)</pre>
+      </div>
+      <div class="bg-black/40 p-4 rounded-xl">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">EnemyFactory</span>:
+    <span class="text-orange-400">@staticmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">spawn</span>(groups):
+        x = random.randint(0, 800)
+        y = random.randint(-100, -40)
+        type = random.choice(['A', 'B'])
+        <span class="text-purple-400">return</span> Enemy((x,y), type, groups)</pre>
+      </div>
+    </div>
+    <div class="mt-4 bg-yellow-500/20 p-2 rounded text-sm text-left">
+      Factory ช่วยซ่อนความซับซ้อนของการสุ่มตำแหน่งและประเภทศัตรูออกจาก Game Loop
+    </div>
+  </div>
+</div>
+
+<!-- Slide 25: Lab Step 5 - Collision Observer -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 5: การชน (Collision Manager)
+    </h1>
+    <p class="mb-4 text-left text-white/80">แยกตรรกะการชนออกจากตัว Sprite (Mediator/Manager)</p>
+    <div class="bg-black/40 rounded-xl p-4 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">CollisionManager</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, player, enemy_group, laser_group):
+        self.player = player
+        self.enemies = enemy_group
+        self.lasers = laser_group
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">check</span>(self):
+        <span class="text-gray-500"># Laser ชน Enemy</span>
+        <span class="text-purple-400">if</span> pygame.sprite.groupcollide(self.lasers, self.enemies, True, True):
+            <span class="text-gray-500"># ส่ง Event หรือเพิ่มคะแนนที่นี่</span>
+            print("Enemy Destroyed")
+
+        <span class="text-gray-500"># Enemy ชน Player</span>
+        <span class="text-purple-400">if</span> pygame.sprite.spritecollide(self.player, self.enemies, True):
+            print("Player Hit!")
+            self.player.take_damage()</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 26: Lab Step 6 - Score System (Singleton) -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 6: คะแนน (Score System)
+    </h1>
+    <div class="bg-black/40 rounded-xl p-5 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">ScoreManager</span>:
+    _instance = None  <span class="text-gray-500"># Singleton Pattern (แบบง่าย)</span>
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__new__</span>(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.score = 0
+            cls._instance.font = pygame.font.Font(None, 36)
+        return cls._instance
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">add</span>(self, amount):
+        self.score += amount
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">draw</span>(self, surface):
+        surf = self.font.render(f'Score: {self.score}', True, 'white')
+        surface.blit(surf, (10, 10))</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 27: Lab Step 7 - Integrating Logic -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 7: รวมร่าง (Integration)
+    </h1>
+    <p class="mb-4 text-left text-white/80">กลับไปที่คลาส <code>Game</code> และเชื่อมต่อทุกอย่าง</p>
+    <div class="bg-black/40 rounded-xl p-4 text-left font-mono text-xs border border-white/20 h-[400px] overflow-auto">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">Game</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        <span class="text-gray-500"># ... init pygame ...</span>
+        self.all_sprites = pygame.sprite.Group()
+        self.enemy_group = pygame.sprite.Group()
+        self.laser_group = pygame.sprite.Group()
+
+        <span class="text-gray-500"># สร้าง Player</span>
+        self.player = Player([self.all_sprites])
+        self.player.laser_group = self.laser_group <span class="text-gray-500"># Dependency Injection</span>
+
+        <span class="text-gray-500"># Managers</span>
+        self.collision = CollisionManager(self.player, self.enemy_group, self.laser_group)
+        self.score_manager = ScoreManager()
+
+        <span class="text-gray-500"># ตั้งเวลา Spawn ศัตรู (Event)</span>
+        self.ENEMY_SPAWN = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.ENEMY_SPAWN, 1000)
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">handle_input</span>(self):
+        <span class="text-purple-400">for</span> event <span class="text-purple-400">in</span> pygame.event.get():
+            <span class="text-purple-400">if</span> event.type == self.ENEMY_SPAWN:
+                enemy = EnemyFactory.spawn([self.all_sprites, self.enemy_group])
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">update</span>(self):
+        self.all_sprites.update()
+        self.collision.check()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">draw</span>(self):
+        self.screen.fill('black')
+        self.all_sprites.draw(self.screen)
+        self.score_manager.draw(self.screen)
+        pygame.display.flip()</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 28: Lab Step 8 - Optimization -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">
+      Step 8: การปรับปรุง (Optimization & Clean Code)
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-yellow-300 mb-2">Delta Time</h3>
+        <p class="text-sm mb-2">เพื่อให้เกมลื่นไหลในทุกเฟรมเรท</p>
+        <code class="bg-black/30 p-1 rounded text-xs block">
+          dt = self.clock.tick() / 1000<br>
+          self.rect.x += self.speed * dt
+        </code>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-blue-300 mb-2">Object Pooling (Advance)</h3>
+        <p class="text-sm">
+          แทนที่จะ <code>kill()</code> และสร้างใหม่ตลอดเวลา ให้นำกระสุนที่ใช้นำกลับมาใช้ใหม่ (Reuse) ช่วยลดภาระ Garbage Collector
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 29: Lab Challenge -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ภารกิจท้าทาย (Lab Challenge)
+    </h1>
+    <div class="bg-white/10 p-8 rounded-2xl text-left space-y-6">
+      <div class="flex items-start gap-4">
+        <div class="bg-red-500 w-8 h-8 flex items-center justify-center rounded-full font-bold">1</div>
+        <div>
+          <h3 class="text-xl font-bold">เพิ่ม Boss Enemy (OCP)</h3>
+          <p class="opacity-80">สร้างคลาส <code>Boss</code> ที่สืบทอดจาก <code>Enemy</code> โดยมี HP และยิงกระสุนสวนกลับได้ ห้ามแก้โค้ด Game Loop</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-blue-500 w-8 h-8 flex items-center justify-center rounded-full font-bold">2</div>
+        <div>
+          <h3 class="text-xl font-bold">เปลี่ยนปืน (Strategy Pattern)</h3>
+          <p class="opacity-80">สร้างคลาส <code>WeaponStrategy</code> ให้ Player เปลี่ยนรูปแบบการยิง (เดี่ยว, กระจาย) ได้ขณะเล่น</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 30: Conclusion -->
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      จบการนำเสนอ
+    </h1>
+    <p class="text-2xl mb-12 text-white/90">
+      "Design Patterns ไม่ใช่กฎข้อบังคับ แต่เป็นเครื่องมือช่วยแก้ปัญหา"
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left max-w-2xl mx-auto">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-lg font-bold border-b border-white/20 pb-2 mb-2">สรุปวันนี้</h3>
+        <ul class="text-sm space-y-1 opacity-80">
+          <li>Pygame Sprite System</li>
+          <li>Game Loop Pattern</li>
+          <li>SOLID (SRP, OCP)</li>
+          <li>Factory & Observer</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-lg font-bold border-b border-white/20 pb-2 mb-2">ทรัพยากรเพิ่มเติม</h3>
+        <ul class="text-sm space-y-1 opacity-80">
+          <li><a href="https://pygame.org/docs">pygame.org/docs</a></li>
+          <li><a href="https://gameprogrammingpatterns.com">gameprogrammingpatterns.com</a></li>
+          <li><a href="https://refactoring.guru">refactoring.guru</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

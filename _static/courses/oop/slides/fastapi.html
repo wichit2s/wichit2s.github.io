@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP: FastAPI</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/oop/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./fastapi.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+    <!-- Slide 1: Title -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      OOP & Design Patterns <br>
+      <span class="text-yellow-300">ใน FastAPI</span>
+    </h1>
+    <div class="text-2xl text-white/90 mb-8 font-light">
+      สถาปัตยกรรมซอฟต์แวร์สมัยใหม่: SOLID, Layered Architecture และ Dependency Injection
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-lg">
+      <p>🎯 <strong>เป้าหมาย:</strong> ประยุกต์ใช้แนวคิดเชิงวัตถุเพื่อสร้าง API ที่ยืดหยุ่นและดูแลรักษาง่าย</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: Why OOP in Web API? -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ทำไมต้องใช้ <span class="text-yellow-300">OOP</span> ใน FastAPI?
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-4 text-red-300">แบบเดิม (Function-Based/Script)</h3>
+        <ul class="list-disc pl-5 space-y-2">
+          <li>เขียนทุกอย่างรวมกันในไฟล์เดียว (Routes + Logic + DB)</li>
+          <li>ยากต่อการทดสอบ (Unit Testing ยากมาก)</li>
+          <li>เมื่อเปลี่ยน Database ต้องแก้โค้ดเกือบทั้งหมด</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-4 text-green-300">แบบ OOP & Patterns</h3>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Encapsulation:</strong> รวม Business Logic ไว้ใน Service Classes</li>
+          <li><strong>Abstraction:</strong> ซ่อนการทำงานของ Database ผ่าน Repository</li>
+          <li><strong>Dependency Injection:</strong> สลับส่วนประกอบได้ง่าย (FastAPI เก่งเรื่องนี้มาก)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: FastAPI & Type Hinting -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      รากฐานของ FastAPI: <span class="text-yellow-300">Type System & OOP</span>
+    </h1>
+    <p class="text-xl mb-8">
+      FastAPI ถูกสร้างมาบนพื้นฐานของ Python Type Hints ซึ่งสอดคล้องกับแนวคิด Class และ Object อย่างยิ่ง
+    </p>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left space-y-4">
+        <p><strong>Pydantic Models</strong> คือ Class ที่ใช้กำหนด "รูปร่าง" ของข้อมูล (Data Shape)</p>
+        <ul class="list-disc pl-5 text-white/80">
+          <li>ตรวจสอบประเภทข้อมูล (Validation)</li>
+          <li>แปลงข้อมูล JSON <-> Python Object (Serialization)</li>
+          <li>ใช้หลักการ Inheritance ได้</li>
+        </ul>
+      </div>
+      <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">from</span> pydantic <span class="text-purple-400">import</span> BaseModel
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">UserBase</span>(BaseModel):
+    username: str
+    email: str
+
+<span class="text-gray-500"># Inheritance in Action</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">UserCreate</span>(UserBase):
+    password: str</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: SOLID in FastAPI - SRP -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      S - <span class="text-yellow-300">Single Responsibility Principle</span>
+    </h1>
+    <div class="bg-white/10 p-8 rounded-2xl text-left">
+      <p class="text-2xl mb-6">
+        "หนึ่ง Class หรือ Function ควรมีเหตุผลเดียวในการเปลี่ยนแปลง"
+      </p>
+      <div class="grid grid-cols-2 gap-8 text-lg">
+        <div>
+          <strong class="text-red-300 block mb-2">❌ สิ่งที่ห้ามทำใน Route Function:</strong>
+          <ul class="list-disc pl-5 text-sm space-y-2 opacity-80">
+            <li>ตรวจสอบความถูกต้องของข้อมูล (Validation Logic)</li>
+            <li>คำนวณ Business Logic ซับซ้อน</li>
+            <li>เขียนคำสั่ง SQL หรือคุยกับ Database โดยตรง</li>
+          </ul>
+        </div>
+        <div>
+          <strong class="text-green-300 block mb-2">✅ สิ่งที่ควรทำ (แยกไฟล์/Class):</strong>
+          <ul class="list-disc pl-5 text-sm space-y-2 opacity-80">
+            <li><strong>Schemas (Pydantic):</strong> รับผิดชอบ Validation</li>
+            <li><strong>Services:</strong> รับผิดชอบ Business Logic</li>
+            <li><strong>Repositories:</strong> รับผิดชอบ Database Access</li>
+            <li><strong>Routes:</strong> รับผิดชอบแค่รับ Request และส่ง Response</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: SOLID in FastAPI - OCP -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      O - <span class="text-yellow-300">Open/Closed Principle</span>
+    </h1>
+    <p class="text-xl mb-8">
+      "เปิดรับการขยาย (Extension) แต่ปิดกั้นการแก้ไข (Modification)"
+    </p>
+    <div class="flex gap-8 items-center text-left">
+      <div class="w-1/2">
+        <p class="mb-4">
+          ใน FastAPI เรามักใช้ <strong>Middleware</strong> หรือ <strong>Dependency Injection</strong> เพื่อเพิ่มความสามารถโดยไม่ต้องแก้โค้ดหลัก
+        </p>
+        <p class="text-sm text-yellow-200">
+          ตัวอย่าง: การเพิ่มระบบ Logging หรือ Authentication สามารถทำได้โดยการ "Inject" เข้าไปใน Path Operation โดยไม่ต้องไปแก้ไส้ในของฟังก์ชันนั้น
+        </p>
+      </div>
+      <div class="w-1/2 bg-black/40 p-4 rounded-xl font-mono text-xs">
+<pre><span class="text-gray-500"># ขยายความสามารถด้วย Dependency</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">get_current_user</span>(token: str = Depends(oauth2_scheme)):
+    <span class="text-gray-500"># Logic ตรวจสอบ user</span>
+    ...
+
+<span class="text-gray-500"># ไม่ต้องแก้โค้ด read_items แค่เพิ่ม Depends</span>
+<span class="text-orange-400">@app.get</span>(<span class="text-green-300">"/items"</span>)
+<span class="text-purple-400">def</span> <span class="text-blue-300">read_items</span>(user = Depends(get_current_user)):
+    ...</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: SOLID in FastAPI - LSP -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      L - <span class="text-yellow-300">Liskov Substitution Principle</span>
+    </h1>
+    <p class="text-xl mb-8">
+      "Subtypes ต้องสามารถแทนที่ Base types ได้โดยไม่ทำให้โปรแกรมพัง"
+    </p>
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <h3 class="text-2xl font-bold mb-4 text-blue-300">ตัวอย่าง: Pydantic Inheritance</h3>
+      <p class="mb-4">
+        หากเรามีฟังก์ชันที่รับค่าเป็น `UserBase` เราควรจะสามารถส่ง `UserCreate` (ซึ่งเป็นลูก) เข้าไปทำงานได้โดยไม่มีข้อผิดพลาด
+      </p>
+      <div class="bg-black/30 p-4 rounded-lg font-mono text-sm border-l-4 border-blue-400">
+        <div class="text-gray-400">def process_user(user: UserBase): ...</div>
+        <div class="mt-2 text-white">
+          process_user(UserCreate(...)) <span class="text-green-400"># ✅ ต้องทำงานได้</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: SOLID in FastAPI - ISP -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      I - <span class="text-yellow-300">Interface Segregation Principle</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left items-center">
+      <div>
+        <p class="text-lg mb-4">
+          "ไม่ควรบังคับให้ Client พึ่งพา Interface ที่พวกเขาไม่ได้ใช้"
+        </p>
+        <p class="text-sm opacity-80">
+          ใน FastAPI เราประยุกต์ใช้โดยการแยก <strong>Request Model</strong> และ <strong>Response Model</strong> ออกจากกัน
+        </p>
+        <p class="text-sm opacity-80 mt-2">
+          ผู้ใช้ (Client) เวลาสร้าง User ต้องส่ง Password แต่เวลาดึงข้อมูล (Response) ไม่ควรเห็น Password
+        </p>
+      </div>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">UserBase</span>(BaseModel):
+    username: str
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">UserCreate</span>(UserBase):
+    password: str  <span class="text-green-300"># Input มี password</span>
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">UserResponse</span>(UserBase):
+    id: int        <span class="text-green-300"># Output มี ID แต่ไม่มี Password</span>
+    
+    <span class="text-purple-400">class</span> <span class="text-yellow-300">Config</span>:
+        orm_mode = <span class="text-blue-300">True</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: SOLID in FastAPI - DIP -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      D - <span class="text-yellow-300">Dependency Inversion Principle</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+      <h3 class="text-3xl font-bold text-center mb-6">"High-level module ไม่ควรขึ้นกับ Low-level module"</h3>
+      <p class="text-lg text-left">
+        FastAPI มีระบบ <strong>Dependency Injection (DI)</strong> ที่ทรงพลังมาก ทำให้เราทำตามหลักการนี้ได้ง่ายที่สุด
+      </p>
+    </div>
+    <div class="flex justify-center gap-4">
+      <div class="p-4 bg-red-900/30 border border-red-500/50 rounded-lg w-1/2">
+        <strong class="text-red-300">แบบผูกมัด (Tight Coupling)</strong>
+        <p class="text-xs mt-2 font-mono">route -> สร้าง connection database เองในฟังก์ชัน</p>
+      </div>
+      <div class="p-4 bg-green-900/30 border border-green-500/50 rounded-lg w-1/2">
+        <strong class="text-green-300">แบบ Inversion (DI)</strong>
+        <p class="text-xs mt-2 font-mono">route -> รับ db session ผ่าน Depends(get_db)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Layered Architecture -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      โครงสร้างสถาปัตยกรรม <span class="text-yellow-300">(Layered Architecture)</span>
+    </h1>
+    <p class="mb-8">การแบ่งเลเยอร์ช่วยให้โค้ดสะอาดและทำตามหลัก SRP</p>
+    
+    <div class="flex flex-col gap-4 w-2/3 mx-auto">
+      <div class="bg-purple-600 p-4 rounded-xl shadow-lg relative">
+        <h3 class="font-bold">1. Presentation Layer (Routers)</h3>
+        <p class="text-sm opacity-80">รับ Request / ส่ง Response (FastAPI APIRouter)</p>
+      </div>
+      <div class="text-2xl">⬇️ Call</div>
+      <div class="bg-blue-600 p-4 rounded-xl shadow-lg relative">
+        <h3 class="font-bold">2. Service Layer (Business Logic)</h3>
+        <p class="text-sm opacity-80">ตรรกะทางธุรกิจ การคำนวณ ตรวจสอบเงื่อนไข</p>
+      </div>
+      <div class="text-2xl">⬇️ Use</div>
+      <div class="bg-green-600 p-4 rounded-xl shadow-lg relative">
+        <h3 class="font-bold">3. Data Access Layer (Repositories)</h3>
+        <p class="text-sm opacity-80">คุยกับ Database (CRUD) ผ่าน ORM</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Design Pattern - Repository Pattern -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Repository Pattern</span>
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-center text-left">
+      <div>
+        <p class="text-lg mb-4">
+          Repository ทำหน้าที่เป็นตัวกลาง (Mediator) ระหว่าง Domain Logic และ Data Mapping Layer
+        </p>
+        <strong class="text-green-300">ประโยชน์:</strong>
+        <ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+          <li>ซ่อนความซับซ้อนของ SQL/ORM</li>
+          <li>เปลี่ยน Database ได้ง่าย (เช่น เปลี่ยนจาก SQLite เป็น PostgreSQL หรือ MongoDB)</li>
+          <li>Mock ข้อมูลเพื่อทำ Test ได้ง่าย</li>
+        </ul>
+      </div>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-xs">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">UserRepository</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, db: Session):
+        self.db = db
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_by_id</span>(self, user_id: int):
+        <span class="text-purple-400">return</span> self.db.query(User).filter(...).first()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">create</span>(self, user: UserCreate):
+        <span class="text-gray-500"># จัดการ logic การบันทึกลง DB</span>
+        ...</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Design Pattern - Service Layer -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Service Layer</span>
+    </h1>
+    <p class="text-xl mb-8">
+      Service Layer คือที่อยู่ของ "Business Logic" ที่แท้จริง
+    </p>
+    <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-blue-400">
+      <h3 class="text-2xl font-bold mb-2">หน้าที่ของ Service</h3>
+      <p class="mb-4">
+        Service จะเรียกใช้ Repository เพื่อเอาข้อมูลมาประมวลผล เช่น:
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>ตรวจสอบว่า User นี้มีสิทธิ์ได้รับส่วนลดหรือไม่?</li>
+        <li>คำนวณราคาสินค้าหลังหักภาษี</li>
+        <li>ส่ง Email หลังจากสมัครสมาชิกสำเร็จ</li>
+      </ul>
+      <p class="mt-4 text-sm text-yellow-200">
+        *Service ไม่ควรรู้เรื่อง HTTP Request/Response (นั่นเป็นหน้าที่ของ Router)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Design Pattern - Dependency Injection -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Dependency Injection (DI)</span>
+    </h1>
+    <div class="text-left space-y-6">
+      <p class="text-xl">
+        FastAPI มีระบบ DI ที่ทรงพลังมากผ่านคำสั่ง <code>Depends()</code>
+      </p>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-sm border border-white/20">
+<pre><span class="text-gray-500"># 1. นิยาม Dependency (เช่น การต่อ Database)</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">get_db</span>():
+    db = SessionLocal()
+    <span class="text-purple-400">try</span>:
+        <span class="text-purple-400">yield</span> db
+    <span class="text-purple-400">finally</span>:
+        db.close()
+
+<span class="text-gray-500"># 2. Inject เข้าไปใน Route</span>
+<span class="text-orange-400">@app.get</span>(<span class="text-green-300">"/users/"</span>)
+<span class="text-purple-400">def</span> <span class="text-blue-300">read_users</span>(db: Session = <span class="text-yellow-300">Depends</span>(get_db)):
+    <span class="text-gray-500"># FastAPI จะรัน get_db() และส่งผลลัพธ์มาให้ตัวแปร db</span>
+    <span class="text-purple-400">return</span> repository.get_users(db)</pre>
+      </div>
+      <p class="text-sm opacity-80">
+        วิธีนี้ทำให้เราสามารถเปลี่ยน implementation ของ <code>get_db</code> ได้ง่ายมาก (เช่น ตอนทำ Test เปลี่ยนไปใช้ Test DB)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Design Pattern - Singleton -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Singleton</span>
+    </h1>
+    <p class="text-xl mb-8">
+      ใช้สำหรับสิ่งที่ควรมีแค่อันเดียวในระบบ เช่น Configuration หรือ Database Connection Pool
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold text-blue-300 mb-2">lru_cache Strategy</h3>
+        <p>ใน FastAPI เรานิยมใช้ <code>@lru_cache</code> จาก <code>functools</code> เพื่อทำ Singleton ให้กับการโหลด Settings</p>
+      </div>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-xs">
+<pre><span class="text-purple-400">from</span> functools <span class="text-purple-400">import</span> lru_cache
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">Settings</span>(BaseSettings):
+    app_name: str = "My API"
+    db_url: str
+
+<span class="text-orange-400">@lru_cache</span>()
+<span class="text-purple-400">def</span> <span class="text-blue-300">get_settings</span>():
+    <span class="text-gray-500"># โหลดไฟล์ config แค่ครั้งเดียว</span>
+    <span class="text-gray-500"># ครั้งต่อไปจะดึงจาก Cache</span>
+    <span class="text-purple-400">return</span> Settings()</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Project Structure Example -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      โครงสร้างโปรเจกต์แบบ <span class="text-yellow-300">Production Grade</span>
+    </h1>
+    <div class="bg-black/40 p-8 rounded-xl text-left font-mono text-lg border border-white/20 inline-block">
+      <span class="text-blue-300">my_fastapi_app/</span><br>
+      ├── <span class="text-yellow-300">app/</span><br>
+      │   ├── <span class="text-purple-400">main.py</span> <span class="text-gray-500"># Entry point</span><br>
+      │   ├── <span class="text-purple-400">api/</span> <span class="text-gray-500"># Routes (Controllers)</span><br>
+      │   ├── <span class="text-purple-400">core/</span> <span class="text-gray-500"># Config, Security</span><br>
+      │   ├── <span class="text-purple-400">crud/</span> <span class="text-gray-500"># Repositories</span><br>
+      │   ├── <span class="text-purple-400">models/</span> <span class="text-gray-500"># Database Models (ORM)</span><br>
+      │   ├── <span class="text-purple-400">schemas/</span> <span class="text-gray-500"># Pydantic Models (DTOs)</span><br>
+      │   └── <span class="text-purple-400">services/</span> <span class="text-gray-500"># Business Logic</span><br>
+      ├── <span class="text-purple-400">tests/</span><br>
+      └── <span class="text-purple-400">requirements.txt</span>
+      └── <span class="text-purple-400">pyproject.toml</span>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Abstract Base Classes (DIP) -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การใช้ <span class="text-yellow-300">Abstract Base Class (ABC)</span>
+    </h1>
+    <p class="text-xl mb-6">
+      เพื่อให้ Service ไม่ยึดติดกับ Database ตัวใดตัวหนึ่ง เราควรกำหนด Interface ไว้ก่อน (DIP)
+    </p>
+    <div class="bg-black/40 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-purple-400">
+<pre><span class="text-purple-400">from</span> abc <span class="text-purple-400">import</span> ABC, abstractmethod
+
+<span class="text-gray-500"># Interface (Contract)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">ITaskRepository</span>(ABC):
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_all</span>(self):
+        <span class="text-purple-400">pass</span>
+
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">add</span>(self, task):
+        <span class="text-purple-400">pass</span>
+
+<span class="text-gray-500"># Service จะคุยกับ ITaskRepository แทนที่จะคุยกับ SQLRepository โดยตรง</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Testing with OOP -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      การทดสอบ (Testing)
+    </h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div>
+        <p class="text-lg mb-4">
+          ข้อดีที่สุดของการออกแบบแบบ OOP/Layered คือ <strong>Testability</strong>
+        </p>
+        <p>เราสามารถสร้าง <code>MockRepository</code> ที่สืบทอดมาจาก <code>ITaskRepository</code> เพื่อใช้ทดสอบ Service ได้โดยไม่ต้องต่อ Database จริง</p>
+      </div>
+      <div class="bg-black/40 p-4 rounded-xl font-mono text-xs">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">MockTaskRepository</span>(ITaskRepository):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        self.tasks = []
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">add</span>(self, task):
+        self.tasks.append(task)
+        <span class="text-purple-400">return</span> task
+
+<span class="text-gray-500"># Test Service โดยใช้ Mock</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">test_create_task</span>():
+    repo = MockTaskRepository()
+    service = TaskService(repo)
+    service.create_task(...)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Factory Pattern in FastAPI -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Design Pattern: <span class="text-yellow-300">Factory Pattern</span>
+    </h1>
+    <p class="text-xl mb-8">
+      ใช้สร้าง Object ที่ซับซ้อน หรือเลือก Implementation ตามสถานการณ์
+    </p>
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <p class="mb-4">ใน FastAPI เรามักใช้ Factory ภายใน Dependency Injection</p>
+      <div class="bg-black/30 p-4 rounded-lg font-mono text-sm">
+        <code class="text-purple-400">def</code> <code class="text-blue-300">get_repository</code>(repo_type: str = <span class="text-green-300">"sql"</span>):<br>
+        &nbsp;&nbsp;<code class="text-purple-400">if</code> repo_type == <span class="text-green-300">"sql"</span>:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<code class="text-purple-400">return</code> SqlTaskRepository()<br>
+        &nbsp;&nbsp;<code class="text-purple-400">elif</code> repo_type == <span class="text-green-300">"memory"</span>:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<code class="text-purple-400">return</code> MemoryTaskRepository()<br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Summary of Benefits -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      สรุปประโยชน์ของการใช้ OOP ใน FastAPI
+    </h1>
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="bg-green-500/20 p-6 rounded-xl border border-green-400">
+        <h3 class="text-xl font-bold text-green-300 mb-2">Maintainability</h3>
+        <p>โค้ดหาง่าย แก้ไขง่าย เพราะแยกส่วนชัดเจน (SRP)</p>
+      </div>
+      <div class="bg-blue-500/20 p-6 rounded-xl border border-blue-400">
+        <h3 class="text-xl font-bold text-blue-300 mb-2">Testability</h3>
+        <p>ทดสอบง่ายเพราะทำ Mocking ได้ (DIP, LSP)</p>
+      </div>
+      <div class="bg-yellow-500/20 p-6 rounded-xl border border-yellow-400">
+        <h3 class="text-xl font-bold text-yellow-300 mb-2">Scalability</h3>
+        <p>เพิ่มฟีเจอร์ใหม่ได้โดยไม่กระทบของเดิม (OCP)</p>
+      </div>
+      <div class="bg-purple-500/20 p-6 rounded-xl border border-purple-400">
+        <h3 class="text-xl font-bold text-purple-300 mb-2">Reusability</h3>
+        <p>นำ Logic หรือ Repository ไปใช้ซ้ำได้</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Preparing for Lab -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      เตรียมตัวเข้าสู่ <span class="text-yellow-300">Lab Session</span>
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <h3 class="text-2xl font-bold mb-4">สิ่งที่เราจะสร้าง: Task Management API</h3>
+      <ul class="list-decimal pl-6 space-y-3 text-lg">
+        <li>ออกแบบ <strong>Pydantic Models</strong> (User, Task)</li>
+        <li>สร้าง <strong>Abstract Repository</strong></li>
+        <li>Implement <strong>In-Memory Repository</strong> (สำหรับทดสอบ)</li>
+        <li>เชื่อมต่อ <strong>Dependency Injection</strong></li>
+        <li>(Advance) เปลี่ยนไปใช้ <strong>SQLAlchemy Repository</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Q&A Lecture -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      จบการบรรยาย
+    </h1>
+    <p class="text-2xl mb-12 font-light">
+      คำถามก่อนเริ่มลงมือปฏิบัติ?
+    </p>
+    <div class="p-6 bg-white/5 rounded-xl text-sm opacity-70">
+      "Theory without practice is empty; practice without theory is blind."
+    </div>
+  </div>
+</div>
+<!-- ส่วนที่ 2: สไลด์ปฏิบัติการ (Laboratory Slides 21-35) -->
+<!-- Lab Slide 1: Lab Intro -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6 mt-8">
+      Lab: <span class="text-yellow-300">Task Management API</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      สร้าง REST API ด้วย FastAPI โดยใช้ Clean Architecture และ OOP Patterns
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">วัตถุประสงค์</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+          <span>ประยุกต์ใช้ <strong>Repository Pattern</strong> เพื่อแยก Data Layer</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+          <span>ใช้งาน <strong>Dependency Injection</strong> ของ FastAPI</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+          <span>เขียนโค้ดตามหลัก <strong>SOLID</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 2: Project Setup -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 1: การตั้งค่าโปรเจกต์
+    </h1>
+    <div class="grid grid-cols-2 gap-8 items-start">
+      <div class="text-left space-y-4">
+        <p>สร้างโครงสร้างโฟลเดอร์เพื่อรองรับ Clean Architecture</p>
+        <div class="bg-black/40 p-4 rounded-xl font-mono text-sm">
+          fastapi-lab/<br>
+          ├── app/<br>
+          │   ├── __init__.py<br>
+          │   ├── models.py <span class="text-gray-500"># Entities</span><br>
+          │   ├── repositories.py <span class="text-gray-500"># Data Access</span><br>
+          │   ├── services.py <span class="text-gray-500"># Business Logic</span><br>
+          │   └── main.py <span class="text-gray-500"># App & Routes</span><br>
+          └── requirements.txt
+          └── pyproject.toml
+        </div>
+      </div>
+      <div class="text-left space-y-4">
+        <p>ติดตั้ง Library ที่จำเป็น</p>
+        <div class="bg-black/40 p-4 rounded-xl font-mono text-sm">
+          <code class="text-green-300">uv init</code><br>
+          <code class="text-green-300">uv add fastapi uvicorn</code>
+        </div>
+        <p class="text-xs text-yellow-200 mt-2">*หมายเหตุ: ใช้ <code>uv</code> ตามที่เรียนในสัปดาห์แรก หรือใช้ pip ก็ได้</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 3: Defining Domain Models (Schemas) -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 2: สร้าง Models (DTOs)
+    </h1>
+    <p class="mb-6 text-white/80">แก้ไขไฟล์ <code>app/models.py</code> เพื่อกำหนดโครงสร้างข้อมูลด้วย Pydantic</p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">from</span> pydantic <span class="text-purple-400">import</span> BaseModel
+<span class="text-purple-400">from</span> typing <span class="text-purple-400">import</span> Optional
+
+<span class="text-gray-500"># Base Model (Shared properties)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">TaskBase</span>(BaseModel):
+    title: str
+    description: Optional[str] = None
+    completed: bool = False
+
+<span class="text-gray-500"># Model for Creation (Input)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">TaskCreate</span>(TaskBase):
+    pass
+
+<span class="text-gray-500"># Model for Reading (Output - includes ID)</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">Task</span>(TaskBase):
+    id: int
+
+    <span class="text-purple-400">class</span> <span class="text-yellow-300">Config</span>:
+        orm_mode = True</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 4: Repository Interface (Abstraction) -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 3: สร้าง Repository Interface
+    </h1>
+    <p class="mb-6 text-white/80">แก้ไขไฟล์ <code>app/repositories.py</code> สร้าง Abstract Base Class (DIP Principle)</p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm border border-white/20">
+<pre><span class="text-purple-400">from</span> abc <span class="text-purple-400">import</span> ABC, abstractmethod
+<span class="text-purple-400">from</span> typing <span class="text-purple-400">import</span> List
+<span class="text-purple-400">from</span> .models <span class="text-purple-400">import</span> Task, TaskCreate
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">ITaskRepository</span>(ABC):
+    
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_all</span>(self) -> List[Task]:
+        <span class="text-purple-400">pass</span>
+
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">create</span>(self, task: TaskCreate) -> Task:
+        <span class="text-purple-400">pass</span>
+        
+    <span class="text-orange-400">@abstractmethod</span>
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_by_id</span>(self, task_id: int) -> Optional[Task]:
+        <span class="text-purple-400">pass</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 5: In-Memory Implementation -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 4: สร้าง InMemoryRepository
+    </h1>
+    <p class="mb-6 text-white/80">เพิ่มโค้ดใน <code>app/repositories.py</code> เพื่อจำลอง Database ด้วย List</p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/20 h-[400px] overflow-auto">
+<pre><span class="text-purple-400">class</span> <span class="text-yellow-300">InMemoryTaskRepository</span>(ITaskRepository):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self):
+        self.tasks = []
+        self.current_id = 1
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_all</span>(self) -> List[Task]:
+        <span class="text-purple-400">return</span> self.tasks
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">create</span>(self, task_in: TaskCreate) -> Task:
+        task = Task(
+            id=self.current_id,
+            **task_in.dict()
+        )
+        self.tasks.append(task)
+        self.current_id += 1
+        <span class="text-purple-400">return</span> task
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_by_id</span>(self, task_id: int) -> Optional[Task]:
+        <span class="text-purple-400">for</span> task <span class="text-purple-400">in</span> self.tasks:
+            <span class="text-purple-400">if</span> task.id == task_id:
+                <span class="text-purple-400">return</span> task
+        <span class="text-purple-400">return</span> None</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 6: Service Layer -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 5: สร้าง Service Layer
+    </h1>
+    <p class="mb-6 text-white/80">แก้ไข <code>app/services.py</code> (Business Logic)</p>
+    <div class="grid grid-cols-2 gap-8 items-center">
+      <div class="text-left">
+        <p class="mb-4">Service จะรับ Repository เข้ามาผ่าน Constructor (Dependency Injection)</p>
+        <p class="text-sm opacity-80">
+          ตรงนี้เราสามารถใส่ Logic เพิ่มเติมได้ เช่น การตรวจสอบว่า Task ซ้ำหรือไม่ หรือการส่งแจ้งเตือน
+        </p>
+      </div>
+      <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">from</span> .repositories <span class="text-purple-400">import</span> ITaskRepository
+<span class="text-purple-400">from</span> .models <span class="text-purple-400">import</span> TaskCreate
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">TaskService</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, repo: ITaskRepository):
+        self.repo = repo
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_tasks</span>(self):
+        <span class="text-purple-400">return</span> self.repo.get_all()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">create_task</span>(self, task_in: TaskCreate):
+        <span class="text-gray-500"># Business logic could go here</span>
+        <span class="text-purple-400">return</span> self.repo.create(task_in)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 7: Main App & Dependency Injection -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6">
+      Step 6: เชื่อมต่อใน Main App
+    </h1>
+    <p class="mb-4 text-white/80">แก้ไข <code>app/main.py</code></p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/20 h-[400px] overflow-auto">
+<pre><span class="text-purple-400">from</span> fastapi <span class="text-purple-400">import</span> FastAPI, Depends
+<span class="text-purple-400">from</span> typing <span class="text-purple-400">import</span> List
+<span class="text-purple-400">from</span> .models <span class="text-purple-400">import</span> Task, TaskCreate
+<span class="text-purple-400">from</span> .repositories <span class="text-purple-400">import</span> InMemoryTaskRepository, ITaskRepository
+<span class="text-purple-400">from</span> .services <span class="text-purple-400">import</span> TaskService
+
+app = FastAPI()
+
+<span class="text-gray-500"># Singleton Repository Instance</span>
+task_repo = InMemoryTaskRepository()
+
+<span class="text-gray-500"># Dependency Provider</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">get_task_service</span>():
+    <span class="text-purple-400">return</span> TaskService(task_repo)
+
+<span class="text-orange-400">@app.get</span>(<span class="text-green-300">"/tasks"</span>, response_model=List[Task])
+<span class="text-purple-400">def</span> <span class="text-blue-300">read_tasks</span>(service: TaskService = Depends(get_task_service)):
+    <span class="text-purple-400">return</span> service.get_tasks()
+
+<span class="text-orange-400">@app.post</span>(<span class="text-green-300">"/tasks"</span>, response_model=Task)
+<span class="text-purple-400">def</span> <span class="text-blue-300">create_task</span>(
+    task: TaskCreate, 
+    service: TaskService = Depends(get_task_service)
+):
+    <span class="text-purple-400">return</span> service.create_task(task)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 8: Running the App -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 7: รันและทดสอบ
+    </h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+      <h3 class="text-2xl font-bold mb-4">Command Line</h3>
+      <code class="bg-black/40 p-4 rounded block text-green-300 font-mono text-xl">
+        uvicorn app.main:app --reload
+      </code>
+    </div>
+    <div class="text-left space-y-4">
+      <p class="text-xl">เปิด Browser ไปที่ <strong>http://127.0.0.1:8000/docs</strong></p>
+      <p>คุณจะเห็น Swagger UI ที่ FastAPI สร้างให้อัตโนมัติ ลอง:</p>
+      <ol class="list-decimal pl-6 space-y-2">
+        <li>ใช้ <strong>POST /tasks</strong> เพื่อสร้าง Task ใหม่</li>
+        <li>ใช้ <strong>GET /tasks</strong> เพื่อดูรายการ Task</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 9: Refactoring for Real DB (Optional) -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 8: ก้าวสู่ Database จริง (Advanced)
+    </h1>
+    <p class="text-xl mb-8">
+      ตอนนี้เราใช้ In-Memory ถ้าปิดแอปข้อมูลจะหาย เราจะเปลี่ยนไปใช้ SQLite โดยไม่แก้ Service Code
+    </p>
+    <div class="text-left bg-black/40 p-6 rounded-xl border-l-4 border-yellow-400">
+      <p class="mb-2 font-bold text-yellow-300">สิ่งที่ต้องทำ:</p>
+      <ul class="list-disc pl-5 space-y-2 text-sm">
+        <li>ติดตั้ง <code>sqlalchemy</code></li>
+        <li>สร้าง SQL Repository ใหม่ที่สืบทอดจาก <code>ITaskRepository</code></li>
+        <li>เปลี่ยน Dependency Injection ใน <code>main.py</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 10: SQL Repository Implementation -->
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-4">
+      SQL Repository Implementation
+    </h1>
+    <div class="bg-black/40 rounded-xl p-4 text-left font-mono text-xs border border-white/20 h-[450px] overflow-auto">
+<pre><span class="text-gray-500"># app/repositories.py (เพิ่มต่อท้าย)</span>
+<span class="text-purple-400">from</span> sqlalchemy.orm <span class="text-purple-400">import</span> Session
+<span class="text-purple-400">from</span> . <span class="text-purple-400">import</span> models_orm  <span class="text-gray-500"># ต้องสร้าง SQLAlchemy Model แยก</span>
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">SqlTaskRepository</span>(ITaskRepository):
+    <span class="text-purple-400">def</span> <span class="text-blue-300">__init__</span>(self, db: Session):
+        self.db = db
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_all</span>(self) -> List[Task]:
+        <span class="text-purple-400">return</span> self.db.query(models_orm.Task).all()
+
+    <span class="text-purple-400">def</span> <span class="text-blue-300">create</span>(self, task_in: TaskCreate) -> Task:
+        db_task = models_orm.Task(**task_in.dict())
+        self.db.add(db_task)
+        self.db.commit()
+        self.db.refresh(db_task)
+        <span class="text-purple-400">return</span> db_task
+    
+    <span class="text-purple-400">def</span> <span class="text-blue-300">get_by_id</span>(self, id: int):
+        <span class="text-gray-500"># ... implementation ...</span>
+        pass</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 11: Swapping Implementation -->
+<div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 9: สลับ Repository (Magic of DIP)
+    </h1>
+    <p class="text-xl mb-8">
+      กลับไปที่ <code>main.py</code> และเปลี่ยนแค่ Dependency Provider
+    </p>
+    
+    <div class="grid grid-cols-1 gap-8 text-left">
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-sm border border-white/20">
+<pre><span class="text-gray-500"># main.py</span>
+
+<span class="text-gray-500"># เดิม:</span>
+<span class="text-gray-500"># def get_task_service():</span>
+<span class="text-gray-500">#     return TaskService(InMemoryTaskRepository())</span>
+
+<span class="text-gray-500"># ใหม่ (ใช้ SQL):</span>
+<span class="text-purple-400">def</span> <span class="text-blue-300">get_task_service</span>(db: Session = Depends(get_db)):
+    repo = SqlTaskRepository(db)
+    <span class="text-purple-400">return</span> TaskService(repo)</pre>
+      </div>
+      <div class="bg-green-500/20 p-4 rounded-xl text-center">
+        <strong class="text-green-300 text-xl">สังเกตว่า Code ส่วน Controller และ Service ไม่ต้องแก้เลย!</strong>
+        <p class="text-sm mt-2">นี่คือพลังของ Polymorphism และ Dependency Injection</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 12: Creating Tests -->
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      Step 10: การเขียน Test
+    </h1>
+    <p class="mb-6 text-white/80">สร้างไฟล์ <code>tests/test_service.py</code></p>
+    <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-xs border border-white/20">
+<pre><span class="text-purple-400">from</span> app.services <span class="text-purple-400">import</span> TaskService
+<span class="text-purple-400">from</span> app.repositories <span class="text-purple-400">import</span> InMemoryTaskRepository
+<span class="text-purple-400">from</span> app.models <span class="text-purple-400">import</span> TaskCreate
+
+<span class="text-purple-400">def</span> <span class="text-blue-300">test_create_task</span>():
+    <span class="text-gray-500"># Arrange</span>
+    repo = InMemoryTaskRepository()
+    service = TaskService(repo)
+    task_data = TaskCreate(title=<span class="text-green-300">"Test Task"</span>)
+
+    <span class="text-gray-500"># Act</span>
+    created_task = service.create_task(task_data)
+
+    <span class="text-gray-500"># Assert</span>
+    <span class="text-purple-400">assert</span> created_task.title == <span class="text-green-300">"Test Task"</span>
+    <span class="text-purple-400">assert</span> created_task.id == 1
+    <span class="text-purple-400">assert</span> len(repo.get_all()) == 1</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 13: Challenge 1 -->
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ภารกิจท้าทาย (Challenge 1)
+    </h1>
+    <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-yellow-400">
+      <h3 class="text-2xl font-bold mb-4">โจทย์: เพิ่มฟีเจอร์ "Mark as Complete"</h3>
+      <p class="mb-4 text-lg">
+        ให้เพิ่ม Endpoint <code>PUT /tasks/{id}/complete</code> เพื่อเปลี่ยนสถานะงาน
+      </p>
+      <ul class="list-disc pl-6 space-y-3 text-lg">
+        <li>เพิ่ม method <code>update</code> ใน <code>ITaskRepository</code></li>
+        <li>Implement method ใน <code>InMemoryTaskRepository</code></li>
+        <li>เพิ่ม Logic ใน <code>TaskService</code></li>
+        <li>สร้าง Route ใหม่ใน <code>main.py</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 14: Challenge 2 -->
+<div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8">
+      ภารกิจท้าทาย (Challenge 2)
+    </h1>
+    <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-red-400">
+      <h3 class="text-2xl font-bold mb-4">โจทย์: Validation Logic</h3>
+      <p class="mb-4 text-lg">
+        ห้ามสร้าง Task ที่มีชื่อ (Title) ซ้ำกัน
+      </p>
+      <ul class="list-disc pl-6 space-y-3 text-lg">
+        <li><strong>ห้าม</strong> เขียน Logic นี้ใน Route</li>
+        <li>ต้องเขียนใน <code>TaskService</code> เท่านั้น</li>
+        <li>อาจจะต้องเพิ่ม method <code>get_by_title</code> ใน Repository</li>
+        <li>ถ้าชื่อซ้ำ ให้ Raise <code>HTTPException</code> จาก Service (หรือสร้าง Custom Exception)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Lab Slide 15: Lab Conclusion -->
+<div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-6xl font-bold mb-6">
+      Lab Complete!
+    </h1>
+    <p class="text-xl mb-12 text-white/90">
+      คุณได้สร้าง API ที่มีโครงสร้างระดับ Production Grade แล้ว
+    </p>
+    <div class="grid grid-cols-2 gap-8 text-left max-w-3xl mx-auto">
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-lg font-bold border-b border-white/20 pb-2 mb-2">Key Takeaways</h3>
+        <ul class="text-sm space-y-1 opacity-80">
+          <li>Pydantic = Data Class</li>
+          <li>Service/Repository Pattern</li>
+          <li>Dependency Injection is Powerful</li>
+        </ul>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-lg font-bold border-b border-white/20 pb-2 mb-2">Next Steps</h3>
+        <ul class="text-sm space-y-1 opacity-80">
+          <li>ลองต่อ PostgreSQL จริง</li>
+          <li>ทำ Authentication (User Service)</li>
+          <li>Deploy ด้วย Docker</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
