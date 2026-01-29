@@ -106,7 +106,6 @@
        4. :icon:`fa fa-link` `สไลด์ FastAPI <../../_static/courses/oop/slides/fastapi.html>`_
      - 1. เข้าใจหลักการพัฒนาชุดคำสั่งเสริมที่ใช้แนวคิดเชิงวัตถุ
        2. อธิบายหลักการใช้งานชุดคำสั่งเสริมที่ใช้แนวคิดเชิงวัตถุเพื่อนำมาแก้ปัญหาโจทย์ที่กำหนดให้ได้ 
-        :icon:`fa-solid fa-person-running` `เกณฑ์การประเมิน <./project_criteria.html>`_
      - * `pygame <https://pygame.org/docs>`_ 
        * `pyside6 <https://doc.qt.io/qtforpython-6/gettingstarted.html>`_
        * `scikitlearn iris svc plot <https://scikit-learn.org/stable/auto_examples/svm/plot_iris_svc.html>`_
