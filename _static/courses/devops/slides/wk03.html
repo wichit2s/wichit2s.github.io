@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk03.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 3: Introduction to Containerization</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            การจัดการสภาพแวดล้อมด้วย Docker และการใช้ Modern Python Tools (uv)
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4">หัวข้อการเรียนรู้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li>ปัญหา "It works on my machine"</li>
+              <li>Container vs Virtual Machine</li>
+              <li>Docker Architecture & Workflow</li>
+              <li>Dockerfile & Basic Commands</li>
+              <li>แนะนำ <strong>uv</strong>: เครื่องมือจัดการ Python Package ยุคใหม่</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: The Problem -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ปัญหาโลกแตก: "It works on my machine"</h2>
+          <p class="text-xl text-white/90 mb-8">
+            ทำไมโค้ดรันได้ที่เครื่องเรา แต่พังเมื่อไปรันที่เครื่องเพื่อนหรือ Server?
+          </p>
+          <div class="grid md:grid-cols-2 gap-6 mt-8">
+            <div class="bg-red-900/30 border border-red-500/30 rounded-2xl p-6">
+              <h3 class="text-2xl font-bold mb-3 text-red-300">สาเหตุ (Causes)</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2">
+                <li>OS ต่างกัน (Windows vs Mac vs Linux)</li>
+                <li>Library คนละเวอร์ชัน</li>
+                <li>การตั้งค่า Environment Variables ไม่เหมือนกัน</li>
+                <li>Dependency หาย (Missing Dependencies)</li>
+              </ul>
+            </div>
+            <div class="bg-green-900/30 border border-green-500/30 rounded-2xl p-6 flex flex-col justify-center">
+              <h3 class="text-2xl font-bold mb-3 text-green-300">ทางแก้ (Solution)</h3>
+              <p class="text-lg">
+                "ห่อ" (Package) ทุกอย่างที่แอปพลิเคชันต้องใช้รวมไปด้วยกันเลย นั่นคือที่มาของ <strong>Container</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What is Containerization? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Containerization คืออะไร?</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            เทคโนโลยีที่ช่วยให้เราสามารถรันแอปพลิเคชันในสภาพแวดล้อมที่แยกขาดจากกัน (Isolated) โดยใช้ทรัพยากรของ OS ร่วมกัน
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+            <ul class="space-y-4 text-left text-lg">
+              <li class="flex items-start"><span class="mr-3">📦</span> <strong>Portable:</strong> ย้ายไปรันที่ไหนก็ได้ที่รองรับ Container Runtime</li>
+              <li class="flex items-start"><span class="mr-3">🚀</span> <strong>Lightweight:</strong> กินทรัพยากรน้อยกว่า VM มาก เพราะไม่ต้องลง OS ใหม่ทั้งตัว</li>
+              <li class="flex items-start"><span class="mr-3">⚡</span> <strong>Fast:</strong> เริ่มทำงาน (Start up) ได้ในระดับวินาที</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: VM vs Container -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Virtual Machine vs Container</h2>
+          <div class="grid md:grid-cols-2 gap-8 mt-4">
+            <!-- VM -->
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-2xl font-bold mb-4 text-yellow-300">Virtual Machine (VM)</h3>
+              <div class="space-y-2 text-sm md:text-base font-mono bg-black/30 p-4 rounded-lg">
+                <div class="bg-blue-500 p-2 rounded">App A + Libs</div>
+                <div class="bg-gray-600 p-2 rounded">Guest OS</div>
+                <div class="bg-purple-600 p-2 rounded">Hypervisor</div>
+                <div class="bg-gray-800 p-2 rounded">Infrastructure</div>
+              </div>
+              <p class="mt-4 text-sm">หนัก (GBs), Boot ช้า, เปลืองทรัพยากรเพราะต้องจำลอง Hardware และ OS</p>
+            </div>
+
+            <!-- Container -->
+            <div class="bg-white/10 p-6 rounded-xl border-2 border-blue-400">
+              <h3 class="text-2xl font-bold mb-4 text-blue-300">Container (Docker)</h3>
+              <div class="space-y-2 text-sm md:text-base font-mono bg-black/30 p-4 rounded-lg">
+                <div class="bg-blue-500 p-2 rounded">App A + Libs</div>
+                <div class="bg-blue-600 p-2 rounded">Container Engine</div>
+                <div class="bg-gray-800 p-2 rounded">Host OS (Kernel)</div>
+              </div>
+              <p class="mt-4 text-sm">เบา (MBs), Boot เร็วมาก, ใช้ Kernel ร่วมกับ Host OS</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: What is Docker? -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Docker คืออะไร?</h2>
+          <div class="flex flex-col items-center">
+            <div class="text-9xl mb-6">🐳</div>
+            <p class="text-md text-white/90 mb-8 leading-relaxed">
+              แพลตฟอร์ม Open Source ยอดนิยมที่สุดสำหรับการสร้าง (Build), ส่งมอบ (Ship), และรัน (Run) แอปพลิเคชันในรูปแบบ Container
+            </p>
+            <div class="bg-blue-900/40 p-6 rounded-2xl border-l-4 border-blue-400 text-left">
+              <p class="italic">"Docker ช่วยให้นักพัฒนาแพ็คแอปฯ และ Dependencies ทั้งหมดใส่กล่องเดียว แล้วเอาไปรันที่ไหนก็ได้"</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-center">
+            <img class="w-full h-auto" src="./images/docker_architecture.jpg" alt="docker architecture" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Docker Architecture -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สถาปัตยกรรมของ Docker</h2>
+          <p class="text-lg text-white/80 mb-6">Client-Server Architecture</p>
+          <div class="grid md:grid-cols-3 gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="text-xl font-bold text-green-300 mb-2">1. Docker Client</h3>
+              <p class="text-sm">เครื่องมือที่เราใช้สั่งงาน (CLI) เช่นคำสั่ง <code>docker build</code>, <code>docker run</code></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="text-xl font-bold text-blue-300 mb-2">2. Docker Host (Daemon)</h3>
+              <p class="text-sm">ตัวทำงานเบื้องหลัง (dockerd) ทำหน้าที่สร้าง, รัน, และจัดการ Container</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">3. Registry</h3>
+              <p class="text-sm">ที่เก็บ Image (เช่น Docker Hub) เหมือน GitHub แต่เก็บ Docker Image</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Key Concept - Image -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Concept 1: Docker Image</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+            <div class="text-6xl mb-4">💿</div>
+            <h3 class="text-2xl font-bold mb-4">"แบบแปลน" (Blueprint)</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-3">
+              <li>เป็นไฟล์แบบ <strong>Read-only</strong> แก้ไขไม่ได้หลังจากสร้างแล้ว</li>
+              <li>ประกอบด้วย Code, Runtime, Libraries, Environment Variables และ Config Files</li>
+              <li>สร้างมาจากไฟล์คำสั่งที่ชื่อว่า <code>Dockerfile</code></li>
+              <li>เปรียบเสมือน: <strong>Class</strong> ในการเขียนโปรแกรม</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Key Concept - Container -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Concept 2: Docker Container</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-2 border-green-400">
+            <div class="text-6xl mb-4">📦</div>
+            <h3 class="text-2xl font-bold mb-4">"สิ่งที่รันอยู่จริง" (Runnable Instance)</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-3">
+              <li>เกิดขึ้นเมื่อนำ Image มาสั่ง Run</li>
+              <li>สามารถ Start, Stop, Move, หรือ Delete ได้</li>
+              <li>แยกขาดจากกัน (Isolated) แต่ละ Container มี Filesystem ของตัวเอง</li>
+              <li>เปรียบเสมือน: <strong>Object</strong> (Instance) ที่ถูกสร้างจาก Class</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Docker Workflow -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-8">The Docker Workflow</h2>
+          <div class="flex justify-between items-center text-center font-bold text-xl md:text-2xl space-x-4">
+            <div class="flex-1 py-6 bg-blue-900/50 rounded-2xl border border-blue-400">
+              <div class="text-4xl mb-2">🔨</div>
+              Build
+              <p class="text-sm font-normal mt-2 text-gray-300">Dockerfile → Image</p>
+            </div>
+            <div class="text-4xl">➡</div>
+            <div class="flex-1 py-6 bg-purple-900/50 rounded-2xl border border-purple-400">
+              <div class="text-4xl mb-2">🚢</div>
+              Ship
+              <p class="text-sm font-normal mt-2 text-gray-300">Upload to Registry</p>
+            </div>
+            <div class="text-4xl">➡</div>
+            <div class="flex-1 py-6 bg-green-900/50 rounded-2xl border border-green-400">
+              <div class="text-4xl mb-2">🏃</div>
+              Run
+              <p class="text-sm font-normal mt-2 text-gray-300">Image → Container</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Introducing uv -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">เครื่องมือใหม่: รู้จักกับ `uv`</h2>
+          <p class="text-xl text-white/90 mb-6">
+            An extremely fast Python package installer and resolver, written in Rust.
+          </p>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">ทำไมต้อง uv?</h3>
+              <ul class="list-disc list-inside text-sm space-y-2">
+                <li>🚀 <strong>เร็วมาก:</strong> เร็วกว่า pip และ pip-tools 10-100 เท่า</li>
+                <li>📦 <strong>All-in-one:</strong> จัดการทั้ง Python version, Virtualenv, และ Dependencies</li>
+                <li>🔒 <strong>Reliable:</strong> มีระบบ Lock file ที่แม่นยำ</li>
+              </ul>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl font-mono text-sm">
+              <p class="text-gray-400"># สร้าง Project ใหม่</p>
+              <p class="text-green-400">$ uv init my-project</p>
+              <p class="text-gray-400 mt-2"># เพิ่ม Package</p>
+              <p class="text-green-400">$ uv add django</p>
+              <p class="text-gray-400 mt-2"># รันคำสั่ง</p>
+              <p class="text-green-400">$ uv run manage.py runserver</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Dockerfile Basics -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Dockerfile คืออะไร?</h2>
+          <p class="text-xl text-white/90 mb-8">
+            ไฟล์ Text ที่บรรจุชุดคำสั่งสำหรับสร้าง Docker Image
+          </p>
+          <div class="bg-black/50 p-6 rounded-2xl text-left font-mono text-sm md:text-lg border-l-4 border-yellow-400">
+            <p><span class="text-purple-400">FROM</span> python:3.13-slim</p>
+            <p><span class="text-purple-400">WORKDIR</span> /app</p>
+            <p><span class="text-purple-400">COPY</span> . /app</p>
+            <p><span class="text-purple-400">RUN</span> pip install -r requirements.txt</p>
+            <p><span class="text-purple-400">CMD</span> ["python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+          </div>
+          <p class="mt-6 text-white/70">Docker จะอ่านบรรทัดเหล่านี้จากบนลงล่างเพื่อสร้าง Image Layer</p>
+        </div>
+      </div>
+
+      <!-- Slide 12: Dockerfile Instructions (FROM & WORKDIR) -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งใน Dockerfile (1/4)</h2>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-2xl font-bold text-blue-300 font-mono">FROM &lt;image&gt;</h3>
+              <p class="mb-2">กำหนด Base Image ที่จะใช้เป็นรากฐาน</p>
+              <code class="bg-black/30 px-2 py-1 rounded text-green-300">FROM python:3.13-slim</code>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-2xl font-bold text-blue-300 font-mono">WORKDIR &lt;path&gt;</h3>
+              <p class="mb-2">กำหนด Directory ทำงานภายใน Container (เหมือน cd เข้าไป)</p>
+              <code class="bg-black/30 px-2 py-1 rounded text-green-300">WORKDIR /app</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Dockerfile Instructions (COPY) -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งใน Dockerfile (2/4)</h2>
+          <div class="bg-white/10 p-8 rounded-xl text-left">
+            <h3 class="text-2xl font-bold text-blue-300 font-mono mb-4">COPY &lt;src&gt; &lt;dest&gt;</h3>
+            <p class="text-lg mb-4">คัดลอกไฟล์จากเครื่องเรา (Host) เข้าไปใน Image</p>
+
+            <div class="bg-black/40 p-4 rounded-lg font-mono text-sm space-y-2">
+              <p class="text-gray-400"># Copy ไฟล์ requirements.txt เข้าไปก่อน</p>
+              <p class="text-green-400">COPY requirements.txt .</p>
+              <p class="text-gray-400 mt-4"># Copy โค้ดทั้งหมด (. คือ current dir) เข้าไปใน workdir</p>
+              <p class="text-green-400">COPY . .</p>
+            </div>
+            <p class="mt-4 text-yellow-300 text-sm">💡 Tip: ควร Copy ไฟล์ requirements ก่อน code เพื่อใช้ประโยชน์จาก Docker Cache</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Dockerfile Instructions (RUN) -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งใน Dockerfile (3/4)</h2>
+          <div class="bg-white/10 p-8 rounded-xl text-left">
+            <h3 class="text-2xl font-bold text-blue-300 font-mono mb-4">RUN &lt;command&gt;</h3>
+            <p class="text-lg mb-4">รันคำสั่ง Linux ในขณะที่กำลัง <strong>สร้าง (Build)</strong> Image</p>
+            <p class="mb-4">มักใช้สำหรับติดตั้ง Package หรือ Setup Environment</p>
+
+            <div class="bg-black/40 p-4 rounded-lg font-mono text-sm space-y-2">
+              <p class="text-green-400">RUN pip install --no-cache-dir -r requirements.txt</p>
+              <p class="text-gray-400"># หรือถ้าใช้ uv</p>
+              <p class="text-green-400">RUN uv sync</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Dockerfile Instructions (CMD) -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งใน Dockerfile (4/4)</h2>
+          <div class="bg-white/10 p-8 rounded-xl text-left">
+            <h3 class="text-2xl font-bold text-blue-300 font-mono mb-4">CMD ["executable", "param1"]</h3>
+            <p class="text-lg mb-4">คำสั่งที่จะรันเมื่อ <strong>เริ่ม (Start)</strong> Container</p>
+            <p class="mb-4">ต่างจาก RUN ตรงที่ CMD ทำงานตอน Run time, RUN ทำงานตอน Build time</p>
+
+            <div class="bg-black/40 p-4 rounded-lg font-mono text-sm">
+              <p class="text-green-400">CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+            </div>
+            <p class="mt-4 text-red-300 text-sm">⚠️ Dockerfile ควรมี CMD เดียว (ถ้ามีหลายอัน อันสุดท้ายจะถูกใช้)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Building an Image -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">คำสั่ง Build Image</h2>
+          <p class="text-xl text-white/90 mb-8">
+            เปลี่ยน Dockerfile ให้กลายเป็น Image
+          </p>
+
+          <div class="bg-black/40 p-6 rounded-2xl text-left font-mono text-lg mb-6">
+            <p class="text-gray-400"># รูปแบบ</p>
+            <p class="text-white mb-4">$ docker build -t &lt;name&gt;:&lt;tag&gt; &lt;path&gt;</p>
+
+            <p class="text-gray-400"># ตัวอย่าง</p>
+            <p class="text-green-400">$ docker build -t mysite:v1 .</p>
+          </div>
+          <ul class="text-left space-y-2 ml-4">
+            <li><code>-t</code> : ตั้งชื่อ Tag ให้ Image (Naming)</li>
+            <li><code>.</code> : ตำแหน่งของ Dockerfile (Current Directory)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 17: Running a Container -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">คำสั่ง Run Container</h2>
+          <p class="text-xl text-white/90 mb-8">
+            นำ Image มาสร้างเป็น Process ที่ใช้งานได้จริง
+          </p>
+
+          <div class="bg-black/40 p-6 rounded-2xl text-left font-mono text-lg">
+            <p class="text-green-400">$ docker run -d -p 8080:8000 --name myapp mysite:v1</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mt-6 text-left text-sm md:text-base">
+            <div class="bg-white/10 p-3 rounded">
+              <strong>-d (Detach):</strong> รันแบบ Background (ไม่ยึดหน้าจอ)
+            </div>
+            <div class="bg-white/10 p-3 rounded">
+              <strong>-p (Port):</strong> HostPort:ContainerPort (Map พอร์ต)
+            </div>
+            <div class="bg-white/10 p-3 rounded">
+              <strong>--name:</strong> ตั้งชื่อให้ Container
+            </div>
+            <div class="bg-white/10 p-3 rounded">
+              <strong>mysite:v1:</strong> ชื่อ Image ที่จะใช้
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Basic Management Commands -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งจัดการพื้นฐาน</h2>
+          <div class="space-y-4 font-mono text-left">
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <code>docker ps</code>
+              <span class="text-sm font-sans opacity-70">ดู Container ที่กำลังรันอยู่</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <code>docker ps -a</code>
+              <span class="text-sm font-sans opacity-70">ดู Container ทั้งหมด (รวมที่หยุดไปแล้ว)</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <code>docker stop &lt;id&gt;</code>
+              <span class="text-sm font-sans opacity-70">หยุด Container</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <code>docker rm &lt;id&gt;</code>
+              <span class="text-sm font-sans opacity-70">ลบ Container</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <code>docker images</code>
+              <span class="text-sm font-sans opacity-70">ดู Image ทั้งหมดในเครื่อง</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Environment Variables -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การส่งค่า Environment Variables</h2>
+          <p class="text-lg text-white/90 mb-6">
+            การตั้งค่า Configuration โดยไม่ต้องแก้โค้ด (เช่น SECRET_KEY, DEBUG Mode)
+          </p>
+
+          <div class="bg-black/40 p-6 rounded-2xl text-left font-mono mb-6">
+            <p class="text-gray-400"># ใช้ flag -e</p>
+            <p class="text-green-400">$ docker run -e DEBUG=False -e SECRET_KEY=1234 mysite:v1</p>
+          </div>
+
+          <div class="bg-white/10 p-6 rounded-xl text-left">
+            <h3 class="font-bold text-yellow-300 mb-2">ทำไมต้องใช้?</h3>
+            <p>เพื่อความปลอดภัย (Security) และความยืดหยุ่น (Flexibility) ทำให้ Image เดียวกัน รันได้ทั้ง Dev, Staging, และ Production แค่เปลี่ยน Env Vars</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: .dockerignore -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ไฟล์ .dockerignore</h2>
+          <p class="text-xl text-white/90 mb-8">
+            อย่าลืมไฟล์นี้! สำคัญเหมือน .gitignore
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div>
+              <p class="mb-4">ใช้ระบุไฟล์ที่ไม่ต้องการ Copy เข้าไปใน Image เพื่อ:</p>
+              <ul class="list-disc list-inside space-y-2 text-green-300">
+                <li>ลดขนาด Image</li>
+                <li>เพิ่มความปลอดภัย (ไม่เอา Secrets เข้าไป)</li>
+                <li>Build เร็วขึ้น</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl font-mono text-sm">
+              <p class="text-gray-300"># .dockerignore</p>
+              <p>__pycache__</p>
+              <p>*.pyc</p>
+              <p>.git</p>
+              <p>.env</p>
+              <p>venv/</p>
+              <p>.venv/</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Why uv in Docker? -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทำไมต้องใช้ uv ใน Docker?</h2>
+          <p class="text-lg text-white/90 mb-8">
+            การรวมพลังของ Docker และ uv
+          </p>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500/30">
+              <h3 class="text-xl font-bold mb-2">⚡ Build Speed</h3>
+              <p class="text-sm">uv ติดตั้ง dependencies ได้เร็วกว่า pip มาก ทำให้ระยะเวลา build docker ลดลง</p>
+            </div>
+            <div class="bg-green-900/30 p-4 rounded-xl border border-green-500/30">
+              <h3 class="text-xl font-bold mb-2">📦 Smaller Image</h3>
+              <p class="text-sm">จัดการ Virtualenv ได้ดี และมี Cache management ที่มีประสิทธิภาพ</p>
+            </div>
+            <div class="bg-purple-900/30 p-4 rounded-xl border border-purple-500/30">
+              <h3 class="text-xl font-bold mb-2">🔒 Deterministic</h3>
+              <p class="text-sm">uv.lock file ช่วยให้มั่นใจว่า Dependencies ใน Container ตรงกับที่เครื่อง Dev เป๊ะๆ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Lab Intro -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">เตรียมพร้อมสำหรับ Lab</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border-2 border-white/20">
+            <div class="text-6xl mb-6">🛠️</div>
+            <h3 class="text-3xl font-bold mb-4">ภารกิจวันนี้</h3>
+            <ol class="text-left text-lg space-y-3 list-decimal list-inside mx-auto max-w-xl">
+              <li>สร้าง Django Project ด้วย <strong>uv</strong></li>
+              <li>เขียน Dockerfile และรัน Container บนเครื่องตัวเอง</li>
+              <li>เตรียมไฟล์สำหรับ Deployment</li>
+              <li>Deploy ขึ้น <strong>PythonAnywhere.com</strong></li>
+            </ol>
+          </div>
+          <p class="mt-8 text-white/60">
+            หมายเหตุ: PythonAnywhere ไม่รองรับ Docker Custom Image ในแพ็คเกจฟรี เราจะใช้ uv เพื่อจัดการ Environment และ Deploy แบบ Traditional
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 23: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab Week 3: Modern Django Deployment</h2>
+          <p class="text-xl text-white/90 mb-8">
+            สร้างโปรเจกต์ Django ด้วย uv, ทดลอง Dockerize, และ Deploy จริงบน Cloud
+          </p>
+          <div class="bg-white/10 p-6 rounded-2xl text-left">
+            <h3 class="text-2xl font-bold mb-4 text-yellow-300">Prerequisites (สิ่งที่ต้องมี)</h3>
+            <ul class="list-disc list-inside space-y-2">
+              <li>VS Code & Git</li>
+              <li>Docker Desktop (ติดตั้งแล้ว)</li>
+              <li>บัญชี PythonAnywhere.com</li>
+              <li>บัญชี GitHub</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Step 1 - Init Project with uv -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 1: Init Project with uv</h2>
+          <p class="mb-4">เปิด Terminal ใน VS Code แล้วทำตามขั้นตอน</p>
+
+          <div class="space-y-4 text-left font-mono text-sm md:text-base">
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 1. ติดตั้ง uv (ถ้ายังไม่มี)</p>
+              <p class="text-green-400">pip install uv</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 2. สร้างโปรเจกต์ใหม่</p>
+              <p class="text-green-400">uv init week3_lab</p>
+              <p class="text-green-400">cd week3_lab</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 3. เพิ่ม Django (uv จะสร้าง venv ให้เอง)</p>
+              <p class="text-green-400">uv add django</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Step 2 - Create Django App -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 2: Create Django App</h2>
+
+          <div class="space-y-4 text-left font-mono text-sm md:text-base">
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 1. สร้าง Django Project ชื่อ mysite</p>
+              <p class="text-green-400">uv run django-admin startproject mysite .</p>
+              <p class="text-xs text-yellow-300 mt-1">*อย่าลืมจุด (.) ข้างหลัง เพื่อสร้างใน folder ปัจจุบัน</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 2. ทดลองรัน (Local)</p>
+              <p class="text-green-400">uv run manage.py migrate</p>
+              <p class="text-green-400">uv run manage.py runserver</p>
+            </div>
+          </div>
+
+          <p class="mt-6">ตรวจสอบที่ <a href="http://127.0.0.1:8000" class="underline text-blue-300">http://127.0.0.1:8000</a> ว่าเว็บขึ้นหรือไม่</p>
+        </div>
+      </div>
+
+      <!-- Slide 26: Step 3 - Create Dockerfile -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 3: Dockerize (Local Test)</h2>
+          <p class="mb-4 text-left">สร้างไฟล์ชื่อ <code>Dockerfile</code> (ไม่มีนามสกุล) ในโฟลเดอร์หลัก:</p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs md:text-sm overflow-auto max-h-96">
+            <p class="text-pink-400">FROM python:3.12-slim</p>
+            <p class="text-gray-400"># ติดตั้ง uv ใน image</p>
+            <p class="text-pink-400">COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv</p>
+            <p class="text-pink-400">WORKDIR /app</p>
+            <p class="text-gray-400"># Copy ไฟล์ config ของ uv</p>
+            <p class="text-pink-400">COPY pyproject.toml uv.lock ./</p>
+            <p class="text-gray-400"># Install dependencies</p>
+            <p class="text-pink-400">RUN uv sync --frozen</p>
+            <p class="text-gray-400"># Copy โค้ด</p>
+            <p class="text-pink-400">COPY . .</p>
+            <p class="text-gray-400"># รัน server</p>
+            <p class="text-pink-400">CMD ["uv", "run", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Step 4 - Build & Run Docker -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 4: Build & Run Container</h2>
+
+          <div class="space-y-4 text-left font-mono text-sm">
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 1. Build Image</p>
+              <p class="text-green-400">docker build -t django-uv-lab .</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 2. Run Container</p>
+              <p class="text-green-400">docker run -p 8000:8000 django-uv-lab</p>
+            </div>
+          </div>
+
+          <div class="mt-6 bg-green-900/30 p-4 rounded-xl border border-green-500/30 text-left">
+            <p>✅ ถ้าเข้า localhost:8000 ได้ แสดงว่า Docker ทำงานถูกต้อง</p>
+            <p class="text-sm opacity-70 mt-2">กด Ctrl+C ใน terminal เพื่อหยุด Container</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Step 5 - Prepare for Deployment -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 5: Prepare for PythonAnywhere</h2>
+          <p class="text-lg mb-4 text-left">
+            PythonAnywhere ไม่รองรับ Docker (Free Tier) เราต้อง Export requirements เพื่อไปใช้กับ pip แบบดั้งเดิม
+          </p>
+
+          <div class="space-y-4 text-left font-mono text-sm">
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 1. Export requirements.txt ด้วย uv</p>
+              <p class="text-green-400">uv export > requirements.txt</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 2. แก้ไข mysite/settings.py</p>
+              <p class="text-white">ALLOWED_HOSTS = ['*']  <span class="text-gray-500"># หรือใส่ชื่อ domain ของ pythonanywhere</span></p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl">
+              <p class="text-gray-400"># 3. Push ขึ้น GitHub (Repo ใหม่)</p>
+              <p class="text-green-400">git init</p>
+              <p class="text-green-400">git add .</p>
+              <p class="text-green-400">git commit -m "Ready for deploy"</p>
+              <p class="text-green-400">git push ...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Step 6 - PythonAnywhere Deployment -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Step 6: Deploy on Cloud</h2>
+          <div class="text-left space-y-4 text-sm">
+            <div class="bg-white/10 p-4 rounded-lg">
+              <strong>1. Bash Console:</strong> Clone Repo ของคุณ
+              <code class="block bg-black/30 p-1 mt-1 text-green-300">git clone https://github.com/User/Repo.git</code>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <strong>2. Setup Venv:</strong> สร้าง Virtualenv และลงของ
+              <code class="block bg-black/30 p-1 mt-1 text-green-300">mkvirtualenv --python=/usr/bin/python3.10 myenv</code>
+              <code class="block bg-black/30 p-1 mt-1 text-green-300">pip install -r requirements.txt</code>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg">
+              <strong>3. Web Tab:</strong>
+              <ul class="list-disc list-inside mt-1 ml-2">
+                <li>Source code: <code>/home/username/repo_name</code></li>
+                <li>Virtualenv: <code>/home/username/.virtualenvs/myenv</code></li>
+                <li>WSGI Config: แก้ไฟล์ให้ชี้ไปที่ <code>mysite.settings</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Submission -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-8">การส่งงาน (Submission)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border-2 border-white/20">
+            <h3 class="text-3xl font-bold mb-6">ส่ง 2 ลิงก์:</h3>
+            <div class="space-y-4 text-xl">
+              <div class="bg-black/40 p-4 rounded-xl flex items-center">
+                <span class="mr-4">🐙</span>
+                <span class="text-green-300">GitHub Repository</span>
+                <span class="text-sm ml-auto text-gray-400">(ต้องมี Dockerfile และ requirements.txt)</span>
+              </div>
+              <div class="bg-black/40 p-4 rounded-xl flex items-center">
+                <span class="mr-4">☁️</span>
+                <span class="text-blue-300">PythonAnywhere URL</span>
+                <span class="text-sm ml-auto text-gray-400">(เว็บต้องเข้าใช้งานได้จริง)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 38: Introduction to Podman -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">รู้จักกับ Podman (Pod Manager)</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            Podman คือ Container Engine แบบ Open Source ที่ไม่มี Daemon (Daemonless) และเน้นความปลอดภัย
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-purple-300">จุดเด่นสำคัญ</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Daemonless:</strong> ไม่ต้องมี Service ตัวกลาง (Daemon) รอรับคำสั่ง ลดจุดที่อาจเกิดความล้มเหลว (Single Point of Failure) [2], [5]</li>
+              <li><strong>Rootless by Default:</strong> รัน Container ได้โดยไม่ต้องใช้สิทธิ์ Root ของเครื่อง ช่วยเพิ่มความปลอดภัยสูงสุด [6], [7]</li>
+              <li><strong>OCI Compliant:</strong> รองรับมาตรฐาน Open Container Initiative ทำให้ใช้ Image ร่วมกับ Docker ได้ทันที [8]</li>
+              <li><strong>Pods:</strong> รองรับแนวคิด "Pod" (กลุ่มของ Container) แบบเดียวกับ Kubernetes [9]</li>
+            </ul>
+          </div>
+          <p class="text-xl text-blue-400 mb-8 leading-relaxed">
+            <a class="text-blue-300 hover:text-blue-100" href="https://podman.io/">https://podman.io/</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 39: Podman vs Docker Architecture -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สถาปัตยกรรม: Docker vs Podman</h2>
+          <div class="grid md:grid-cols-2 gap-8 mt-4">
+            <!-- Docker -->
+            <div class="bg-white/10 p-6 rounded-xl border-t-4 border-blue-400">
+              <h3 class="text-2xl font-bold mb-4 text-blue-300">Docker (Client-Server)</h3>
+              <p class="mb-4 text-sm">ใช้ CLI ส่งคำสั่งไปหา <strong>Docker Daemon (dockerd)</strong> ที่รันเป็น Background Process ด้วยสิทธิ์ Root</p>
+              <div class="bg-black/30 p-4 rounded-lg font-mono text-sm">
+                CLI ➔ REST API ➔ <span class="text-red-400">Daemon (Root)</span> ➔ Container
+              </div>
+              <p class="mt-4 text-red-300 text-xs">⚠️ ถ้า Daemon ล่ม Container ทั้งหมดจะดับไปด้วย [10]</p>
+            </div>
+
+            <!-- Podman -->
+            <div class="bg-white/10 p-6 rounded-xl border-t-4 border-purple-400">
+              <h3 class="text-2xl font-bold mb-4 text-purple-300">Podman (Fork/Exec)</h3>
+              <p class="mb-4 text-sm">ทำงานแบบ Process ปกติของ Linux (Direct Process) ไม่ต้องผ่าน Daemon ตัวกลาง</p>
+              <div class="bg-black/30 p-4 rounded-lg font-mono text-sm">
+                CLI ➔ <span class="text-green-400">Process (User)</span> ➔ Container
+              </div>
+              <p class="mt-4 text-green-300 text-xs">✅ ปลอดภัยกว่า และแยกการทำงานอิสระต่อกัน [11]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 40: Podman Desktop Introduction -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Podman Desktop คืออะไร?</h2>
+          <p class="text-xl text-white/90 mb-8">
+            เครื่องมือจัดการ Container แบบ GUI (Graphical User Interface) ที่ใช้งานฟรีและ Open Source
+          </p>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">คุณสมบัติหลัก [3]</h3>
+              <ul class="list-disc list-inside text-sm space-y-2">
+                <li>🖥️ <strong>จัดการง่าย:</strong> ดูแล Containers, Images, Volumes และ Pods ผ่านหน้าจอ UI</li>
+                <li>☸️ <strong>Kubernetes Ready:</strong> สามารถสร้าง YAML file จาก Container เพื่อนำไป Deploy บน Kubernetes ได้ทันที</li>
+                <li>🔄 <strong>Docker Compatible:</strong> ทำงานร่วมกับ Docker Extension และ Docker CLI ได้</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl flex flex-col justify-center items-center">
+              <div class="text-4xl mb-2">💸 ฟรี!</div>
+              <p class="text-center text-sm">ทางเลือกทดแทน Docker Desktop (ที่เริ่มมีการคิดค่าบริการสำหรับองค์กรขนาดใหญ่) [12]</p>
+              <p class="mt-4 text-xs text-gray-300">รองรับ Windows, macOS, Linux</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 41: Installation Guide -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การติดตั้ง (Installation)</h2>
+          <div class="space-y-4 text-left">
+            <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500/30">
+              <h3 class="text-xl font-bold mb-2">🪟 Windows (Requirements) [13], [14]</h3>
+              <ul class="list-disc list-inside text-sm">
+                <li>ต้องเปิดใช้งาน <strong>WSL2 (Windows Subsystem for Linux)</strong></li>
+                <li>Windows 10 Build 19043+ หรือ Windows 11</li>
+                <li>RAM ขั้นต่ำ 6 GB</li>
+                <li><em>วิธีติดตั้ง:</em> ดาวน์โหลด Installer จาก <a href="https://podman-desktop.io" class="underline">podman-desktop.io</a> โปรแกรมจะช่วยติดตั้ง WSL2 ให้</li>
+              </ul>
+            </div>
+            <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-500/30">
+              <h3 class="text-xl font-bold mb-2">🍎 macOS & 🐧 Linux</h3>
+              <ul class="list-disc list-inside text-sm">
+                <li><strong>macOS:</strong> ติดตั้งผ่าน brew: <code>brew install podman-desktop</code> หรือโหลด dmg file</li>
+                <li><strong>Linux:</strong> ติดตั้งผ่าน Flatpak หรือ Binary โดยตรง</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 42: Migration from Docker -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ย้ายจาก Docker มา Podman ยากไหม?</h2>
+          <p class="text-xl text-white/90 mb-8">
+            "แทบไม่ต้องเปลี่ยนอะไรเลย"
+          </p>
+
+          <div class="bg-black/40 p-6 rounded-2xl text-left font-mono text-lg mb-6">
+            <p class="text-gray-400"># สร้าง Alias เพื่อใช้คำสั่ง docker เหมือนเดิม [15]</p>
+            <p class="text-green-400">$ alias docker=podman</p>
+            <br>
+            <p class="text-gray-400"># คำสั่งใช้งานเหมือนกัน 99%</p>
+            <p class="text-white">$ docker run -d -p 80:80 nginx</p>
+            <p class="text-green-300">➔ $ podman run -d -p 80:80 nginx</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+            <div class="bg-white/10 p-4 rounded-xl">
+              <strong>Dockerfile:</strong> ใช้ไฟล์เดิมได้เลย ไม่ต้องแก้โค้ด [16]
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <strong>Docker Compose:</strong> ใช้ <code>podman-compose</code> ทดแทน หรือใช้ฟีเจอร์ Pods ของ Podman [17]
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 43: Pod Concept (Unique Feature) -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ฟีเจอร์พิเศษ: Pods</h2>
+          <p class="text-lg text-white/90 mb-6">
+            Podman สามารถจัดการ "Pod" ได้เหมือน Kubernetes (ซึ่ง Docker ปกติทำไม่ได้)
+          </p>
+
+          <div class="flex items-center justify-center space-x-4 mb-6">
+            <div class="bg-white/10 p-6 rounded-2xl border-2 border-purple-400 w-full max-w-md">
+              <h3 class="text-xl font-bold mb-4 text-purple-300">Pod A (Shared Namespace)</h3>
+              <div class="flex justify-center space-x-2">
+                <div class="bg-blue-500 p-3 rounded">Container 1 (Web)</div>
+                <div class="bg-green-500 p-3 rounded">Container 2 (DB)</div>
+              </div>
+              <p class="mt-4 text-xs">Container ใน Pod เดียวกัน คุยกันผ่าน localhost ได้เลย!</p>
+            </div>
+          </div>
+
+          <div class="bg-black/40 p-4 rounded-xl text-left font-mono text-sm">
+            <p class="text-gray-400"># สร้าง Pod ว่างๆ</p>
+            <p class="text-green-400">$ podman pod create --name my-pod -p 8080:80</p>
+            <p class="text-gray-400 mt-2"># รัน Container เข้าไปใน Pod นั้น</p>
+            <p class="text-green-400">$ podman run -dt --pod my-pod nginx</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 44: Lab: Setup Podman Desktop -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: ติดตั้งและใช้งาน Podman</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">ภารกิจ (Mission)</h3>
+            <ol class="list-decimal list-inside space-y-4 text-lg">
+              <li>ดาวน์โหลดและติดตั้ง <strong>Podman Desktop</strong></li>
+              <li>ทำการ <strong>Initialize Podman Machine</strong> (ในหน้า Settings)</li>
+              <li>ทดลองรัน Container ผ่าน GUI:
+                <ul class="list-disc list-inside ml-6 text-sm text-gray-300 mt-2">
+                  <li>Pull image: <code>docker.io/library/httpd</code> [18]</li>
+                  <li>Start Container และ map port 8080:80</li>
+                </ul>
+              </li>
+              <li>ทดลองสร้างไฟล์ Kubernetes YAML จาก Container ที่รันอยู่ (ฟีเจอร์เด็ดของ Podman)</li>
+            </ol>
+          </div>
+          <p class="mt-6 text-white/60">
+            *หมายเหตุ: บน Windows การรัน Podman ครั้งแรกอาจใช้เวลาสักพักในการสร้าง WSL2 VM
+          </p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -35,7 +35,7 @@ DevOps
      - ปฏิบัติการ (2 ชั่วโมง)
    * - **สัปดาห์ที่ 1**
 
-       * `slides <../../_static/courses/devops/slides/wk01.html>`_
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk01.html>`_
      - **บทนำสู่ DevOps และวัฒนธรรม (Introduction to DevOps & Culture)**
 
        * DevOps คืออะไร? ความหมาย, ที่มา, ประโยชน์
@@ -49,7 +49,7 @@ DevOps
        * ทดลองใช้คำสั่ง Git พื้นฐาน (init, add, commit, status) ใน local repository
    * - **สัปดาห์ที่ 2**
 
-       * `slides <../../_static/courses/devops/slides/wk02.html>`_
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk02.html>`_
      - **การควบคุมเวอร์ชันด้วย Git (Version Control with Git)**
 
        * แนวคิดของ Version Control System (VCS)
@@ -63,6 +63,8 @@ DevOps
        * ฝึก clone, push, pull, branch, merge ในโปรเจกต์กลุ่มเล็กๆ
        * แก้ไข Conflict เบื้องต้น
    * - **สัปดาห์ที่ 3**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk03.html>`_
      - **บทนำสู่ Containerization ด้วย Docker (Introduction to Containerization with Docker)**
 
        * Containerization คืออะไร? ทำไมต้องใช้?
