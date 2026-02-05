@@ -79,6 +79,8 @@ DevOps
        * ฝึกสร้าง Dockerfile อย่างง่ายสำหรับแอปพลิเคชัน Node.js/Python (Hello World)
        * Build และ Run Docker Image ของตัวเอง
    * - **สัปดาห์ที่ 4**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk04.html>`_
      - **การจัดการ Docker Images และ Volumes (Docker Images & Volumes Management)**
 
        * การจัดการ Docker Images (Layers, Caching)

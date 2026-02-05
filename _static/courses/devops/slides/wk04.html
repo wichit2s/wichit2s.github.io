@@ -2,70 +2,19 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เครื่องมือทางวิทยาการข้อมูล - สัปดาห์ 5ความรู้เพิ่มเติมเกี่ยวกับโมเดล - สัปดาห์ 4</title>
+    <title>DevOps</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
-
-body {
-  font-family: 'Kanit', sans-serif;
-}
-
-    .slide {
-      min-height: 100vh;
-      display: none;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .slide.active {
-      display: flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .tech-card {
-      transition: all 0.3s ease;
-    }
-
-    .tech-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-
-    .slide-counter {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 10px 15px;
-      border-radius: 20px;
-      font-size: 14px;
-      z-index: 1000;
-    }
-    .home {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      color: white;
-      font-size: 14px;
-      z-index: 1000;
-    }
-    </style>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
   </head>
   <body class="bg-gray-50" x-data="slideshow()">
-    <!-- แผนการสอน -->
+    
     <div class="home flex items-center gap-4">
-      <a href="https://wichit2s.github.io/courses/webdev/" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
         <span class="hover:text-blue-700">
           <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
         </span>
@@ -80,873 +29,1192 @@ body {
 
     <!-- Navigation -->
     <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
-      <!-- ปุ่มก่อนหน้า -->
-      <button id="prevSlide" @click="previousSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <!-- ตรงกลาง: ตัวนับสไลด์ + ปุ่ม Home -->
-      <div class="flex items-center gap-4">
-        <a href="https://wichit2s.github.io/_static/courses/webdev/slides/wk04.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk04.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
           <span>
             <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
           </span>
         </a>
       </div>
 
-      <!-- ปุ่มถัดไป -->
-      <button id="nextSlide" @click="nextSlide()" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-4">
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
     </div>
 
-
     <div x-ref="slidesContainer">
+<!-- Slide 1: Title Slide -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-2">สัปดาห์ที่ 4</h2>
+    <h2 class="text-3xl font-bold mb-6">การจัดการ Docker Images และ Volumes</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      เจาะลึกการทำงานของ Image Layers, การฝากไฟล์ไว้บน Registry และการเก็บข้อมูลให้อยู่ถาวร
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+      <h3 class="text-2xl font-semibold mb-4 text-yellow-300">หัวข้อการเรียนรู้</h3>
+      <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+        <li><strong>Image Anatomy:</strong> เข้าใจเรื่อง Layers และ Caching</li>
+        <li><strong>Registry:</strong> การใช้งาน Docker Hub (Tag & Push)</li>
+        <li><strong>Data Persistence:</strong> การใช้ Volumes และ Bind Mounts</li>
+        <li><strong>Networking Basics:</strong> การเชื่อมต่อระหว่าง Containers</li>
+      </ul>
+    </div>
+    <div class="text-sm text-white/70 mt-8">DevOps Course: Week 4</div>
+  </div>
+</div>
 
-      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
-            การทำงานร่วมกันในโครงการ<br>
-            <span class="text-yellow-300">ด้วย GitHub</span>
-          </h1>
+<!-- Slide 2: Recap & Context -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ทบทวน: Image vs Container</h2>
+    <p class="text-lg text-white/90 mb-8">
+      ก่อนจะไปต่อ ต้องแม่นเรื่องข้อแตกต่าง
+    </p>
+    <div class="grid md:grid-cols-2 gap-8 mt-4">
+      <!-- Image -->
+      <div class="bg-blue-900/30 border border-blue-500/50 p-6 rounded-2xl">
+        <div class="text-5xl mb-4">💿</div>
+        <h3 class="text-2xl font-bold mb-2 text-blue-300">Docker Image</h3>
+        <p class="text-sm mb-4">"แม่พิมพ์" หรือ "ต้นแบบ"</p>
+        <ul class="text-left text-sm space-y-2 list-disc list-inside">
+          <li>Read-only (แก้ไขไม่ได้)</li>
+          <li>ประกอบด้วย Code, Libs, OS Filesystem</li>
+          <li>สร้างจาก Dockerfile</li>
+        </ul>
+      </div>
+      
+      <!-- Container -->
+      <div class="bg-green-900/30 border border-green-500/50 p-6 rounded-2xl">
+        <div class="text-5xl mb-4">📦</div>
+        <h3 class="text-2xl font-bold mb-2 text-green-300">Docker Container</h3>
+        <p class="text-sm mb-4">"สิ่งมีชีวิต" ที่รันอยู่จริง</p>
+        <ul class="text-left text-sm space-y-2 list-disc list-inside">
+          <li>Read-Write Layer (เขียนทับได้ชั่วคราว)</li>
+          <li>เป็น Instance ของ Image</li>
+          <li>สร้าง ลบ หรือเริ่มใหม่ได้ตลอดเวลา</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Pull Request • Issue • Collaboration Workflow
-          </div>
+<!-- Slide 3: Union File System -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">เบื้องหลัง Image</h2>
+    <h2 class="text-3xl font-bold mb-6">Union File System</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      ทำไม Docker Image ถึงมีขนาดเล็กและสร้างได้เร็ว? คำตอบคือ <strong>UnionFS</strong>
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <h3 class="text-2xl font-bold mb-4 text-purple-300">หลักการทำงาน</h3>
+      <ul class="space-y-4 text-lg">
+        <li class="flex items-start">
+          <span class="mr-3">🥞</span>
+          <span><strong>Layering:</strong> Docker มองไฟล์ระบบเป็น "ชั้นๆ" ซ้อนทับกัน</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-3">🔍</span>
+          <span><strong>Unified View:</strong> เวลาเรามองเข้าไปใน Container เราจะเห็นไฟล์ทั้งหมดรวมกันเสมือนเป็นไฟล์ระบบเดียว</span>
+        </li>
+        <li class="flex items-start">
+          <span class="mr-3">♻️</span>
+          <span><strong>Copy-on-Write (CoW):</strong> ถ้าจะแก้ไขไฟล์ที่อยู่ในชั้นล่าง Docker จะไม่แก้ที่เดิม แต่จะ "Copy" ไฟล์นั้นขึ้นมาที่ชั้นบนสุดแล้วค่อยแก้ (ประหยัดพื้นที่)</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-4">ผลลัพธ์การเรียนรู้</h2>
-            <div class="grid md:grid-cols-2 gap-4 text-left">
-              <div class="flex items-start gap-3"><div class="badge">1</div><span>สร้าง repository ร่วมกันกับทีมได้</span></div>
-              <div class="flex items-start gap-3"><div class="badge">2</div><span>ใช้ pull request และ issue สำหรับการจัดการงานกลุ่มได้</span></div>
-              <div class="flex items-start gap-3"><div class="badge">3</div><span>ใช้ branch workflow เพื่อหลีกเลี่ยงความขัดแย้งของโค้ดได้</span></div>
-              <div class="flex items-start gap-3"><div class="badge">4</div><span>บันทึกและติดตามการเปลี่ยนแปลงของโครงการอย่างเป็นระบบ</span></div>
-            </div>
-          </div>
-
-          <div class="text-lg text-white/80">
-            <span class="week-label">สัปดาห์ที่ 4</span>
-          </div>
-        </div>
+<!-- Slide 4: Image Layers Visualization -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">โครงสร้างของ Image Layers</h2>
+    <p class="text-lg text-white/80 mb-6">ทุกคำสั่งใน Dockerfile สร้าง Layer ใหม่</p>
+    
+    <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+      <!-- Dockerfile Side -->
+      <div class="bg-black/50 p-6 rounded-xl font-mono text-sm text-left w-full md:w-1/2 h-64 overflow-hidden border border-gray-600">
+        <p class="text-gray-500"># Dockerfile</p>
+        <p><span class="text-purple-400">FROM</span> ubuntu:20.04</p>
+        <p><span class="text-purple-400">COPY</span> . /app</p>
+        <p><span class="text-purple-400">RUN</span> make /app</p>
+        <p><span class="text-purple-400">CMD</span> python app.py</p>
       </div>
 
-      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            การสร้างโปรเจกต์ & โฟลว์การทำงานร่วมกัน<br>
-            <span class="text-yellow-300">บน GitHub</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Repository • Branch • Pull Request Workflow
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">หัวข้อสำคัญของวันนี้</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>การสร้าง repository สำหรับงานกลุ่มและกำหนดโครงสร้างไฟล์</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>การสร้าง branch ตามหน้าที่ เช่น feature, bugfix, hotfix</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>การเปิด Pull Request (PR) พร้อมคำอธิบายและการ Review</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>การใช้ Issue เพื่อวางแผนงานและจัดลำดับความสำคัญ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>การเชื่อมโยง Issue ↔ Pull Request เพื่อการติดตามงาน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>การ Resolve conflict แบบพื้นฐานก่อน merge</span>
-              </div>
-
-            </div>
-          </div>
-
+      <!-- Layers Side -->
+      <div class="flex flex-col-reverse w-full md:w-1/2 space-y-1 space-y-reverse">
+        <div class="bg-green-500/80 p-3 rounded text-center font-bold text-black transform scale-105 shadow-lg relative">
+          Container Layer (Read/Write)
+          <span class="absolute right-0 top-0 text-xs bg-white/30 px-1 rounded">Writable</span>
         </div>
+        <div class="bg-blue-500/60 p-3 rounded text-center border-b border-white/10">Layer 3: CMD python app.py</div>
+        <div class="bg-blue-500/60 p-3 rounded text-center border-b border-white/10">Layer 2: RUN make /app</div>
+        <div class="bg-blue-500/60 p-3 rounded text-center border-b border-white/10">Layer 1: COPY . /app</div>
+        <div class="bg-gray-600 p-3 rounded text-center">Base Image: Ubuntu 20.04</div>
+      </div>
+    </div>
+    <p class="mt-6 text-sm text-yellow-300">
+      💡 ในกรณีที่หลาย App ใช้ Base Image อันเดียวกัน จะโหลด Base Image แค่ครั้งเดียวและแชร์กัน (ประหยัด Disk)
+    </p>
+  </div>
+</div>
+
+<!-- Slide 5: Layer Caching -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Layer Caching: หัวใจของความเร็ว</h2>
+    <p class="text-xl text-white/90 mb-8">
+      Docker จะจำผลลัพธ์ของแต่ละ Layer ไว้ ถ้า Input ไม่เปลี่ยน Docker จะใช้ "ของเดิม" (Cache) แทนการสร้างใหม่
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+      <div class="bg-red-900/30 p-6 rounded-xl border border-red-500/30">
+        <h3 class="text-xl font-bold text-red-300 mb-2">❌ แบบที่ช้า (Bad Practice)</h3>
+        <code class="block font-mono text-xs bg-black/40 p-2 rounded mb-2">
+          COPY . .<br>
+          RUN pip install -r requirements.txt
+        </code>
+        <p class="text-sm">ถ้าแก้ Code แค่บรรทัดเดียว Layer <code>COPY . .</code> จะเปลี่ยน ทำให้ Layer ถัดไป (pip install) ต้องรันใหม่ทั้งหมด ทั้งที่ dependency ไม่เปลี่ยน</p>
       </div>
 
-      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
+      <div class="bg-green-900/30 p-6 rounded-xl border border-green-500/30">
+        <h3 class="text-xl font-bold text-green-300 mb-2">✅ แบบที่เร็ว (Good Practice)</h3>
+        <code class="block font-mono text-xs bg-black/40 p-2 rounded mb-2">
+          COPY requirements.txt .<br>
+          RUN pip install -r requirements.txt<br>
+          COPY . .
+        </code>
+        <p class="text-sm">แยก Copy dependency มาก่อน ถ้าแก้ Code หลัก Docker จะยังใช้ Cache ของ Layer <code>pip install</code> ได้ เพราะ requirements.txt ไม่เปลี่ยน</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            ทำความเข้าใจ<br>
-            <span class="text-yellow-300">Git Branch Workflow</span>
-          </h1>
+<!-- Slide 6: Inspection Command -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ตรวจสอบประวัติด้วย `docker history`</h2>
+    <p class="text-lg text-white/90 mb-6">
+      เราสามารถดูว่า Image นี้ถูกสร้างมาจากคำสั่งอะไรบ้างและแต่ละชั้นมีขนาดเท่าไหร่
+    </p>
+    
+    <div class="bg-black/60 p-6 rounded-2xl text-left font-mono text-sm overflow-x-auto shadow-2xl border border-gray-600">
+      <p class="text-green-400 mb-2">$ docker history python:3.9-slim</p>
+      <table class="w-full text-gray-300">
+        <tr class="text-white border-b border-gray-500">
+          <th class="pb-2">IMAGE</th>
+          <th class="pb-2">CREATED</th>
+          <th class="pb-2">CREATED BY</th>
+          <th class="pb-2">SIZE</th>
+        </tr>
+        <tr>
+          <td>a8734b...</td>
+          <td>2 weeks ago</td>
+          <td>CMD ["python3"]</td>
+          <td>0B</td>
+        </tr>
+        <tr>
+          <td>&lt;missing&gt;</td>
+          <td>2 weeks ago</td>
+          <td>/bin/sh -c #(nop)  ENTRYPOINT...</td>
+          <td>0B</td>
+        </tr>
+        <tr>
+          <td>&lt;missing&gt;</td>
+          <td>2 weeks ago</td>
+          <td>/bin/sh -c apt-get update...</td>
+          <td>10MB</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="mt-8 bg-white/10 p-4 rounded-xl text-left">
+      <h3 class="font-bold text-yellow-300">ประโยชน์:</h3>
+      <ul class="list-disc list-inside text-sm">
+        <li>ตรวจสอบว่า Image บวมเพราะ Layer ไหน</li>
+        <li>ดูว่าใครเป็นคนสร้าง Image หรือใช้คำสั่งอะไรที่อาจไม่ปลอดภัย</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Feature Branch • Main/Dev Branch • Merge Strategy
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">แนวทางการทำงาน</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>ใช้ <strong>Main Branch</strong> เป็นโค้ดเวอร์ชันเสถียรที่สุด</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>ใช้ <strong>Dev Branch</strong> สำหรับโค้ดที่กำลังพัฒนา</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>สร้าง <strong>Feature Branch</strong> สำหรับงานแต่ละฟีเจอร์</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>รวมงานผ่าน <strong>Pull Request</strong> พร้อมการ Review</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>ใช้ commit message แบบสั้น ชัดเจน และสม่ำเสมอ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>แก้ conflict ก่อน merge เพื่อป้องกันปัญหาระยะยาว</span>
-              </div>
-
-            </div>
-          </div>
-
+<!-- Slide 7: Docker Registry -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Docker Registry คืออะไร?</h2>
+    <div class="flex flex-col items-center">
+      <div class="text-8xl mb-4">☁️</div>
+      <p class="text-xl text-white/90 mb-8">
+        คือ "โกดัง" สำหรับจัดเก็บและแจกจ่าย Docker Images
+      </p>
+      <div class="grid md:grid-cols-2 gap-6 w-full text-left">
+        <div class="bg-white/10 p-6 rounded-xl">
+          <h3 class="text-2xl font-bold text-blue-300 mb-2">Docker Hub</h3>
+          <p class="text-sm">Public Registry ที่ใหญ่ที่สุด (Default ของ Docker) มี Official Images มากมาย (Nginx, Python, Node)</p>
+        </div>
+        <div class="bg-white/10 p-6 rounded-xl">
+          <h3 class="text-2xl font-bold text-pink-300 mb-2">Private Registry</h3>
+          <p class="text-sm">สำหรับเก็บ Image ของบริษัทที่ไม่ต้องการเปิดเผย (เช่น AWS ECR, Google GCR, หรือ Self-hosted)</p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
+<!-- Slide 8: Image Naming Convention -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-8">โครงสร้างชื่อของ Image</h2>
+    <p class="text-lg text-white/80 mb-8">ชื่อ Image บอกที่มาและเวอร์ชันเสมอ</p>
+    
+    <div class="flex flex-wrap justify-center items-center text-xl md:text-3xl font-mono bg-white/10 p-8 rounded-2xl">
+      <div class="text-gray-400 flex flex-col items-center mx-2">
+        <span>docker.io/</span>
+        <span class="text-xs font-sans mt-2 text-gray-500">Registry (Optional)</span>
+      </div>
+      <div class="text-blue-300 flex flex-col items-center mx-2">
+        <span>wichit2s/</span>
+        <span class="text-xs font-sans mt-2 text-gray-500">User/Org</span>
+      </div>
+      <div class="text-green-300 flex flex-col items-center mx-2">
+        <span>my-app</span>
+        <span class="text-xs font-sans mt-2 text-gray-500">Image Name</span>
+      </div>
+      <div class="text-yellow-300 flex flex-col items-center mx-2">
+        <span>:v1.0</span>
+        <span class="text-xs font-sans mt-2 text-gray-500">Tag</span>
+      </div>
+    </div>
 
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            ขั้นตอนการส่งงานด้วย<br>
-            <span class="text-yellow-300">Pull Request (PR)</span>
-          </h1>
+    <ul class="mt-8 text-left space-y-2 text-sm md:text-base mx-auto max-w-2xl">
+      <li>🔴 <strong>Registry:</strong> ถ้าไม่ใส่ จะถือว่าเป็น <code>docker.io</code> (Docker Hub)</li>
+      <li>🔵 <strong>User:</strong> ชื่อบัญชีเจ้าของ ถ้าเป็น Official Image (เช่น <code>ubuntu</code>) จะไม่มีส่วนนี้</li>
+      <li>🟡 <strong>Tag:</strong> ระบุเวอร์ชัน ถ้าไม่ใส่ จะถือว่าเป็น <code>:latest</code></li>
+    </ul>
+  </div>
+</div>
 
-          <div class="text-xl text-white/90 mb-8 font-light">
-            From Branch → Pull Request → Review → Merge
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">กระบวนการทำงาน</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>สร้าง branch ใหม่สำหรับงานที่รับผิดชอบ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>เขียนโค้ดและ commit พร้อมข้อความที่อธิบายชัดเจน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>เปิด Pull Request และเลือก branch ที่ต้องการ merge เข้า</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>ระบุคำอธิบายงาน เช่น ทำอะไร แก้บั๊กไหน หรือเพิ่มฟีเจอร์ใด</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>ให้เพื่อนร่วมทีมตรวจสอบ (Review) และแสดงความคิดเห็น</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>แก้ไขตามคำแนะนำแล้วกด “Update PR”</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">7</div>
-                <span>เมื่อทุกอย่างสมบูรณ์แล้ว กด Merge PR เพื่อรวมเข้ากับ branch หลัก</span>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
+<!-- Slide 9: Tagging & Pushing -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ขั้นตอนการนำ Image ขึ้น Cloud</h2>
+    <div class="space-y-4 text-left font-mono text-sm md:text-lg">
+      
+      <div class="bg-black/40 p-4 rounded-xl border-l-4 border-blue-400">
+        <p class="text-gray-400"># 1. Login เข้า Docker Hub</p>
+        <p class="text-green-400">$ docker login</p>
       </div>
 
-      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            การจัดการงานด้วย<br>
-            <span class="text-yellow-300">GitHub Issues</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Task Tracking • Discussion • Project Planning
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">สิ่งที่ควรรู้</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>Issue ใช้สำหรับสร้าง “งาน” ที่ต้องทำ เช่น ฟีเจอร์ บั๊ก หรือไอเดีย</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>ตั้งชื่อ Issue ให้ชัดเจนและมีคำอธิบายที่เข้าใจง่าย</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>กำหนดผู้รับผิดชอบงาน (Assignee) และป้ายกำกับ (Labels)</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>ใช้ Checklists เพื่อติดตามความคืบหน้าแต่ละขั้นตอน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>เชื่อมโยง Issue กับ Pull Request เพื่อให้เห็นว่าใครแก้อะไรอยู่</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>ปิด Issue เมื่อโค้ดที่เกี่ยวข้องถูก merged เรียบร้อยแล้ว</span>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-      </div>
-      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            การแก้ไขปัญหา<br>
-            <span class="text-yellow-300">Merge Conflict</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Why Conflicts Happen • How to Resolve • Best Practices
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">แนวทางการจัดการ</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>Conflict เกิดขึ้นเมื่อไฟล์เดียวกันถูกแก้ไขในตำแหน่งเดียวกัน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>ใช้คำสั่ง <code>git pull</code> เพื่อดึงโค้ดล่าสุดก่อนเริ่มทำงาน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>เมื่อเกิด conflict ให้เปิดไฟล์เพื่อดูส่วนที่ Git ทำเครื่องหมายไว้</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>เลือกว่าจะใช้โค้ดของตัวเอง ของเพื่อน หรือรวมเข้าด้วยกัน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>แก้ไขเสร็จแล้วให้ commit ใหม่เพื่อยืนยันการแก้ conflict</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>หลีกเลี่ยง conflict ด้วยการซิงก์โค้ดบ่อย ๆ และใช้ branch แยกงาน</span>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
+      <div class="bg-black/40 p-4 rounded-xl border-l-4 border-yellow-400">
+        <p class="text-gray-400"># 2. แปะป้ายชื่อ (Tag) ให้ตรงกับ User ของเรา</p>
+        <p class="text-white">รูปแบบ: docker tag &lt;local-image&gt; &lt;user&gt;/&lt;image&gt;:&lt;tag&gt;</p>
+        <p class="text-green-400 mt-2">$ docker tag my-app:latest wichit2s/my-app:v1</p>
       </div>
 
-      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            แนวทางการทำงานร่วมกัน<br>
-            <span class="text-yellow-300">อย่างมีประสิทธิภาพ</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Communication • Workflow Discipline • Responsibility
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">ข้อควรปฏิบัติ</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>กำหนดมาตรฐานการตั้งชื่อ branch, commit และ PR ให้เหมือนกันทั้งทีม</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>อัปเดตสถานะงานใน Issue หรือ Project Board อยู่เสมอ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>เปิด PR เล็ก ๆ บ่อย ๆ แทน PR ใหญ่ที่ตรวจสอบยาก</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>Review โค้ดของเพื่อนด้วยความสุภาพ พร้อมคำแนะนำที่สร้างสรรค์</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>แก้ conflict ให้เร็วที่สุดเมื่อมีคำขอจากผู้ร่วมงาน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>ร่วมสื่อสารผ่านช่องทางกลาง เช่น Discord, LINE Group, GitHub Discussions</span>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
+      <div class="bg-black/40 p-4 rounded-xl border-l-4 border-green-400">
+        <p class="text-gray-400"># 3. อัปโหลด (Push)</p>
+        <p class="text-green-400">$ docker push wichit2s/my-app:v1</p>
       </div>
 
-      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
+    </div>
+    <p class="mt-6 text-red-300 text-sm">⚠️ สำคัญ: คุณต้องมีสิทธิ์เขียน (Write Access) ใน Repository ปลายทาง</p>
+  </div>
+</div>
 
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            กิจกรรมปฏิบัติ<br>
-            <span class="text-yellow-300">Workshop: GitHub Collaboration</span>
-          </h1>
+<!-- Slide 10: The Problem of Data Persistence -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">ปัญหา: ข้อมูลหายไปไหน?</h2>
+    <p class="text-xl text-white/90 mb-8">
+      Containers are <strong>Ephemeral</strong> (เกิดขึ้นแล้วดับไปในเวลาอันสั้น)
+    </p>
+    
+    <div class="flex items-center justify-center space-x-8 mb-8">
+      <div class="bg-white/10 p-6 rounded-xl w-64 h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-400">
+        <div class="text-6xl mb-4">🗑️</div>
+        <p>เมื่อ Container ถูกลบ (Remove)</p>
+      </div>
+      <div class="text-4xl">➡️</div>
+      <div class="bg-red-900/40 p-6 rounded-xl w-64 h-64 flex flex-col items-center justify-center border-2 border-red-500">
+        <div class="text-6xl mb-4">🔥</div>
+        <p>ไฟล์ที่สร้างใหม่ใน Container จะหายไปทันที!</p>
+      </div>
+    </div>
 
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Branch • Issue • Pull Request • Conflict Resolution
-          </div>
+    <p class="text-lg bg-blue-900/50 p-4 rounded-lg inline-block">
+      ทางแก้คือการใช้ <strong>Volumes</strong> หรือ <strong>Bind Mounts</strong> เพื่อเก็บข้อมูลไว้นอก Container
+    </p>
+  </div>
+</div>
+<!-- Slide 11: Storage Options -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ทางเลือกในการจัดเก็บข้อมูล (Storage Options)</h2>
+    <p class="text-lg text-white/90 mb-8">
+      Docker มีวิธีหลักๆ ในการเก็บข้อมูล (Persist) แม้ Container จะถูกลบไปแล้ว
+    </p>
+    <div class="grid md:grid-cols-3 gap-6 text-left">
+      <div class="bg-blue-900/40 p-6 rounded-xl border-t-4 border-blue-400">
+        <h3 class="text-xl font-bold mb-2">1. Volumes</h3>
+        <p class="text-sm mb-4">เก็บข้อมูลไว้ในพื้นที่ส่วนตัวของ Docker บน Host (เช่น <code>/var/lib/docker/volumes/</code>)</p>
+        <span class="text-xs bg-blue-500 px-2 py-1 rounded">Best Practice</span>
+      </div>
+      <div class="bg-yellow-900/40 p-6 rounded-xl border-t-4 border-yellow-400">
+        <h3 class="text-xl font-bold mb-2">2. Bind Mounts</h3>
+        <p class="text-sm mb-4">เชื่อมโยงไฟล์หรือโฟลเดอร์จาก <strong>ที่ไหนก็ได้</strong> บนเครื่อง Host เข้าไปใน Container</p>
+        <span class="text-xs bg-yellow-500 px-2 py-1 rounded">Great for Dev</span>
+      </div>
+      <div class="bg-gray-800/40 p-6 rounded-xl border-t-4 border-gray-400">
+        <h3 class="text-xl font-bold mb-2">3. tmpfs Mounts</h3>
+        <p class="text-sm mb-4">เก็บข้อมูลใน <strong>RAM</strong> ของ Host เท่านั้น ข้อมูลจะหายไปเมื่อ Container หยุดทำงาน</p>
+        <span class="text-xs bg-gray-500 px-2 py-1 rounded">For Secrets/Speed</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">สิ่งที่นักศึกษาต้องทำ</h2>
+<!-- Slide 12: Docker Volumes Deep Dive -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">เจาะลึก Docker Volumes</h2>
+    <p class="text-xl text-white/90 mb-6">
+      วิธีมาตรฐานและปลอดภัยที่สุดในการเก็บข้อมูล
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <h3 class="text-2xl font-bold mb-4 text-green-300">ทำไมต้องใช้ Volumes?</h3>
+      <ul class="space-y-4 text-lg list-disc list-inside">
+        <li><strong>Managed by Docker:</strong> ดูแลโดย Docker โดยตรง ไม่ขึ้นกับโครงสร้างไฟล์ของ OS</li>
+        <li><strong>Easy Backup:</strong> ง่ายต่อการสำรองข้อมูลหรือย้ายข้อมูล (Migration)</li>
+        <li><strong>Sharing:</strong> แชร์ข้อมูลระหว่าง Container ได้อย่างปลอดภัย</li>
+        <li><strong>Driver Support:</strong> รองรับการเก็บข้อมูลบน Cloud หรือ Remote Storage ได้</li>
+      </ul>
+      <div class="mt-6 bg-black/40 p-4 rounded-lg font-mono text-sm">
+        <p class="text-gray-400"># ตัวอย่างการสร้างและใช้งาน</p>
+        <p class="text-green-400">$ docker volume create my-db-data</p>
+        <p class="text-green-400">$ docker run -v my-db-data:/var/lib/mysql mysql</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div class="grid md:grid-cols-2 gap-5 text-left">
+<!-- Slide 13: Bind Mounts Deep Dive -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">เจาะลึก Bind Mounts</h2>
+    <p class="text-xl text-white/90 mb-6">
+      สะพานเชื่อมระหว่าง Code ในเครื่องเรากับ Container
+    </p>
+    
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div class="bg-white/10 p-6 rounded-2xl h-full flex flex-col justify-center">
+        <h3 class="text-2xl font-bold mb-4 text-yellow-300">Use Case หลัก</h3>
+        <p class="text-lg">
+          เหมาะมากสำหรับ <strong>Development Environment</strong> เราแก้ Code ในเครื่อง (Host) แล้วเห็นผลลัพธ์ใน Container ทันทีโดยไม่ต้อง Build Image ใหม่
+        </p>
+      </div>
+      
+      <div class="bg-black/50 p-6 rounded-2xl font-mono text-left h-full flex flex-col justify-center">
+        <p class="text-gray-400 mb-2"># รูปแบบคำสั่ง</p>
+        <p class="text-white mb-4 text-sm">-v /path/on/host:/path/in/container</p>
+        
+        <p class="text-gray-400 mb-2"># ตัวอย่างจริง (Windows/Mac)</p>
+        <p class="text-green-400 text-sm">$ docker run -v $(pwd):/app -p 80:80 my-web-server</p>
+      </div>
+    </div>
+    
+    <p class="mt-8 text-red-300 text-sm">
+      ⚠️ ข้อควรระวัง: ประสิทธิภาพอาจต่ำกว่า Volume และขึ้นอยู่กับ File System ของ Host
+    </p>
+  </div>
+</div>
 
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>สร้าง repository กลุ่มพร้อม README เบื้องต้น</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>เปิด Issue เพื่อแบ่งงานตามความรับผิดชอบของแต่ละคน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>สร้าง feature branch และพัฒนาโค้ดอย่างน้อย 1 ส่วน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>เปิด Pull Request พร้อมคำอธิบายงานที่ทำ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>ให้เพื่อน review PR และแสดงความคิดเห็น</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>แก้ conflict (ถ้ามี) และ merge PR เข้าสู่ branch หลัก</span>
-              </div>
-
-            </div>
-          </div>
-
+<!-- Slide 14: Volume Management Commands -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">คำสั่งจัดการ Volume (Volume CLI)</h2>
+    <div class="space-y-4 font-mono text-left text-lg">
+      
+      <div class="bg-white/10 p-4 rounded-xl flex items-center border-l-4 border-blue-400">
+        <div class="flex-1">
+          <code class="text-blue-300">docker volume create &lt;name&gt;</code>
         </div>
+        <span class="text-sm opacity-70">สร้าง Volume ใหม่</span>
       </div>
 
-      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            การวางแผนงานด้วย<br>
-            <span class="text-yellow-300">GitHub Project Board</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Kanban • Task Flow • Tracking Progress
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">สิ่งที่ควรใช้งาน</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>สร้างบอร์ดแบบ <strong>Kanban</strong> (To Do / In Progress / Done)</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>เชื่อมโยง Issue กับการ์ดบนบอร์ดเพื่อการติดตามที่ง่ายขึ้น</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>ย้ายการ์ดเมื่อเริ่มทำ–กำลังทำ–เสร็จสิ้น เพื่ออัพเดตสถานะ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>ใช้ Labels เพื่อแบ่งหมวดงาน เช่น feature, bug, documentation</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>มอบหมายงานให้สมาชิกทีมผ่านการ์ดอย่างชัดเจน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>ใช้ Automation ของ GitHub เพื่อย้ายการ์ดอัตโนมัติเมื่อ PR ถูก merged</span>
-              </div>
-
-            </div>
-          </div>
-
+      <div class="bg-white/10 p-4 rounded-xl flex items-center border-l-4 border-green-400">
+        <div class="flex-1">
+          <code class="text-green-300">docker volume ls</code>
         </div>
+        <span class="text-sm opacity-70">ดูรายชื่อ Volume ทั้งหมด</span>
       </div>
 
-      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            สรุปสาระสำคัญของการทำงานร่วมกันด้วย<br>
-            <span class="text-yellow-300">Git & GitHub</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Collaboration • Workflow • Productivity
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">จุดสำคัญที่ต้องจำ</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>ใช้ branch แยกงานเสมอเพื่อหลีกเลี่ยง conflict และทำงานคู่ขนาน</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>Pull Request คือหัวใจของการตรวจสอบคุณภาพโค้ด (Review)</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>Issue ช่วยให้การแบ่งงานและติดตามความคืบหน้าเป็นระบบ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>Project Board ทำให้เห็นภาพรวมของงานทั้งหมดในทีม</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>สื่อสารกันเสมอเพื่อลดความคลาดเคลื่อนและทำงานได้รวดเร็วขึ้น</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>Commit บ่อย ๆ เขียนข้อความให้ชัดเจนและมีความหมาย</span>
-              </div>
-
-            </div>
-          </div>
-
+      <div class="bg-white/10 p-4 rounded-xl flex items-center border-l-4 border-yellow-400">
+        <div class="flex-1">
+          <code class="text-yellow-300">docker volume inspect &lt;name&gt;</code>
         </div>
+        <span class="text-sm opacity-70">ดูรายละเอียด (เช่น path จริงบนเครื่อง)</span>
       </div>
 
-      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            มอบหมายงานกลุ่ม<br>
-            <span class="text-yellow-300">GitHub Collaboration Project</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Repository • Project Board • Agile Planning
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
-            <h2 class="text-2xl font-semibold mb-4 text-center">รายละเอียดงานที่ต้องทำ</h2>
-
-            <div class="space-y-4 text-lg leading-relaxed">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>สร้างกลุ่ม <strong>4–5 คน</strong></span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>ให้ตัวแทนสร้าง <strong>private Repository</strong> ชื่อ <code>dstoolbox68prj</code></span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>เพิ่มสมาชิกทุกคนเป็น <strong>collaborator</strong> และเพิ่ม <strong>wichit2s</strong></span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>สร้าง <strong>GitHub Project</strong> ชื่อเดียวกับ repository และเชื่อม/นำเข้า <strong>issues</strong> จาก <code>dstoolbox68prj</code></span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>ตั้งค่าบทบาทสมาชิกใน Project ให้ทุกคน (รวม <strong>wichit2s</strong>) เป็น <strong>admin</strong></span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>เลือกเว็บไซต์ประกาศหางานที่ต้องการ <strong>scrape</strong> ข้อมูล</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">7</div>
-                <span>เขียนแผนการดำเนินโครงงานและการแบ่งงานตามหลัก <strong>SCRUM / Agile</strong></span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">8</div>
-                <span>เขียนข้อมูลโครงงาน รายชื่อสมาชิก เว็บประกาศงาน และการแบ่งงานลงใน <code>README.md</code></span>
-              </div>
-
-            </div>
-          </div>
-
+      <div class="bg-white/10 p-4 rounded-xl flex items-center border-l-4 border-red-400">
+        <div class="flex-1">
+          <code class="text-red-300">docker volume rm &lt;name&gt;</code>
         </div>
+        <span class="text-sm opacity-70">ลบ Volume (ต้องไม่มี Container ใช้งานอยู่)</span>
       </div>
 
-      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            ทำความรู้จัก<br>
-            <span class="text-yellow-300">Agile Development</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Flexible • Fast Delivery • Continuous Improvement
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
-            <h2 class="text-2xl font-semibold mb-4 text-center">แนวคิดสำคัญของ Agile</h2>
-
-            <div class="space-y-4 text-lg">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>การพัฒนาแบบยืดหยุ่น ปรับเปลี่ยนตามความต้องการได้</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>แบ่งงานออกเป็นรอบสั้น ๆ (Iterations / Sprints)</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>เน้นการสื่อสารร่วมกันในทีมอย่างต่อเนื่อง</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>ส่งมอบงานได้เร็ว มองเห็นความคืบหน้าชัดเจน</span>
-              </div>
-
-            </div>
-          </div>
-
+      <div class="bg-white/10 p-4 rounded-xl flex items-center border-l-4 border-purple-400">
+        <div class="flex-1">
+          <code class="text-purple-300">docker volume prune</code>
         </div>
+        <span class="text-sm opacity-70">ลบ Volume ที่ไม่ได้ใช้ทั้งหมด (Clean up)</span>
       </div>
 
-      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
+    </div>
+  </div>
+</div>
 
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            Scrum Framework<br>
-            <span class="text-yellow-300">Roles • Events • Artifacts</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Simple Yet Powerful Team Process
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-            <h2 class="text-2xl font-semibold mb-4">องค์ประกอบหลักของ Scrum</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3"><div class="badge">1</div><span><strong>Product Owner</strong> – กำหนดความต้องการและลำดับความสำคัญ</span></div>
-              <div class="flex items-start gap-3"><div class="badge">2</div><span><strong>Scrum Master</strong> – สนับสนุนทีมและแก้ปัญหาอุปสรรค</span></div>
-              <div class="flex items-start gap-3"><div class="badge">3</div><span><strong>Development Team</strong> – ลงมือทำงานจริง</span></div>
-
-              <div class="flex items-start gap-3"><div class="badge">4</div><span><strong>Sprint</strong> – รอบการทำงาน 1–2 สัปดาห์</span></div>
-              <div class="flex items-start gap-3"><div class="badge">5</div><span><strong>Daily Scrum</strong> – ประชุมรายวัน 15 นาที</span></div>
-              <div class="flex items-start gap-3"><div class="badge">6</div><span><strong>Review & Retrospective</strong> – ตรวจงานและวางแผนพัฒนา</span></div>
-
-            </div>
-          </div>
-
-        </div>
+<!-- Slide 15: Mounting Syntax (-v vs --mount) -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">วิธีการใช้งาน: -v vs --mount</h2>
+    <p class="text-lg text-white/90 mb-8">
+      เราสามารถ Mount Volume ได้ 2 วิธีหลัก
+    </p>
+    
+    <div class="grid md:grid-cols-2 gap-8 text-left">
+      <!-- Short Syntax -->
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-2 text-blue-300">1. -v (Short Syntax)</h3>
+        <p class="text-sm mb-4">นิยมใช้มากที่สุด สั้น กระชับ แต่อาจสับสนระหว่าง Volume กับ Bind Mount</p>
+        <code class="block bg-black/40 p-3 rounded font-mono text-xs mb-2">
+          -v my-vol:/app
+        </code>
+        <p class="text-xs text-gray-400">ถ้าไม่มี / นำหน้า = Named Volume</p>
+        <code class="block bg-black/40 p-3 rounded font-mono text-xs mt-2">
+          -v /home/user/data:/app
+        </code>
+        <p class="text-xs text-gray-400">ถ้ามี / นำหน้า = Bind Mount (Host path)</p>
       </div>
 
-      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            Backlogs<br>
-            <span class="text-yellow-300">Product vs Sprint</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Organizing Work with Priority
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
-            <h2 class="text-2xl font-semibold mb-4 text-center">สอง Backlog สำคัญ</h2>
-
-            <div class="space-y-4 text-lg">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span><strong>Product Backlog:</strong> รายการงานทั้งหมดของโปรเจกต์ จัดลำดับโดย Product Owner</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span><strong>Sprint Backlog:</strong> งานที่ทีมเลือกมาทำใน Sprint นั้น ๆ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>Backlog ควรมีคำอธิบายชัดเจน พร้อม Acceptance Criteria</span>
-              </div>
-
-            </div>
-          </div>
-
+      <!-- Long Syntax -->
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-2 text-green-300">2. --mount (Long Syntax)</h3>
+        <p class="text-sm mb-4">ชัดเจน อ่านง่าย (Explicit) แนะนำสำหรับการใช้งานใน Docker Service / Swarm</p>
+        <div class="bg-black/40 p-3 rounded font-mono text-xs space-y-1">
+          <p>--mount type=volume,src=my-vol,dst=/app</p>
+          <p class="text-gray-500 py-1">--- OR ---</p>
+          <p>--mount type=bind,src=/host/path,dst=/app</p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
+<!-- Slide 16: Introduction to Networking -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Docker Networking คืออะไร?</h2>
+    <p class="text-xl text-white/90 mb-8">
+      Container ไม่ได้อยู่โดดเดี่ยว ต้องสื่อสารกันเองและสื่อสารกับโลกภายนอกด้วย
+    </p>
+    
+    <div class="flex justify-center items-center gap-8 mb-8">
+      <div class="bg-white/10 p-8 rounded-full w-48 h-48 flex flex-col items-center justify-center border-4 border-blue-500">
+        <div class="text-4xl">🌐</div>
+        <p class="mt-2 font-bold">World</p>
+      </div>
+      <div class="text-4xl">↔️</div>
+      <div class="bg-white/10 p-8 rounded-xl w-48 h-48 flex flex-col items-center justify-center border-4 border-green-500 relative">
+        <div class="absolute -top-4 bg-green-500 px-2 rounded text-xs">Docker Host</div>
+        <div class="text-4xl">🐳</div>
+        <p class="mt-2 font-bold">Container</p>
+      </div>
+    </div>
 
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            User Stories<br>
-            <span class="text-yellow-300">& Acceptance Criteria</span>
-          </h1>
+    <div class="bg-blue-900/30 p-6 rounded-xl text-left">
+      <h3 class="text-xl font-bold mb-2 text-blue-300">เป้าหมายของ Networking:</h3>
+      <ul class="list-disc list-inside text-sm md:text-base">
+        <li>แยกการสื่อสารของแต่ละ App ออกจากกัน (Isolation)</li>
+        <li>เชื่อมต่อ Database กับ Backend อย่างปลอดภัย (Communication)</li>
+        <li>เปิดให้บริการ Web Server สู่ภายนอก (Exposing)</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Clear • Simple • User-Focused
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 text-left">
-            <h2 class="text-2xl font-semibold mb-4 text-center">รูปแบบของ User Story</h2>
-
-            <div class="space-y-4 text-lg">
-
-              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
-                <strong>As a</strong> (user type)<br>
-                <strong>I want</strong> (functionality)<br>
-                <strong>So that</strong> (benefit)
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>ควรสั้น กระชับ และเน้นผู้ใช้เป็นศูนย์กลาง</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span><strong>Acceptance Criteria</strong> คือเงื่อนไขการทำงานที่ถือว่าทำสำเร็จแล้ว</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>ควรเขียนเป็นข้อ ๆ เช่น “ระบบต้องแสดงรายการงานทั้งหมดได้”</span>
-              </div>
-
-            </div>
-          </div>
-
+<!-- Slide 17: Default Bridge Driver -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">1. Bridge Network (Default)</h2>
+    <p class="text-lg text-white/90 mb-6">
+      เมื่อคุณรัน Container โดยไม่ระบุจะใช้ Network นี้
+    </p>
+    
+    <div class="bg-white/10 p-8 rounded-2xl text-left">
+      <div class="flex items-start mb-4">
+        <span class="text-3xl mr-4">🌉</span>
+        <div>
+          <h3 class="text-2xl font-bold text-blue-300">Software Bridge (docker0)</h3>
+          <p>Docker สร้าง Virtual Switch ภายใน Host เพื่อให้ Container เชื่อมต่อกันได้</p>
         </div>
       </div>
+      
+      <ul class="space-y-3 text-sm md:text-base ml-12 list-disc">
+        <li>Container จะได้รับ IP Address ภายใน (เช่น 172.17.0.2)</li>
+        <li>Container ใน Bridge เดียวกันคุยกันได้ผ่าน IP Address</li>
+        <li><strong>ข้อจำกัด:</strong> ใน Default Bridge, Container <strong>ไม่สามารถ</strong> คุยกันผ่าน "ชื่อ" (DNS Name) ได้ ต้องใช้ IP เท่านั้น</li>
+      </ul>
+    </div>
+    
+    <div class="mt-6 bg-black/40 p-4 rounded-xl font-mono text-sm">
+      <p class="text-gray-400"># ตรวจสอบ Network ทั้งหมด</p>
+      <p class="text-green-400">$ docker network ls</p>
+    </div>
+  </div>
+</div>
 
-      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-
-          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
-            GitHub Project Management<br>
-            <span class="text-yellow-300">แบบ Agile / Scrum</span>
-          </h1>
-
-          <div class="text-xl text-white/90 mb-8 font-light">
-            Boards • Issues • Milestones • Automation
-          </div>
-
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10">
-
-            <h2 class="text-2xl font-semibold mb-4">GitHub ช่วยทีมได้อย่างไร?</h2>
-
-            <div class="grid md:grid-cols-2 gap-5 text-left">
-
-              <div class="flex items-start gap-3">
-                <div class="badge">1</div>
-                <span>ใช้ <strong>Project Board (Kanban)</strong> ติดตามงานของ Sprint</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">2</div>
-                <span>ใช้ <strong>Issues</strong> แทน User Stories/Tasks</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">3</div>
-                <span>สร้าง <strong>Milestones</strong> เพื่อกำหนดรอบ Sprint</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">4</div>
-                <span>เชื่อมโยง PR ↔ Issues เพื่อดูความคืบหน้าอัตโนมัติ</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">5</div>
-                <span>ใช้ Automation เพื่อย้ายการ์ดเมื่อ PR ถูก merged</span>
-              </div>
-
-              <div class="flex items-start gap-3">
-                <div class="badge">6</div>
-                <span>ทบทวนงานหลัง Sprint ผ่าน Review & Retrospective</span>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
+<!-- Slide 18: Host & None Drivers -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Special Drivers: Host & None</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      
+      <!-- Host Driver -->
+      <div class="bg-red-900/30 p-6 rounded-xl border-t-4 border-red-500 text-left">
+        <h3 class="text-2xl font-bold mb-3">Host Network</h3>
+        <code class="bg-black/30 px-2 py-1 rounded text-xs block mb-3">--network host</code>
+        <ul class="list-disc list-inside text-sm space-y-2">
+          <li><strong>ยกเลิกการแยก Network:</strong> Container ใช้ Network Stack เดียวกับเครื่อง Host เลย</li>
+          <li><strong>Performance สูงสุด:</strong> ไม่มีการทำ NAT</li>
+          <li><strong>ข้อเสีย:</strong> Port ชนกันได้ง่าย (เช่น รัน Nginx 2 ตัวที่ Port 80 ไม่ได้)</li>
+        </ul>
       </div>
 
+      <!-- None Driver -->
+      <div class="bg-gray-700/30 p-6 rounded-xl border-t-4 border-gray-500 text-left">
+        <h3 class="text-2xl font-bold mb-3">None Network</h3>
+        <code class="bg-black/30 px-2 py-1 rounded text-xs block mb-3">--network none</code>
+        <ul class="list-disc list-inside text-sm space-y-2">
+          <li><strong>ตัดขาดจากโลกภายนอก:</strong> Container ไม่มี Network Interface (นอกจาก Loopback)</li>
+          <li><strong>Security สูงสุด:</strong> เหมาะสำหรับงานที่ไม่ต้องใช้อินเทอร์เน็ต เช่น การคำนวณข้อมูลแบบ Offline หรือ Batch Job</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: User-defined Bridge -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">User-defined Bridge Network</h2>
+    <p class="text-xl text-white/90 mb-6">
+      <span class="text-yellow-300">★ พระเอกตัวจริง</span>: สิ่งที่เราควรใช้แทน Default Bridge
+    </p>
+    
+    <div class="bg-white/10 p-6 rounded-2xl text-left mb-6">
+      <h3 class="text-2xl font-bold text-green-300 mb-2">Automatic Service Discovery</h3>
+      <p class="text-lg">
+        เมื่อเราสร้าง Network เอง Container จะสามารถเรียกหากันด้วย <strong>"ชื่อ Container"</strong> ได้เลย (Docker มี DNS Server ภายในให้)
+      </p>
+    </div>
+
+    <div class="bg-black/50 p-6 rounded-xl font-mono text-sm text-left space-y-3">
+      <div>
+        <p class="text-gray-400"># 1. สร้าง Network ใหม่</p>
+        <p class="text-green-400">$ docker network create my-net</p>
+      </div>
+      <div>
+        <p class="text-gray-400"># 2. รัน Database (ตั้งชื่อว่า db)</p>
+        <p class="text-green-400">$ docker run -d --name db --network my-net postgres</p>
+      </div>
+      <div>
+        <p class="text-gray-400"># 3. รัน Web App ให้ต่อกับ db</p>
+        <p class="text-green-400">$ docker run -d --network my-net my-web-app</p>
+        <p class="text-yellow-500 text-xs mt-1"># Web App สามารถ connect string ไปที่ host: "db" ได้เลย!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Port Publishing -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">การเผยแพร่พอร์ต (Port Publishing)</h2>
+    <p class="text-lg text-white/90 mb-8">
+      การอนุญาตให้คนภายนอกเข้าถึง Container ได้
+    </p>
+    
+    <div class="bg-white/10 p-8 rounded-2xl border-2 border-dashed border-white/30">
+      <code class="text-3xl font-mono block mb-4 text-yellow-300">-p &lt;Host_Port&gt;:&lt;Container_Port&gt;</code>
+      <p class="text-sm text-gray-300 mb-6">รูปแบบ: -p [พอร์ตเครื่องเรา]:[พอร์ตภายในคอนเทนเนอร์]</p>
+      
+      <div class="grid grid-cols-2 gap-4 text-left">
+        <div class="bg-black/30 p-4 rounded-lg">
+          <strong>$ docker run -p 8080:80 nginx</strong>
+          <p class="text-xs text-green-300 mt-2">เข้าเว็บผ่าน http://localhost:8080</p>
+        </div>
+        <div class="bg-black/30 p-4 rounded-lg">
+          <strong>$ docker run -p 3000:3000 nodeapp</strong>
+          <p class="text-xs text-green-300 mt-2">เข้าเว็บผ่าน http://localhost:3000</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-8 text-sm">
+      ⚠️ ถ้าไม่ใส่ <code>-p</code> Container จะคุยกันเองได้ แต่เราจะเข้าผ่าน Browser ไม่ได้
+    </p>
+  </div>
+</div>
+
+
+<!-- Slide 21: Container Communication -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">การสื่อสารระหว่าง Container (Container Communication)</h2>
+    <p class="text-lg text-white/90 mb-6">
+      เมื่อเราสร้าง Network เอง (User-defined Bridge) สิ่งมหัศจรรย์จะเกิดขึ้น
+    </p>
+    
+    <div class="grid md:grid-cols-2 gap-8 text-left">
+      <div class="bg-red-900/30 p-6 rounded-xl border border-red-500/30">
+        <h3 class="text-xl font-bold mb-2 text-red-300">Default Bridge</h3>
+        <p class="text-sm mb-4">Container ต้องคุยกันผ่าน <strong>IP Address</strong> เท่านั้น</p>
+        <div class="bg-black/40 p-3 rounded font-mono text-xs">
+          $ ping 172.17.0.2 <span class="text-green-400">✔</span><br>
+          $ ping db-server <span class="text-red-400">✘ (Unknown Host)</span>
+        </div>
+        <p class="text-xs mt-2 opacity-70">ยากในการจัดการ เพราะ IP เปลี่ยนทุกครั้งที่ Restart</p>
+      </div>
+
+      <div class="bg-green-900/30 p-6 rounded-xl border border-green-500/30">
+        <h3 class="text-xl font-bold mb-2 text-green-300">User-defined Bridge</h3>
+        <p class="text-sm mb-4">Container คุยกันผ่าน <strong>Container Name</strong> ได้เลย</p>
+        <div class="bg-black/40 p-3 rounded font-mono text-xs">
+          $ ping 172.18.0.2 <span class="text-green-400">✔</span><br>
+          $ ping db-server <span class="text-green-400">✔ (Resolved!)</span>
+        </div>
+        <p class="text-xs mt-2 opacity-70">Docker มี Internal DNS Server คอยจัดการให้</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 22: DNS Resolution -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Service Discovery & DNS</h2>
+    <div class="bg-white/10 p-8 rounded-2xl flex items-center justify-center space-x-8">
+      
+      <!-- App Container -->
+      <div class="text-center">
+        <div class="text-5xl mb-2">📱</div>
+        <div class="font-bold">Web App</div>
+        <code class="bg-black/50 px-2 py-1 rounded text-xs">name: my-web</code>
+      </div>
+
+      <!-- Arrow -->
+      <div class="flex flex-col items-center">
+        <span class="text-xs text-yellow-300 mb-1">"Connect to db:5432"</span>
+        <div class="h-1 w-32 bg-white/50"></div>
+        <span class="text-xs text-yellow-300 mt-1">Docker DNS resolves IP</span>
+      </div>
+
+      <!-- DB Container -->
+      <div class="text-center">
+        <div class="text-5xl mb-2">🗄️</div>
+        <div class="font-bold">Database</div>
+        <code class="bg-black/50 px-2 py-1 rounded text-xs">name: db</code>
+      </div>
+
+    </div>
+    
+    <div class="mt-8 text-left bg-blue-900/30 p-6 rounded-xl">
+      <h3 class="font-bold text-blue-300 mb-2">ประโยชน์ของการใช้ชื่อ (DNS):</h3>
+      <ul class="list-disc list-inside text-sm">
+        <li>ไม่ต้อง Hardcode IP Address ใน Config file</li>
+        <li>เมื่อ Container ตายแล้วเกิดใหม่ (ได้ IP ใหม่) แอปฯ ยังทำงานได้ปกติเพราะชื่อเดิม</li>
+        <li>เป็นพื้นฐานสำคัญก่อนไปสู่ Docker Compose และ Kubernetes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 23: Summary of Commands -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">สรุปคำสั่งสำคัญ (Cheat Sheet)</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-left font-mono text-sm">
+      
+      <div class="bg-white/10 p-4 rounded-lg">
+        <strong class="text-blue-300 block mb-1">Images</strong>
+        <p>docker build -t .</p>
+        <p>docker images</p>
+        <p>docker tag</p>
+        <p>docker push</p>
+      </div>
+
+      <div class="bg-white/10 p-4 rounded-lg">
+        <strong class="text-green-300 block mb-1">Volumes</strong>
+        <p>docker volume create</p>
+        <p>docker volume ls</p>
+        <p>docker run -v vol:/path</p>
+        <p>docker run -v $(pwd):/path</p>
+      </div>
+
+      <div class="bg-white/10 p-4 rounded-lg">
+        <strong class="text-purple-300 block mb-1">Network</strong>
+        <p>docker network create</p>
+        <p>docker network ls</p>
+        <p>docker run --network</p>
+        <p>docker network inspect</p>
+      </div>
+
+      <div class="bg-white/10 p-4 rounded-lg col-span-2 md:col-span-3">
+        <strong class="text-yellow-300 block mb-1">Cleanup (ใช้ระวัง!)</strong>
+        <p>docker system prune -a</p>
+        <span class="text-xs text-gray-400">ลบทุกอย่างที่ไม่ได้รันอยู่ (Stopped containers, unused networks, dangling images)</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Slide 24: Pre-Lab Transition -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-8xl mb-6">🧪</div>
+    <h2 class="text-5xl font-bold mb-6">Ready for Laboratory?</h2>
+    <p class="text-xl text-white/90 mb-8">
+      เราจะลงมือทำจริง: ตั้งแต่เขียน Code, สร้าง Image, Push ขึ้น Cloud, จนถึงการจัดการ Data และ Network
+    </p>
+    <div class="bg-white/10 px-8 py-4 rounded-full inline-block animate-bounce border border-white/30">
+      เปิด VS Code และ Docker Desktop รอไว้เลย!
+    </div>
+  </div>
+</div>
+
+<!-- Slide 25: Lab Mission Overview -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ภารกิจวันนี้ (Mission: Django & Postgres)</h2>
+    <p class="text-xl mb-8">
+      เราจะจำลองสภาพแวดล้อม Production โดยแยก Database และ Web Server ออกจากกัน
+    </p>
+    <div class="grid grid-cols-2 gap-6 text-left text-lg">
+      <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-400">
+        <span class="text-2xl mr-2">🌐</span>
+        <strong>Network:</strong> สร้าง Docker Network ให้ Container คุยกันได้
+      </div>
+      <div class="bg-white/10 p-5 rounded-xl border-l-4 border-green-400">
+        <span class="text-2xl mr-2">🗄️</span>
+        <strong>Database:</strong> รัน PostgreSQL Container แยกต่างหาก
+      </div>
+      <div class="bg-white/10 p-5 rounded-xl border-l-4 border-yellow-400">
+        <span class="text-2xl mr-2">⚡</span>
+        <strong>Optimization:</strong> เขียน Dockerfile ให้ Build เร็วด้วย Layer Caching
+      </div>
+      <div class="bg-white/10 p-5 rounded-xl border-l-4 border-purple-400">
+        <span class="text-2xl mr-2">💾</span>
+        <strong>Volumes:</strong> ใช้ Bind Mount เพื่อแก้โค้ดแล้วเห็นผลทันที
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 26: Clone Repository -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 1: เตรียม Source Code</h2>
+    <p class="text-lg mb-4">ดาวน์โหลดโค้ดต้นฉบับและสลับไปยัง Branch ที่ถูกต้อง</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg space-y-4">
+      <div>
+        <p class="text-gray-400"># 1. Clone Repository</p>
+        <p class="text-green-400 text-sm md:text-base">$ git clone https://github.com/wichitpaulsombat/djrepo.git</p>
+      </div>
+      
+      <div>
+        <p class="text-gray-400"># 2. เข้าโฟลเดอร์และ Checkout branch wk04</p>
+        <p class="text-green-400">$ cd djrepo</p>
+        <p class="text-green-400">$ git checkout wk04</p>
+      </div>
+
+      <div>
+        <p class="text-gray-400"># 3. ตรวจสอบไฟล์ (ต้องมี manage.py และ requirements.txt)</p>
+        <p class="text-green-400">$ ls -l</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 27: Create Docker Network -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 2: สร้าง Docker Network</h2>
+    <p class="text-lg mb-6">
+      เพื่อให้ Web App (Django) มองเห็น Database (Postgres) ผ่านชื่อ Container
+    </p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-xl border-2 border-dashed border-blue-500/50">
+      <p class="text-gray-400 mb-2"># สร้าง Bridge Network ชื่อ 'dj-net'</p>
+      <p class="text-green-400">$ docker network create dj-net</p>
+    </div>
+    
+    <div class="mt-6 bg-white/10 p-4 rounded-xl text-left">
+      <p class="text-sm">
+        💡 <strong>ทำไมต้องทำ?</strong><br>
+        ถ้าไม่สร้าง Network เอง Container จะใช้ Default Bridge ซึ่งไม่สามารถคุยกันด้วยชื่อ (DNS Resolution) ได้สะดวก
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 28: Start PostgreSQL -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 3: รัน Database Container</h2>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm md:text-base leading-relaxed">
+      <p class="text-gray-400 mb-2"># รัน Postgres โดยกำหนดชื่อเป็น 'db' และอยู่ใน Network เดียวกัน</p>
+      <p class="text-green-400">
+        $ docker run -d \<br>
+        &nbsp;&nbsp;--name db \<br>
+        &nbsp;&nbsp;--network dj-net \<br>
+        &nbsp;&nbsp;-e POSTGRES_DB=postgres \<br>
+        &nbsp;&nbsp;-e POSTGRES_USER=postgres \<br>
+        &nbsp;&nbsp;-e POSTGRES_PASSWORD=secret \<br>
+        &nbsp;&nbsp;-v pgdata:/var/lib/postgresql/data \<br>
+        &nbsp;&nbsp;postgres:15-alpine
+      </p>
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 gap-4 text-left text-sm">
+      <div class="bg-white/10 p-2 rounded"><strong>--name db:</strong> ชื่อนี้สำคัญ! Django จะใช้เชื่อมต่อ</div>
+      <div class="bg-white/10 p-2 rounded"><strong>-v pgdata:...:</strong> ใช้ Named Volume เก็บข้อมูลถาวร</div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 29: Analyze Settings.py -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 4: ตรวจสอบการตั้งค่า Django</h2>
+    <p class="mb-4">เปิดไฟล์ <code>mysite/settings.py</code> ดูส่วน DATABASES</p>
+    
+    <div class="bg-gray-800 p-4 rounded-xl text-left font-mono text-xs md:text-sm border border-gray-600">
+      <p><span class="text-purple-400">import</span> os</p>
+      <p class="text-gray-500">...</p>
+      <p>DATABASES = {</p>
+      <p>&nbsp;&nbsp;'default': {</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;'ENGINE': 'django.db.backends.postgresql',</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;'NAME': os.environ.get('DB_NAME', 'postgres'),</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;'USER': os.environ.get('DB_USER', 'postgres'),</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;'PASSWORD': os.environ.get('DB_PASSWORD', 'secret'),</p>
+      <p class="bg-yellow-900/50">&nbsp;&nbsp;&nbsp;&nbsp;'HOST': os.environ.get('DB_HOST', 'db'), <span class="text-gray-400"># ชื่อ Container DB</span></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;'PORT': '5432',</p>
+      <p>&nbsp;&nbsp;}</p>
+      <p>}</p>
+    </div>
+    <p class="mt-4 text-sm text-yellow-300">
+      สังเกตว่าโค้ดรองรับการอ่านค่าจาก Environment Variables (os.environ.get) ทำให้เราปรับแก้ค่าได้ตอนสั่ง Docker Run
+    </p>
+  </div>
+</div>
+
+<!-- Slide 30: Optimize Dockerfile -->
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 5: เขียน Dockerfile (Optimized)</h2>
+    <p class="mb-4">สร้างไฟล์ <code>Dockerfile</code> ใหม่ โดยเรียงลำดับ Layer ให้ถูกต้อง</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-green-400">
+      <p><span class="text-purple-400">FROM</span> python:3.10-slim</p>
+      <p class="mt-2"><span class="text-gray-500"># ติดตั้ง dependencies ที่จำเป็นสำหรับ Postgres</span></p>
+      <p><span class="text-purple-400">RUN</span> apt-get update && apt-get install -y libpq-dev gcc</p>
+      <p class="mt-2"><span class="text-purple-400">WORKDIR</span> /app</p>
+      <p class="mt-2"><span class="text-gray-500"># 🚀 Optimization: Copy requirements ก่อน Code</span></p>
+      <p><span class="text-purple-400">COPY</span> requirements.txt .</p>
+      <p><span class="text-purple-400">RUN</span> pip install --no-cache-dir -r requirements.txt</p>
+      <p class="mt-2"><span class="text-gray-500"># จากนั้นค่อย Copy Code ที่เหลือ</span></p>
+      <p><span class="text-purple-400">COPY</span> . .</p>
+      <p class="mt-2"><span class="text-purple-400">CMD</span> ["python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 30: Optimize Dockerfile with uv -->
+<div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 5: เขียน Dockerfile (Optimized with uv)</h2>
+    <p class="mb-4">ปรับปรุง Dockerfile โดยใช้ <strong>uv</strong> แทน pip เพื่อลดเวลา Build (เร็วกว่า 10-100 เท่า)</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-green-400">
+      <p><span class="text-purple-400">FROM</span> python:3.10-slim</p>
+      <p class="mt-2"><span class="text-gray-500"># 1. นำเข้า uv จาก official image</span></p>
+      <p><span class="text-purple-400">COPY</span> --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv</p>
+      <p class="mt-2"><span class="text-gray-500"># 2. ติดตั้ง OS dependencies ที่จำเป็นสำหรับ Postgres</span></p>
+      <p><span class="text-purple-400">RUN</span> apt-get update && apt-get install -y libpq-dev gcc</p>
+      <p class="mt-2"><span class="text-purple-400">WORKDIR</span> /app</p>
+      <p class="mt-2"><span class="text-gray-500"># 3. Copy requirements และติดตั้งด้วย uv (ใช้ Cache)</span></p>
+      <p><span class="text-purple-400">COPY</span> requirements.txt .</p>
+      <p><span class="text-purple-400">RUN</span> uv pip install --system --no-cache -r requirements.txt</p>
+      <p class="mt-2"><span class="text-gray-500"># 4. Copy Code ส่วนที่เหลือ</span></p>
+      <p><span class="text-purple-400">COPY</span> . .</p>
+      <p class="mt-2"><span class="text-purple-400">CMD</span> ["python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+    </div>
+
+    <div class="mt-6 bg-white/10 p-4 rounded-xl text-left text-sm">
+      <h3 class="font-bold text-yellow-300 mb-1">💡 Key Changes:</h3>
+      <ul class="list-disc list-inside">
+        <li><strong>COPY --from=.../uv:</strong> ดึงตัวโปรแกรม uv เข้ามาใช้ใน image</li>
+        <li><strong>uv pip install --system:</strong> สั่ง uv ให้ลง package ใส่ระบบหลักของ Python ใน container เลย (ไม่ต้องสร้าง venv ซ้อน) ซึ่งเร็วกว่า pip มาก</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 31: Build Image -->
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 6: Build Image</h2>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg mb-6">
+      <p class="text-gray-400"># ตั้งชื่อ Image ว่า 'dj-app'</p>
+      <p class="text-green-400">$ docker build -t dj-app .</p>
+    </div>
+
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <h3 class="font-bold text-yellow-300 mb-2">ลองทดสอบ Caching:</h3>
+      <ol class="list-decimal list-inside text-sm">
+        <li>ลอง Build ครั้งแรก (ใช้เวลาโหลด pip นาน)</li>
+        <li>แก้ไฟล์ในโฟลเดอร์ mysite เล็กน้อย (เช่นแก้ README)</li>
+        <li>Build อีกครั้ง ... สังเกตว่าขั้นตอน <code>RUN pip install</code> จะเขียนว่า <strong>Using cache</strong> (เร็วมาก!)</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 32: Run Django App -->
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-4">Step 7: Start Django Container</h2>
+    <p class="mb-4">เชื่อม Network, กำหนด Env Vars, และ Mount Volume</p>
+    
+    <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs md:text-sm leading-relaxed">
+      <p class="text-gray-400"># Windows (PowerShell) ใช้ ${PWD} แทน $(pwd)</p>
+      <p class="text-green-400">
+        $ docker run -d \<br>
+        &nbsp;&nbsp;--name web \<br>
+        &nbsp;&nbsp;--network dj-net \<br>
+        &nbsp;&nbsp;-p 8000:8000 \<br>
+        &nbsp;&nbsp;-v $(pwd):/app \<br>
+        &nbsp;&nbsp;-e DB_HOST=db \<br>
+        &nbsp;&nbsp;-e DB_PASSWORD=secret \<br>
+        &nbsp;&nbsp;dj-app
+      </p>
+    </div>
+    
+    <div class="mt-4 text-left text-sm space-y-1">
+      <p>✅ <strong>--network dj-net:</strong> เพื่อให้เจอ container ชื่อ 'db'</p>
+      <p>✅ <strong>-v $(pwd):/app:</strong> เพื่อให้แก้โค้ดในเครื่องแล้ว container อัปเดตตาม (Hot Reload)</p>
+      <p>✅ <strong>-e DB_HOST=db:</strong> บอก Django ให้ต่อ Database ที่เครื่องชื่อ 'db'</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 33: Run Migrations -->
+<div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 8: Initialize Database</h2>
+    <p class="text-lg mb-6">
+      เมื่อรันครั้งแรก Database ยังว่างเปล่า เราต้องสั่ง Migrate เพื่อสร้างตาราง
+    </p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg space-y-4">
+      <div>
+        <p class="text-gray-400"># สั่งรันคำสั่งภายใน container ชื่อ 'web'</p>
+        <p class="text-green-400">$ docker exec -it web python manage.py migrate</p>
+      </div>
+      
+      <div>
+        <p class="text-gray-400"># (Optional) สร้าง Admin User</p>
+        <p class="text-green-400">$ docker exec -it web python manage.py createsuperuser</p>
+      </div>
+    </div>
+    <p class="mt-6 text-green-300">ถ้าขึ้น OK แสดงว่า Django ต่อกับ Postgres สำเร็จแล้ว!</p>
+  </div>
+</div>
+
+<!-- Slide 34: Test Application -->
+<div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 9: ทดสอบหน้าเว็บ</h2>
+    <div class="bg-white text-gray-900 p-8 rounded-xl shadow-2xl max-w-2xl mx-auto">
+      <h3 class="text-2xl font-bold mb-4">🌐 Open Browser</h3>
+      <p class="text-xl text-blue-600 underline cursor-pointer">http://localhost:8000</p>
+      <p class="mt-4 text-gray-600">คุณควรเห็นหน้า "The install worked successfully!" หรือหน้าแอปพลิเคชันของคุณ</p>
+    </div>
+    
+    <div class="mt-8 bg-blue-900/30 p-4 rounded-xl border border-blue-500/30">
+      <p>ลองเข้า <strong>http://localhost:8000/admin</strong> และ Login ด้วย Superuser ที่สร้างเมื่อสักครู่</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 35: Verify Volume (Hot Reload) -->
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 10: ทดสอบการแก้โค้ด (Bind Mount)</h2>
+    <p class="mb-6">พิสูจน์ว่าเราไม่ต้อง Build Image ใหม่เมื่อแก้โค้ด</p>
+    
+    <ol class="list-decimal list-inside text-left text-lg space-y-4 bg-white/10 p-8 rounded-2xl">
+      <li>เปิด VS Code ในเครื่องของคุณ (Host)</li>
+      <li>แก้ไขไฟล์ <code>mysite/urls.py</code> หรือสร้างไฟล์ views ง่ายๆ</li>
+      <li>ลองเปลี่ยนข้อความที่แสดงผล หรือทำให้ Code Error เล็กน้อย</li>
+      <li><strong>Refresh Browser ทันที</strong> (ไม่ต้อง stop/start container)</li>
+      <li>ถ้าหน้าเว็บเปลี่ยนตาม แสดงว่า Bind Mount (<code>-v $(pwd):/app</code>) ทำงานสมบูรณ์</li>
+    </ol>
+  </div>
+</div>
+
+<!-- Slide 36: Troubleshooting -->
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">ปัญหาที่พบบ่อย (Troubleshooting)</h2>
+    <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500/30">
+        <strong>Connection Refused (DB)</strong>
+        <p>สาเหตุ: Container 'web' หา 'db' ไม่เจอ หรือ DB ยังรันไม่เสร็จ</p>
+        <p class="text-yellow-300">แก้: เช็คว่าอยู่ Network เดียวกันไหม (`docker network inspect dj-net`)</p>
+      </div>
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500/30">
+        <strong>Relation "auth_user" does not exist</strong>
+        <p>สาเหตุ: ยังไม่ได้รัน Migration</p>
+        <p class="text-yellow-300">แก้: รันคำสั่ง `migrate` ใน Step 8 อีกครั้ง</p>
+      </div>
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500/30">
+        <strong>DisallowedHost</strong>
+        <p>สาเหตุ: ALLOWED_HOSTS ใน settings.py ไม่รองรับ</p>
+        <p class="text-yellow-300">แก้: เพิ่ม '*' หรือ 'localhost' ใน settings.py แล้ว Save (Bind mount จะอัปเดตให้)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 37: Clean Up -->
+<div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 11: การลบและคืนพื้นที่</h2>
+    <p class="mb-6">เมื่อทำ Lab เสร็จแล้ว ควรลบ Container เพื่อไม่ให้หนักเครื่อง</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg space-y-2">
+      <p class="text-gray-400"># ลบ Containers (ทั้ง web และ db)</p>
+      <p class="text-green-400">$ docker rm -f web db</p>
+      <br>
+      <p class="text-gray-400"># ลบ Network</p>
+      <p class="text-green-400">$ docker network rm dj-net</p>
+      <br>
+      <p class="text-gray-400"># (Optional) ลบ Volume หากไม่ต้องการข้อมูลแล้ว</p>
+      <p class="text-green-400">$ docker volume rm pgdata</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 38: Submission -->
+<div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-8">การส่งงาน (Submission)</h2>
+    <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border-2 border-white/20">
+      <h3 class="text-3xl font-bold mb-6">สิ่งที่ต้องส่ง:</h3>
+      <div class="space-y-6 text-lg text-left mx-auto max-w-xl">
+        <div class="flex items-start">
+          <span class="text-3xl mr-4">📸</span>
+          <div>
+            <strong>1. ส่ง Video Link:</strong><br>
+            <span>แสดงการทำ lab เพื่อให้ได้ ResumeHub Website รันผ่าน docker ได้ สำเร็จ</span> 
+          </div>
+        </div>
+              <!--
+        <div class="flex items-start">
+          <span class="text-3xl mr-4">🐳</span>
+          <div>
+            <strong>2. Dockerfile:</strong><br>
+            <span>Copy เนื้อหาใน Dockerfile ที่เขียน (Optimization) ส่งใน MS Teams/Classroom</span>
+          </div>
+        </div>
+              -->
+      </div>
+    </div>
+  </div>
+</div>
 
     </div>
 
     <script>
-      function slideshow() {
-        return {
-          currentSlide: 0,
-          totalSlides: 0,
-          touchStartX: 0,
-          touchEndX: 0,
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
 
-          init() {
-            // นับจำนวนสไลด์ทั้งหมด
-            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
 
-            // เพิ่ม event listeners
-            this.setupKeyboardNavigation();
-            this.setupTouchNavigation();
-          },
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
 
-          nextSlide() {
-            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-          },
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
 
-          previousSlide() {
-            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-          },
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
 
-          setupKeyboardNavigation() {
-            document.addEventListener('keydown', (e) => {
-              if (e.key === 'ArrowRight' || e.key === ' ') {
-                e.preventDefault();
-                this.nextSlide();
-              } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                this.previousSlide();
-              }
-            });
-          },
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
 
-          setupTouchNavigation() {
-            document.addEventListener('touchstart', (e) => {
-              this.touchStartX = e.changedTouches[0].screenX;
-            });
-
-            document.addEventListener('touchend', (e) => {
-              this.touchEndX = e.changedTouches[0].screenX;
-              const swipeDistance = 50;
-
-              if (this.touchStartX - this.touchEndX > swipeDistance) {
-                this.nextSlide();
-              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
-                this.previousSlide();
-              }
-            });
-          }
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
         }
       }
+    }
     </script>
   </body>
 </html>

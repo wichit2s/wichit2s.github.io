@@ -87,6 +87,7 @@
      - สร้าง image สำหรับ data project
 
        * ฝัง metadata ของ MCP ใน Docker build
+       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk09.html>`_
      - แบบฝึกหัด
    * - 10
      - แนะนำ Agent Development Kit (ADK)
