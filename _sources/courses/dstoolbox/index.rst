@@ -94,6 +94,7 @@
      - เรียนรู้การสร้าง agent สำหรับ query ข้อมูล
 
        *  สร้าง command-based data agent
+       * `สไลด์ <../../_static/courses/dstoolbox/slides/wk10.html>`_
      - แบบทดสอบ
    * - 11
      - การประยุกต์ใช้ Agent AI ในโครงงานวิทยาการข้อมูล
