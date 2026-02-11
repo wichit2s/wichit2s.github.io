@@ -94,6 +94,8 @@ DevOps
        * ทดลอง Mount Volume เพื่อเก็บข้อมูลของ Container
        * เชื่อมต่อ 2 Containers ด้วย Docker Network
    * - **สัปดาห์ที่ 5**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk05.html>`_
      - **การประกอบแอปพลิเคชันด้วย Docker Compose (Application Assembly with Docker Compose)**
 
        * ปัญหาของการรันหลาย Containers ด้วยมือ

@@ -947,6 +947,7 @@
       <p><span class="text-purple-400">RUN</span> pip install --no-cache-dir -r requirements.txt</p>
       <p class="mt-2"><span class="text-gray-500"># จากนั้นค่อย Copy Code ที่เหลือ</span></p>
       <p><span class="text-purple-400">COPY</span> . .</p>
+      <p><span class="text-purple-400">EXPOSE</span> 8000</p>
       <p class="mt-2"><span class="text-purple-400">CMD</span> ["python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
     </div>
   </div>
@@ -959,18 +960,20 @@
     <p class="mb-4">ปรับปรุง Dockerfile โดยใช้ <strong>uv</strong> แทน pip เพื่อลดเวลา Build (เร็วกว่า 10-100 เท่า)</p>
     
     <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-green-400">
-      <p><span class="text-purple-400">FROM</span> python:3.10-slim</p>
+      <p><span class="text-purple-400">FROM</span> python:3.13-slim</p>
       <p class="mt-2"><span class="text-gray-500"># 1. นำเข้า uv จาก official image</span></p>
       <p><span class="text-purple-400">COPY</span> --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv</p>
       <p class="mt-2"><span class="text-gray-500"># 2. ติดตั้ง OS dependencies ที่จำเป็นสำหรับ Postgres</span></p>
       <p><span class="text-purple-400">RUN</span> apt-get update && apt-get install -y libpq-dev gcc</p>
       <p class="mt-2"><span class="text-purple-400">WORKDIR</span> /app</p>
-      <p class="mt-2"><span class="text-gray-500"># 3. Copy requirements และติดตั้งด้วย uv (ใช้ Cache)</span></p>
-      <p><span class="text-purple-400">COPY</span> requirements.txt .</p>
-      <p><span class="text-purple-400">RUN</span> uv pip install --system --no-cache -r requirements.txt</p>
+      <p class="mt-2"><span class="text-gray-500"># 3. Copy requirements และติดตั้งด้วย uv </span></p>
+      <p><span class="text-purple-400">COPY</span> pyproject.toml uv.lock ./</p>
+      <p><span class="text-purple-400">RUN</span> uv sync --frozen --no-dev</p>
       <p class="mt-2"><span class="text-gray-500"># 4. Copy Code ส่วนที่เหลือ</span></p>
       <p><span class="text-purple-400">COPY</span> . .</p>
-      <p class="mt-2"><span class="text-purple-400">CMD</span> ["python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+      <p class="mt-2"><span class="text-gray-500"># 5. Expose port</span></p>
+      <p><span class="text-purple-400">EXPOSE</span> 8000</p>
+      <p class="mt-2"><span class="text-purple-400">CMD</span> ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
     </div>
 
     <div class="mt-6 bg-white/10 p-4 rounded-xl text-left text-sm">

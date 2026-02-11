@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk05.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-2">สัปดาห์ที่ 5</h2>
+          <h2 class="text-3xl font-bold mb-6">การประกอบแอปพลิเคชันด้วย Docker Compose</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+            เรียนรู้วิธีการจัดการแอปพลิเคชันที่มีหลาย Container เชื่อมต่อกันอย่างมีประสิทธิภาพ ลดความซับซ้อนในการรันคำสั่งด้วยมือ
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">หัวข้อการเรียนรู้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>The Problem:</strong> ปัญหาของการรันหลาย Containers ด้วยมือ</li>
+              <li><strong>Core Concept:</strong> Docker Compose คืออะไร? และโครงสร้างไฟล์ <code>docker-compose.yml</code></li>
+              <li><strong>Key Commands:</strong> การใช้งานคำสั่ง <code>up</code>, <code>down</code>, <code>ps</code>, และ <code>logs</code></li>
+              <li><strong>Resource Management:</strong> การจัดการ Services, Networks และ Volumes ใน Compose</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 5</div>
+        </div>
+      </div>
+
+<!-- Slide 1: Title Slide -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 5: Application Assembly with Docker Compose</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      การประกอบแอปพลิเคชันแบบ Multi-Container และการจัดการ Service Orchestration เบื้องต้น
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+      <h3 class="text-2xl font-semibold mb-4 text-yellow-300">หัวข้อการเรียนรู้</h3>
+      <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+        <li>ปัญหาของการรัน Container หลายตัวด้วยมือ</li>
+        <li>Docker Compose คืออะไร?</li>
+        <li>โครงสร้างไฟล์ <code>docker-compose.yml</code></li>
+        <li>การจัดการ Services, Networks และ Volumes</li>
+        <li>คำสั่งพื้นฐาน (up, down, ps, logs)</li>
+      </ul>
+    </div>
+    <div class="text-sm text-white/70 mt-8">DevOps Course: Week 5</div>
+  </div>
+</div>
+
+<!-- Slide 2: Recap Week 4 -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ทบทวน: สิ่งที่เรียนไปเมื่อสัปดาห์ที่แล้ว</h2>
+    <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-center text-xs border-l-2 border-green-400">
+      <p>git clone -b wk04 https://github.com/wichitpaulsombat/djrepo</p>
+    </div>
+    <div class="grid grid-cols-3 gap-6 mt-8 text-left">
+      <div class="bg-blue-900/30 p-6 rounded-xl border border-blue-500/30">
+        <h3 class="text-xl font-bold mb-2 text-blue-300">Docker Image</h3>
+        <p class="text-sm">แม่พิมพ์ (Blueprint) ที่ Read-only ใช้สร้าง Container</p>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p><span class="text-purple-400">FROM</span> python:3.13-slim</p>
+          <p><span class="text-purple-400">COPY</span> --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv</p>
+          <p class="mt-2"><span class="text-purple-400">WORKDIR</span> /app</p>
+          <p><span class="text-purple-400">COPY</span> pyproject.toml uv.lock ./</p>
+          <p><span class="text-purple-400">RUN</span> uv sync --frozen --no-dev</p>
+          <p><span class="text-purple-400">COPY</span> . .</p>
+          <p><span class="text-purple-400">EXPOSE</span> 8000</p>
+          <p class="mt-2"><span class="text-purple-400">CMD</span> ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]</p>
+        </div>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker docker build -t djrepo:0.04.1 .</p>
+        </div>
+      </div>
+      <div class="bg-green-900/30 p-6 rounded-xl border border-green-500/30">
+        <h3 class="text-xl font-bold mb-2 text-green-300">Docker Volume</h3>
+        <p class="text-sm">พื้นที่เก็บข้อมูลถาวร (Persistent Data) ที่แยกจาก Lifecycle ของ Container</p>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker volume create djrepo-media</p>
+        </div>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker run -v djrepo-media:/app/media djrepo:0.04.1</p>
+        </div>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker run --mount type=volume,src=djrepo-media,dst=/app/media djrepo:0.04.1</p>
+        </div>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker run --mount type=bind,src=$(pwd),dst=/app djrepo:0.04.1</p>
+        </div>
+      </div>
+      <div class="bg-purple-900/30 p-6 rounded-xl border border-purple-500/30">
+        <h3 class="text-xl font-bold mb-2 text-purple-300">Docker Network</h3>
+        <p class="text-sm">ช่องทางสื่อสารระหว่าง Container ด้วย DNS Name</p>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker network create djrepo-network</p>
+        </div>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker run -d --name db --network djrepo-net postgres:15</p>
+        </div>
+        <div class="mt-4 bg-black/50 p-2 rounded-xl text-left font-mono text-xs border-l-2 border-green-400">
+          <p>docker run --network djrepo-net --mount type=bind,src=$(pwd),dst=/app djrepo:0.04.1</p>
+        </div>
+      </div>
+    </div>
+    <p class="mt-8 text-lg">
+      วันนี้เราจะนำองค์ประกอบเหล่านี้มารวมร่างกัน!
+    </p>
+  </div>
+</div>
+
+<!-- Slide 3: The Scenario -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">สถานการณ์จริง: Modern Applications</h2>
+    <p class="text-xl text-white/90 mb-8">
+      แอปพลิเคชันสมัยใหม่ ไม่ได้มีแค่โปรแกรมเดียวโดดๆ มักประกอบด้วย:
+    </p>
+    <div class="flex justify-center items-center gap-4 text-sm md:text-base">
+      <div class="bg-white/10 p-4 rounded-lg flex flex-col items-center">
+        <span class="text-3xl mb-2">🖥️</span>
+        <span>Frontend (React/Vue)</span>
+      </div>
+      <span class="text-2xl">+</span>
+      <div class="bg-white/10 p-4 rounded-lg flex flex-col items-center">
+        <span class="text-3xl mb-2">⚙️</span>
+        <span>Backend (Django/Node)</span>
+      </div>
+      <span class="text-2xl">+</span>
+      <div class="bg-white/10 p-4 rounded-lg flex flex-col items-center">
+        <span class="text-3xl mb-2">🗄️</span>
+        <span>Database (Postgres/MySQL)</span>
+      </div>
+      <span class="text-2xl">+</span>
+      <div class="bg-white/10 p-4 rounded-lg flex flex-col items-center">
+        <span class="text-3xl mb-2">⚡</span>
+        <span>Cache (Redis)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: The Problem with Manual CLI -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ปัญหาของการรันด้วยมือ (The Pain of Manual Run)</h2>
+    <p class="mb-4 text-left">ถ้าต้องรันแอปฯ ข้างต้น คุณต้องพิมพ์คำสั่งแบบนี้ทุกครั้ง:</p>
+    
+    <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs space-y-2 border-l-4 border-red-500">
+      <p class="text-gray-400"># 1. Create Network</p>
+      <p class="text-white">$ docker network create my-net</p>
+      <p class="text-gray-400"># 2. Run Database</p>
+      <p class="text-white">$ docker run -d --name db --net my-net -v db-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres</p>
+      <p class="text-gray-400"># 3. Run Backend (ต้องรอ DB start เสร็จก่อนไหม?)</p>
+      <p class="text-white">$ docker run -d --name backend --net my-net -e DB_HOST=db my-backend:v1</p>
+      <p class="text-gray-400"># 4. Run Frontend</p>
+      <p class="text-white">$ docker run -d --name frontend --net my-net -p 80:80 my-frontend:v1</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: Issues Identified -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ทำไมวิธี Manual ถึงไม่เวิร์ค?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+      <div class="bg-red-900/30 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2">❌ Human Error</h3>
+        <p class="text-sm">จำ Flag ผิด, ลืมใส่ Env Vars, ลืม map volume ทำให้ข้อมูลหาย</p>
+      </div>
+      <div class="bg-red-900/30 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2">❌ Dependency Hell</h3>
+        <p class="text-sm">ลำดับการรันสำคัญมาก (Backend ห้ามรันก่อน Database) การจัดการลำดับด้วยมือทำได้ยาก</p>
+      </div>
+      <div class="bg-red-900/30 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2">❌ Configuration Drift</h3>
+        <p class="text-sm">Developer A รันด้วยคำสั่งนึง แต่ Developer B รันอีกคำสั่งนึง ทำให้ผลลัพธ์ไม่เหมือนกัน ("It works on my machine")</p>
+      </div>
+      <div class="bg-red-900/30 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2">❌ Cleanup ยาก</h3>
+        <p class="text-sm">ต้องมานั่งไล่ <code>docker stop</code> และ <code>docker rm</code> ทีละตัว</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Solution Concept -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">ทางออก: Infrastructure as Code</h2>
+    <p class="text-xl text-white/90 mb-8">
+      จะดีกว่าไหม? ถ้าเราเขียน "Configuration" ของการรัน Container ทั้งหมดลงในไฟล์เดียว
+    </p>
+    <div class="flex items-center justify-center space-x-4 animate-pulse">
+      <div class="text-6xl">📄</div>
+      <div class="text-4xl">➔</div>
+      <div class="text-6xl">🐳 🐳 🐳</div>
+    </div>
+    <p class="mt-8 text-lg bg-green-900/40 p-4 rounded-xl inline-block">
+      นี่คือหน้าที่ของ <strong>Docker Compose</strong>
+    </p>
+  </div>
+</div>
+
+<!-- Slide 7: What is Docker Compose? -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Docker Compose คืออะไร?</h2>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <p class="text-xl mb-6">
+        เครื่องมือสำหรับ <strong>นิยาม (Define)</strong> และ <strong>รัน (Run)</strong> แอปพลิเคชัน Docker แบบ Multi-container
+      </p>
+      <ul class="list-disc list-inside space-y-4 text-lg">
+        <li>ใช้ไฟล์ <code>YAML</code> เพื่อกำหนดค่า Services, Networks และ Volumes</li>
+        <li>สั่งงานแอปพลิเคชันทั้งหมดด้วยคำสั่งเดียว</li>
+        <li>เหมาะอย่างยิ่งสำหรับ: Local Development, Automated Testing, และ Staging Environments</li>
+      </ul>
+    </div>
+    <div class="mt-6 text-sm text-gray-300">
+      *อ้างอิง: Docker Documentation [1], Wichit2s Docs [2]
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: The YAML File Structure -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">โครงสร้างไฟล์ docker-compose.yml</h2>
+    <p class="mb-4">ประกอบด้วย 3 ส่วนหลัก (Top-level elements)</p>
+    
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-black/50 p-6 rounded-xl font-mono text-sm">
+        <span class="text-gray-500"># docker-compose.yml</span><br>
+        <span class="text-blue-400">services:</span><br>
+        &nbsp;&nbsp;web:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;image: nginx<br>
+        &nbsp;&nbsp;db:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;image: postgres<br><br>
+        <span class="text-green-400">volumes:</span><br>
+        &nbsp;&nbsp;db-data:<br><br>
+        <span class="text-yellow-400">networks:</span><br>
+        &nbsp;&nbsp;my-net:
+      </div>
+      
+      <div class="space-y-4">
+        <div class="bg-blue-900/40 p-3 rounded border-l-4 border-blue-400">
+          <strong>1. Services:</strong> หัวใจหลัก ระบุ Container ที่จะรัน (Image, Port, Command)
+        </div>
+        <div class="bg-green-900/40 p-3 rounded border-l-4 border-green-400">
+          <strong>2. Volumes:</strong> ระบุ Named Volumes ที่ใช้เก็บข้อมูล
+        </div>
+        <div class="bg-yellow-900/40 p-3 rounded border-l-4 border-yellow-400">
+          <strong>3. Networks:</strong> ระบุการเชื่อมต่อที่ซับซ้อน (ปกติไม่ต้องใส่ก็ได้ เพราะ Compose สร้าง Default ให้)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Service Definition -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">เจาะลึก: Services</h2>
+    <p class="text-lg text-white/90 mb-6">Service คือคำนิยามของ Container ใน Compose</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm md:text-lg">
+      <p class="text-blue-400">services:</p>
+      <p class="ml-4 text-green-300">frontend:  <span class="text-gray-500"># ชื่อ Service (ใช้เป็น DNS Name ได้เลย)</span></p>
+      <p class="ml-8">build: ./frontend</p>
+      <p class="ml-8">ports:</p>
+      <p class="ml-12">- "3000:3000"</p>
+      <p class="ml-4 text-green-300">database:</p>
+      <p class="ml-8">image: postgres:15</p>
+      <p class="ml-8">environment:</p>
+      <p class="ml-12">- POSTGRES_PASSWORD=secret</p>
+    </div>
+    
+    <p class="mt-6 text-yellow-300">💡 Tip: ชื่อ Service (frontend, database) จะกลายเป็น Hostname ใน Network อัตโนมัติ</p>
+  </div>
+</div>
+
+<!-- Slide 10: Build vs Image -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">แหล่งที่มา: Build vs Image</h2>
+    <div class="grid md:grid-cols-2 gap-8 text-left">
+      <!-- Image -->
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-4 text-blue-300">image:</h3>
+        <p class="mb-4">ใช้เมื่อต้องการดึง Image สำเร็จรูปจาก Registry (เช่น Docker Hub) หรือ Image ที่ Build ไว้แล้ว</p>
+        <code class="bg-black/40 p-2 rounded block">image: redis:alpine</code>
+      </div>
+      
+      <!-- Build -->
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-4 text-green-300">build:</h3>
+        <p class="mb-4">ใช้เมื่อต้องการสร้าง Image จาก Source Code (Dockerfile) ในเครื่องเรา</p>
+        <code class="bg-black/40 p-2 rounded block">
+          build:<br>
+          &nbsp;&nbsp;context: .<br>
+          &nbsp;&nbsp;dockerfile: Dockerfile.dev
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: Managing Environment Variables -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">การจัดการตัวแปรสภาพแวดล้อม (Environment Variables)</h2>
+    <p class="mb-6">สามารถทำได้ 2 วิธีหลักใน Compose</p>
+    
+    <div class="space-y-4 text-left">
+      <div class="bg-black/50 p-4 rounded-xl border-l-4 border-blue-400">
+        <h4 class="font-bold text-blue-300">1. กำหนดโดยตรง (environment)</h4>
+        <pre class="text-xs md:text-sm mt-2">
+environment:
+  - DEBUG=True
+  - DB_HOST=postgres</pre>
+      </div>
+
+      <div class="bg-black/50 p-4 rounded-xl border-l-4 border-purple-400">
+        <h4 class="font-bold text-purple-300">2. ใช้ไฟล์ .env (env_file) - แนะนำ!</h4>
+        <pre class="text-xs md:text-sm mt-2">
+env_file:
+  - .env</pre>
+        <p class="text-xs text-gray-400 mt-1">*เก็บค่าความลับ (Secrets) ไว้ใน .env และอย่าลืมเพิ่มใน .gitignore</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Networking in Compose -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Networking ใน Docker Compose</h2>
+    <div class="bg-white/10 p-8 rounded-2xl text-left">
+      <h3 class="text-2xl font-bold mb-4 text-yellow-300">Default Behavior</h3>
+      <p class="text-lg mb-4">
+        เมื่อรัน <code>docker-compose up</code> Docker จะทำสิ่งเหล่านี้ให้อัตโนมัติ:
+      </p>
+      <ol class="list-decimal list-inside space-y-3 text-lg">
+        <li>สร้าง Network ใหม่ชื่อ <code>[project_name]_default</code></li>
+        <li>นำ Container ทุกตัวในไฟล์ไปใส่ใน Network นี้</li>
+        <li>Container สามารถคุยกันได้ผ่าน <strong>Service Name</strong></li>
+      </ol>
+      <div class="mt-6 bg-green-900/30 p-4 rounded-xl text-center">
+        ไม่ต้องสั่ง <code>docker network create</code> เองอีกต่อไป!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Volumes in Compose -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Volumes ใน Docker Compose</h2>
+    <p class="text-lg text-white/90 mb-6">กำหนดพื้นที่เก็บข้อมูลได้ 2 รูปแบบหลัก</p>
+    
+    <div class="grid md:grid-cols-2 gap-6 text-left">
+      <div class="bg-blue-900/40 p-5 rounded-xl border border-blue-500">
+        <h3 class="font-bold text-xl mb-2">1. Host Bind Mount</h3>
+        <p class="text-sm mb-2">เชื่อมโฟลเดอร์เครื่องเราเข้า Container (เหมาะสำหรับ Dev)</p>
+        <code class="bg-black/40 p-2 rounded block text-xs">
+          volumes:<br>
+          &nbsp;&nbsp;- ./src:/app/src
+        </code>
+      </div>
+      
+      <div class="bg-green-900/40 p-5 rounded-xl border border-green-500">
+        <h3 class="font-bold text-xl mb-2">2. Named Volume</h3>
+        <p class="text-sm mb-2">ให้ Docker จัดการพื้นที่ (เหมาะสำหรับ Database)</p>
+        <code class="bg-black/40 p-2 rounded block text-xs">
+          volumes:<br>
+          &nbsp;&nbsp;- pgdata:/var/lib/postgresql/data
+        </code>
+      </div>
+    </div>
+    
+    <p class="mt-4 text-xs text-yellow-300">*ถ้าใช้ Named Volume ต้องประกาศที่ top-level volumes key ด้วย</p>
+  </div>
+</div>
+
+<!-- Slide 14: Top-Level Volumes Declaration -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">การประกาศ Volumes (Top-Level)</h2>
+    <p class="text-lg mb-6">ถ้าใช้ Named Volume ต้องประกาศบอก Compose เสมอ</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm relative">
+      <div class="absolute top-4 right-4 bg-red-500 text-xs px-2 py-1 rounded">Important</div>
+      <p>services:</p>
+      <p>&nbsp;&nbsp;db:</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;image: postgres</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;volumes:</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-green-400">pgdata</span>:/var/lib/postgresql/data</p>
+      <br>
+      <p class="text-green-400">volumes:</p>
+      <p>&nbsp;&nbsp;<span class="text-green-400">pgdata:</span>  <span class="text-gray-500"># ต้องประกาศตรงนี้ด้วย!</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Managing Dependencies -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">ลำดับการทำงาน (Dependencies)</h2>
+    <p class="text-lg mb-6">
+      ใช้ <code>depends_on</code> เพื่อบอกว่า Service ไหนต้องเริ่มก่อน
+    </p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+      <p>services:</p>
+      <p>&nbsp;&nbsp;web:</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;build: .</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-400">depends_on:</span></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-green-400">db</span></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">redis</span></p>
+      <br>
+      <p>&nbsp;&nbsp;<span class="text-green-400">db:</span> ...</p>
+      <p>&nbsp;&nbsp;<span class="text-purple-400">redis:</span> ...</p>
+    </div>
+    
+    <div class="mt-6 bg-red-900/40 p-4 rounded-xl text-sm text-left">
+      <strong>⚠️ ข้อควรระวัง:</strong> <code>depends_on</code> แค่รอให้ Container "Start" แต่ไม่ได้รอให้ Database "Ready" (พร้อมรับ Connection) แอปพลิเคชันยังต้องมี Logic ในการ Retry การเชื่อมต่อเอง
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Port Mapping -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Port Mapping ใน Compose</h2>
+    <p class="text-lg mb-6">การเปิดประตูสู่โลกภายนอก (Host Machine)</p>
+    
+    <div class="bg-white/10 p-6 rounded-xl text-left font-mono">
+      <p class="mb-2">ports:</p>
+      <p class="ml-4">- "HOST_PORT:CONTAINER_PORT"</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 mt-6 text-left">
+      <div class="bg-black/40 p-4 rounded-lg">
+        <p class="text-green-300">ports:</p>
+        <p class="ml-4 text-green-300">- "8000:80"</p>
+        <p class="text-xs text-gray-400 mt-2">เข้าผ่าน localhost:8000 (Host) จะทะลุไป Port 80 (Container)</p>
+      </div>
+      <div class="bg-black/40 p-4 rounded-lg opacity-60">
+        <p class="text-gray-300">expose:</p>
+        <p class="ml-4 text-gray-300">- "5432"</p>
+        <p class="text-xs text-gray-400 mt-2">เปิด Port 5432 เฉพาะให้ Container อื่นใน Network เดียวกันคุยได้ (คนนอกเข้าไม่ได้)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Restart Policies -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Restart Policies</h2>
+    <p class="text-lg mb-6">จะทำอย่างไรถ้า Container พัง (Crash) หรือเครื่อง Reboot?</p>
+    
+    <div class="space-y-3 text-left font-mono text-sm md:text-base">
+      <div class="flex items-center bg-white/10 p-3 rounded">
+        <span class="w-32 font-bold text-red-300">no</span>
+        <span>ไม่ restart เลย (Default)</span>
+      </div>
+      <div class="flex items-center bg-white/10 p-3 rounded">
+        <span class="w-32 font-bold text-yellow-300">always</span>
+        <span>Restart เสมอ ถ้าหยุดทำงาน (แม้จะสั่ง stop ไปแล้ว พอเปิด docker ใหม่ก็จะรันเอง)</span>
+      </div>
+      <div class="flex items-center bg-white/10 p-3 rounded">
+        <span class="w-32 font-bold text-green-300">on-failure</span>
+        <span>Restart เฉพาะเมื่อโปรแกรม Error (Exit code != 0)</span>
+      </div>
+      <div class="flex items-center bg-white/10 p-3 rounded">
+        <span class="w-32 font-bold text-blue-300">unless-stopped</span>
+        <span>Restart เสมอ ยกเว้นเราสั่ง stop ไว้</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Full Example Review -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-2">
+    <h2 class="text-3xl font-bold mb-4">ตัวอย่างไฟล์ที่สมบูรณ์</h2>
+    <div class="bg-black/60 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-[500px]">
+<pre class="text-gray-300">
+services:
+  <span class="text-blue-400">django_app:</span>
+    build: .
+    command: uv run python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app_db
+      - DB_USER=user
+      - DB_PASS=pass
+
+  <span class="text-green-400">db:</span>
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=app_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+
+volumes:
+  postgres_data:
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Command - UP -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">The Magic Command: UP</h2>
+    <p class="text-xl text-white/90 mb-8">
+      สร้าง, เริ่ม, และเชื่อมต่อทุกอย่างในคำสั่งเดียว
+    </p>
+    
+    <div class="bg-black/50 p-8 rounded-2xl text-left font-mono text-2xl mb-6">
+      <p class="text-green-400">$ docker-compose up</p>
+    </div>
+
+    <div class="text-left space-y-4">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong>-d (Detached):</strong> รันแบบ Background (คืนค่า Terminal ให้เรา)
+        <code class="block mt-2 text-green-300">$ docker-compose up -d</code>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong>--build:</strong> บังคับให้ Build Image ใหม่ (ถ้ามีการแก้ Dockerfile)
+        <code class="block mt-2 text-green-300">$ docker-compose up -d --build</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Command - DOWN -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Command: DOWN</h2>
+    <p class="text-xl text-white/90 mb-8">
+      หยุดและล้างบาง (Cleanup)
+    </p>
+    
+    <div class="bg-black/50 p-8 rounded-2xl text-left font-mono text-2xl mb-6">
+      <p class="text-red-400">$ docker-compose down</p>
+    </div>
+
+    <ul class="list-disc list-inside text-left text-lg space-y-2 mb-6">
+      <li>หยุด Container</li>
+      <li>ลบ Container</li>
+      <li>ลบ Default Network ที่สร้างขึ้น</li>
+    </ul>
+
+    <div class="bg-red-900/30 p-4 rounded-xl border border-red-500 text-left">
+      <strong>⚠️ Option สำคัญ:</strong> <code>-v</code> (Volumes)
+      <p class="text-sm mt-1"><code>$ docker-compose down -v</code> จะลบ Named Volumes ด้วย (ข้อมูลหายหมด!)</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 21: Command - PS & LOGS -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Monitoring Commands</h2>
+    <div class="grid md:grid-cols-2 gap-8 text-left">
+      
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-4 text-blue-300">docker-compose ps</h3>
+        <p class="mb-4">ดูสถานะของ Container ในโปรเจกต์ปัจจุบันเท่านั้น</p>
+        <div class="bg-black/40 p-2 rounded text-xs font-mono">
+          Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;Ports<br>
+          myapp_web_1&nbsp;Up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0.0.0:80->80/tcp<br>
+          myapp_db_1&nbsp;&nbsp;Up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5432/tcp
+        </div>
+      </div>
+
+      <div class="bg-white/10 p-6 rounded-xl">
+        <h3 class="text-2xl font-bold mb-4 text-yellow-300">docker-compose logs</h3>
+        <p class="mb-4">ดู Output จากทุก Container รวมกัน</p>
+        <ul class="list-disc list-inside text-sm">
+          <li><code>-f</code> : Follow (ดูแบบ Real-time)</li>
+          <li><code>web</code> : ดูเฉพาะ service ชื่อ web</li>
+        </ul>
+        <code class="block mt-2 bg-black/40 p-2 rounded text-xs text-green-300">$ docker-compose logs -f web</code>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Slide 22: Command - EXEC & RUN -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Executing Commands</h2>
+    <p class="text-lg text-white/90 mb-6">การเข้าไปสั่งงานภายใน Container</p>
+    
+    <div class="space-y-6 text-left">
+      <div class="bg-white/10 p-6 rounded-xl border-l-4 border-green-400">
+        <h3 class="text-2xl font-bold mb-2">docker-compose exec</h3>
+        <p class="mb-2">รันคำสั่งใน Container ที่ <strong>กำลังทำงานอยู่</strong> (Running)</p>
+        <div class="bg-black/40 p-3 rounded font-mono text-sm">
+          <p class="text-gray-400"># เข้าไปใน shell ของ db</p>
+          <p class="text-green-400">$ docker-compose exec db psql -U user</p>
+        </div>
+      </div>
+
+      <div class="bg-white/10 p-6 rounded-xl border-l-4 border-blue-400">
+        <h3 class="text-2xl font-bold mb-2">docker-compose run</h3>
+        <p class="mb-2">สร้าง Container ตัวใหม่ขึ้นมาเพื่อรันคำสั่ง (One-off task)</p>
+        <div class="bg-black/40 p-3 rounded font-mono text-sm">
+          <p class="text-gray-400"># รัน migration แล้วจบไป</p>
+          <p class="text-green-400">$ docker-compose run web python manage.py migrate</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 23: Start, Stop, Restart -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Lifecycle Control</h2>
+    <div class="grid grid-cols-3 gap-4 text-left font-mono text-lg">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <code class="text-yellow-300 block mb-2">stop</code>
+        <p class="text-sm font-sans">หยุด Container แต่ไม่ลบ (Data ใน Mem หาย, FS ยังอยู่)</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <code class="text-green-300 block mb-2">start</code>
+        <p class="text-sm font-sans">เริ่ม Container ที่หยุดไปแล้วขึ้นมาใหม่</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <code class="text-blue-300 block mb-2">restart</code>
+        <p class="text-sm font-sans">Stop แล้ว Start ใหม่ (ใช้เมื่อแก้ Config หรือ App crash)</p>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-black/40 p-6 rounded-xl text-left">
+      <p class="text-xl mb-2">💡 สรุป Lifecycle:</p>
+      <p class="text-gray-300">
+        Create -> Start -> [Running] -> Stop -> [Stopped] -> rm -> [Deleted]
+      </p>
+      <p class="mt-4 text-sm text-yellow-300">
+        <code>docker-compose up</code> = Create + Start (ถ้ายังไม่มี) หรือ Restart (ถ้า Config เปลี่ยน)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 24: Scaling Services -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Scaling Services</h2>
+    <p class="text-xl text-white/90 mb-8">
+      เพิ่มจำนวน Container ของ Service ได้ง่ายๆ (แต่ต้องระวังเรื่อง Port Choc!)
+    </p>
+    
+    <div class="bg-black/50 p-6 rounded-2xl text-left font-mono text-xl mb-6">
+      <p class="text-green-400">$ docker-compose up -d --scale web=3</p>
+    </div>
+
+    <div class="bg-red-900/30 p-6 rounded-xl text-left border border-red-500">
+      <h3 class="font-bold text-red-300 mb-2">⚠️ ข้อควรระวังเรื่อง Port</h3>
+      <p>
+        ถ้าคุณ map port แบบ <code>"8000:80"</code> คุณจะ Scale ไม่ได้ เพราะ Port 8000 บน Host มีได้แค่หนึ่งเดียว
+      </p>
+      <p class="mt-2 text-sm text-white">
+        <strong>ทางแก้:</strong> ใช้ Load Balancer (เช่น Nginx) อยู่หน้าสุด หรือให้ Docker สุ่ม Port (ระบุแค่ target port)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 25: Prepare for Lab -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Lab: Docker Compose in Action</h2>
+    <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border-2 border-white/20">
+      <h3 class="text-3xl font-bold mb-6">ภารกิจวันนี้</h3>
+      <ol class="text-left text-lg space-y-4 list-decimal list-inside mx-auto max-w-2xl">
+        <li>แปลงคำสั่ง <code>docker run</code> (จาก Lab ที่แล้ว) มาเป็น <code>docker-compose.yml</code></li>
+        <li>ประกอบร่าง Django + PostgreSQL เข้าด้วยกัน</li>
+        <li>ทดสอบการ Persistence ข้อมูล (ลบ Container ข้อมูลต้องอยู่)</li>
+        <li>ใช้ <code>docker-compose.override.yml</code> สำหรับ Dev Environment (Optional)</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 26: Project Structure -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">โครงสร้างโปรเจกต์ (Project Structure)</h2>
+    <p class="mb-6">จัดระเบียบไฟล์ให้ถูกต้องก่อนเริ่มงาน</p>
+    
+    <div class="bg-black/50 p-8 rounded-xl font-mono text-left inline-block">
+      <p class="text-blue-300">my-project/</p>
+      <p>├── <span class="text-yellow-300">docker-compose.yml</span></p>
+      <p>├── .env &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500"># เก็บ Secrets</span></p>
+      <p>├── .gitignore</p>
+      <p>├── <span class="text-green-300">backend/</span></p>
+      <p>│&nbsp;&nbsp;&nbsp;├── Dockerfile</p>
+      <p>│&nbsp;&nbsp;&nbsp;├── requirements.txt</p>
+      <p>│&nbsp;&nbsp;&nbsp;└── src/</p>
+      <p>└── <span class="text-green-300">frontend/</span></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;├── Dockerfile</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;└── package.json</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 27: Benefits Summary -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">สรุปประโยชน์ของ Docker Compose</h2>
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="bg-white/10 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2 text-green-300">✅ Single Command</h3>
+        <p>สร้าง, เริ่ม, หยุด ทุกอย่างด้วยคำสั่งเดียว</p>
+      </div>
+      <div class="bg-white/10 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2 text-blue-300">✅ Isolated Environment</h3>
+        <p>สร้างสภาพแวดล้อมที่แยกขาดจากกันได้ง่าย (Project Name)</p>
+      </div>
+      <div class="bg-white/10 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2 text-yellow-300">✅ Preservation</h3>
+        <p>เก็บรักษา Volume data เมื่อ Container ถูกสร้างใหม่</p>
+      </div>
+      <div class="bg-white/10 p-5 rounded-xl">
+        <h3 class="font-bold text-xl mb-2 text-purple-300">✅ Portable</h3>
+        <p>แค่มีไฟล์ <code>docker-compose.yml</code> ก็รันที่ไหนก็ได้</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 28: Compose vs Orchestration -->
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Compose vs Orchestrators (K8s/Swarm)</h2>
+    <p class="text-lg text-white/90 mb-8">
+      Compose ดีมาก แต่ไม่ใช่คำตอบของทุกสิ่ง
+    </p>
+    
+    <div class="grid md:grid-cols-2 gap-8 text-left">
+      <div class="bg-green-900/30 p-6 rounded-xl border-t-4 border-green-500">
+        <h3 class="text-2xl font-bold mb-2">Docker Compose</h3>
+        <ul class="list-disc list-inside space-y-2 text-sm">
+          <li>✅ Single Host (เครื่องเดียว)</li>
+          <li>✅ Local Development</li>
+          <li>✅ Testing / CI Pipelines</li>
+          <li>❌ ไม่รองรับ Auto-scaling ข้ามเครื่อง</li>
+          <li>❌ ไม่มี Self-healing ขั้นสูง</li>
+        </ul>
+      </div>
+      
+      <div class="bg-blue-900/30 p-6 rounded-xl border-t-4 border-blue-500">
+        <h3 class="text-2xl font-bold mb-2">Kubernetes / Swarm</h3>
+        <ul class="list-disc list-inside space-y-2 text-sm">
+          <li>✅ Multi-Host (Cluster)</li>
+          <li>✅ Production Grade</li>
+          <li>✅ High Availability / Scaling</li>
+          <li>✅ Zero-downtime Deployment</li>
+          <li>⚠️ ความซับซ้อนสูงกว่ามาก</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 29: References -->
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">เอกสารอ้างอิงและศึกษาต่อ</h2>
+    <div class="space-y-4 text-left">
+      <a href="https://docs.docker.com/compose/" target="_blank" class="block bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
+        <h3 class="font-bold text-blue-300">📄 Docker Compose Documentation</h3>
+        <p class="text-sm text-gray-300">คู่มือฉบับสมบูรณ์จาก Docker Official</p>
+      </a>
+      <a href="https://github.com/docker/awesome-compose" target="_blank" class="block bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
+        <h3 class="font-bold text-green-300">🌟 Awesome Compose (GitHub)</h3>
+        <p class="text-sm text-gray-300">ตัวอย่าง Compose files สำหรับ Tech Stack ต่างๆ (React, Django, Go, etc.)</p>
+      </a>
+      <div class="bg-white/5 p-4 rounded-xl">
+        <h3 class="font-bold text-yellow-300">📚 Course Materials</h3>
+        <p class="text-sm text-gray-300">DevOps — wichit2s documentation: Week 5</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 30: Final Q&A -->
+<div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-8xl mb-6">💬</div>
+    <h2 class="text-5xl font-bold mb-6">Q & A</h2>
+    <p class="text-xl text-white/90 mb-8">
+      มีคำถามสงสัยตรงไหนก่อนเริ่ม Lab ไหมครับ?
+    </p>
+    <div class="bg-white/10 px-8 py-4 rounded-full inline-block animate-bounce border border-white/30 cursor-pointer">
+      Let's Start the Lab! 🚀
+    </div>
+  </div>
+</div>
+
+<!-- Slide 43: Advanced Lab Overview -->
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Lab Project: Resume Hub (Full Stack)</h2>
+    <p class="text-xl text-white/90 mb-8">
+      เปลี่ยนจาก Monolith เป็น Modern Architecture แยก Frontend และ Backend ออกจากกัน
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+      <div class="bg-blue-600/30 p-4 rounded-xl border border-blue-400">
+        <div class="text-3xl mb-2">⚛️</div>
+        <h3 class="font-bold">Frontend</h3>
+        <p class="text-xs">React + Vite + Tailwind</p>
+      </div>
+      <div class="bg-green-600/30 p-4 rounded-xl border border-green-400">
+        <div class="text-3xl mb-2">🐍</div>
+        <h3 class="font-bold">Backend</h3>
+        <p class="text-xs">Django REST + uv</p>
+      </div>
+      <div class="bg-red-600/30 p-4 rounded-xl border border-red-400">
+        <div class="text-3xl mb-2">🚀</div>
+        <h3 class="font-bold">Cache & DB</h3>
+        <p class="text-xs">Redis + PostgreSQL</p>
+      </div>
+      <div class="bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+        <div class="text-3xl mb-2">🌐</div>
+        <h3 class="font-bold">Gateway</h3>
+        <p class="text-xs">Caddy Web Server</p>
+      </div>
+    </div>
+    <div class="mt-8 text-sm text-yellow-300 bg-white/10 p-4 rounded-lg inline-block">
+      🎯 <strong>Goal:</strong> สร้างระบบ Resume Platform ตาม SRS โดยใช้ Caddy เป็น Load Balancer และ Reverse Proxy
+    </div>
+  </div>
+</div>
+
+<!-- Slide 44: Architecture Diagram -->
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">System Architecture</h2>
+    <div class="bg-white/10 p-8 rounded-2xl relative h-96 w-full flex justify-center items-center">
+      <!-- Client -->
+      <div class="absolute left-0 top-1/2 transform -translate-y-1/2 text-center">
+        <div class="text-4xl">💻</div>
+        <p class="text-sm">User Browser</p>
+      </div>
+      
+      <!-- Caddy Gateway -->
+      <div class="absolute left-1/4 top-1/2 transform -translate-y-1/2 bg-purple-600 p-6 rounded-xl border-2 border-white/50 z-10">
+        <div class="text-3xl font-bold">Caddy</div>
+        <p class="text-xs">Reverse Proxy / LB</p>
+        <p class="text-xs mt-1 text-yellow-300">Port 80</p>
+      </div>
+
+      <!-- Arrow -->
+      <div class="absolute left-[10%] top-1/2 w-[15%] h-1 bg-white"></div>
+
+      <!-- Backend Services -->
+      <div class="absolute right-0 top-0 h-full w-1/2 border-l-2 border-dashed border-white/30 pl-8 flex flex-col justify-center gap-4">
+        
+        <!-- Frontend Static -->
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-1 bg-purple-400"></div>
+          <div class="bg-blue-500 p-3 rounded-lg w-48 text-left">
+            <strong>Static Files</strong><br><span class="text-xs">React Build (Dist)</span>
+          </div>
+        </div>
+
+        <!-- Backend API -->
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-1 bg-purple-400"></div>
+          <div class="bg-green-600 p-3 rounded-lg w-48 text-left relative">
+            <strong>Backend API</strong> (x3)<br><span class="text-xs">Django (Scale)</span>
+            <div class="absolute -right-4 -top-2 text-xl">⚙️</div>
+          </div>
+        </div>
+
+        <!-- Database & Cache -->
+        <div class="flex gap-2 ml-12 mt-2">
+          <div class="bg-blue-800 p-2 rounded text-xs border border-blue-400">🐘 Postgres</div>
+          <div class="bg-red-800 p-2 rounded text-xs border border-red-400">🔥 Redis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 45: Step 1 - Backend Setup -->
+<div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 1: Backend Setup (Django API)</h2>
+    <p class="mb-4 text-left">ใช้ Code เดิมจาก <code>djrepo</code> แต่ปรับให้เป็น API Mode</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4">
+      <div>
+        <p class="text-gray-400"># 1. ย้ายไฟล์ทั้งหมดไปไว้ที่ backend</p>
+        <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+          <p class="text-green-400">$ mkdir backend</p>
+          <p class="text-green-400">$ mv * backend</p>
+        </div>
+      
+        <p class="text-gray-400"># 2. ติดตั้ง Library เพิ่มเติมใน requirements.txt</p>
+        <code class="text-green-300 block bg-black/30 p-2 rounded">
+          djangorestframework<br>
+          django-cors-headers<br>
+          django-redis<br>
+          psycopg2-binary<br>
+          gunicorn
+        </code>
+      </div>
+      <div>
+        <p class="text-gray-400"># 2. แก้ไข djrepo/settings.py</p>
+        <code class="text-blue-300 block bg-black/30 p-2 rounded overflow-auto">
+          INSTALLED_APPS = [..., 'rest_framework', 'corsheaders', 'main']<br><br>
+          MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware', ...] + MIDDLEWARE<br><br>
+          CORS_ALLOW_ALL_ORIGINS = True  # สำหรับ Lab เท่านั้น<br><br>
+          CACHES = {<br>
+          &nbsp;&nbsp;'default': {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;'BACKEND': 'django_redis.cache.RedisCache',<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;'LOCATION': 'redis://redis:6379/1',<br>
+          &nbsp;&nbsp;}<br>
+          }
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 47: Step 2 - API Serializers & Views -->
+<div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 2: สร้าง API Views (REST Framework)</h2>
+    <div class="grid md:grid-cols-2 gap-4 text-left font-mono text-xs">
+      <div class="bg-black/50 p-4 rounded-xl">
+        <p class="text-gray-400 mb-2"># main/serializers.py</p>
+        <pre class="text-blue-300">
+from rest_framework import serializers
+from .models import *
+
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = ['name', 'level']
+
+class ResumeSerializer(serializers.ModelSerializer):
+    skills = SkillSerializer(many=True, read_only=True)
+    avg_rating = serializers.ReadOnlyField() 
+    
+    class Meta:
+        model = Resume
+        fields = '__all__'
+        </pre>
+      </div>
+      <div class="bg-black/50 p-4 rounded-xl">
+        <p class="text-gray-400 mb-2"># main/views.py</p>
+        <pre class="text-green-300">
+from rest_framework import viewsets
+from .models import *
+from .serializers import *
+
+class ResumeViewSet(viewsets.ModelViewSet):
+    queryset = Resume.objects.all()
+    serializer_class = ResumeSerializer
+    
+    # Example Redis Caching logic could go here
+    # def list(self, request):
+    #    ... check cache ...
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 48: Step 4 - Backend Dockerfile (Optimized) -->
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 4: Backend Dockerfile (with uv)</h2>
+    <p class="mb-4 text-left text-sm">เราจะใช้ <code>uv</code> เพื่อความเร็วในการ Build และ <code>gunicorn</code> สำหรับ Production</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-xs border-l-4 border-green-400">
+      <p><span class="text-purple-400">FROM</span> python:3.13-slim</p>
+      <p class="mt-2"><span class="text-purple-400">WORKDIR</span> /app</p>
+      <p><span class="text-purple-400">COPY</span> requirements.txt .</p>
+      <p><span class="text-purple-400">RUN</span> pip install --no-cache-dir -r requirements.txt</p>
+      <p class="mt-2 text-gray-500"># Copy application code</p>
+      <p><span class="text-purple-400">COPY</span> . .</p>
+      <p class="mt-2 text-gray-500"># Collect static files (optional for API, but good practice)</p>
+      <p><span class="text-purple-400">RUN</span> python manage.py collectstatic --noinput</p>
+      <p class="mt-2 text-gray-500"># Run with Gunicorn</p>
+      <p><span class="text-purple-400">CMD</span> ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 49: Step 5 - Frontend Setup (Vite + React) -->
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 5: Frontend Initialization</h2>
+    <p class="mb-4 text-lg">สร้างโปรเจกต์ React ใหม่แยกจากโฟลเดอร์ Backend</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg space-y-3">
+      <p class="text-gray-400"># ออกจากโฟลเดอร์ backend ไปที่ root ของ project</p>
+      <p class="text-green-400">$ cd ..</p>
+      <p class="text-gray-400"># สร้างโปรเจกต์ Vite ชื่อ 'frontend'</p>
+      <p class="text-green-400">$ npm create vite@latest frontend -- --template react</p>
+      <p class="text-green-400">$ cd frontend</p>
+      <p class="text-green-400"># ติดตั้ง tailwindcss <a href="https://tailwindcss.com/docs/installation/using-vite">https://tailwindcss.com/docs/installation/using-vite</a></p>
+      <p class="text-green-400">$ npm run dev</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 50: Step 6 - Tailwind Configuration -->
+<div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 6: ตั้งค่า TailwindCSS</h2>
+    
+    <div class="grid md:grid-cols-2 gap-6 text-left font-mono text-xs">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong>1. แก้ไข vite.config.js</strong>
+        <pre class="mt-2 text-blue-300">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+})
+        </pre>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <strong>2. แก้ไข src/index.css</strong>
+        <pre class="mt-2 text-blue-300">
+@import "tailwindcss";
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 51: Step 7 - Frontend Components (Resume List) -->
+<div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-4">Step 7: สร้าง Component แสดง Resume</h2>
+    <p class="mb-2 text-sm">ไฟล์: <code>src/App.jsx</code> (เรียกข้อมูลจาก Backend)</p>
+    
+    <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-96">
+      <pre class="text-pink-300">
+import { useEffect, useState } from 'react'
+
+function App() {
+  const [resumes, setResumes] = useState([])
+
+  useEffect(() => {
+    // Fetch ผ่าน /api ซึ่ง Caddy จะ Route ไปหา Backend ให้
+    fetch('/api/resumes/') 
+      .then(res => res.json())
+      .then(data => setResumes(data))
+  }, [])
+
+  return (
+    &lt;div className="container mx-auto p-4"&gt;
+      &lt;h1 className="text-3xl font-bold mb-6 text-center text-blue-600"&gt;Resume Hub&lt;/h1&gt;
+      &lt;div className="grid grid-cols-1 md:grid-cols-3 gap-4"&gt;
+        {resumes.map(resume => (
+          &lt;div key={resume.id} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition"&gt;
+            &lt;h2 className="text-xl font-bold"&gt;{resume.title}&lt;/h2&gt;
+            &lt;p className="text-gray-600"&gt;{resume.summary}&lt;/p&gt;
+            &lt;div className="mt-4 flex flex-wrap gap-2"&gt;
+               {resume.skills.map(skill => (
+                 &lt;span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"&gt;{skill.name}&lt;/span&gt;
+               ))}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+export default App
+      </pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 52: Step 8 - Frontend Dockerfile (Multi-stage) -->
+<div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 8: Frontend Dockerfile (Build Only)</h2>
+    <p class="mb-4 text-left">เราจะใช้ Docker เพื่อ <strong>Build</strong> ไฟล์ static (html, css, js) แล้วส่งให้ Caddy เสิร์ฟ</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-blue-400">
+      <p class="text-gray-500"># frontend/Dockerfile</p>
+      <p><span class="text-purple-400">FROM</span> node:22-alpine AS builder</p>
+      <p><span class="text-purple-400">WORKDIR</span> /app</p>
+      <p><span class="text-purple-400">COPY</span> package.json package-lock.json ./</p>
+      <p><span class="text-purple-400">RUN</span> npm ci</p>
+      <p><span class="text-purple-400">COPY</span> . .</p>
+      <p><span class="text-purple-400">RUN</span> npm run build</p>
+      <p class="text-gray-500 mt-2"># ใน Production จริง เราอาจใช้ Container นี้แค่ Copy file ออกมา</p>
+      <p class="text-gray-500"># หรือใช้ Multi-stage เพื่อรัน Nginx/Caddy ในตัวก็ได้</p>
+      <p class="text-gray-500"># แต่ใน Lab นี้เราจะใช้ Caddy หลักตัวเดียวในการ mount volume</p>
+      <p><span class="text-purple-400">CMD</span> ["echo", "Build Complete"]</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 53: Step 9 - Caddy Configuration -->
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 9: Caddyfile Setup</h2>
+    <p class="mb-6">Caddy จะทำหน้าที่เป็น <strong>Web Server</strong> (เสิร์ฟ Frontend) และ <strong>Reverse Proxy</strong> (ส่ง Request ไป Backend)</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg border-2 border-purple-500">
+      <p class="text-gray-500"># Caddyfile (สร้างไว้ที่ root ของโปรเจกต์)</p>
+      <br>
+      <p class="text-yellow-300">:80 {</p>
+      <p class="ml-4 text-gray-400"># Serve Static Files (Frontend)</p>
+      <p class="ml-4 text-green-300">root * /srv</p>
+      <p class="ml-4 text-green-300">file_server</p>
+      <p class="ml-4 text-green-300">try_files {path} /index.html</p>
+      <br>
+      <p class="ml-4 text-gray-400"># Proxy API requests to Backend</p>
+      <p class="ml-4 text-blue-300">handle /api/* {</p>
+      <p class="ml-8 text-blue-300">reverse_proxy backend:8000</p>
+      <p class="ml-4 text-blue-300">}</p>
+      <p class="text-yellow-300">}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 54: Step 10 - Docker Compose Assembly -->
+<div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-4">Step 10: Docker Compose (The Grand Assembly)</h2>
+    <div class="bg-black/60 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-[500px]">
+      <pre class="text-gray-300">
+services:
+  <span class="text-green-400">backend:</span>
+    build: ./backend
+    command: gunicorn mysite.wsgi:application --bind 0.0.0.0:8000
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_HOST=db
+      - DB_PASSWORD=secret
+    deploy:
+      replicas: 3  <span class="text-gray-500"># Scaling Backend to 3 instances!</span>
+
+  <span class="text-purple-400">frontend-build:</span>
+    build: ./frontend
+    volumes:
+      - frontend_dist:/app/dist
+    command: sh -c "npm run build && cp -r dist/* /shared/"  <span class="text-gray-500"># Copy build to volume</span>
+    volumes:
+      - static_volume:/shared
+
+  <span class="text-yellow-400">caddy:</span>
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - static_volume:/srv  <span class="text-gray-500"># Serve frontend from volume</span>
+    depends_on:
+      - backend
+      - frontend-build
+
+  <span class="text-blue-400">db:</span>
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  <span class="text-red-400">redis:</span>
+    image: redis:alpine
+
+volumes:
+  pgdata:
+  static_volume:
+      </pre>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 55: Step 11 - Running the Stack -->
+<div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">Step 11: Execute & Scale</h2>
+    <p class="mb-6 text-xl">สั่งรันระบบทั้งหมดด้วยคำสั่งเดียว</p>
+    
+    <div class="bg-black/50 p-6 rounded-2xl text-left font-mono text-xl mb-6">
+      <p class="text-green-400">$ docker-compose up -d --build</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <h3 class="font-bold text-yellow-300 mb-2">สิ่งที่เกิดขึ้น:</h3>
+        <ol class="list-decimal list-inside space-y-1">
+          <li>Postgres & Redis เริ่มทำงาน</li>
+          <li>Backend 3 ตัวเริ่มทำงานพร้อมกัน</li>
+          <li>Frontend Build สร้างไฟล์ Static ไปใส่ Volume</li>
+          <li>Caddy เริ่มทำงานและ Mount Volume </li>
+        </ol>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <h3 class="font-bold text-blue-300 mb-2">การตรวจสอบ:</h3>
+        <code class="block mb-1">$ docker-compose ps</code>
+        <p>คุณจะเห็น backend-1, backend-2, backend-3 รันอยู่</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 56: Step 12 - Testing Scalability -->
+<div :class="{ 'active': currentSlide === 44 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 12: Testing Load Balancing</h2>
+    <p class="mb-4">พิสูจน์ว่า Caddy กระจายงานไปยัง Backend ทั้ง 3 ตัว</p>
+    
+    <div class="space-y-4 text-left">
+      <div class="bg-black/50 p-4 rounded-xl font-mono text-sm">
+        <p class="text-gray-400"># ดู Log ของ Backend แบบ Real-time</p>
+        <p class="text-green-400">$ docker-compose logs -f backend</p>
+      </div>
+      
+      <div class="bg-white/10 p-4 rounded-xl">
+        <p>เปิด Browser เข้าเว็บ <code>http://localhost</code> แล้ว Refresh หน้าเว็บหลายๆ ครั้ง</p>
+        <p class="mt-2 text-yellow-300">สังเกตที่ Terminal: คุณจะเห็น Log สลับไปมาระหว่าง:</p>
+        <ul class="list-disc list-inside ml-4 text-gray-300 font-mono text-xs mt-1">
+          <li>backend_1 | GET /api/resumes/ 200 OK</li>
+          <li>backend_2 | GET /api/resumes/ 200 OK</li>
+          <li>backend_3 | GET /api/resumes/ 200 OK</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 57: Step 13 - Cache Verification -->
+<div :class="{ 'active': currentSlide === 45 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 13: ทดสอบ Redis Cache</h2>
+    <p class="mb-6">ตรวจสอบว่าข้อมูลถูกเก็บใน Redis จริงหรือไม่</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+      <p class="text-gray-400"># 1. เข้าไปใน Redis Container</p>
+      <p class="text-green-400">$ docker-compose exec redis redis-cli</p>
+      
+      <p class="text-gray-400 mt-4"># 2. ดู Keys ทั้งหมด</p>
+      <p class="text-green-400">127.0.0.1:6379> KEYS *</p>
+      <p class="text-white">1) ":1:views.decorators.cache.cache_header..."</p>
+      <p class="text-white">2) ":1:views.decorators.cache.cache_page..."</p>
+      
+      <p class="text-gray-400 mt-4"># 3. ถ้าเจอ Keys แสดงว่า Django Caching ทำงานถูกต้อง</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 58: Data Seeding (Bonus) -->
+<div :class="{ 'active': currentSlide === 46 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Bonus: การเติมข้อมูล (Data Seeding)</h2>
+    <p class="mb-4 text-lg">เนื่องจาก Database เริ่มต้นว่างเปล่า หน้าเว็บจะโล่ง</p>
+    
+    <div class="bg-white/10 p-6 rounded-xl text-left">
+      <h3 class="font-bold text-yellow-300 mb-2">วิธีเพิ่มข้อมูลผ่าน Django Admin:</h3>
+      <ol class="list-decimal list-inside space-y-2 text-sm">
+        <li>สร้าง Superuser: <code class="bg-black/30 px-2 rounded">$ docker-compose exec backend python manage.py createsuperuser</code></li>
+        <li>สร้าง Resumes: <code class="bg-black/30 px-2 rounded">$ docker-compose exec backend python manage.py generate_resumes --number 100</code></li>
+        <li>เข้า <code>http://localhost/admin</code> (Caddy จะ Route ไป Backend ให้ถ้า Config ถูกต้อง หรืออาจต้องเพิ่ม /admin ใน Caddyfile)</li>
+        <li>เพิ่มข้อมูล Resume, Skills ผ่านหน้า Admin</li>
+        <li>กลับมาหน้าแรก <code>http://localhost</code> เพื่อดูผลลัพธ์</li>
+      </ol>
+    </div>
+    <p class="mt-4 text-xs text-red-300">*หมายเหตุ: ใน Caddyfile ที่ให้ไป เรา map แค่ /api/* ถ้าจะเข้า admin ต้องเพิ่ม `handle /admin/* { reverse_proxy backend:8000 }` ด้วย</p>
+  </div>
+</div>
+
+<!-- Slide 59: Troubleshooting Guide -->
+<div :class="{ 'active': currentSlide === 47 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Troubleshooting Lab</h2>
+    <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500/30">
+        <strong class="text-red-300 block mb-2">502 Bad Gateway (Caddy)</strong>
+        <p>สาเหตุ: Caddy เริ่มก่อน Backend หรือ Backend พัง</p>
+        <p class="text-gray-300 mt-1">แก้: รอสักพัก หรือเช็ค logs backend (`docker-compose logs backend`)</p>
+      </div>
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500/30">
+        <strong class="text-red-300 block mb-2">Frontend จอขาว / ไม่โหลด</strong>
+        <p>สาเหตุ: Vite Build ไม่ผ่าน หรือ Volume mount ไม่ตรง</p>
+        <p class="text-gray-300 mt-1">แก้: เช็ค logs frontend-build และดูว่าใน container caddy มีไฟล์ใน /srv ไหม</p>
+      </div>
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500/30">
+        <strong class="text-red-300 block mb-2">CORS Error</strong>
+        <p>สาเหตุ: Django ปฏิเสธ Request จาก Frontend</p>
+        <p class="text-gray-300 mt-1">แก้: เช็ค `CORS_ALLOW_ALL_ORIGINS = True` ใน settings.py</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 60: Submission -->
+<div :class="{ 'active': currentSlide === 48 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-8">การส่งงาน (Project Submission)</h2>
+    <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border-2 border-white/20">
+      <h3 class="text-3xl font-bold mb-6 text-yellow-300">Resume Hub Full-Stack</h3>
+      <ul class="text-left text-lg space-y-4 list-disc list-inside mx-auto max-w-xl">
+        <li><strong>GitHub Repository:</strong> อัปโหลดโค้ดทั้งหมด (backend, frontend, docker-compose.yml, Caddyfile)</li>
+        <li><strong>Screenshots:</strong>
+          <ul class="list-disc list-inside ml-6 text-sm text-gray-300 mt-2">
+            <li>หน้าเว็บที่แสดงข้อมูล Resume จาก Database</li>
+            <li>หน้าจอ `docker-compose ps` แสดง Services ทั้งหมด</li>
+            <li>หน้าจอ `docker-compose logs backend` แสดงการกระจาย Load</li>
+          </ul>
+        </li>
+        <li><strong>Demo Video (Optional):</strong> คลิปสั้นๆ แสดงการทำงาน</li>
+      </ul>
+    </div>
+    <p class="mt-8 text-white/60">
+      Mission Complete! 🚀 คุณได้สร้างระบบ Microservices-ready Architecture แล้ว
+    </p>
+  </div>
+</div>
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
