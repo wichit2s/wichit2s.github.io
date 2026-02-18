@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk06.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 6: บทนำสู่ Continuous Integration (CI)</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          เปลี่ยนการรวมโค้ดที่ยุ่งยากให้เป็นเรื่องอัตโนมัติ เพื่อคุณภาพซอฟต์แวร์ที่ดียิ่งขึ้น
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">หัวข้อ</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Theory:</strong> Continuous Integration (CI) คืออะไร? ประโยชน์และแนวปฏิบัติ </li>
+              <li><strong>Process:</strong> ขั้นตอนหลักของ CI (Build, Test, Static Analysis) </li>
+              <li><strong>Tools:</strong> รู้จักเครื่องมือ CI ยอดนิยม (Jenkins, GitLab CI/CD, GitHub Actions) </li>
+              <li><strong>Mechanism:</strong> การใช้ Git Hooks เพื่อเริ่มกระบวนการ CI </li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 6</div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center h-full w-full mx-auto p-6">
+          <img src="images/DevOps-process.png" alt="devops loop" />
+        </div>
+      </div>
+
+      <!-- Slide 2: The Old Way (Integration Hell) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ปัญหาก่อนมี CI: "Integration Hell"</h2>
+          <p class="text-lg text-white/90 mb-8">
+          เมื่อ Developer หลายคนทำงานแยกกันเป็นเวลานาน แล้วมา "รวมร่าง" กันทีเดียวตอนจบ 
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500/30">
+              <h3 class="text-2xl font-bold mb-2 text-red-300">💀 อาการที่พบ</h3>
+              <ul class="list-disc list-inside space-y-2">
+                <li>Merge Conflicts มหาศาล แก้กันเป็นวัน</li>
+                <li>Bug โผล่ตอน Deploy (Works on my machine) </li>
+                <li>ไม่รู้ว่าโค้ดใครทำพัง</li>
+                <li>เสียเวลารอ Feedback นานเกินไป </li>
+              </ul>
+            </div>
+            <div class="flex justify-center items-center">
+              <div class="text-9xl animate-pulse">🔥</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What is Continuous Integration? -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Continuous Integration (CI) คืออะไร?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="text-xl mb-6 leading-relaxed">
+            แนวปฏิบัติในการพัฒนาซอฟต์แวร์ที่นักพัฒนาจะทำการ <strong>รวมโค้ด (Merge)</strong> เข้าสู่ Shared Repository <strong>บ่อยๆ</strong> (อย่างน้อยวันละครั้ง) 
+            </p>
+            <div class="bg-blue-900/40 p-6 rounded-xl border-l-4 border-blue-400">
+              <h3 class="text-xl font-bold mb-2">หัวใจสำคัญของ CI :</h3>
+              <ul class="list-disc list-inside space-y-2 text-lg">
+                <li><strong>Automated Build:</strong> ทุกการ Merge ต้องถูก Build โดยอัตโนมัติ</li>
+                <li><strong>Automated Test:</strong> ต้องผ่านการทดสอบ (Unit/Integration Test) ทันที</li>
+                <li><strong>Fast Feedback:</strong> รู้ผลทันทีว่าผ่านหรือพัง ผ่าน Dashboard หรือ Notification </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: The CI Workflow Diagram -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">วงจรการทำงานของ CI (Workflow) </h2>
+
+          <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-black">
+            <!-- Step 1 -->
+            <div class="bg-white p-4 rounded-xl w-48 h-48 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition">
+              <div class="text-4xl mb-2">👨‍💻</div>
+              <h3 class="font-bold">1. Code</h3>
+              <p class="text-xs text-gray-600">Dev commits code to Git </p>
+            </div>
+
+            <div class="text-4xl text-white">➡</div>
+
+            <!-- Step 2 -->
+            <div class="bg-blue-100 p-4 rounded-xl w-48 h-48 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition">
+              <div class="text-4xl mb-2">⚙️</div>
+              <h3 class="font-bold">2. Build</h3>
+              <p class="text-xs text-gray-600">CI Server compiles code </p>
+            </div>
+
+            <div class="text-4xl text-white">➡</div>
+
+            <!-- Step 3 -->
+            <div class="bg-green-100 p-4 rounded-xl w-48 h-48 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition">
+              <div class="text-4xl mb-2">🧪</div>
+              <h3 class="font-bold">3. Test</h3>
+              <p class="text-xs text-gray-600">Run automated tests & Static Analysis </p>
+            </div>
+
+            <div class="text-4xl text-white">➡</div>
+
+            <!-- Step 4 -->
+            <div class="bg-yellow-100 p-4 rounded-xl w-48 h-48 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition">
+              <div class="text-4xl mb-2">📊</div>
+              <h3 class="font-bold">4. Report</h3>
+              <p class="text-xs text-gray-600">Pass/Fail Notification </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Benefits of CI -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ประโยชน์ของการทำ CI </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl flex items-start">
+              <span class="text-3xl mr-4">🐛</span>
+              <div>
+                <h3 class="font-bold text-lg text-green-300">Detect Bugs Early</h3>
+                <p class="text-sm">เจอ Bug ทันทีที่ commit ไม่ต้องรอไปเจอตอน production </p>
+              </div>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl flex items-start">
+              <span class="text-3xl mr-4">📉</span>
+              <div>
+                <h3 class="font-bold text-lg text-blue-300">Reduce Integration Risk</h3>
+                <p class="text-sm">การรวมโค้ดทีละนิดบ่อยๆ ง่ายกว่าการรวมก้อนใหญ่ทีเดียว </p>
+              </div>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl flex items-start">
+              <span class="text-3xl mr-4">🚀</span>
+              <div>
+                <h3 class="font-bold text-lg text-yellow-300">Faster Delivery</h3>
+                <p class="text-sm">เมื่อกระบวนการทดสอบเป็นอัตโนมัติ เราก็ปล่อยของได้เร็วขึ้น </p>
+              </div>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl flex items-start">
+              <span class="text-3xl mr-4">🤝</span>
+              <div>
+                <h3 class="font-bold text-lg text-purple-300">Better Communication</h3>
+                <p class="text-sm">ทีมสื่อสารกันผ่านโค้ดและการแจ้งเตือน ลดความสับสน </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Key Elements of CI -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">องค์ประกอบสำคัญ (Key Elements) </h2>
+          <p class="text-lg text-white/90 mb-8">
+          การทำ CI ไม่ใช่แค่การลงเครื่องมือ แต่ต้องมีองค์ประกอบเหล่านี้
+          </p>
+
+          <div class="space-y-4 text-left">
+            <div class="bg-gray-800/50 p-4 rounded-xl border-l-4 border-gray-400">
+              <h3 class="text-xl font-bold">1. Version Control System (VCS)</h3>
+              <p class="text-sm text-gray-300">ต้องมีศูนย์กลางเก็บโค้ด เช่น Git (GitHub, GitLab, Bitbucket) เพื่อจัดการ Source Code </p>
+            </div>
+            <div class="bg-blue-900/50 p-4 rounded-xl border-l-4 border-blue-400">
+              <h3 class="text-xl font-bold">2. Automated Build</h3>
+              <p class="text-sm text-gray-300">สคริปต์ที่สามารถ Compile, Link, หรือ Package โค้ดได้ด้วยคำสั่งเดียว (เช่น <code>npm build</code>, <code>docker build</code>) </p>
+            </div>
+            <div class="bg-green-900/50 p-4 rounded-xl border-l-4 border-green-400">
+              <h3 class="text-xl font-bold">3. Automated Testing</h3>
+              <p class="text-sm text-gray-300">สิ่งที่ขาดไม่ได้! ถ้าไม่มี Test ก็ไม่ใช่ CI (Unit Test, Integration Test) </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: CI Practices (Best Practices) -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">แนวปฏิบัติที่ดี (CI Best Practices) </h2>
+          <ul class="list-disc list-inside text-left text-lg space-y-3 bg-white/10 p-8 rounded-2xl">
+            <li><strong>Commit Early, Commit Often:</strong> อย่าดองโค้ดไว้นาน ให้ commit บ่อยๆ เพื่อให้ CI ทำงาน </li>
+            <li><strong>Don't Commit Broken Code:</strong> รัน Test ในเครื่องตัวเอง (Local) ให้ผ่านก่อน Push </li>
+            <li><strong>Fix Broken Build Immediately:</strong> ถ้า CI แดง (Fail) ต้องรีบแก้ทันที เป็น Priority สูงสุด </li>
+            <li><strong>Keep the Build Fast:</strong> กระบวนการ CI ไม่ควรนานเกินไป (เช่น ไม่ควรเกิน 10-15 นาที) เพื่อให้ Feedback เร็ว </li>
+            <li><strong>Build in a Clean Environment:</strong> ทุก Build ควรเริ่มจากสภาพแวดล้อมที่สะอาด (Clean Slate) เพื่อป้องกัน "Works on my machine" </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Section 2: The CI Process (Slides 8-12) -->
+      <!-- Slide 8: The Build Stage -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ขั้นตอนที่ 1: Build (การประกอบร่าง) </h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <p class="text-xl mb-4">เป้าหมาย: เปลี่ยน Source Code ให้เป็น Executable Artifact ที่พร้อมรัน</p>
+            <div class="grid grid-cols-2 gap-6 mt-6">
+              <div>
+                <h3 class="font-bold text-blue-300">กิจกรรมหลัก:</h3>
+                <ul class="list-disc list-inside text-sm text-gray-300 mt-2">
+                  <li>Compile Code (สำหรับภาษาอย่าง Java, C++, Go)</li>
+                  <li>Resolve Dependencies (npm install, pip install)</li>
+                  <li>Package Application (สร้าง JAR, WAR, หรือ Docker Image) </li>
+                </ul>
+              </div>
+              <div class="bg-black/30 p-4 rounded-xl font-mono text-sm">
+                <p class="text-green-400">$ npm install</p>
+                <p class="text-green-400">$ npm run build</p>
+                <p class="text-gray-500">... Creating optimized production build ...</p>
+                <p class="text-green-400">$ docker build -t my-app:v1 .</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Automated Testing (The Backbone) -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ขั้นตอนที่ 2: Automated Testing </h2>
+          <p class="text-lg text-white/90 mb-6">
+          กระดูกสันหลังของ CI คือการทดสอบอัตโนมัติ เพื่อรับประกันคุณภาพ
+          </p>
+          <div class="flex justify-center mb-6">
+            <!-- Testing Pyramid Visualization -->
+            <div class="flex flex-col w-64">
+              <div class="bg-red-500 text-white p-2 text-center rounded-t-lg text-xs">E2E Tests (Slow/Expensive) </div>
+              <div class="bg-yellow-500 text-black p-4 text-center text-sm font-bold">Integration Tests </div>
+              <div class="bg-green-500 text-white p-8 text-center rounded-b-lg text-lg font-bold">Unit Tests (Fast/Cheap) </div>
+            </div>
+          </div>
+          <div class="bg-white/10 p-6 rounded-xl text-left">
+            <p class="mb-2"><strong>Unit Tests:</strong> ทดสอบฟังก์ชันย่อยๆ แยกกัน (ควรมีเยอะที่สุด) </p>
+            <p class="mb-2"><strong>Integration Tests:</strong> ทดสอบการทำงานร่วมกันระหว่าง Module/Database </p>
+            <p class="text-yellow-300 text-sm mt-4">
+            *CI Server จะรัน Test เหล่านี้ทุกครั้ง ถ้า Test ไม่ผ่าน = Build Failed (ห้าม Merge!) 
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Static Analysis (Code Quality) -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ขั้นตอนที่ 3: Static Analysis </h2>
+          <p class="text-lg text-white/90 mb-6">
+          การตรวจสอบโค้ดโดยไม่ต้องรันโปรแกรม (Code Quality & Security)
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500">
+              <h3 class="font-bold text-blue-300">Code Style (Linting)</h3>
+              <p class="text-sm">ตรวจสอบรูปแบบการเขียนโค้ดให้เป็นมาตรฐานเดียวกัน (เช่น ESLint, Pylint) </p>
+            </div>
+            <div class="bg-yellow-900/30 p-4 rounded-xl border border-yellow-500">
+              <h3 class="font-bold text-yellow-300">Bug Detection</h3>
+              <p class="text-sm">ค้นหาจุดที่อาจก่อให้เกิด Bug เช่น ตัวแปรที่ไม่ได้ใช้, Infinite Loop </p>
+            </div>
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <h3 class="font-bold text-red-300">Security Scanning (SAST)</h3>
+              <p class="text-sm">ค้นหาช่องโหว่ความปลอดภัยเบื้องต้นในโค้ด (เช่น Hardcoded Password) </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Feedback Mechanism -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Feedback Mechanism (การแจ้งผล) </h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <p class="text-xl mb-6">
+            CI ที่ดีต้องแจ้งผลเร็วและชัดเจน เพื่อให้ Developer แก้ไขได้ทันที
+            </p>
+            <ul class="list-disc list-inside space-y-4 text-lg">
+              <li><strong>Dashboards:</strong> หน้าจอแสดงสถานะของทุก Build (เขียว/แดง) </li>
+              <li><strong>Notifications:</strong> แจ้งเตือนผ่าน Email, Slack, หรือ Microsoft Teams </li>
+              <li><strong>Pull Request Checks:</strong> บล็อกการ Merge ถ้า CI ยังไม่ผ่าน (GitHub Checks) </li>
+            </ul>
+            <div class="mt-6 bg-red-900/40 p-4 rounded-xl text-center border border-red-500">
+              "Broken Build คือเรื่องปกติ แต่การปล่อยให้ Broken นานๆ คือปัญหา" 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: CI Process Summary -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สรุปกระบวนการ CI</h2>
+          <div class="flex items-center justify-center space-x-2 text-sm md:text-base">
+            <div class="bg-gray-700 p-3 rounded">1. Dev Commit</div>
+            <span>➡️</span>
+            <div class="bg-blue-600 p-3 rounded">2. CI Triggered</div>
+            <span>➡️</span>
+            <div class="bg-purple-600 p-3 rounded">3. Build</div>
+            <span>➡️</span>
+            <div class="bg-yellow-600 p-3 rounded">4. Static Analysis</div>
+            <span>➡️</span>
+            <div class="bg-green-600 p-3 rounded">5. Test</div>
+            <span>➡️</span>
+            <div class="bg-red-600 p-3 rounded">6. Feedback</div>
+          </div>
+          <p class="mt-8 text-lg">
+          ถัดไปเราจะมาดู "เครื่องมือ" ที่ทำให้กระบวนการเหล่านี้เป็นจริง
+          </p>
+        </div>
+      </div>
+      <!-- Section 3: CI Tools (Slides 13-17) -->
+      <!-- Slide 13: CI Tools Overview -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">เครื่องมือ CI ยอดนิยม (Popular Tools) </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+
+            <div class="bg-white p-6 rounded-xl text-black flex flex-col items-center shadow-lg">
+              <div class="text-5xl mb-2 text-orange-500">🤵</div>
+              <h3 class="font-bold">Jenkins</h3>
+              <p class="text-xs mt-2 text-gray-500">รุ่นเก๋า, Open Source, ปรับแต่งได้สูงมาก แต่ดูแลยาก </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl text-black flex flex-col items-center border-4 border-blue-500 shadow-lg">
+              <div class="text-5xl mb-2 text-black">🐱</div>
+              <h3 class="font-bold">GitHub Actions</h3>
+              <p class="text-xs mt-2 text-gray-500">มาแรง, Integrate กับ GitHub แน่นปึ้ก, ฟรีสำหรับ Public Repo </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl text-black flex flex-col items-center shadow-lg">
+              <div class="text-5xl mb-2 text-orange-600">🦊</div>
+              <h3 class="font-bold">GitLab CI</h3>
+              <p class="text-xs mt-2 text-gray-500">All-in-one platform, ดีเยี่ยมสำหรับองค์กรที่ใช้ GitLab, มี Auto DevOps </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Jenkins - The Veteran -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Jenkins: The Automation Server </h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-orange-300 mb-4">จุดเด่น</h3>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Huge Ecosystem:</strong> มี Plugins เป็นพัน (1000+) รองรับเกือบทุก tool </li>
+                <li><strong>Flexible:</strong> เขียน Pipeline เป็น Code (Groovy) ได้ </li>
+                <li><strong>Self-Hosted:</strong> ติดตั้งใน Server ตัวเองได้ (Privacy & Control) </li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-red-300 mb-4">ข้อสังเกต</h3>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Maintenance:</strong> ต้องดูแล Server เอง (Patch, Update) </li>
+                <li><strong>UI:</strong> หน้าตาอาจดูเก่ากว่า tool สมัยใหม่</li>
+                <li><strong>Complexity:</strong> การตั้งค่าอาจซับซ้อนสำหรับมือใหม่ </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: GitLab CI/CD - The All-in-One -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">GitLab CI/CD: Seamless Integration </h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="text-lg mb-6">
+            เป็นส่วนหนึ่งของ GitLab ทำให้ Code และ Pipeline อยู่ที่เดียวกัน ไม่ต้อง setup แยก
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li><strong>.gitlab-ci.yml:</strong> กำหนด Pipeline ด้วยไฟล์ YAML ใน repo เลย </li>
+              <li><strong>GitLab Runner:</strong> ตัวรัน Job ที่ติดตั้งง่าย รองรับ Docker </li>
+              <li><strong>Auto DevOps:</strong> ตรวจจับและสร้าง Pipeline ให้อัตโนมัติ (สำหรับโปรเจกต์มาตรฐาน) </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: GitHub Actions - The Modern Standard -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">GitHub Actions: Workflow Automation </h2>
+          <p class="text-lg text-white/90 mb-6">
+          Automation Tool ที่มาพร้อมกับ GitHub ที่เราจะเน้นใน Lab นี้
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-blue-300 mb-4">Core Concepts </h3>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Workflow:</strong> กระบวนการอัตโนมัติ (ไฟล์ .yml ใน .github/workflows)</li>
+                <li><strong>Event:</strong> ตัวกระตุ้น (เช่น <code>push</code>, <code>pull_request</code>)</li>
+                <li><strong>Job:</strong> งานที่รันในเครื่องเดียวกัน (Runner)</li>
+                <li><strong>Action:</strong> คำสั่งสำเร็จรูปที่คนอื่นเขียนไว้ให้ใช้ (Marketplace)</li>
+              </ul>
+            </div>
+
+            <div class="bg-black/50 p-6 rounded-xl font-mono text-xs overflow-auto">
+              <p class="text-gray-400"># .github/workflows/ci.yml</p>
+              <p class="text-purple-400">name:</p> CI Pipeline
+              <p class="text-purple-400">on:</p> [push]
+              <p class="text-purple-400">jobs:</p>
+              <p>&nbsp;&nbsp;<span class="text-blue-400">build-test:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;runs-on: ubuntu-latest</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;steps:</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- uses: actions/checkout@v2</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run: npm install</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run: npm test</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Tool Comparison Summary -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เปรียบเทียบเครื่องมือ (Comparison) </h2>
+          <div class="overflow-x-auto">
+            <table class="table-auto w-full text-left text-sm text-gray-300">
+              <thead class="bg-white/20 text-white font-bold">
+                <tr>
+                  <th class="p-3">Feature</th>
+                  <th class="p-3">Jenkins</th>
+                  <th class="p-3">GitLab CI</th>
+                  <th class="p-3">GitHub Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-600">
+                <tr>
+                  <td class="p-3">Hosting</td>
+                  <td class="p-3">Self-hosted</td>
+                  <td class="p-3">Cloud / Self-hosted</td>
+                  <td class="p-3">Cloud / Self-hosted</td>
+                </tr>
+                <tr>
+                  <td class="p-3">Configuration</td>
+                  <td class="p-3">Jenkinsfile (Groovy)</td>
+                  <td class="p-3">YAML (.gitlab-ci.yml)</td>
+                  <td class="p-3">YAML (Workflows)</td>
+                </tr>
+                <tr>
+                  <td class="p-3">Difficulty</td>
+                  <td class="p-3">High (Setup/Plugins)</td>
+                  <td class="p-3">Medium</td>
+                  <td class="p-3">Low (Easy to start)</td>
+                </tr>
+                <tr>
+                  <td class="p-3">Ecosystem</td>
+                  <td class="p-3">Massive Plugin Library</td>
+                  <td class="p-3">Integrated in GitLab</td>
+                  <td class="p-3">Huge Marketplace</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- Section 4: Git Hooks & CI Initiation (Slides 18-20) -->
+      <!-- Slide 18: Git Hooks - The Trigger -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Git Hooks: จุดเริ่มต้นของ Automation </h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-green-500">
+            <p class="text-xl mb-4">
+            Git Hooks คือสคริปต์ที่ Git จะเรียกใช้งาน (Fire) เมื่อมีเหตุการณ์สำคัญเกิดขึ้น เช่น ก่อน Commit หรือหลัง Push 
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div class="bg-black/30 p-4 rounded-xl">
+                <h3 class="font-bold text-green-300">Client-Side Hooks </h3>
+                <ul class="list-disc list-inside text-sm mt-2">
+                  <li><strong>pre-commit:</strong> รันก่อน commit (ใช้ตรวจ Lint, Format code) </li>
+                  <li><strong>commit-msg:</strong> ตรวจรูปแบบข้อความ commit </li>
+                </ul>
+              </div>
+              <div class="bg-black/30 p-4 rounded-xl">
+                <h3 class="font-bold text-blue-300">Server-Side Hooks </h3>
+                <ul class="list-disc list-inside text-sm mt-2">
+                  <li><strong>pre-receive:</strong> รันเมื่อ server ได้รับ push (ใช้ปฏิเสธการ push ที่ไม่ผ่านกฎ)</li>
+                  <li><strong>post-receive:</strong> รันหลัง push เสร็จ (ใช้ trigger CI server) </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Local Automation with Pre-commit -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Local Automation: Pre-commit Hook </h2>
+          <p class="text-lg text-white/90 mb-6">
+          ป้องกัน "Bad Code" ไม่ให้เข้าสู่ Repo ตั้งแต่เครื่อง Developer
+          </p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm relative">
+            <p class="text-gray-500"># .git/hooks/pre-commit</p>
+            <p class="text-green-300">#!/bin/sh</p>
+            <p class="text-white">echo "Running pre-commit checks..."</p>
+            <br>
+            <p class="text-gray-400"># Run Linter</p>
+            <p class="text-white">npm run lint</p>
+            <p class="text-purple-400">if</p> [ $? -ne 0 ]; <p class="text-purple-400">then</p>
+            <p>&nbsp;&nbsp;echo "Lint failed! Commit rejected."</p>
+            <p>&nbsp;&nbsp;exit 1 <span class="text-gray-500"># Non-zero exit blocks the commit</span></p>
+            <p class="text-purple-400">fi</p>
+          </div>
+          <p class="mt-4 text-sm text-yellow-300">
+          Tip: ใช้ framework อย่าง <code>pre-commit</code> หรือ <code>husky</code> (สำหรับ JS) จะจัดการง่ายกว่าเขียน shell script เอง 
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 20: Webhooks - Connecting Git to CI -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Webhooks: สะพานเชื่อมสู่ CI Server </h2>
+          <p class="text-xl text-white/90 mb-8">
+          Git Server (GitHub/GitLab) ส่งสัญญาณบอก CI Server ว่า "มีโค้ดใหม่มาแล้วนะ!"
+          </p>
+
+          <div class="flex items-center justify-center gap-4 bg-white/10 p-6 rounded-xl">
+            <div class="text-center">
+              <div class="text-5xl mb-2">🐱</div>
+              <strong>GitHub</strong>
+              <p class="text-xs">Event: Push</p>
+            </div>
+
+            <div class="flex flex-col items-center">
+              <span class="text-xs text-yellow-300 mb-1">HTTP POST (Payload) </span>
+              <div class="h-1 w-32 bg-white/50 relative">
+                <div class="absolute right-0 -top-1 w-2 h-2 bg-white rounded-full"></div>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <div class="text-5xl mb-2">🤖</div>
+              <strong>CI Server</strong>
+              <p class="text-xs">Action: Start Build</p>
+            </div>
+          </div>
+
+          <div class="mt-6 text-left text-sm bg-blue-900/30 p-4 rounded-xl">
+            <strong>Note:</strong> GitHub Actions ไม่ต้องตั้ง Webhook เอง เพราะมัน Integrated กันอยู่แล้ว แต่ถ้าใช้ Jenkins ต้องตั้งค่า Webhook ใน GitHub Repo setting 
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 21: Lab Mission -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ภารกิจ: CI for Full-Stack App 🛠️</h2>
+          <p class="text-xl text-white/90 mb-8">
+          เราจะสร้าง Automated Pipeline ให้กับโปรเจกต์ Resume Hub ที่มีทั้ง Backend (Django) และ Frontend (React)
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-blue-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมาย (Objectives)</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ <strong>Backend Pipeline:</strong> ติดตั้ง Dependencies, รัน Linter, และรัน Unit Tests ของ Django</li>
+              <li>✅ <strong>Frontend Pipeline:</strong> ติดตั้ง Node Modules, Build Project, และตรวจสอบว่าไม่มี Error</li>
+              <li>✅ <strong>Monorepo Strategy:</strong> ตั้งค่าให้ CI ทำงานแยกกัน (แก้ Frontend ไม่ต้องรัน Test Backend)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Step 1 - Fork & Clone -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: Prepare Project</h2>
+          <p class="mb-4 text-left">เตรียม Source Code จาก GitHub (Branch wk05)</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. ไปที่ GitHub และ Fork Repository นี้:</p>
+            <p class="text-blue-300">https://github.com/wichitpaulsombat/djrepo</p>
+            <br>
+            <p class="text-gray-400"># 2. Clone Repository ของคุณลงเครื่อง (เปลี่ยน YOUR_USER)</p>
+            <p class="text-green-400">$ git clone -b wk05 https://github.com/YOUR_USER/djrepo.git</p>
+            <p class="text-green-400">$ cd djrepo</p>
+            <br>
+            <p class="text-gray-400"># 3. ตรวจสอบโครงสร้างไฟล์ (ควรเจอ folder backend/ และ frontend/)</p>
+            <p class="text-green-400">$ ls -F</p>
+            <p class="text-white">backend/  frontend/  docker-compose.yaml ...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Monorepo CI Strategy -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">กลยุทธ์สำหรับ Monorepo</h2>
+          <p class="text-lg mb-6">
+          เนื่องจากเราเก็บโค้ดทั้ง 2 ส่วนไว้ใน Repo เดียว เราควรกำหนด <strong>Paths Filter</strong> เพื่อประหยัดทรัพยากร
+          </p>
+
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <h3 class="font-bold text-green-300 mb-2">Backend Workflow</h3>
+              <p class="text-sm">ทำงานเมื่อมีการแก้ไขไฟล์ในโฟลเดอร์ <code>backend/**</code> เท่านั้น</p>
+            </div>
+
+            <div class="bg-blue-900/30 p-6 rounded-xl border border-blue-500">
+              <h3 class="font-bold text-blue-300 mb-2">Frontend Workflow</h3>
+              <p class="text-sm">ทำงานเมื่อมีการแก้ไขไฟล์ในโฟลเดอร์ <code>frontend/**</code> เท่านั้น</p>
+            </div>
+          </div>
+
+          <div class="mt-6 bg-white/10 p-4 rounded-xl">
+            <p class="text-sm">👉 เราจะสร้างไฟล์ Workflow แยกกัน 2 ไฟล์: <code>django.yml</code> และ <code>react.yml</code></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Step 2 - Create Backend Workflow -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 2: สร้าง Django Workflow (1/2)</h2>
+          <p class="mb-4 text-left">สร้างไฟล์ <code>.github/workflows/django.yml</code></p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-[400px] border-l-4 border-green-500">
+            <p><span class="text-purple-400">name:</span> Django CI</p>
+            <p><span class="text-purple-400">on:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">push:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">branches:</span> [ "wk05" ]</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">paths:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- "backend/**"  <span class="text-gray-500"># ทำงานเฉพาะเมื่อแก้ backend</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">pull_request:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">branches:</span> [ "wk05" ]</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">paths:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- "backend/**"</p>
+            <br>
+            <p><span class="text-purple-400">jobs:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">build-test:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">runs-on:</span> ubuntu-latest</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">defaults:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">run:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">working-directory:</span> ./backend <span class="text-gray-500"># เข้าไปใน folder backend เสมอ</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Step 2 - Backend Workflow Steps -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 2: เพิ่ม Steps (2/2)</h2>
+          <p class="mb-2 text-left">ต่อจากไฟล์เดิม เพิ่มขั้นตอนการติดตั้งและทดสอบ</p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-[400px] border-l-4 border-green-500">
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">steps:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">uses:</span> actions/checkout@v4</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">name:</span> Set up Python</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">uses:</span> actions/setup-python@v5</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">with:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">python-version:</span> "3.11"</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">name:</span> Install Dependencies</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">run:</span> |</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;python -m pip install --upgrade pip</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pip install -r requirements.txt</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">name:</span> Run Tests</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">run:</span> |</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;python manage.py test</p>
+          </div>
+          <div class="mt-4 bg-yellow-900/40 p-2 rounded text-sm text-left">
+            ℹ️ <strong>Note:</strong> เนื่องจากเรากำหนด <code>defaults.run.working-directory</code> ไว้แล้ว คำสั่ง <code>pip</code> และ <code>manage.py</code> จะรันในโฟลเดอร์ backend โดยอัตโนมัติ
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Step 3 - Create Frontend Workflow -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 3: สร้าง React Workflow (1/2)</h2>
+          <p class="mb-4 text-left">สร้างไฟล์ <code>.github/workflows/react.yml</code></p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-[400px] border-l-4 border-blue-500">
+            <p><span class="text-purple-400">name:</span> React CI</p>
+            <p><span class="text-purple-400">on:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">push:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">branches:</span> [ "wk05" ]</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">paths:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- "frontend/**" <span class="text-gray-500"># เฉพาะไฟล์ Frontend</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">pull_request:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">branches:</span> [ "wk05" ]</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">paths:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- "frontend/**"</p>
+            <br>
+            <p><span class="text-purple-400">jobs:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">build:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">runs-on:</span> ubuntu-latest</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">defaults:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">run:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">working-directory:</span> ./frontend</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Step 3 - Frontend Workflow Steps -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 3: เพิ่ม Steps (2/2)</h2>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs overflow-auto max-h-[400px] border-l-4 border-blue-500">
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">steps:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">uses:</span> actions/checkout@v4</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">name:</span> Set up Node.js</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">uses:</span> actions/setup-node@v4</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">with:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">node-version:</span> "18"</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">cache:</span> "npm"</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">cache-dependency-path:</span> frontend/package-lock.json</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">name:</span> Install Dependencies</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">run:</span> npm ci</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-400">name:</span> Build</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">run:</span> npm run build</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">env:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">CI:</span> false <span class="text-gray-500"># ป้องกัน build fail จาก warning เล็กน้อย (Optional)</span></p>
+          </div>
+
+          <div class="mt-4 bg-white/10 p-3 rounded text-sm text-left">
+            <strong>✨ Highlight:</strong> การใช้ <code>cache: "npm"</code> จะช่วยให้การติดตั้ง dependencies ในรอบถัดไปเร็วขึ้นมาก
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Step 4 - Commit & Push -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: Commit และ Push</h2>
+          <p class="mb-4 text-left">เมื่อสร้างไฟล์ Workflow ทั้งสองเสร็จแล้ว ให้ส่งขึ้น GitHub</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg space-y-2">
+            <p class="text-gray-400"># ตรวจสอบสถานะ</p>
+            <p class="text-green-400">$ git status</p>
+            <br>
+            <p class="text-gray-400"># Add files</p>
+            <p class="text-green-400">$ git add .github/workflows/</p>
+            <br>
+            <p class="text-gray-400"># Commit</p>
+            <p class="text-green-400">$ git commit -m "Add CI pipelines for Backend and Frontend"</p>
+            <br>
+            <p class="text-gray-400"># Push to wk05 branch</p>
+            <p class="text-green-400">$ git push origin wk05</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Step 5 - Verification -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 5: ตรวจสอบผลลัพธ์ (Verification)</h2>
+          <div class="space-y-4 text-left bg-white/10 p-6 rounded-xl">
+            <p>1. เปิด GitHub Repository ของคุณ</p>
+            <p>2. ไปที่แท็บ <strong>Actions</strong></p>
+            <p>3. คุณควรเห็น Workflows ทั้ง <strong>Django CI</strong> และ <strong>React CI</strong> กำลังทำงาน (หรือทำงานเสร็จแล้ว)</p>
+          </div>
+
+          <div class="mt-6 grid grid-cols-2 gap-4">
+            <div class="bg-green-900/40 p-4 rounded border border-green-500 text-center">
+              <div class="text-2xl">✅ Success</div>
+              <p class="text-xs mt-1">ถ้าโค้ดไม่มี Error ไฟจะเขียว</p>
+            </div>
+            <div class="bg-red-900/40 p-4 rounded border border-red-500 text-center">
+              <div class="text-2xl">❌ Failure</div>
+              <p class="text-xs mt-1">ถ้า Build พัง หรือ Test ไม่ผ่าน</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Step 6 - Test Path Filtering -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 6: ทดสอบ Path Filtering</h2>
+          <p class="mb-4 text-left">ลองแก้ไขไฟล์เฉพาะส่วน Frontend เพื่อดูว่า Backend CI จะไม่ทำงาน</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+            <p class="text-gray-400"># แก้ไขไฟล์ Frontend เล็กน้อย</p>
+            <p class="text-white">แก้ไข <code>frontend/src/App.jsx</code> (เช่นเปลี่ยนข้อความ)</p>
+            <br>
+            <p class="text-green-400">$ git add frontend/src/App.jsx</p>
+            <p class="text-green-400">$ git commit -m "Update frontend text"</p>
+            <p class="text-green-400">$ git push origin wk05</p>
+          </div>
+
+          <p class="mt-6 bg-blue-900/40 p-4 rounded-xl text-yellow-300 text-sm">
+          👀 สังเกตที่แท็บ Actions: ควรจะมีแค่ <strong>React CI</strong> เท่านั้นที่ทำงาน ส่วน Django CI จะนิ่งสนิท (Skipped) นี่คือข้อดีของการทำ Path Filtering!
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 31: Advanced - Linting (Optional) -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Advanced: เพิ่ม Linter (Optional)</h2>
+          <p class="mb-4 text-left">เพิ่มคุณภาพโค้ดด้วยการตรวจจับ Syntax Error อัตโนมัติ</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+            <div class="bg-black/50 p-4 rounded-xl">
+              <strong class="text-green-300">Django (flake8)</strong>
+              <p class="text-gray-400 mt-1">เพิ่มใน <code>django.yml</code>:</p>
+              <pre class="text-xs mt-2">
+- name: Lint with flake8
+  run: |
+    pip install flake8
+    # stop the build if there are Python syntax errors
+    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+              </pre>
+            </div>
+            <div class="bg-black/50 p-4 rounded-xl">
+              <strong class="text-blue-300">React (ESLint)</strong>
+              <p class="text-gray-400 mt-1">เพิ่มใน <code>react.yml</code> (ก่อน build):</p>
+              <pre class="text-xs mt-2">
+- name: Lint
+  run: npm run lint
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Branch Protection Rules -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">ความปลอดภัย: Branch Protection Rules</h2>
+          <p class="text-lg mb-6">
+          บังคับให้ CI ผ่านก่อน Merge (Best Practice)
+          </p>
+
+          <div class="bg-white/10 p-6 rounded-xl text-left space-y-3 text-sm md:text-base">
+            <p>1. ไปที่ <strong>Settings</strong> ของ Repository > <strong>Branches</strong></p>
+            <p>2. คลิก <strong>Add branch protection rule</strong></p>
+            <p>3. Branch name pattern: <code>wk05</code> (หรือ main)</p>
+            <p>4. ติคถูกที่ <strong>Require status checks to pass before merging</strong></p>
+            <p>5. ค้นหาและเลือก <code>build-test</code> (จาก Django) และ <code>build</code> (จาก React)</p>
+            <p>6. กด <strong>Create</strong></p>
+          </div>
+          <p class="mt-4 text-sm text-red-300">
+          ผลลัพธ์: ถ้าใครเปิด Pull Request เข้ามาแล้ว Test พัง ปุ่ม Merge จะกดไม่ได้! 🛡️
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 33: Troubleshooting Lab -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">แก้ปัญหา (Troubleshooting)</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <strong class="text-red-300">Error: requirements.txt not found</strong>
+              <p class="mt-1">สาเหตุ: ไม่ได้ตั้ง <code>working-directory</code> หรือ path ผิด</p>
+              <p class="text-yellow-300">แก้: เช็ค <code>defaults.run.working-directory: ./backend</code></p>
+            </div>
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <strong class="text-red-300">Error: npm ci failed</strong>
+              <p class="mt-1">สาเหตุ: ไม่มี <code>package-lock.json</code> ใน repo</p>
+              <p class="text-yellow-300">แก้: รัน <code>npm install</code> ในเครื่องแล้ว push ไฟล์ lock ขึ้นไปก่อน</p>
+            </div>
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <strong class="text-red-300">React Build Fail (Warnings)</strong>
+              <p class="mt-1">สาเหตุ: React Treat Warnings as Errors ใน CI</p>
+              <p class="text-yellow-300">แก้: เพิ่ม env <code>CI: false</code> ใน step build</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Lab Conclusion -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🎉</div>
+          <h2 class="text-4xl font-bold mb-4">Lab Complete!</h2>
+          <p class="text-xl text-white/90">
+          คุณได้สร้างระบบ CI เต็มรูปแบบสำหรับ Modern Web Application แล้ว
+          </p>
+          <div class="mt-8 flex justify-center space-x-8">
+            <div class="text-center">
+              <span class="block text-3xl font-bold text-green-400">Automated</span>
+              <span class="text-sm">Testing & Building</span>
+            </div>
+            <div class="text-center">
+              <span class="block text-3xl font-bold text-blue-400">Monorepo</span>
+              <span class="text-sm">Optimized Workflow</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

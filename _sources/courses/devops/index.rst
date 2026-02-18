@@ -108,6 +108,8 @@ DevOps
        * ทดลอง :code:`docker-compose up` และ :code:`down`
        * เชื่อมต่อแอปพลิเคชันทั้งหมดเข้าด้วยกัน
    * - **สัปดาห์ที่ 6**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk06.html>`_
      - **บทนำสู่ Continuous Integration (CI) (Introduction to Continuous Integration)**
 
        * CI คืออะไร? ประโยชน์และแนวปฏิบัติ
