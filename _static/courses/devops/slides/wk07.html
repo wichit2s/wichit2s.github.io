@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk07.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Part 1: Introduction to CD (Slides 1-6) -->
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 7: Continuous Delivery & Deployment Strategies</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          จาก Source Code สู่มือผู้ใช้งาน: กระบวนการส่งมอบซอฟต์แวร์อย่างต่อเนื่องและกลยุทธ์การ Deploy ที่ปลอดภัย
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Concepts:</strong> Continuous Delivery vs. Continuous Deployment</li>
+              <li><strong>Artifacts:</strong> ความสำคัญของ Artifact Management และ Container Registry</li>
+              <li><strong>Release Management:</strong> การจัดการเวอร์ชันและการปล่อยซอฟต์แวร์</li>
+              <li><strong>Strategies:</strong> กลยุทธ์การ Deploy (Rolling, Blue/Green, Canary)</li>
+              <li><strong>GitOps:</strong> แนวคิดสมัยใหม่ในการจัดการ Deployment</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 7</div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Recap CI (Week 6) -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวน: Continuous Integration (CI)</h2>
+          <p class="text-lg text-white/90 mb-6">
+          ก่อนจะส่งมอบ (Deliver) เราต้องมั่นใจว่าการรวมโค้ด (Integrate) สมบูรณ์แล้ว
+          </p>
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-blue-900/30 p-5 rounded-xl border-t-4 border-blue-500">
+              <h3 class="font-bold text-xl mb-2">Build</h3>
+              <p class="text-sm">คอมไพล์โค้ด หรือสร้าง Docker Image </p>
+            </div>
+            <div class="bg-green-900/30 p-5 rounded-xl border-t-4 border-green-500">
+              <h3 class="font-bold text-xl mb-2">Test</h3>
+              <p class="text-sm">Unit Test และ Integration Test ผ่านทั้งหมด </p>
+            </div>
+            <div class="bg-purple-900/30 p-5 rounded-xl border-t-4 border-purple-500">
+              <h3 class="font-bold text-xl mb-2">Artifact</h3>
+              <p class="text-sm">ได้ชิ้นงาน (เช่น Docker Image) ที่พร้อมนำไปใช้งาน </p>
+            </div>
+          </div>
+          <div class="mt-8 text-yellow-300 text-lg">
+            "CI จบที่การได้ Artifact ที่ผ่านการทดสอบ... แต่ CD คือการนำ Artifact นั้นไปสู่ Environment ถัดไป"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What is Continuous Delivery (CD)? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Continuous Delivery คืออะไร?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="text-xl mb-6 leading-relaxed">
+            แนวปฏิบัติในการพัฒนาซอฟต์แวร์ที่ทำให้โค้ดของเรา <strong>"พร้อมที่จะ Deploy"</strong> ไปยัง Production ได้ตลอดเวลา อย่างปลอดภัยและรวดเร็ว 
+            </p>
+            <ul class="list-disc list-inside space-y-4 text-lg">
+              <li>ทุกการเปลี่ยนแปลงที่ผ่านการ Test จะถูกเตรียมพร้อมสำหรับการ Release</li>
+              <li><strong>Key Concept:</strong> การ Deploy ไป Production ยังต้องใช้ <strong>"การตัดสินใจของมนุษย์" (Manual Approval)</strong> เพื่อกดปุ่มเริ่ม </li>
+              <li>เป้าหมายคือลดความเสี่ยง และทำให้การ Deploy เป็นเรื่องน่าเบื่อ (Boring is good) </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Continuous Delivery vs. Deployment -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">ความแตกต่างที่สำคัญ (The Crucial Difference)</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Continuous Delivery -->
+            <div class="bg-blue-900/40 p-6 rounded-2xl border-2 border-blue-500 relative">
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 px-4 py-1 rounded-full text-sm font-bold">Most Enterprise</div>
+              <h3 class="text-2xl font-bold mb-4">Continuous Delivery</h3>
+              <div class="space-y-2 text-left text-sm">
+                <p>✅ Automated Build & Test</p>
+                <p>✅ Deploy to Staging อัตโนมัติ</p>
+                <p class="text-yellow-300">✋ <strong>Manual Approval</strong> เพื่อไป Production</p>
+              </div>
+              <p class="mt-4 text-xs text-gray-300">"ซอฟต์แวร์พร้อมเสมอ แต่เราเลือกเวลาปล่อยเอง" </p>
+            </div>
+
+            <!-- Continuous Deployment -->
+            <div class="bg-green-900/40 p-6 rounded-2xl border-2 border-green-500 relative">
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-green-500 px-4 py-1 rounded-full text-sm font-bold">Ultimate Goal</div>
+              <h3 class="text-2xl font-bold mb-4">Continuous Deployment</h3>
+              <div class="space-y-2 text-left text-sm">
+                <p>✅ Automated Build & Test</p>
+                <p>✅ Deploy to Staging อัตโนมัติ</p>
+                <p class="text-green-300">🚀 <strong>Automated Deploy</strong> ไป Production ทันที</p>
+              </div>
+              <p class="mt-4 text-xs text-gray-300">"ถ้า Test ผ่าน ลูกค้าจะได้ใช้ฟีเจอร์ใหม่ทันที" </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: The CD Pipeline -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-4">
+          <h2 class="text-4xl font-bold mb-6">The CD Pipeline Structure</h2>
+          <p class="mb-8 text-white/80">เส้นทางของโค้ดจากเครื่อง Developer สู่ Production Server</p>
+
+          <div class="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-black text-xs md:text-sm">
+            <div class="bg-gray-300 p-4 rounded-lg w-32 flex flex-col items-center">
+              <span class="text-2xl">💻</span>
+              <strong>Commit</strong>
+            </div>
+            <span class="text-white text-xl">➜</span>
+            <div class="bg-blue-200 p-4 rounded-lg w-32 flex flex-col items-center border-b-4 border-blue-500">
+              <span class="text-2xl">⚙️</span>
+              <strong>CI Build</strong>
+              <span class="text-[10px] text-gray-600">Unit Tests</span>
+            </div>
+            <span class="text-white text-xl">➜</span>
+            <div class="bg-purple-200 p-4 rounded-lg w-32 flex flex-col items-center border-b-4 border-purple-500">
+              <span class="text-2xl">📦</span>
+              <strong>Artifact</strong>
+              <span class="text-[10px] text-gray-600">Docker Image</span>
+            </div>
+            <span class="text-white text-xl">➜</span>
+            <div class="bg-yellow-200 p-4 rounded-lg w-32 flex flex-col items-center border-b-4 border-yellow-500">
+              <span class="text-2xl">🚧</span>
+              <strong>Staging</strong>
+              <span class="text-[10px] text-gray-600">Integration Test</span>
+            </div>
+            <span class="text-white text-xl">➜</span>
+            <div class="bg-green-200 p-4 rounded-lg w-32 flex flex-col items-center border-b-4 border-green-500">
+              <span class="text-2xl">🚀</span>
+              <strong>Production</strong>
+              <span class="text-[10px] text-gray-600">Live Traffic</span>
+            </div>
+          </div>
+
+          <p class="mt-6 text-sm text-gray-300">Reference: DevOps Pipeline </p>
+        </div>
+      </div>
+
+      <!-- Slide 6: Why CD Matters? -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทำไมต้องทำ Continuous Delivery?</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-xl text-green-300 mb-2">⚡ Faster Time to Market</h3>
+              <p class="text-sm">ส่งมอบฟีเจอร์ใหม่ถึงมือลูกค้าได้เร็วขึ้น ไม่ต้องรอนานเป็นเดือน </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-xl text-blue-300 mb-2">📉 Low Risk Releases</h3>
+              <p class="text-sm">การปล่อยทีละนิด (Small Batches) ทำให้ความเสี่ยงต่ำ และแก้ปัญหาได้ง่ายกว่าการปล่อยก้อนใหญ่ </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-xl text-yellow-300 mb-2">🔄 Faster Feedback Loop</h3>
+              <p class="text-sm">ได้รับฟีดแบ็คจากผู้ใช้จริงเร็วขึ้น เพื่อนำมาปรับปรุงผลิตภัณฑ์ </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-xl text-purple-300 mb-2">🤖 Reliable Deployments</h3>
+              <p class="text-sm">กระบวนการเป็นอัตโนมัติ ลด Human Error จากการ Deploy ด้วยมือ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part 2: Artifact & Release Management (Slides 7-13) -->
+      <!-- Slide 7: Infrastructure as Code (IaC) Context -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Foundation: Infrastructure as Code (IaC)</h2>
+          <p class="text-lg mb-6">ก่อนจะ Deploy แอปฯ เราต้องมีโครงสร้างพื้นฐานที่พร้อมและเหมือนกันทุก Environment</p>
+
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold mb-2">❌ ClickOps</h3>
+              <p class="text-sm">การกดสร้าง Server ผ่านหน้าเว็บ Console</p>
+              <ul class="list-disc list-inside mt-2 text-xs text-gray-300">
+                <li>ทำซ้ำยาก (Non-repeatable)</li>
+                <li>เสี่ยงต่อ Human Error</li>
+                <li>ไม่มี Version Control</li>
+              </ul>
+            </div>
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <h3 class="text-xl font-bold mb-2">✅ Infrastructure as Code</h3>
+              <p class="text-sm">การเขียน Code เพื่อกำหนดโครงสร้างระบบ (เช่น Terraform, Ansible)</p>
+              <ul class="list-disc list-inside mt-2 text-xs text-gray-300">
+                <li>ตรวจสอบย้อนหลังได้ (Audit Trail) </li>
+                <li>Environment เหมือนกันเป๊ะ (Consistency)</li>
+                <li>Disaster Recovery ได้เร็ว</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Immutable Infrastructure -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Immutable Infrastructure</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-purple-500">
+            <h3 class="text-2xl font-bold mb-4">"Don't fix servers, replace them."</h3>
+            <p class="text-lg mb-6">
+            ในยุค Container เราจะไม่ SSH เข้าไปอัปเดตแพทช์หรือแก้โค้ดใน Server ที่รันอยู่
+            </p>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <span class="text-3xl mr-4">🚫</span>
+                <span><strong>Mutable:</strong> อัปเดต v1 เป็น v2 บนเครื่องเดิม (เสี่ยงต่อ Configuration Drift)</span>
+              </div>
+              <div class="flex items-center">
+                <span class="text-3xl mr-4">✅</span>
+                <span><strong>Immutable:</strong> สร้าง Container v2 ใหม่ แล้วลบ v1 ทิ้ง </span>
+              </div>
+            </div>
+            <p class="mt-6 text-sm text-yellow-300">
+            *Docker Image คือตัวอย่างที่ดีที่สุดของ Immutable Artifact
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Artifact Management -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความสำคัญของ Artifact Management</h2>
+          <p class="text-xl text-white/90 mb-8">
+          Artifact คือ "ของ" ที่ได้จากการ Build และพร้อมส่งมอบ (เช่น Docker Image, JAR file, Binary)
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="bg-black/40 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-blue-300 mb-2">Build Once, Deploy Anywhere</h3>
+              <p class="text-sm">
+              เราควร Build Artifact <strong>แค่ครั้งเดียว</strong> ในขั้นตอน CI แล้วใช้ตัวเดิม Deploy ไปยังทุก Environment (Dev, QA, Prod) 
+              </p>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-green-300 mb-2">Single Source of Truth</h3>
+              <p class="text-sm">
+              ถ้าเกิดปัญหาที่ Production เราต้องมั่นใจได้ว่า Image นั้นคือตัวเดียวกับที่ผ่านการเทสมาแล้ว
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Container Registries -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ที่เก็บ Artifact (Container Registry)</h2>
+          <p class="mb-6">เปรียบเสมือน "โกดัง" เก็บสินค้าที่รอส่งออก</p>
+
+          <div class="flex justify-center gap-8 mb-8">
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center">
+              <img src="https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png" class="h-16 mb-2 opacity-80" alt="Docker Hub">
+              <span class="font-bold">Docker Hub</span>
+              <span class="text-xs text-gray-500">Public/Private</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center">
+              <span class="text-4xl mb-2">☁️</span>
+              <span class="font-bold">Azure ACR</span>
+              <span class="text-xs text-gray-500">Enterprise Grade</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center">
+              <span class="text-4xl mb-2">🦊</span>
+              <span class="font-bold">GitLab Registry</span>
+              <span class="text-xs text-gray-500">Built-in</span>
+            </div>
+          </div>
+
+          <div class="bg-blue-900/30 p-4 rounded-xl text-left border border-blue-500">
+            <strong>Best Practice:</strong> ควรใช้ Private Registry สำหรับซอฟต์แวร์ขององค์กร เพื่อความปลอดภัยและการควบคุมสิทธิ์การเข้าถึง 
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Tagging & Versioning Strategy -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การจัดการ Version (Tagging Strategy)</h2>
+          <p class="text-lg mb-6">การตั้งชื่อ Tag ของ Docker Image มีผลต่อการทำ CD อย่างมาก</p>
+
+          <div class="space-y-4 text-left">
+            <div class="bg-red-900/30 p-4 rounded-xl border-l-4 border-red-500">
+              <h3 class="font-bold text-red-300">🚫 อย่าใช้ 'latest' ใน Production</h3>
+              <p class="text-sm">เพราะเราจะไม่รู้เลยว่า 'latest' ตอนนี้คือเวอร์ชันไหนกันแน่ ทำให้ Rollback ยาก</p>
+            </div>
+
+            <div class="bg-green-900/30 p-4 rounded-xl border-l-4 border-green-500">
+              <h3 class="font-bold text-green-300">✅ ใช้ Semantic Versioning หรือ Commit SHA</h3>
+              <ul class="list-disc list-inside text-sm mt-1">
+                <li><code>myapp:v1.0.2</code> (ชัดเจน, สื่อความหมาย) </li>
+                <li><code>myapp:git-a1b2c3d</code> (ผูกกับ Source Code commit ได้แม่นยำ)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Configuration Management -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การจัดการ Configuration (12-Factor App)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <p class="text-xl mb-4">
+            "Code เดียวกัน แต่ Config ต่างกันตาม Environment"
+            </p>
+            <p class="mb-6 text-gray-300">
+            เราไม่ควร Hardcode ค่า Database หรือ API Key ลงใน Docker Image แต่ควรส่งเข้าไปตอน Deploy ผ่าน <strong>Environment Variables</strong> 
+            </p>
+
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-sm">
+              <p class="text-purple-400"># Docker Compose Example</p>
+              <p>services:</p>
+              <p>&nbsp;&nbsp;web:</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;image: myapp:v1.0.0</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;environment:</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- DB_HOST=<span class="text-green-300">${DB_HOST}</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- API_KEY=<span class="text-green-300">${API_KEY}</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Chain of Custody -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Chain of Custody (ห่วงโซ่ความคุ้มครอง)</h2>
+          <p class="text-lg text-white/90 mb-6">
+          ใน Enterprise CD ความปลอดภัยและการตรวจสอบย้อนกลับเป็นเรื่องสำคัญ
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-blue-300 mb-2">🔍 Traceability</h3>
+              <p class="text-sm">รู้ว่า Artifact นี้มาจาก Commit ไหน, ใครเป็นคนเขียน, และผ่านการ Test อะไรมาบ้าง </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">🖊️ Image Signing</h3>
+              <p class="text-sm">การเซ็น Digital Signature ให้กับ Image เพื่อยืนยันว่าไม่ได้ถูกแก้ไขระหว่างทาง (Supply Chain Security)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Part 3: Release & Deployment Strategies (Slides 14-24) -->
+      <!-- Slide 14: Release Management -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Release Management Process</h2>
+          <p class="text-xl mb-8">
+          Release ไม่ใช่แค่การ Copy ไฟล์ แต่คือกระบวนการ
+          </p>
+          <div class="flex flex-col space-y-4 text-left">
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full mr-4 font-bold">1</div>
+              <span><strong>Planning:</strong> กำหนดฟีเจอร์ที่จะปล่อยในเวอร์ชันถัดไป</span>
+            </div>
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full mr-4 font-bold">2</div>
+              <span><strong>Building & Versioning:</strong> สร้าง Artifact และติด Tag (SemVer)</span>
+            </div>
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full mr-4 font-bold">3</div>
+              <span><strong>Testing (Staging):</strong> ทดสอบในสภาพแวดล้อมเสมือนจริง (UAT)</span>
+            </div>
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-full mr-4 font-bold">4</div>
+              <span><strong>Approval:</strong> การอนุมัติ (Gatekeeping) ก่อนขึ้น Production </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Deployment Strategy Intro -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Deployment Strategies</h2>
+          <p class="text-xl text-white/90 mb-8">
+          "จะเปลี่ยนของเก่าเป็นของใหม่ยังไง ให้ระบบไม่ล่ม และผู้ใช้ไม่บ่น?"
+          </p>
+          <div class="grid grid-cols-3 gap-6">
+            <div class="bg-blue-600 p-6 rounded-xl transform hover:scale-105 transition">
+              <span class="text-4xl">🔄</span>
+              <h3 class="text-xl font-bold mt-4">Rolling</h3>
+              <p class="text-sm mt-2">ค่อยๆ เปลี่ยนทีละตัว</p>
+            </div>
+            <div class="bg-green-600 p-6 rounded-xl transform hover:scale-105 transition">
+              <span class="text-4xl">🔵🟢</span>
+              <h3 class="text-xl font-bold mt-4">Blue/Green</h3>
+              <p class="text-sm mt-2">สลับขั้วทันที (Instant Switch)</p>
+            </div>
+            <div class="bg-yellow-600 p-6 rounded-xl transform hover:scale-105 transition">
+              <span class="text-4xl">🐤</span>
+              <h3 class="text-xl font-bold mt-4">Canary</h3>
+              <p class="text-sm mt-2">ปล่อยให้กลุ่มเล็กๆ ลองก่อน</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Strategy 1 - Recreate (Basic) -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">1. Recreate Strategy (Big Bang)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <p class="text-lg mb-4">
+            <strong>วิธีทำงาน:</strong> หยุดระบบเก่าทั้งหมด (Downtime) -> ลงของใหม่ -> เริ่มระบบใหม่
+            </p>
+            <div class="grid grid-cols-2 gap-6 mt-6">
+              <div>
+                <h4 class="text-green-300 font-bold">ข้อดี:</h4>
+                <ul class="list-disc list-inside text-sm">
+                  <li>ง่ายที่สุด ไม่ต้องใช้ Tool ซับซ้อน</li>
+                  <li>ไม่เปลืองทรัพยากร (ไม่ต้องรัน 2 เวอร์ชันพร้อมกัน)</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="text-red-300 font-bold">ข้อเสีย:</h4>
+                <ul class="list-disc list-inside text-sm">
+                  <li><strong>Downtime:</strong> ระบบจะใช้งานไม่ได้ช่วงหนึ่ง</li>
+                  <li>ไม่เหมาะกับ Business Critical App</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Strategy 2 - Rolling Deployment -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">2. Rolling Deployment</h2>
+          <p class="mb-4">ค่อยๆ แทนที่ Instance เก่าด้วยของใหม่ ทีละส่วน (Incrementally) </p>
+
+          <div class="flex justify-center items-center gap-4 my-6">
+            <div class="flex flex-col items-center">
+              <div class="flex gap-2">
+                <div class="w-12 h-12 bg-green-500 rounded flex items-center justify-center">v2</div>
+                <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center">v1</div>
+                <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center">v1</div>
+              </div>
+              <p class="text-xs mt-2">Step 1</p>
+            </div>
+            <span class="text-2xl">➡</span>
+            <div class="flex flex-col items-center">
+              <div class="flex gap-2">
+                <div class="w-12 h-12 bg-green-500 rounded flex items-center justify-center">v2</div>
+                <div class="w-12 h-12 bg-green-500 rounded flex items-center justify-center">v2</div>
+                <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center">v1</div>
+              </div>
+              <p class="text-xs mt-2">Step 2</p>
+            </div>
+            <span class="text-2xl">➡</span>
+            <div class="flex flex-col items-center">
+              <div class="flex gap-2">
+                <div class="w-12 h-12 bg-green-500 rounded flex items-center justify-center">v2</div>
+                <div class="w-12 h-12 bg-green-500 rounded flex items-center justify-center">v2</div>
+                <div class="w-12 h-12 bg-green-500 rounded flex items-center justify-center">v2</div>
+              </div>
+              <p class="text-xs mt-2">Complete</p>
+            </div>
+          </div>
+
+          <div class="bg-black/30 p-4 rounded-xl text-left text-sm">
+            <p>✅ <strong>Zero Downtime:</strong> ผู้ใช้ยังใช้งานได้ตลอด</p>
+            <p>⚠️ <strong>Risk:</strong> จะมีช่วงเวลาที่ v1 และ v2 ทำงานพร้อมกัน (ต้องระวังเรื่อง Database/API compatibility) </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Strategy 3 - Blue/Green Deployment -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">3. Blue/Green Deployment</h2>
+          <p class="mb-4">สร้าง Environment ใหม่ (Green) ให้สมบูรณ์ แล้วสลับ Traffic ไปทีเดียว </p>
+
+          <div class="grid grid-cols-2 gap-8 mb-6">
+            <div class="border-2 border-blue-500 p-4 rounded-xl opacity-50">
+              <h3 class="font-bold text-blue-300">Blue (Current Live)</h3>
+              <p>User Traffic ❌</p>
+              <div class="h-2 w-full bg-gray-600 mt-2"></div>
+            </div>
+            <div class="border-4 border-green-500 p-4 rounded-xl transform scale-110 shadow-lg bg-green-900/20">
+              <h3 class="font-bold text-green-300">Green (New Version)</h3>
+              <p>User Traffic ✅</p>
+              <div class="h-2 w-full bg-green-500 mt-2 animate-pulse"></div>
+            </div>
+          </div>
+
+          <div class="text-left text-sm space-y-2">
+            <p>✅ <strong>Instant Switch & Rollback:</strong> สลับไปมาได้ทันที ถ้ามีปัญหาก็สลับกลับ Blue ง่ายมาก</p>
+            <p>⚠️ <strong>Cost:</strong> เปลืองทรัพยากร 2 เท่า (ต้องมี Server รองรับทั้ง 2 environments) </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Strategy 4 - Canary Deployment -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">4. Canary Deployment</h2>
+          <p class="text-lg mb-6">"นกขมิ้นในเหมืองถ่านหิน" - ปล่อยให้ผู้ใช้กลุ่มเล็กๆ ลองก่อน </p>
+
+          <div class="bg-white/10 p-6 rounded-2xl relative mb-6">
+            <div class="flex justify-between items-center mb-2">
+              <span>Users (100%)</span>
+            </div>
+            <div class="w-full h-8 bg-blue-600 rounded-full overflow-hidden flex">
+              <div class="w-[90%] bg-blue-600 flex items-center justify-center text-xs">v1 (Stable) - 90%</div>
+              <div class="w-[10%] bg-yellow-500 flex items-center justify-center text-xs text-black font-bold">v2 - 10%</div>
+            </div>
+            <div class="mt-4 text-left text-sm">
+              <p>1. ปล่อย v2 ให้ User 10%</p>
+              <p>2. Monitor Error Rate / Performance</p>
+              <p>3. ถ้าดี -> ขยายเป็น 50% -> 100%</p>
+              <p>4. ถ้าพัง -> Rollback ทันที (ผู้ใช้ส่วนใหญ่ไม่ได้รับผลกระทบ)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Feature Flags (Toggles) -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Feature Flags (Decoupling Deploy from Release)</h2>
+          <p class="text-lg mb-6">
+          Deploy โค้ดไปแล้ว แต่ "ปิด" ฟีเจอร์ไว้ก่อน แล้วค่อย "เปิด" เมื่อพร้อม 
+          </p>
+
+          <div class="bg-black/50 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-yellow-400">
+            <p>if (features.isEnabled('new-checkout-ui')) {</p>
+            <p>&nbsp;&nbsp;return &lt;NewCheckout /&gt;;</p>
+            <p>} else {</p>
+            <p>&nbsp;&nbsp;return &lt;OldCheckout /&gt;;</p>
+            <p>}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mt-6 text-left text-sm">
+            <div class="bg-white/10 p-3 rounded">✅ A/B Testing ได้ง่าย</div>
+            <div class="bg-white/10 p-3 rounded">✅ Kill Switch ปิดฟีเจอร์ทันทีถ้ามีบั๊ก</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Zero Downtime Deployment -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Zero Downtime: เป้าหมายสูงสุด</h2>
+          <p class="text-lg mb-6">
+          หัวใจสำคัญคือ <strong>Load Balancer</strong> และ <strong>Health Checks</strong>
+          </p>
+          <div class="bg-white/10 p-6 rounded-xl text-left space-y-3">
+            <p>1. <strong>Health Check:</strong> ระบบต้องรู้ว่า Container ตัวใหม่ "พร้อม" (Healthy) หรือยัง ก่อนจะส่ง Traffic ไปหา </p>
+            <p>2. <strong>Graceful Shutdown:</strong> Container ตัวเก่าต้องเคลียร์ Request ที่ค้างอยู่ให้จบก่อนจะดับไป</p>
+            <p>3. <strong>Database Migrations:</strong> ต้องระวังการแก้ Database ที่ทำให้เวอร์ชันเก่าพัง (Backward Compatibility) </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Strategy Comparison Table -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">เปรียบเทียบกลยุทธ์ (Comparison)</h2>
+          <div class="overflow-x-auto">
+            <table class="table-auto w-full text-left text-sm text-gray-300">
+              <thead class="bg-white/20 text-white font-bold">
+                <tr>
+                  <th class="p-3">Strategy</th>
+                  <th class="p-3">Zero Downtime</th>
+                  <th class="p-3">Real User Testing</th>
+                  <th class="p-3">Cost</th>
+                  <th class="p-3">Rollback Duration</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-600">
+                <tr>
+                  <td class="p-3 font-bold text-red-300">Recreate</td>
+                  <td class="p-3">❌ No</td>
+                  <td class="p-3">❌ No</td>
+                  <td class="p-3">Lowest</td>
+                  <td class="p-3">Slow</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-blue-300">Rolling</td>
+                  <td class="p-3">✅ Yes</td>
+                  <td class="p-3">❌ No</td>
+                  <td class="p-3">Low</td>
+                  <td class="p-3">Slow</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-green-300">Blue/Green</td>
+                  <td class="p-3">✅ Yes</td>
+                  <td class="p-3">❌ No</td>
+                  <td class="p-3">High (x2)</td>
+                  <td class="p-3">Instant ⚡</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-yellow-300">Canary</td>
+                  <td class="p-3">✅ Yes</td>
+                  <td class="p-3">✅ Yes</td>
+                  <td class="p-3">Low</td>
+                  <td class="p-3">Fast</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: GitOps Concept -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Modern CD: GitOps</h2>
+          <p class="text-lg mb-6">
+          ใช้ Git เป็น "Single Source of Truth" สำหรับ Infrastructure และ Application 
+          </p>
+
+          <div class="flex justify-center items-center gap-6 bg-white/10 p-6 rounded-xl">
+            <div class="text-center">
+              <div class="text-5xl mb-2">🐱</div>
+              <p>Git Repo</p>
+              <p class="text-xs">(Manifests)</p>
+            </div>
+            <div class="text-3xl animate-pulse">Sync 🔄</div>
+            <div class="text-center">
+              <div class="text-5xl mb-2">🐙</div>
+              <p>ArgoCD / Flux</p>
+              <p class="text-xs">(Controller)</p>
+            </div>
+            <div class="text-3xl">➡</div>
+            <div class="text-center">
+              <div class="text-5xl mb-2">☸️</div>
+              <p>Kubernetes</p>
+              <p class="text-xs">(Cluster)</p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-gray-300">
+          แทนที่จะรันคำสั่ง <code>kubectl apply</code> เอง เราแค่แก้ไฟล์ใน Git แล้วระบบจะ Sync ให้เองอัตโนมัติ
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 24: Tools for CD -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เครื่องมือสำหรับ CD (Tools)</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">🐙</span>
+              <div>
+                <h3 class="font-bold">ArgoCD</h3>
+                <p class="text-xs text-gray-400">GitOps tool สำหรับ Kubernetes ยอดนิยม </p>
+              </div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">🤵</span>
+              <div>
+                <h3 class="font-bold">Jenkins</h3>
+                <p class="text-xs text-gray-400">Classic tool ปรับแต่งได้เยอะ แต่ต้องดูแลเอง </p>
+              </div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">☁️</span>
+              <div>
+                <h3 class="font-bold">Render / Vercel</h3>
+                <p class="text-xs text-gray-400">Platform as a Service (PaaS) ที่รวม CD มาให้ในตัว ใช้ง่าย </p>
+              </div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">🚀</span>
+              <div>
+                <h3 class="font-bold">GitHub Actions</h3>
+                <p class="text-xs text-gray-400">ใช้ทำได้ทั้ง CI และ CD (Push Docker, Deploy to Cloud)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part 4: Security & Wrap Up (Slides 25-30) -->
+      <!-- Slide 25: DevSecOps in CD -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Security in CD Pipeline</h2>
+          <p class="text-lg mb-6">ความปลอดภัยต้องอยู่ในทุกขั้นตอน ไม่ใช่แค่ตอนจบ </p>
+
+          <div class="space-y-4 text-left">
+            <div class="bg-red-900/30 p-4 rounded-xl border-l-4 border-red-500">
+              <h3 class="font-bold text-red-300">Image Scanning</h3>
+              <p class="text-sm">สแกนหาช่องโหว่ (CVEs) ใน Docker Image ก่อนขึ้น Production (เช่นใช้ Trivy, Snyk) </p>
+            </div>
+            <div class="bg-yellow-900/30 p-4 rounded-xl border-l-4 border-yellow-500">
+              <h3 class="font-bold text-yellow-300">Secret Management</h3>
+              <p class="text-sm">ห้ามฝัง Password ใน Code/Image ให้ใช้ Vault หรือ Secret Manager ของ Cloud </p>
+            </div>
+            <div class="bg-blue-900/30 p-4 rounded-xl border-l-4 border-blue-500">
+              <h3 class="font-bold text-blue-300">Least Privilege</h3>
+              <p class="text-sm">CD Tool ควรมีสิทธิ์เท่าที่จำเป็นในการ Deploy เท่านั้น</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Monitoring & Observability -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">หลัง Deploy เสร็จ... จบไหม?</h2>
+          <p class="text-xl mb-8">NO! เราต้องเฝ้าระวัง (Monitor) ทันที </p>
+
+          <div class="grid grid-cols-3 gap-6 text-center">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <div class="text-4xl mb-2">📊</div>
+              <h3 class="font-bold">Metrics</h3>
+              <p class="text-xs">CPU, RAM, Error Rate (Prometheus)</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <div class="text-4xl mb-2">📝</div>
+              <h3 class="font-bold">Logs</h3>
+              <p class="text-xs">บันทึกเหตุการณ์ (ELK, Loki)</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <div class="text-4xl mb-2">🚨</div>
+              <h3 class="font-bold">Alerts</h3>
+              <p class="text-xs">แจ้งเตือนเมื่อมีปัญหา (PagerDuty)</p>
+            </div>
+          </div>
+          <p class="mt-6 text-sm text-yellow-300">
+          *ถ้า Deploy แล้ว Error Rate พุ่งสูง -> ต้อง Auto-Rollback ทันที 
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 27: Summary -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สรุปบทเรียน (Summary)</h2>
+          <ul class="list-disc list-inside text-left text-lg space-y-4 bg-white/10 p-8 rounded-2xl">
+            <li><strong>CD (Delivery)</strong> คือการทำให้พร้อม Deploy, <strong>CD (Deployment)</strong> คือการ Deploy อัตโนมัติ</li>
+            <li><strong>Artifact</strong> ต้อง Build ครั้งเดียว (Immutable) แล้วใช้ตลอด Pipeline</li>
+            <li><strong>Deployment Strategies</strong> (Rolling, Blue/Green, Canary) ช่วยลด Downtime และความเสี่ยง</li>
+            <li><strong>Configuration</strong> ต้องแยกออกจาก Code (Environment Variables)</li>
+            <li><strong>Security & Monitoring</strong> เป็นส่วนสำคัญของ CD Pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 28: Q&A -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-6">💬</div>
+          <h2 class="text-5xl font-bold mb-6">Q & A</h2>
+          <p class="text-xl text-white/90 mb-8">
+          มีคำถามเกี่ยวกับ Continuous Delivery หรือ Deployment Strategies ไหมครับ?
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 29: Preparing for Lab -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! 🧪</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">Next: Hands-on Deployment</h3>
+            <p class="text-lg mb-4">
+            ใน Lab ถัดไป เราจะนำโปรเจกต์ Django + React ที่ทำ CI ไว้แล้ว มาทำ <strong>CD (Continuous Deployment)</strong> ขึ้น Cloud จริงๆ
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>เราจะใช้ <strong>Render.com</strong> (PaaS) ในการ Deploy </li>
+              <li>เชื่อมต่อ GitHub Repo กับ Render</li>
+              <li>ตั้งค่า <strong>Environment Variables</strong> บน Cloud</li>
+              <li>ทดสอบแก้ไขโค้ดและดูมัน Deploy อัตโนมัติ (Automated Deployment)</li>
+            </ul>
+            <div class="mt-8 text-center">
+              <span class="bg-blue-600 px-6 py-2 rounded-full text-sm font-bold animate-pulse">
+                สิ่งที่ต้องเตรียม: GitHub Account & Render Account
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Thank You -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-6xl font-bold mb-6">ขอบคุณครับ</h2>
+          <p class="text-2xl text-white/90">
+          See you in the Lab!
+          </p>
+        </div>
+      </div>
+
+<!-- Slide 30: Lab Overview -->
+<div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Lab: Continuous Deployment to Render 🚀</h2>
+    <p class="text-xl text-white/90 mb-8">
+      เรียนรู้วิธีการนำ Django Application ขึ้นสู่ระบบ Production จริงบนคลาวด์ของ Render.com
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-purple-500 text-left">
+      <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab</h3>
+      <ul class="space-y-3 text-lg">
+        <li>✅ เตรียมความพร้อมโค้ด Django สำหรับ Production (Gunicorn, Whitenoise)</li>
+        <li>✅ สร้างและเชื่อมต่อฐานข้อมูล PostgreSQL บน Render</li>
+        <li>✅ ตั้งค่า Web Service และ Automated Deployment (CD)</li>
+        <li>✅ จัดการ Environment Variables และ Secrets อย่างปลอดภัย</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 31: Step 1 - Fork & Clone Repository -->
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 1: เตรียม Repository (Fork & Clone)</h2>
+    <p class="mb-4 text-left">เราจะใช้โค้ดจาก Branch <code>wk07</code> เป็นจุดเริ่มต้นในการ Deploy</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm md:text-base space-y-3 border-l-4 border-blue-400">
+      <p class="text-gray-400"># 1. ไปที่ GitHub และทำการ Fork Repository ต่อไปนี้ไปยังบัญชีของคุณ:</p>
+      <p class="text-blue-300">https://github.com/wichitpaulsombat/djrepo</p>
+      <br>
+      <p class="text-gray-400"># 2. ในเครื่องของคุณ ให้ Clone repo ที่เพิ่ง Fork มา (สลับไปที่ branch wk07)</p>
+      <p class="text-green-400">$ git clone -b wk07 https://github.com/YOUR_GITHUB_USER/djrepo.git</p>
+      <p class="text-green-400">$ cd djrepo</p>
+    </div>
+    <div class="mt-6 bg-blue-900/40 p-4 rounded-xl text-left text-sm">
+      💡 <strong>ข้อสังเกต:</strong> โปรเจกต์นี้ได้รับการปรับแต่งค่าบางส่วนสำหรับ Render ไว้แล้ว เช่น การเพิ่มไลบรารีที่จำเป็นลงใน <code>requirements.txt</code>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 32: Step 2 - สำรวจไฟล์สำคัญสำหรับ Render -->
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 2: ทำความเข้าใจไฟล์สำคัญ (Build Script)</h2>
+    <p class="mb-4 text-left text-sm">Render ต้องการคำสั่งในการ "Build" โปรเจกต์ เราจึงมักสร้างไฟล์ <code>build.sh</code> แยกไว้</p>
+    
+    <div class="grid md:grid-cols-2 gap-6 text-left">
+      <div class="bg-black/50 p-4 rounded-xl font-mono text-xs overflow-auto h-64 border border-gray-600">
+        <p class="text-gray-400"># build.sh (ตรวจสอบว่ามีไฟล์นี้อยู่ในโปรเจกต์)</p>
+        <p class="text-green-300">#!/usr/bin/env bash</p>
+        <p class="text-gray-400"># Exit on error</p>
+        <p class="text-blue-300">set -o errexit</p>
+        <br>
+        <p class="text-gray-400"># ติดตั้ง Dependencies</p>
+        <p class="text-white">pip install -r requirements.txt</p>
+        <br>
+        <p class="text-gray-400"># รวบรวม Static Files (CSS, JS, Images)</p>
+        <p class="text-white">python manage.py collectstatic --no-input</p>
+        <br>
+        <p class="text-gray-400"># อัปเดตโครงสร้างฐานข้อมูล</p>
+        <p class="text-white">python manage.py migrate</p>
+      </div>
+      
+      <div class="flex flex-col justify-center space-y-4">
+        <div class="bg-white/10 p-4 rounded-xl">
+          <h3 class="font-bold text-yellow-300 text-sm">Library ที่จำเป็น (ใน requirements.txt):</h3>
+          <ul class="list-disc list-inside mt-2 text-xs text-gray-200 space-y-1">
+            <li><code>gunicorn</code> : Web Server สำหรับรัน Django บน Production</li>
+            <li><code>psycopg2-binary</code> : ตัวเชื่อมต่อฐานข้อมูล PostgreSQL</li>
+            <li><code>dj-database-url</code> : ตัวแปลง String URL เป็นการตั้งค่า Database</li>
+            <li><code>whitenoise</code> : ตัวช่วยเสิร์ฟ Static files</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 33: Step 3 - สมัคร Render และสร้าง PostgreSQL -->
+<div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 3: สร้าง Database บน Render</h2>
+    <div class="bg-white/10 p-6 rounded-xl text-left space-y-4">
+      <p>1. เข้าไปที่ <a href="https://dashboard.render.com" target="_blank" class="text-blue-400 underline">dashboard.render.com</a> และ Sign in ด้วยบัญชี GitHub</p>
+      <p>2. กดปุ่ม <strong>New +</strong> และเลือก <strong>PostgreSQL</strong></p>
+      <p>3. ตั้งค่าฐานข้อมูลดังนี้:</p>
+      <ul class="list-disc list-inside ml-6 text-sm text-yellow-300">
+        <li><strong>Name:</strong> djrepo-db (หรือชื่ออะไรก็ได้)</li>
+        <li><strong>Region:</strong> Singapore (หรือโซนที่ใกล้คุณที่สุด)</li>
+        <li><strong>PostgreSQL Version:</strong> 15 หรือ 16</li>
+        <li><strong>Instance Type:</strong> Free (ใช้งานได้ฟรี)</li>
+      </ul>
+      <p>4. กดปุ่ม <strong>Create Database</strong></p>
+      <div class="bg-black/30 p-3 rounded mt-4 border-l-4 border-green-500">
+        <p class="text-sm">🔑 <strong>สำคัญ:</strong> เมื่อสร้างเสร็จแล้ว ให้คัดลอก <strong>Internal Database URL</strong> เก็บไว้ (เราจะใช้เชื่อมต่อกับ Web Service)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 34: Step 4 - สร้าง Web Service สำหรับ Django -->
+<div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 4: สร้าง Web Service (เชื่อมโค้ด)</h2>
+    <p class="mb-4 text-left">ตอนนี้เราจะนำโค้ดจาก GitHub มาวางบนเซิร์ฟเวอร์</p>
+    
+    <div class="bg-white/10 p-6 rounded-xl text-left space-y-4">
+      <p>1. กลับมาที่หน้า Dashboard หลัก กด <strong>New +</strong> แล้วเลือก <strong>Web Service</strong></p>
+      <p>2. เลือก <strong>Build and deploy from a Git repository</strong> แล้วกด Next</p>
+      <p>3. กด <strong>Connect</strong> ที่ Repository <code>djrepo</code> ของคุณ</p>
+      <p>4. ตั้งค่า Web Service เบื้องต้น:</p>
+      <ul class="list-disc list-inside ml-6 text-sm">
+        <li><strong>Name:</strong> djrepo-app (ชื่อเว็บของคุณ)</li>
+        <li><strong>Region:</strong> Singapore (ควรเป็นที่เดียวกับ Database)</li>
+        <li><strong>Branch:</strong> <span class="text-yellow-300 font-bold">wk07</span> (ห้ามลืมเลือก branch นี้!)</li>
+        <li><strong>Runtime:</strong> Python 3</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 35: Step 5 - ตั้งค่าคำสั่ง Build & Start -->
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 5: ตั้งค่า Build & Start Command</h2>
+    <p class="mb-4 text-left">บอกให้ Render รู้ว่าต้องรันคำสั่งอะไรเพื่อเตรียมและเปิดใช้งานแอป</p>
+    
+    <div class="grid md:grid-cols-2 gap-6 text-left">
+      <div class="bg-purple-900/30 p-5 rounded-xl border border-purple-500">
+        <h3 class="font-bold text-purple-300 mb-2">Build Command</h3>
+        <p class="text-sm mb-2 text-gray-300">ใส่คำสั่งเพื่อเรียกใช้สคริปต์ที่เราเตรียมไว้</p>
+        <code class="block bg-black/50 p-2 rounded text-green-400">./build.sh</code>
+      </div>
+      
+      <div class="bg-blue-900/30 p-5 rounded-xl border border-blue-500">
+        <h3 class="font-bold text-blue-300 mb-2">Start Command</h3>
+        <p class="text-sm mb-2 text-gray-300">ใช้ Gunicorn เสิร์ฟแอปแทนรันเซิร์ฟเวอร์ของ Django</p>
+        <code class="block bg-black/50 p-2 rounded text-green-400">gunicorn mysite.wsgi:application</code>
+      </div>
+    </div>
+    
+    <div class="mt-6 bg-red-900/40 p-4 rounded-xl text-sm text-left border-l-4 border-red-500">
+      ⚠️ <strong>ระวัง:</strong> ชื่อ <code>mysite</code> ใน Start Command ต้องตรงกับโฟลเดอร์ที่มีไฟล์ <code>wsgi.py</code> ในโปรเจกต์ของคุณ (ให้เช็คชื่อโปรเจกต์ในโค้ดอีกครั้ง หากตั้งชื่ออื่นให้เปลี่ยนตามนั้น)
+    </div>
+  </div>
+</div>
+
+<!-- Slide 36: Step 6 - Environment Variables (เคล็ดลับความปลอดภัย) -->
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-4">Step 6: ตั้งค่า Environment Variables</h2>
+    <p class="mb-4 text-sm text-left">เลื่อนลงมาที่หมวด <strong>Environment Variables</strong> และเพิ่มค่าต่างๆ ดังนี้ (กด Add Environment Variable):</p>
+    
+    <div class="bg-black/50 p-6 rounded-xl font-mono text-sm text-left space-y-4 border-2 border-yellow-500/50">
+      <div>
+        <span class="text-blue-300 font-bold">DATABASE_URL</span> = 
+        <span class="text-green-300">postgres://... (วาง Internal Database URL จาก Step 3)</span>
+      </div>
+      <div>
+        <span class="text-blue-300 font-bold">SECRET_KEY</span> = 
+        <span class="text-green-300">พิมพ์ข้อความสุ่มยาวๆ มั่วๆ ลงไป (ห้ามให้ใครรู้)</span>
+      </div>
+      <div>
+        <span class="text-blue-300 font-bold">DEBUG</span> = 
+        <span class="text-green-300">False</span> <span class="text-gray-500"># ปิดโหมด Debug บน Production เพื่อความปลอดภัย</span>
+      </div>
+      <div>
+        <span class="text-blue-300 font-bold">PYTHON_VERSION</span> = 
+        <span class="text-green-300">3.11</span> <span class="text-gray-500"># กำหนดเวอร์ชัน Python ให้ตรงกับตอนพัฒนา</span>
+      </div>
+    </div>
+    
+    <p class="mt-4 text-sm text-left text-white/80">เมื่อกรอกครบแล้ว ให้เลื่อนลงไปล่างสุดและกดปุ่ม <strong>Create Web Service</strong></p>
+  </div>
+</div>
+
+<!-- Slide 37: Step 7 - Monitor Deployment -->
+<div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 7: ดูผลการ Deploy และ Logs</h2>
+    <p class="mb-6">เมื่อกด Create แล้ว ระบบจะเริ่มกระบวนการ CI/CD ทันที</p>
+    
+    <div class="bg-white/10 p-6 rounded-xl text-left space-y-4">
+      <h3 class="font-bold text-yellow-300">สิ่งที่ต้องสังเกตในหน้า Logs:</h3>
+      <ol class="list-decimal list-inside space-y-2 text-sm text-gray-200">
+        <li>ระบบกำลัง Clone repository และ Checkout branch <code class="bg-black/30 px-1 rounded">wk07</code></li>
+        <li>ระบบทำการรัน <code class="bg-black/30 px-1 rounded">./build.sh</code></li>
+        <li>ดูว่า <code>pip install</code> ทำงานสำเร็จหรือไม่</li>
+        <li>ดูว่า Database migrations สมบูรณ์หรือไม่ (Applying migrations...)</li>
+        <li>สถานะสุดท้ายจะต้องขึ้นว่า <span class="text-green-400 font-bold">==> Your service is live 🎉</span></li>
+      </ol>
+      <div class="mt-4 p-3 bg-blue-900/30 rounded border border-blue-500 text-sm">
+        🌐 ถ้าสำเร็จ คุณสามารถคลิกที่ URL ด้านมุมซ้ายบน (เช่น <code>https://djrepo-app.onrender.com</code>) เพื่อดูเว็บไซต์ของคุณได้เลย!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 38: Step 8 - เข้าใช้งาน Shell เพื่อสร้าง Superuser -->
+<div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">Step 8: สร้างบัญชี Admin (Superuser)</h2>
+    <p class="mb-4 text-left text-lg">ฐานข้อมูลบน Production เริ่มต้นจะว่างเปล่า เราต้องสร้าง Admin เพื่อเข้าหลังบ้าน</p>
+    
+    <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+      <div class="bg-white/10 p-5 rounded-xl">
+        <h3 class="font-bold text-yellow-300 mb-2">วิธีทำบน Render:</h3>
+        <ol class="list-decimal list-inside space-y-2">
+          <li>ที่หน้า Dashboard ของ Web Service ให้คลิกแท็บ <strong>Shell</strong></li>
+          <li>รอสักครู่เพื่อให้ Terminal โหลด</li>
+          <li>พิมพ์คำสั่งสร้าง Superuser</li>
+          <li>กรอก Username, Email, และ Password</li>
+        </ol>
+      </div>
+      <div class="bg-black/50 p-5 rounded-xl font-mono">
+        <p class="text-gray-400"># พิมพ์คำสั่งนี้ในหน้า Shell</p>
+        <p class="text-green-400">$ python manage.py createsuperuser</p>
+        <br>
+        <p class="text-white">Username: admin</p>
+        <p class="text-white">Email address: admin@example.com</p>
+        <p class="text-white">Password:</p>
+        <p class="text-white">Password (again):</p>
+        <p class="text-green-300 mt-2">Superuser created successfully.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 39: Troubleshooting (แก้ปัญหาที่พบบ่อย) -->
+<div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h2 class="text-3xl font-bold mb-6">🛠️ Troubleshooting (การแก้ปัญหา)</h2>
+    <div class="grid md:grid-cols-3 gap-4 text-left text-sm">
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+        <strong class="text-red-300 block mb-2">Build Failed (pip error)</strong>
+        <p>สาเหตุ: พิมพ์ชื่อ Library ใน requirements.txt ผิด หรือเวอร์ชัน Python ไม่ตรงกัน</p>
+        <p class="text-gray-300 mt-2">แก้: เช็ค Logs ให้ดีว่าตัวไหน Error และระบุ <code>PYTHON_VERSION</code> ให้ตรง</p>
+      </div>
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+        <strong class="text-red-300 block mb-2">Database Connection Error</strong>
+        <p>สาเหตุ: คัดลอก DATABASE_URL ผิด หรือใส่ External URL แทน Internal</p>
+        <p class="text-gray-300 mt-2">แก้: กลับไปเช็คที่แท็บ Environment ให้แน่ใจว่าใช้ <code>postgres://...</code> ที่ถูกต้อง</p>
+      </div>
+      <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+        <strong class="text-red-300 block mb-2">เว็บพัง 500 Server Error</strong>
+        <p>สาเหตุ: โค้ดมีบั๊ก หรือลืมตั้ง ALLOWED_HOSTS ใน Django settings</p>
+        <p class="text-gray-300 mt-2">แก้: ถ้าในโปรเจกต์ตั้ง <code>ALLOWED_HOSTS = ['*']</code> ไว้แล้ว ให้ไปเช็คหน้า Logs เพื่อดู Error จริงๆ ของ Django</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 40: Auto Deploy (GitOps) -->
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-4xl font-bold mb-6">เวทมนตร์แห่ง CD: Auto Deploy 🔄</h2>
+    <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-green-500">
+      <p class="text-xl mb-4">
+        Render ได้เชื่อมต่อกับ GitHub Repository ของคุณเรียบร้อยแล้ว
+      </p>
+      <p class="text-lg text-gray-300 mb-6">
+        ทุกครั้งที่คุณมีการ <code class="text-white bg-black/50 px-2 py-1 rounded">git push</code> การอัปเดตโค้ดขึ้นไปยัง Branch <strong>wk07</strong> บน GitHub ของคุณ:
+      </p>
+      <ul class="list-disc list-inside space-y-2 text-lg text-yellow-300">
+        <li>Render จะตรวจจับการเปลี่ยนแปลงโดยอัตโนมัติ (ผ่าน Webhook)</li>
+        <li>ทำการ Build ใหม่ (Zero-downtime deploy)</li>
+        <li>แอปพลิเคชันจะถูกอัปเดตโดยที่คุณไม่ต้องกดปุ่มใดๆ อีก!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 41: Lab Completion & Submission -->
+<div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-8xl mb-4">🎉</div>
+    <h2 class="text-5xl font-bold mb-6">ภารกิจสำเร็จ! การส่งงาน</h2>
+    <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+      <h3 class="text-2xl font-bold mb-4 text-green-300">รายละเอียดการส่งผลการทำ Lab:</h3>
+      <ul class="list-decimal list-inside space-y-4 text-lg">
+        <li>
+          <strong>URL ของเว็บไซต์:</strong> ส่งลิงก์ Render ของคุณ (เช่น <code>https://djrepo-app.onrender.com</code>)
+        </li>
+        <li>
+          <strong>Screenshots (จัดทำเป็น PDF):</strong>
+          <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-2 space-y-1">
+            <li>หน้าเว็บของคุณที่ทำงานได้ปกติ (หน้าแรก)</li>
+            <li>หน้าเว็บ <code>/admin</code> ที่เข้าสู่ระบบด้วย Superuser แล้ว</li>
+            <li>หน้า Dashboard ของ Render ที่แสดงสถานะ Service เป็นสีเขียว (Live)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

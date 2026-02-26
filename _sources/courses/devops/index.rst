@@ -123,6 +123,8 @@ DevOps
        * ตั้งค่าให้รันเมื่อ push โค้ด
        * รัน Linting (ESLint, Pylint) และ Unit Tests สำหรับโปรเจกต์ Hello World
    * - **สัปดาห์ที่ 7**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk07.html>`_
      - **Continuous Delivery (CD) และ Deployment (CD & Deployment)**
 
        * CD คืออะไร? เปรียบเทียบกับ Continuous Deployment
