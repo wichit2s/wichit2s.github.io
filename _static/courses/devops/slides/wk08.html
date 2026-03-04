@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk08.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 8: Infrastructure as Code (IaC) ด้วย Ansible</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          เปลี่ยนการตั้งค่าเซิร์ฟเวอร์ด้วยมือ ให้กลายเป็นโค้ดที่ทำงานอัตโนมัติ รวดเร็ว และทำซ้ำได้
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Introduction:</strong> IaC คืออะไร? ทำไมต้องใช้?</li>
+              <li><strong>Concept:</strong> เปรียบเทียบ Imperative vs. Declarative</li>
+              <li><strong>Ansible Overview:</strong> แนะนำ Ansible และสถาปัตยกรรม</li>
+              <li><strong>Core Components:</strong> Control Node, Managed Node, Inventory, Module</li>
+              <li><strong>Language:</strong> YAML syntax เบื้องต้น</li>
+              <li><strong>Playbook:</strong> การเขียน Ansible Playbook</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 8</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: ปัญหาของการจัดการแบบดั้งเดิม -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ยุคก่อน IaC: การจัดการแบบ Manual (ClickOps)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          การใช้คน (System Admin) รีโมท (SSH) เข้าไปพิมพ์คำสั่งทีละเครื่อง หรือคลิกผ่านหน้าเว็บ UI
+          </p>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-red-900/40 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold text-red-300 mb-2">🚨 ปัญหาที่พบ</h3>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Snowflake Servers:</strong> เซิร์ฟเวอร์แต่ละเครื่องมีการตั้งค่าที่ไม่เหมือนกัน (เพี้ยนไปทีละนิด)</li>
+                <li><strong>Human Error:</strong> พิมพ์คำสั่งผิด หรือลืมตั้งค่าบางอย่าง</li>
+                <li><strong>Lack of Documentation:</strong> ไม่มีใครรู้ว่าเซิร์ฟเวอร์นี้ถูกตั้งค่าอะไรไปบ้างในอดีต</li>
+                <li><strong>Slow Scaling:</strong> จะเพิ่มเซิร์ฟเวอร์ 10 เครื่อง ต้องเสียเวลาทำแบบเดิม 10 ครั้ง</li>
+              </ul>
+            </div>
+            <div class="flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-8xl mb-4">😰</div>
+                <p class="text-yellow-300 font-bold">"It works on my machine!"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: IaC คืออะไร? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Infrastructure as Code (IaC) คืออะไร?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-blue-500">
+            <p class="text-xl mb-6 leading-relaxed">
+            <strong>IaC (Infrastructure as Code)</strong> คือแนวปฏิบัติในการจัดการและเตรียมความพร้อม (Provisioning) โครงสร้างพื้นฐานทางไอที (เซิร์ฟเวอร์, เครือข่าย, ฐานข้อมูล) ผ่าน <strong>"ไฟล์โค้ด (Code)"</strong> แทนที่จะใช้การตั้งค่าด้วยมือ
+            </p>
+            <div class="bg-black/30 p-4 rounded-xl font-mono text-sm text-green-300">
+              "ปฏิบัติต่อ Infrastructure เหมือนกับที่เราปฏิบัติต่อ Application Code"
+            </div>
+            <ul class="list-disc list-inside space-y-2 text-lg mt-6">
+              <li>เก็บไฟล์โค้ดไว้ใน <strong>Version Control (เช่น Git)</strong></li>
+              <li>สามารถ Review, Test, และทำ CI/CD pipeline ได้</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: ทำไมต้องใช้ IaC? -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">ทำไมถึงต้องใช้ IaC? (Why use IaC?)</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            <div class="bg-blue-800/40 p-6 rounded-xl shadow-lg">
+              <div class="text-4xl mb-4">⚡</div>
+              <h3 class="font-bold text-xl mb-2 text-blue-300">Speed & Automation</h3>
+              <p class="text-sm">ตั้งค่าเซิร์ฟเวอร์ 100 เครื่องได้เร็วเท่ากับ 1 เครื่อง ลดเวลาจากหลายสัปดาห์เหลือเพียงไม่กี่นาที</p>
+            </div>
+            <div class="bg-green-800/40 p-6 rounded-xl shadow-lg">
+              <div class="text-4xl mb-4">🎯</div>
+              <h3 class="font-bold text-xl mb-2 text-green-300">Consistency</h3>
+              <p class="text-sm">กำจัดปัญหา Snowflake เซิร์ฟเวอร์ทุกเครื่องที่ถูกสร้างจากโค้ดชุดเดียวกัน จะมีหน้าตาและสภาพแวดล้อมเหมือนกันเป๊ะ 100%</p>
+            </div>
+            <div class="bg-purple-800/40 p-6 rounded-xl shadow-lg">
+              <div class="text-4xl mb-4">📜</div>
+              <h3 class="font-bold text-xl mb-2 text-purple-300">Traceability</h3>
+              <p class="text-sm">เมื่อใช้ร่วมกับ Git เราจะรู้ได้ทันทีว่า "ใคร" เปลี่ยนแปลงค่าเซิร์ฟเวอร์ "อะไร" และ "เมื่อไหร่" (Audit Trail)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: ประโยชน์ต่อ DevOps -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">IaC และ DevOps Culture</h2>
+          <p class="text-lg text-white/90 mb-6">IaC เป็นรากฐานสำคัญที่ทำให้กระบวนการ DevOps สมบูรณ์</p>
+
+          <div class="flex flex-col space-y-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">🔄</span>
+              <div>
+                <strong>Reusability (การใช้ซ้ำ):</strong> เขียนโค้ดครั้งเดียว สามารถนำไปใช้สร้าง Environment ใหม่ (Dev, QA, Prod) ได้ทันที
+              </div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">⏪</span>
+              <div>
+                <strong>Easy Rollback (ย้อนกลับง่าย):</strong> หากอัปเดตระบบแล้วพัง สามารถรันโค้ดเวอร์ชันก่อนหน้าเพื่อย้อนกลับสถานะเซิร์ฟเวอร์ได้อย่างรวดเร็ว
+              </div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center">
+              <span class="text-3xl mr-4">🤝</span>
+              <div>
+                <strong>Collaboration (การทำงานร่วมกัน):</strong> Dev และ Ops ใช้ภาษาเดียวกันในการคุยเรื่อง Infrastructure ผ่านไฟล์โค้ด
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: ประเภทของเครื่องมือ IaC -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">ประเภทของเครื่องมือ IaC</h2>
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-indigo-900/50 p-6 rounded-2xl border-t-4 border-indigo-400">
+              <h3 class="text-2xl font-bold mb-4 text-indigo-300">1. Infrastructure Provisioning</h3>
+              <p class="text-sm mb-4">
+              เน้นการ <strong>"สร้าง"</strong> ทรัพยากร (เช่น เช่า VM ใหม่, สร้าง VPC, สร้าง Load Balancer บน Cloud)
+              </p>
+              <ul class="list-disc list-inside text-sm text-gray-300 mb-4">
+                <li>Terraform</li>
+                <li>AWS CloudFormation</li>
+                <li>Pulumi</li>
+              </ul>
+            </div>
+
+            <div class="bg-teal-900/50 p-6 rounded-2xl border-t-4 border-teal-400">
+              <h3 class="text-2xl font-bold mb-4 text-teal-300">2. Configuration Management</h3>
+              <p class="text-sm mb-4">
+              เน้นการ <strong>"ตั้งค่า"</strong> ภายในเซิร์ฟเวอร์ที่มีอยู่แล้ว (เช่น ติดตั้ง Nginx, สร้าง User, แก้ไขไฟล์ Config)
+              </p>
+              <ul class="list-disc list-inside text-sm text-gray-300 mb-4">
+                <li><strong>Ansible (เครื่องมือหลักของเราในสัปดาห์นี้)</strong></li>
+                <li>Chef</li>
+                <li>Puppet</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: แผนภาพเครื่องมือยอดนิยม -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">เครื่องมือในตลาด IaC (Market Landscape)</h2>
+
+          <div class="flex justify-center gap-6 flex-wrap">
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center shadow-lg">
+              <div class="text-4xl mb-2 text-purple-600">🏗️</div>
+              <span class="font-bold">Terraform</span>
+              <span class="text-xs text-gray-500 mt-1">Provisioning (Declarative)</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center shadow-lg border-4 border-red-500 transform scale-110">
+              <div class="text-4xl mb-2 text-red-600">🅰️</div>
+              <span class="font-bold">Ansible</span>
+              <span class="text-xs text-gray-500 mt-1">Config Mgmt (Procedural/Dec)</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center shadow-lg">
+              <div class="text-4xl mb-2 text-orange-500">👨‍🍳</div>
+              <span class="font-bold">Chef</span>
+              <span class="text-xs text-gray-500 mt-1">Config Mgmt (Imperative)</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl text-black w-40 flex flex-col items-center shadow-lg">
+              <div class="text-4xl mb-2 text-yellow-600">🎭</div>
+              <span class="font-bold">Puppet</span>
+              <span class="text-xs text-gray-500 mt-1">Config Mgmt (Declarative)</span>
+            </div>
+          </div>
+
+          <p class="mt-8 text-lg text-yellow-300">
+          *ในโลกความเป็นจริง มักใช้ร่วมกัน เช่น ใช้ Terraform สร้าง VM และใช้ Ansible เข้าไปติดตั้ง Software
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Imperative vs. Declarative Intro -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Imperative vs. Declarative</h2>
+          <p class="text-xl text-white/90 mb-8">
+          สองแนวคิดหลักในการสั่งงาน Infrastructure
+          </p>
+          <div class="bg-white/10 p-8 rounded-3xl text-left flex items-center justify-between">
+            <div class="w-1/2 pr-4">
+              <h3 class="text-2xl font-bold text-orange-300 mb-2">Imperative</h3>
+              <p>บอก <strong>"ขั้นตอน (How)"</strong> ว่าต้องทำอย่างไรทีละขั้น</p>
+            </div>
+            <div class="text-4xl">⚔️</div>
+            <div class="w-1/2 pl-4 text-right">
+              <h3 class="text-2xl font-bold text-green-300 mb-2">Declarative</h3>
+              <p>บอก <strong>"ผลลัพธ์ (What)"</strong> ที่ต้องการ แล้วให้ระบบจัดการหาวิธีเอง</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: แนวทางแบบ Imperative -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">แนวทางแบบ Imperative (ทำอย่างไร)</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div>
+              <p class="text-lg mb-4">
+              คุณต้องระบุขั้นตอนอย่างละเอียด (Step-by-step) คล้ายกับการเขียน Bash Script
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+                <li>ต้องตรวจสอบเงื่อนไขเอง (เช่น ตรวจก่อนว่าติดตั้งหรือยัง)</li>
+                <li>ถ้ารันซ้ำอาจเกิด Error หรือได้ผลลัพธ์ที่ผิดเพี้ยน</li>
+                <li>ดูแลรักษายากเมื่อระบบซับซ้อนขึ้น</li>
+              </ul>
+            </div>
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-sm border-l-4 border-orange-500">
+              <p class="text-gray-400"># ตัวอย่าง Bash Script (Imperative)</p>
+              <p class="text-green-400">apt-get update</p>
+              <p class="text-green-400">apt-get install -y nginx</p>
+              <p class="text-green-400">systemctl start nginx</p>
+              <p class="text-green-400">systemctl enable nginx</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: แนวทางแบบ Declarative -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">แนวทางแบบ Declarative (ต้องการอะไร)</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div>
+              <p class="text-lg mb-4">
+              คุณระบุเฉพาะ <strong>"สภาวะสุดท้ายที่ต้องการ (Desired State)"</strong> เครื่องมือจะไปหาวิธีทำให้มันเกิดขึ้นเอง
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+                <li>เครื่องมือจะตรวจสอบให้เองว่าปัจจุบันเป็นอย่างไร แล้วปรับแก้เฉพาะส่วนที่ต่าง</li>
+                <li>รันซ้ำกี่ครั้งก็ได้ผลเหมือนเดิม (Idempotent)</li>
+                <li>อ่านง่าย เข้าใจง่าย</li>
+              </ul>
+            </div>
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-sm border-l-4 border-green-500">
+              <p class="text-gray-400"># ตัวอย่าง Ansible (Declarative)</p>
+              <p><span class="text-purple-400">- name:</span> Ensure Nginx is installed</p>
+              <p>&nbsp;&nbsp;<span class="text-blue-400">apt:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">name:</span> nginx</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">state:</span> present <span class="text-gray-500"># ขอแค่ให้มี</span></p>
+              <br>
+              <p><span class="text-purple-400">- name:</span> Ensure Nginx is running</p>
+              <p>&nbsp;&nbsp;<span class="text-blue-400">service:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">name:</span> nginx</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">state:</span> started <span class="text-gray-500"># ขอแค่ให้รันอยู่</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: สรุปเปรียบเทียบ Imperative vs Declarative -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สรุปเปรียบเทียบ (Comparison)</h2>
+          <div class="overflow-x-auto bg-white/10 rounded-xl">
+            <table class="table-auto w-full text-left text-sm md:text-base">
+              <thead class="bg-black/30">
+                <tr>
+                  <th class="p-4">Feature</th>
+                  <th class="p-4 text-orange-300">Imperative (How)</th>
+                  <th class="p-4 text-green-300">Declarative (What)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/20">
+                <tr>
+                  <td class="p-4 font-bold">Focus</td>
+                  <td class="p-4">บอกขั้นตอนว่าต้องทำอย่างไร</td>
+                  <td class="p-4">บอกผลลัพธ์สุดท้ายที่อยากได้</td>
+                </tr>
+                <tr>
+                  <td class="p-4 font-bold">Learning Curve</td>
+                  <td class="p-4">เริ่มต้นง่าย (เหมือนเขียน Script)</td>
+                  <td class="p-4">ต้องเรียนรู้ Syntax ของเครื่องมือ</td>
+                </tr>
+                <tr>
+                  <td class="p-4 font-bold">Idempotency</td>
+                  <td class="p-4">มักจะไม่มี (ต้องเขียนเช็คเงื่อนไขเอง)</td>
+                  <td class="p-4">มีในตัว (Built-in) ทำซ้ำได้ปลอดภัย</td>
+                </tr>
+                <tr>
+                  <td class="p-4 font-bold">Examples</td>
+                  <td class="p-4">Bash scripts, Chef (mostly)</td>
+                  <td class="p-4">Terraform, Ansible, Kubernetes YAML</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Introduction to Ansible -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">แนะนำ Ansible 🅰️</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-red-600">
+            <p class="text-xl mb-4">
+            <strong>Ansible</strong> คือ Open-source IT Automation Tool ที่พัฒนาโดย Red Hat ใช้สำหรับ <strong>Configuration Management</strong>, Application Deployment, และ Task Automation
+            </p>
+            <div class="grid grid-cols-2 gap-4 mt-6">
+              <div class="bg-black/30 p-4 rounded-xl">
+                <h4 class="font-bold text-red-300">ภาษาที่ใช้</h4>
+                <p class="text-sm">เขียนด้วยภาษา Python แต่ผู้ใช้เขียนคำสั่งด้วยรูปแบบ <strong>YAML</strong> ที่อ่านง่ายเหมือนภาษาอังกฤษ</p>
+              </div>
+              <div class="bg-black/30 p-4 rounded-xl">
+                <h4 class="font-bold text-red-300">ลักษณะเด่น</h4>
+                <p class="text-sm">เรียบง่ายทรงพลัง และเน้นการทำงานแบบ Declarative (Desired State)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: จุดเด่นของ Ansible (Why Ansible?) -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">ทำไมถึงต้องเลือก Ansible?</h2>
+
+          <div class="grid grid-cols-3 gap-6 text-center">
+            <div class="bg-white/10 p-6 rounded-xl transform hover:scale-105 transition">
+              <div class="text-5xl mb-4">👻</div>
+              <h3 class="font-bold text-lg text-blue-300">Agentless</h3>
+              <p class="text-xs mt-2 text-gray-300"><strong>ไม่ต้องลงโปรแกรม (Agent) ไว้ที่เครื่องปลายทาง</strong> ต่างจาก Chef/Puppet ทำให้ระบบเบาและปลอดภัย</p>
+            </div>
+
+            <div class="bg-white/10 p-6 rounded-xl transform hover:scale-105 transition">
+              <div class="text-5xl mb-4">🔑</div>
+              <h3 class="font-bold text-lg text-yellow-300">Uses SSH / WinRM</h3>
+              <p class="text-xs mt-2 text-gray-300">ทำงานผ่านโปรโตคอลความปลอดภัยพื้นฐานที่มีอยู่แล้ว (SSH สำหรับ Linux, WinRM สำหรับ Windows)</p>
+            </div>
+
+            <div class="bg-white/10 p-6 rounded-xl transform hover:scale-105 transition">
+              <div class="text-5xl mb-4">📖</div>
+              <h3 class="font-bold text-lg text-green-300">Simple YAML</h3>
+              <p class="text-xs mt-2 text-gray-300">ไม่ต้องเรียนรู้ภาษาโปรแกรมมิ่งใหม่ การเขียน Playbook เป็นรูปแบบข้อความที่มนุษย์อ่านเข้าใจทันที</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: สถาปัตยกรรมของ Ansible -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สถาปัตยกรรมของ Ansible (Architecture)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl flex flex-col items-center">
+            <p class="mb-6 text-lg">Push Model: ผลักดันคำสั่งจากเครื่องหลักไปยังเครื่องเป้าหมาย</p>
+
+            <!-- Simple Diagram -->
+            <div class="flex items-center justify-center gap-8 w-full">
+              <!-- Control Node -->
+              <div class="bg-red-800 p-4 rounded-xl border-2 border-red-500 w-1/3">
+                <div class="text-3xl mb-2">💻</div>
+                <h3 class="font-bold">Control Node</h3>
+                <ul class="text-xs text-left list-disc list-inside mt-2 text-gray-300">
+                  <li>ติดตั้ง Ansible</li>
+                  <li>เก็บ Playbook & Inventory</li>
+                </ul>
+              </div>
+
+              <!-- Connection -->
+              <div class="flex flex-col items-center">
+                <span class="text-sm font-mono text-yellow-300">SSH / Python</span>
+                <div class="flex gap-2">
+                  <span class="text-3xl">➡️</span>
+                  <span class="text-3xl">➡️</span>
+                  <span class="text-3xl">➡️</span>
+                </div>
+              </div>
+
+              <!-- Managed Nodes -->
+              <div class="flex flex-col gap-4 w-1/3">
+                <div class="bg-blue-800 p-3 rounded-lg border border-blue-400">
+                  <h4 class="font-bold text-sm">Managed Node 1 (Web)</h4>
+                </div>
+                <div class="bg-blue-800 p-3 rounded-lg border border-blue-400">
+                  <h4 class="font-bold text-sm">Managed Node 2 (DB)</h4>
+                </div>
+                <div class="bg-blue-800 p-3 rounded-lg border border-blue-400">
+                  <h4 class="font-bold text-sm">Managed Node 3 (App)</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Control Node vs Managed Node -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ส่วนประกอบหลัก (The Nodes)</h2>
+
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-black/40 p-6 rounded-xl border-t-4 border-red-500">
+              <h3 class="text-2xl font-bold mb-2 text-red-300">Control Node</h3>
+              <p class="text-sm mb-4">เครื่องคอมพิวเตอร์หลักที่เราใช้สั่งงาน (อาจเป็น Laptop ของเรา หรือ Server กลาง)</p>
+              <div class="bg-white/10 p-3 rounded text-sm">
+                <strong>สิ่งที่ต้องมี:</strong>
+                <ul class="list-disc list-inside mt-1">
+                  <li>Linux หรือ macOS (Windows ใช้ผ่าน WSL)</li>
+                  <li>ติดตั้ง Python</li>
+                  <li>ติดตั้งโปรแกรม Ansible</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-black/40 p-6 rounded-xl border-t-4 border-blue-500">
+              <h3 class="text-2xl font-bold mb-2 text-blue-300">Managed Nodes</h3>
+              <p class="text-sm mb-4">เครื่องเป้าหมายที่ Ansible จะเข้าไปจัดการ (เช่น Web Server, Database Server)</p>
+              <div class="bg-white/10 p-3 rounded text-sm">
+                <strong>สิ่งที่ต้องมี:</strong>
+                <ul class="list-disc list-inside mt-1">
+                  <li><span class="text-red-400 font-bold">ไม่ต้องติดตั้ง Ansible</span></li>
+                  <li>ต้องเปิดบริการ SSH (พอร์ต 22)</li>
+                  <li>ต้องติดตั้ง Python เพื่อให้รับสคริปต์มารันได้</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Inventory -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Inventory (สมุดหน้าเหลืองของ Ansible)</h2>
+          <p class="text-lg text-white/90 mb-6">
+          ไฟล์ที่เก็บรายชื่อ IP Address หรือ Hostname ของ Managed Nodes ทั้งหมด
+          </p>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm md:text-base border border-gray-600 relative shadow-2xl">
+            <p class="text-gray-400"># ไฟล์ inventory (มักใช้ชื่อ hosts หรือ inventory.ini)</p>
+            <br>
+            <p class="text-green-300">[webservers]</p>
+            <p class="text-white">192.168.1.10</p>
+            <p class="text-white">192.168.1.11</p>
+            <p class="text-white">web1.example.com</p>
+            <br>
+            <p class="text-blue-300">[dbservers]</p>
+            <p class="text-white">192.168.1.20</p>
+            <br>
+            <p class="text-purple-300">[all:vars]</p>
+            <p class="text-gray-300">ansible_user=ubuntu <span class="text-gray-500"># กำหนด user สำหรับ SSH</span></p>
+            <p class="text-gray-300">ansible_ssh_private_key_file=~/.ssh/id_rsa</p>
+          </div>
+
+          <p class="mt-4 text-sm text-yellow-300 text-left">
+          *เราสามารถจัดกลุ่ม (Group) เครื่องเข้าด้วยกัน เช่นกลุ่ม [webservers] เพื่อสั่งงานรวดเดียวทั้งกลุ่ม
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 16: Modules -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Modules (อาวุธของ Ansible)</h2>
+          <div class="bg-white/10 p-6 rounded-2xl text-left">
+            <p class="text-lg mb-4">
+            <strong>Modules</strong> คือชิ้นส่วนโปรแกรมสำเร็จรูป (Scripts) ที่ทำงานเฉพาะเจาะจง Ansible มี Built-in modules มาให้หลายพันตัว (Batteries included)
+            </p>
+
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="bg-black/30 p-4 rounded border-l-4 border-green-500">
+                <strong class="text-green-300">Package Mgmt:</strong> <code>apt</code>, <code>yum</code>, <code>dnf</code>, <code>pip</code>, <code>npm</code>
+              </div>
+              <div class="bg-black/30 p-4 rounded border-l-4 border-blue-500">
+                <strong class="text-blue-300">Files & Folders:</strong> <code>copy</code>, <code>file</code>, <code>template</code>, <code>fetch</code>
+              </div>
+              <div class="bg-black/30 p-4 rounded border-l-4 border-yellow-500">
+                <strong class="text-yellow-300">Services:</strong> <code>service</code>, <code>systemd</code>
+              </div>
+              <div class="bg-black/30 p-4 rounded border-l-4 border-purple-500">
+                <strong class="text-purple-300">Commands:</strong> <code>command</code>, <code>shell</code>, <code>script</code>
+              </div>
+            </div>
+
+            <p class="mt-4 text-xs text-gray-300">
+            เมื่อสั่งรัน Ansible จะส่ง Module (Python script) ไปยัง Managed Node เพื่อทำงาน และลบทิ้งเมื่อเสร็จสิ้น
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: YAML Introduction -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ภาษา YAML 📄</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-yellow-400">
+            <h3 class="text-2xl font-bold mb-4">YAML Ain't Markup Language</h3>
+            <p class="text-lg mb-4">
+            เป็นภาษาที่ใช้เก็บข้อมูลโครงสร้าง (Data Serialization) ออกแบบมาให้อ่านและเขียนได้ง่ายมากที่สุด <strong>"Human-readable"</strong>
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>ใช้แพร่หลายในโลก DevOps (Ansible, Kubernetes, GitHub Actions, Docker Compose)</li>
+              <li>ใช้นามสกุลไฟล์ <code>.yml</code> หรือ <code>.yaml</code></li>
+              <li>เป็นพื้นฐานสำคัญที่ต้องเข้าใจก่อนเขียน Ansible Playbook</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: กฎพื้นฐานของ YAML -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">กฎพื้นฐานของ YAML (Syntax Rules)</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="font-bold text-xl mb-4 text-red-300">⚠️ สิ่งที่ต้องระวังที่สุด</h3>
+              <ul class="list-disc list-inside space-y-3 text-sm">
+                <li><strong>Indentation (การย่อหน้า):</strong> แสดงถึงลำดับชั้น (Hierarchy) คล้าย Python</li>
+                <li><strong>ห้ามใช้ Tab เด็ดขาด!</strong> (Must use Spaces)</li>
+                <li>ปกติใช้ Space 2 เคาะ ในการย่อหน้า 1 ระดับ</li>
+                <li>ระวังช่องว่างหลังเครื่องหมาย Colon (<code>: </code>) ต้องมีเสมอ</li>
+              </ul>
+            </div>
+
+            <div class="bg-black/50 p-6 rounded-xl font-mono text-sm border border-gray-600">
+              <p class="text-gray-500"># คอมเมนต์ใช้เครื่องหมาย Hashtag</p>
+              <p class="text-purple-400">name:</p> John Doe
+              <p class="text-purple-400">age:</p> 30
+              <p class="text-purple-400">is_developer:</p> true
+              <br>
+              <p class="text-gray-500"># สังเกตการย่อหน้า</p>
+              <p class="text-blue-400">skills:</p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">frontend:</span> React</p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">backend:</span> Python</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: YAML Data Structures -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">โครงสร้างข้อมูลใน YAML</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">1. Dictionaries (Key-Value Pairs)</h3>
+              <p class="text-xs mb-2">จับคู่กุญแจกับค่าของมัน</p>
+              <div class="bg-black/40 p-3 rounded font-mono text-xs">
+                <span class="text-purple-400">martin:</span><br>
+                &nbsp;&nbsp;<span class="text-blue-300">name:</span> Martin D'vloper<br>
+                &nbsp;&nbsp;<span class="text-blue-300">job:</span> Developer<br>
+                &nbsp;&nbsp;<span class="text-blue-300">skill:</span> Elite
+              </div>
+            </div>
+
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-green-300 mb-2">2. Lists (Arrays)</h3>
+              <p class="text-xs mb-2">รายการข้อมูล ใช้เครื่องหมายขีด (Dash)</p>
+              <div class="bg-black/40 p-3 rounded font-mono text-xs">
+                <span class="text-purple-400">fruits:</span><br>
+                &nbsp;&nbsp;- Apple<br>
+                &nbsp;&nbsp;- Orange<br>
+                &nbsp;&nbsp;- Strawberry<br>
+                &nbsp;&nbsp;- Mango
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 bg-white/10 p-5 rounded-xl text-left">
+            <h3 class="font-bold text-blue-300 mb-2">ผสมกันได้ (List of Dictionaries)</h3>
+            <div class="bg-black/40 p-3 rounded font-mono text-xs">
+              - <span class="text-blue-300">name:</span> John Smith<br>
+              &nbsp;&nbsp;<span class="text-blue-300">role:</span> Admin<br>
+              - <span class="text-blue-300">name:</span> Jane Doe<br>
+              &nbsp;&nbsp;<span class="text-blue-300">role:</span> User
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: ความเรียบง่ายของ YAML -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">YAML vs JSON vs XML</h2>
+          <p class="mb-4">เปรียบเทียบข้อมูลเดียวกัน ทำไมเราถึงรัก YAML</p>
+
+          <div class="grid grid-cols-3 gap-4 text-left font-mono text-xs">
+            <div class="bg-black/50 p-4 rounded-xl border border-gray-500">
+              <h3 class="text-yellow-500 mb-2 font-sans font-bold">XML (The Past)</h3>
+              <pre>
+&lt;person&gt;
+  &lt;name&gt;John&lt;/name&gt;
+  &lt;age&gt;30&lt;/age&gt;
+  &lt;skills&gt;
+    &lt;skill&gt;Linux&lt;/skill&gt;
+    &lt;skill&gt;Git&lt;/skill&gt;
+  &lt;/skills&gt;
+&lt;/person&gt;
+              </pre>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl border border-gray-500">
+              <h3 class="text-blue-400 mb-2 font-sans font-bold">JSON (The Standard)</h3>
+              <pre>
+{
+  "person": {
+    "name": "John",
+    "age": 30,
+    "skills": [
+      "Linux",
+      "Git"
+    ]
+  }
+}
+              </pre>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl border-2 border-green-500 shadow-[0_0_15px_rgba(0,255,0,0.3)] transform scale-105">
+              <h3 class="text-green-400 mb-2 font-sans font-bold">YAML (The DevOps Way)</h3>
+              <pre>
+---
+person:
+  name: John
+  age: 30
+  skills:
+    - Linux
+    - Git
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Playbook คืออะไร? -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Ansible Playbook 📚</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-purple-500">
+            <p class="text-xl mb-4">
+            <strong>Playbook</strong> คือไฟล์ YAML ที่เปรียบเสมือน "คู่มือการทำงาน (Instruction Manual)" ที่เราระบุไว้ว่าอยากให้ Ansible เข้าไปทำอะไรในเซิร์ฟเวอร์เป้าหมายบ้าง
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>เป็นหัวใจหลักในการทำ Configuration Management</li>
+              <li>เขียนด้วยรูปแบบ Declarative</li>
+              <li>เป็นไฟล์ที่สามารถเก็บเข้า Version Control (Git) ได้</li>
+              <li>รันกี่ครั้งก็ได้ผลเหมือนเดิม (Idempotent)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Anatomy of a Playbook -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ส่วนประกอบของ Playbook (Anatomy)</h2>
+
+          <div class="flex items-center justify-center gap-4 text-left">
+            <!-- Playbook -->
+            <div class="bg-gray-800 p-4 rounded-xl w-48 text-center border-2 border-gray-400">
+              <h3 class="font-bold text-xl">Playbook</h3>
+              <p class="text-xs text-gray-400 mt-1">ไฟล์ 1 ไฟล์</p>
+            </div>
+            <span class="text-3xl">➡️</span>
+            <!-- Plays -->
+            <div class="bg-blue-800 p-4 rounded-xl w-48 text-center border-2 border-blue-400">
+              <h3 class="font-bold text-xl">Play</h3>
+              <p class="text-xs text-blue-200 mt-1">การจับคู่เป้าหมาย (Hosts) กับงานที่ต้องทำ</p>
+            </div>
+            <span class="text-3xl">➡️</span>
+            <!-- Tasks -->
+            <div class="bg-purple-800 p-4 rounded-xl w-48 text-center border-2 border-purple-400">
+              <h3 class="font-bold text-xl">Tasks</h3>
+              <p class="text-xs text-purple-200 mt-1">งานย่อยๆ ที่ทำทีละลำดับ</p>
+            </div>
+            <span class="text-3xl">➡️</span>
+            <!-- Modules -->
+            <div class="bg-green-800 p-4 rounded-xl w-48 text-center border-2 border-green-400">
+              <h3 class="font-bold text-xl">Modules</h3>
+              <p class="text-xs text-green-200 mt-1">คำสั่งเฉพาะเจาะจง (เช่น apt, copy)</p>
+            </div>
+          </div>
+
+          <div class="mt-8 bg-black/40 p-4 rounded-lg text-sm text-gray-300 max-w-3xl mx-auto">
+            "1 Playbook สามารถมีหลาย Plays, 1 Play สามารถมีหลาย Tasks, 1 Task จะเรียกใช้ 1 Module"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: โครงสร้างไฟล์ Ansible Playbook -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">โครงสร้าง Playbook พื้นฐาน</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm relative shadow-2xl border-l-4 border-green-500">
+            <p class="text-gray-500">--- <span class="text-gray-400">(สัญลักษณ์บอกการเริ่มต้นไฟล์ YAML)</span></p>
+            <p><span class="text-blue-400">- name:</span> Update Web Servers <span class="text-gray-500"># นี่คือ Play (List item แรก)</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> webservers <span class="text-gray-500"># เป้าหมาย (อ้างอิงจาก Inventory)</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">become:</span> true <span class="text-gray-500"># ขอสิทธิ์ Root (sudo)</span></p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">tasks:</span> <span class="text-gray-500"># รายการงานที่จะทำใน Play นี้</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Task 1 - Update apt cache</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">apt:</span> <span class="text-gray-500"># เรียกใช้ Module 'apt'</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">update_cache:</span> yes</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Task 2 - Do something else</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500">...</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: ตัวอย่าง Playbook - ติดตั้ง Nginx -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ตัวอย่างจริง: ติดตั้ง Nginx (Web Server)</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-black/50 p-5 rounded-xl font-mono text-xs overflow-auto h-72 border border-gray-600">
+              <p>---</p>
+              <p><span class="text-blue-400">- name:</span> Setup Nginx Web Server</p>
+              <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> webservers</p>
+              <p>&nbsp;&nbsp;<span class="text-blue-400">become:</span> yes</p>
+              <p>&nbsp;&nbsp;<span class="text-purple-400">tasks:</span></p>
+              <br>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Ensure nginx is installed</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">apt:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> nginx</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> present</p>
+              <br>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Ensure nginx is running and enabled</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">service:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> nginx</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> started</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">enabled:</span> yes</p>
+            </div>
+
+            <div class="flex flex-col justify-center space-y-4">
+              <div class="bg-white/10 p-4 rounded-xl">
+                <h3 class="font-bold text-yellow-300 mb-2">คำอธิบาย</h3>
+                <ul class="list-disc list-inside text-sm text-gray-200 space-y-2">
+                  <li><strong>become: yes</strong> = เปลี่ยนเป็นสิทธิ์ root (สำคัญมากตอนติดตั้งโปรแกรม)</li>
+                  <li><strong>apt module</strong> = ใช้สำหรับติดตั้ง package (เหมือนรัน <code>apt-get install nginx</code>)</li>
+                  <li><strong>service module</strong> = จัดการ service (เหมือนรัน <code>systemctl start nginx</code> และ <code>systemctl enable nginx</code>)</li>
+                </ul>
+              </div>
+              <code class="bg-gray-800 p-2 rounded text-green-400 text-sm mt-2 text-center block">
+                $ ansible-playbook -i hosts install_nginx.yml
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Idempotency ใน Ansible -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความสามารถ Idempotency ♻️</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-green-500">
+            <p class="text-xl mb-4">
+            <strong>Idempotency</strong> คือแนวคิดที่ว่า "คุณสามารถสั่งทำงาน (Execute) สิ่งเดิมซ้ำกี่ครั้งก็ได้ แต่ผลลัพธ์สุดท้ายจะยังคงเหมือนเดิม และจะไม่ทำสิ่งที่ไม่จำเป็น"
+            </p>
+
+            <div class="space-y-4 mt-6">
+              <div class="flex items-center bg-black/30 p-4 rounded-xl">
+                <span class="text-2xl mr-4">▶️</span>
+                <div>
+                  <strong class="text-blue-300">รัน Playbook ครั้งแรก:</strong> Ansible เห็นว่ายังไม่มี Nginx จึงทำการ "ติดตั้ง" (Status: <span class="text-yellow-400">changed</span>)
+                </div>
+              </div>
+              <div class="flex items-center bg-black/30 p-4 rounded-xl">
+                <span class="text-2xl mr-4">🔁</span>
+                <div>
+                  <strong class="text-green-300">รัน Playbook ครั้งที่สอง:</strong> Ansible เช็คพบว่า Nginx มีอยู่แล้วและรันอยู่ จึง "ไม่ทำอะไรเลย" (Status: <span class="text-green-400">ok</span>)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: สรุปเนื้อหา (Recap) -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สรุปเนื้อหาบทเรียน (Recap)</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border-2 border-white/20 text-left space-y-4">
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>IaC</strong> ช่วยลด Human Error เพิ่มความเร็ว และสามารถทำซ้ำ (Repeatable) สภาพแวดล้อมได้ 100%</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Declarative (Ansible)</strong> โฟกัสว่า "อยากได้อะไร (What)" มากกว่า "ทำอย่างไร (How)"</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Ansible Architecture</strong> มีเพียง Control Node (ที่มี Python/Ansible) ยิงคำสั่งผ่าน SSH ไปหา Managed Node (ไม่ต้องลง Agent)</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Playbook และ YAML</strong> ใช้อ่านและเขียนได้ง่าย นำมาซึ่งแนวคิด Infrastructure as "Documented" Code</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: เตรียมตัวทำ Lab -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! 🛠️</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">Next: Hands-on Ansible</h3>
+            <p class="text-lg mb-4">
+            ในส่วนของปฏิบัติการ (Laboratory) เราจะเปลี่ยนเครื่องส่วนตัวของคุณเป็น Control Node เพื่อจัดการ Infrastructure
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>✅ ติดตั้ง Ansible บนเครื่องส่วนตัว / WSL</li>
+              <li>✅ สร้าง <strong>Inventory file</strong> จำลองเครื่องเป้าหมาย (อาจใช้ VM บน VirtualBox หรือวง LAN)</li>
+              <li>✅ ทดสอบการเชื่อมต่อด้วย <code>ansible ping</code> (Ad-hoc command)</li>
+              <li>✅ เขียน <strong>Playbook แรก</strong> ของคุณเพื่อสั่งติดตั้ง Nginx, Copy หน้าเว็บ HTML และ Start Service อัตโนมัติ</li>
+            </ul>
+            <div class="mt-8 text-center text-gray-300 text-sm">
+              เตรียม SSH Key (<code>ssh-keygen</code>) และความพร้อมของระบบ Linux ไว้ให้ดี!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Lab Mission -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ภารกิจ: Your First Ansible Playbook 🚀</h2>
+          <p class="text-xl text-white/90 mb-8">
+          เปลี่ยนคอมพิวเตอร์ของคุณให้เป็น Control Node เพื่อสั่งติดตั้งและตั้งค่า Web Server อัตโนมัติ
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-red-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab (Objectives)</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ ติดตั้ง Ansible บนคอมพิวเตอร์ส่วนตัว (Control Node)</li>
+              <li>✅ สร้าง Inventory File เพื่อระบุเป้าหมาย (Managed Node)</li>
+              <li>✅ ทดสอบการเชื่อมต่อด้วย Ad-hoc command (Ping)</li>
+              <li>✅ เขียน Playbook เพื่อ: ติดตั้ง Nginx, Copy ไฟล์เว็บ, และ Start Service</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Architecture & Prerequisites -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">สถาปัตยกรรมสำหรับ Lab นี้</h2>
+          <p class="mb-6">คุณจะต้องใช้ระบบปฏิบัติการ Linux จำนวน 2 ส่วน (อาจจะเป็น VM, WSL2, หรือเครื่องจริงใน LAN)</p>
+
+          <div class="flex items-center justify-center gap-8 text-left">
+            <!-- Control Node -->
+            <div class="bg-black/50 p-6 rounded-xl border-t-4 border-red-500 w-1/2">
+              <h3 class="text-xl font-bold text-red-300 mb-2">💻 Control Node (เครื่องเรา)</h3>
+              <p class="text-sm mb-4">เครื่องที่จะใช้เขียนโค้ดและยิงคำสั่ง (เช่น Ubuntu บน WSL2, macOS)</p>
+              <ul class="list-disc list-inside text-xs text-gray-300">
+                <li>ต้องมี Internet เพื่อติดตั้ง Ansible</li>
+                <li>มีไฟล์ Playbook (.yml) และ Inventory</li>
+              </ul>
+            </div>
+
+            <div class="text-4xl animate-pulse">SSH ➡️</div>
+
+            <!-- Managed Node -->
+            <div class="bg-black/50 p-6 rounded-xl border-t-4 border-blue-500 w-1/2">
+              <h3 class="text-xl font-bold text-blue-300 mb-2">🖥️ Managed Node (เครื่องเป้าหมาย)</h3>
+              <p class="text-sm mb-4">เครื่องที่จะถูกติดตั้ง Nginx (เช่น VM บน VirtualBox หรือวง LAN)</p>
+              <ul class="list-disc list-inside text-xs text-gray-300">
+                <li>ต้องรู้ IP Address (เช่น 192.168.1.100)</li>
+                <li>ต้องมี User ที่สามารถใช้ <code>sudo</code> ได้</li>
+                <li>เปิดบริการ SSH ไว้ (Port 22)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Step 1 - Install Ansible -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: ติดตั้ง Ansible บน Control Node</h2>
+          <p class="mb-4 text-left">เปิด Terminal บนเครื่องของคุณ (WSL2 หรือ Linux) แล้วรันคำสั่งต่อไปนี้</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border border-gray-600">
+            <p class="text-gray-400"># 1. อัปเดตรายการ Package</p>
+            <p class="text-green-400">$ sudo apt update</p>
+            <br>
+            <p class="text-gray-400"># 2. ติดตั้ง Ansible</p>
+            <p class="text-green-400">$ sudo apt install ansible -y</p>
+            <br>
+            <p class="text-gray-400"># 3. ตรวจสอบเวอร์ชันเพื่อยืนยันการติดตั้ง</p>
+            <p class="text-green-400">$ ansible --version</p>
+            <p class="text-white">ansible [core 2.x.x] ...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 2 - Prepare SSH Access -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 2: เตรียมความพร้อม SSH (Password-less)</h2>
+          <p class="mb-4 text-left text-sm">เพื่อให้ Ansible ทำงานอัตโนมัติได้ราบรื่น ควรตั้งค่า SSH Key เพื่อไม่ให้ต้องพิมพ์รหัสผ่านทุกครั้ง</p>
+
+          <div class="bg-white/10 p-6 rounded-xl text-left space-y-4">
+            <div class="font-mono text-sm bg-black/40 p-4 rounded">
+              <p class="text-gray-400"># 1. สร้าง SSH Key บน Control Node (กด Enter ผ่านไปเรื่อยๆ)</p>
+              <p class="text-green-400">$ ssh-keygen</p>
+              <br>
+              <p class="text-gray-400"># 2. Copy Key ไปยัง Managed Node (เปลี่ยน IP และ Username)</p>
+              <p class="text-green-400">$ ssh-copy-id target_user@192.168.x.x</p>
+              <br>
+              <p class="text-gray-400"># 3. ทดสอบ Login (ถ้าเข้าได้โดยไม่ถาม Password ถือว่าสำเร็จ!)</p>
+              <p class="text-green-400">$ ssh target_user@192.168.x.x</p>
+            </div>
+            <p class="text-xs text-yellow-300 mt-2">*หมายเหตุ: หากใช้สภาพแวดล้อมที่ห้ามใช้ SSH Key สามารถใช้การถาม Password ตอนรัน Playbook ได้โดยเพิ่ม <code>-k -K</code></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 3 - Create Inventory File -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 3: สร้าง Inventory File</h2>
+          <p class="mb-4 text-left">สร้างโฟลเดอร์สำหรับโปรเจกต์และสร้างไฟล์สมุดหน้าเหลือง (Inventory) เพื่อระบุเป้าหมาย</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-green-400">$ mkdir my-ansible-lab && cd my-ansible-lab</p>
+            <p class="text-green-400">$ nano hosts</p>
+            <br>
+            <p class="text-gray-400"># เพิ่มเนื้อหาลงในไฟล์ hosts:</p>
+            <p class="text-purple-300">[webservers]</p>
+            <p class="text-white">192.168.x.x <span class="text-gray-500"># (เปลี่ยนเป็น IP ของ VM/Managed Node ของคุณ)</span></p>
+            <br>
+            <p class="text-purple-300">[webservers:vars]</p>
+            <p class="text-blue-300">ansible_user=target_user <span class="text-gray-500"># (เปลี่ยนเป็นชื่อ user ของเครื่องเป้าหมาย)</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 4 - Test Connection (Ping) -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: ทดสอบการเชื่อมต่อ (Ad-hoc Command)</h2>
+          <p class="mb-4 text-left">ใช้ Ansible ping module เพื่อตรวจสอบว่า Control Node คุยกับ Managed Node ได้หรือไม่</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+            <p class="text-gray-400"># สั่ง ping ไปยังกลุ่ม webservers โดยใช้ไฟล์ hosts ที่เราสร้าง</p>
+            <p class="text-green-400">$ ansible webservers -i hosts -m ping</p>
+            <br>
+            <p class="text-gray-400"># ผลลัพธ์ที่ควรได้:</p>
+            <p class="text-white">192.168.x.x | <span class="text-green-500 font-bold">SUCCESS</span> => {</p>
+            <p class="text-blue-300">&nbsp;&nbsp;&nbsp;&nbsp;"changed": false,</p>
+            <p class="text-blue-300">&nbsp;&nbsp;&nbsp;&nbsp;"ping": "pong"</p>
+            <p class="text-white">}</p>
+          </div>
+          <div class="mt-4 bg-green-900/40 p-3 rounded text-sm text-left">
+            ✅ ถ้าขึ้น <strong>"ping": "pong"</strong> แสดงว่า Ansible พร้อมเข้าไปทำงานที่เครื่องเป้าหมายแล้ว!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Step 5 - Create Web Content -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 5: เตรียมไฟล์ HTML</h2>
+          <p class="mb-4 text-left">ก่อนเขียน Playbook ให้สร้างไฟล์ HTML ง่ายๆ บนเครื่อง Control Node เพื่อเตรียม Copy ไปยัง Web Server</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+            <p class="text-green-400">$ nano index.html</p>
+            <br>
+            <p class="text-gray-400"># พิมพ์โค้ด HTML เบื้องต้น:</p>
+            <p class="text-white">&lt;html&gt;</p>
+            <p class="text-white">&lt;head&gt;&lt;title&gt;Ansible Lab&lt;/title&gt;&lt;/head&gt;</p>
+            <p class="text-white">&lt;body style="background-color: #282c34; color: white; text-align: center; margin-top: 50px;"&gt;</p>
+            <p class="text-white">&nbsp;&nbsp;&lt;h1&gt;🚀 Hello DevOps!&lt;/h1&gt;</p>
+            <p class="text-white">&nbsp;&nbsp;&lt;p&gt;This web server was configured automatically by Ansible.&lt;/p&gt;</p>
+            <p class="text-white">&lt;/body&gt;</p>
+            <p class="text-white">&lt;/html&gt;</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 35: Step 6 - Writing the Playbook (Part 1) -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 6: เริ่มเขียน Playbook (ติดตั้ง Nginx)</h2>
+          <p class="mb-4 text-left">สร้างไฟล์ <code>setup-web.yml</code> และกำหนดโครงสร้างของ Play พร้อม Task แรก</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-yellow-500">
+            <p class="text-green-400">$ nano setup-web.yml</p>
+            <br>
+            <p class="text-gray-500">---</p>
+            <p><span class="text-blue-400">- name:</span> Setup Web Server</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> webservers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">become:</span> yes  <span class="text-gray-500"># ขอสิทธิ์ sudo ในการทำงาน</span></p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">tasks:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Install Nginx package</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">apt:</span> <span class="text-gray-500"># ใช้โมดูล apt (สำหรับ Ubuntu/Debian)</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> nginx</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> present <span class="text-gray-500"># ต้องการให้มีการติดตั้งอยู่ (Declarative)</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">update_cache:</span> yes <span class="text-gray-500"># เหมือนสั่ง apt update ก่อน</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 36: Step 7 - Writing the Playbook (Part 2) -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 7: เพิ่ม Task การ Copy ไฟล์</h2>
+          <p class="mb-4 text-left">ต่อจาก Task เดิม ให้เพิ่มคำสั่ง <code>copy</code> นำไฟล์ HTML ไปวางที่เซิร์ฟเวอร์ปลายทาง</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-yellow-500">
+            <p class="text-gray-500">... (ต่อจากโค้ดสไลด์ที่แล้ว)</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Copy custom index.html</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">copy:</span> <span class="text-gray-500"># ใช้โมดูล copy</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">src:</span> index.html <span class="text-gray-500"># ไฟล์ต้นทางที่เครื่อง Control Node</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">dest:</span> /var/www/html/index.html <span class="text-gray-500"># ตำแหน่งปลายทางบน Managed Node</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">mode:</span> '0644' <span class="text-gray-500"># กำหนด Permission ให้ไฟล์</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 37: Step 8 - Writing the Playbook (Part 3) -->
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 8: เพิ่ม Task การ Start Service</h2>
+          <p class="mb-4 text-left">ปิดท้ายด้วยการใช้โมดูล <code>service</code> เพื่อให้มั่นใจว่า Nginx ทำงานอยู่</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-yellow-500">
+            <p class="text-gray-500">... (ต่อจากโค้ดสไลด์ที่แล้ว)</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- name:</span> Ensure Nginx is started and enabled</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">service:</span> <span class="text-gray-500"># ใช้โมดูล service</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> nginx <span class="text-gray-500"># ชื่อ service</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> started <span class="text-gray-500"># ให้รันอยู่เสมอ</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">enabled:</span> yes <span class="text-gray-500"># ให้ start อัตโนมัติเมื่อเปิดเครื่อง (systemctl enable)</span></p>
+          </div>
+          <div class="mt-4 text-xs text-red-300 text-left bg-black/30 p-2">
+            ⚠️ <strong>ระวังเรื่อง Indentation (การย่อหน้า) ใน YAML:</strong> ต้องใช้ Spacebar เสมอ ห้ามใช้ Tab
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 38: Step 9 - Execute the Playbook -->
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 9: รัน Ansible Playbook</h2>
+          <p class="mb-4 text-left">ถึงเวลาแสดงพลังของ IaC! รัน Playbook เพื่อตั้งค่าเซิร์ฟเวอร์ทั้งหมดด้วยคำสั่งเดียว</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+            <p class="text-gray-400"># รัน Playbook โดยใช้ Inventory (-i) ที่เราสร้างไว้</p>
+            <p class="text-green-400">$ ansible-playbook -i hosts setup-web.yml -K</p>
+            <p class="text-xs text-gray-500 mt-1">(-K จะถามรหัสผ่าน sudo (BECOME password) ของเครื่องเป้าหมาย)</p>
+            <br>
+            <p class="text-white">PLAY [Setup Web Server] *************************************************</p>
+            <br>
+            <p class="text-white">TASK [Gathering Facts] **************************************************</p>
+            <p class="text-green-500">ok: [192.168.x.x]</p>
+            <br>
+            <p class="text-white">TASK [Install Nginx package] ********************************************</p>
+            <p class="text-yellow-400">changed: [192.168.x.x]</p>
+            <br>
+            <p class="text-white">TASK [Copy custom index.html] *******************************************</p>
+            <p class="text-yellow-400">changed: [192.168.x.x]</p>
+            <br>
+            <p class="text-white">PLAY RECAP **************************************************************</p>
+            <p class="text-yellow-400">192.168.x.x : ok=4  changed=2  unreachable=0  failed=0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 39: Step 10 - Verify the Result -->
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 10: ตรวจสอบผลลัพธ์ (Verification)</h2>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">เปิด Web Browser</h3>
+              <p>นำ IP Address ของเครื่อง Managed Node (เช่น <code>http://192.168.x.x</code>) ไปเปิดใน Browser บนเครื่องของคุณ</p>
+              <div class="mt-4 bg-[#282c34] p-6 rounded text-center text-white border border-gray-600">
+                <h1 class="text-3xl font-bold">🚀 Hello DevOps!</h1>
+                <p class="mt-2 text-sm">This web server was configured automatically by Ansible.</p>
+              </div>
+            </div>
+
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="text-xl font-bold text-green-300 mb-2">ลองรันซ้ำอีกรอบ (Idempotency)</h3>
+              <code class="text-sm bg-black/50 p-2 rounded block text-green-400">$ ansible-playbook -i hosts setup-web.yml -K</code>
+              <p class="text-sm mt-2 text-gray-300">คุณจะเห็นว่าสถานะเปลี่ยนจาก <span class="text-yellow-400">changed</span> เป็น <span class="text-green-500">ok</span> ทั้งหมด เพราะ Ansible รู้ว่าติดตั้งเรียบร้อยแล้วและไม่มีการเปลี่ยนแปลง</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 40: Troubleshooting (การแก้ปัญหา) -->
+      <div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">🛠️ Troubleshooting (การแก้ปัญหาที่พบบ่อย)</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">Error: Unreachable (SSH Error)</strong>
+              <p>สาเหตุ: Ansible เชื่อมต่อ SSH ไปเครื่องเป้าหมายไม่ได้</p>
+              <p class="text-gray-300 mt-2">วิธีแก้: เช็ค IP ว่าถูกต้องไหม, เครื่องเปิดอยู่หรือเปล่า, และทดสอบใช้คำสั่ง <code>ssh user@IP</code> ด้วยตัวเองดูก่อน</p>
+            </div>
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">Error: Missing sudo password</strong>
+              <p>สาเหตุ: Task ต้องการสิทธิ์ Root (become: yes) แต่ไม่ได้ให้รหัสผ่าน</p>
+              <p class="text-gray-300 mt-2">วิธีแก้: เติม <code>-K</code> หรือ <code>--ask-become-pass</code> ตอนรันคำสั่ง ansible-playbook</p>
+            </div>
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">Error: Syntax Error in YAML</strong>
+              <p>สาเหตุ: ย่อหน้าผิด หรือใช้ Tab แทน Space</p>
+              <p class="text-gray-300 mt-2">วิธีแก้: ตรวจสอบการเว้นวรรคให้ตรงกันทุกบรรทัดระดับเดียวกัน และเช็คเครื่องหมาย <code>:</code> (ต้องมีช่องว่างตามหลังเสมอ)</p>
+            </div>
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">Error: Could not find or access 'index.html'</strong>
+              <p>สาเหตุ: ไม่พบไฟล์ต้นทางที่กำหนดใน src</p>
+              <p class="text-gray-300 mt-2">วิธีแก้: ตรวจสอบว่าคุณสร้างไฟล์ <code>index.html</code> ไว้ในโฟลเดอร์เดียวกับที่รันคำสั่ง ansible หรือระบุ path ผิด</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 41: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🎉</div>
+          <h2 class="text-5xl font-bold mb-6">Lab Complete! การส่งงาน</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">รายละเอียดสิ่งที่ต้องส่ง (Submission):</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>ไฟล์ Code:</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ไฟล์ <code>hosts</code> (Inventory)</li>
+                  <li>ไฟล์ <code>setup-web.yml</code> (Playbook)</li>
+                  <li>ไฟล์ <code>index.html</code></li>
+                </ul>
+              </li>
+              <li>
+                <strong>Screenshots (รวมเป็น PDF):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ภาพผลลัพธ์ตอนรัน <code>ansible-playbook</code> สำเร็จ (แสดง PLAY RECAP)</li>
+                  <li>ภาพหน้า Web Browser ที่แสดงผลเว็บ 🚀 Hello DevOps! บน IP ของ Managed Node</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

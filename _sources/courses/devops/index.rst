@@ -137,6 +137,8 @@ DevOps
        * Push Docker Image ไปยัง Docker Hub
        * *จำลอง* การ Deploy ไปยัง Server ด้วย SSH (ใช้ :code:`sshpass` หรือ :code:`scp` เพื่อส่งไฟล์ Docker Compose ไปรันบน VM/Local Machine อื่น)
    * - **สัปดาห์ที่ 8**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk08.html>`_
      - **Infrastructure as Code (IaC) ด้วย Ansible (IaC with Ansible)**
 
        * IaC คืออะไร? ทำไมต้องใช้?
@@ -149,6 +151,8 @@ DevOps
        * สร้าง Inventory File
        * เขียน Ansible Playbook อย่างง่ายเพื่อ: ติดตั้ง Package (เช่น Nginx), Copy ไฟล์, สตาร์ท Service บนเครื่องเป้าหมาย (อาจใช้ VM บน VirtualBox/WSL2/อีกเครื่องใน LAN)
    * - **สัปดาห์ที่ 9**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk09.html>`_
      - **การจัดการ Configuration ด้วย Ansible (Configuration Management with Ansible)**
 
        * Ansible Roles คืออะไร? โครงสร้างและการใช้งาน

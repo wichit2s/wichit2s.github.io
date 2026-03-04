@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk09.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 9: การจัดการ Configuration ด้วย Ansible</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          ยกระดับการเขียน Playbook สู่ความเป็นมืออาชีพด้วย Variables, Jinja2 Templates, Roles และ Vault
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Configuration Management:</strong> แนวคิดและหลักการของ Idempotency</li>
+              <li><strong>Variables:</strong> การจัดการตัวแปรและลำดับความสำคัญ (Precedence)</li>
+              <li><strong>Jinja2 Templates:</strong> การสร้างไฟล์ Configuration แบบไดนามิก</li>
+              <li><strong>Ansible Roles:</strong> โครงสร้าง การสร้าง และการเรียกใช้งาน</li>
+              <li><strong>Ansible Vault:</strong> การปกป้องข้อมูลสำคัญ (Sensitive Data)</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 9</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Recap Week 8 -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวนสัปดาห์ที่ 8 (Recap)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          องค์ประกอบพื้นฐานของ Ansible ที่เราได้เรียนรู้ไปแล้ว
+          </p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+            <div class="bg-red-900/40 p-4 rounded-xl border-t-4 border-red-500">
+              <h3 class="font-bold text-red-300 mb-2">Control Node</h3>
+              <p class="text-xs">เครื่องที่ติดตั้ง Ansible และใช้รันคำสั่งไปยังเครื่องอื่นๆ</p>
+            </div>
+            <div class="bg-blue-900/40 p-4 rounded-xl border-t-4 border-blue-500">
+              <h3 class="font-bold text-blue-300 mb-2">Inventory</h3>
+              <p class="text-xs">ไฟล์รายชื่อเครื่องเป้าหมาย (Managed Nodes) ที่จัดกลุ่มไว้</p>
+            </div>
+            <div class="bg-green-900/40 p-4 rounded-xl border-t-4 border-green-500">
+              <h3 class="font-bold text-green-300 mb-2">Playbook</h3>
+              <p class="text-xs">สคริปต์ YAML ที่ระบุขั้นตอน (Tasks) ที่ต้องการให้ทำงาน</p>
+            </div>
+            <div class="bg-yellow-900/40 p-4 rounded-xl border-t-4 border-yellow-500">
+              <h3 class="font-bold text-yellow-300 mb-2">Modules</h3>
+              <p class="text-xs">ชุดคำสั่งสำเร็จรูป เช่น <code>apt</code>, <code>copy</code>, <code>service</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is Configuration Management -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Configuration Management คืออะไร?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-blue-500">
+            <p class="text-xl mb-4">
+            การรักษาสถานะของระบบ (ซอฟต์แวร์, เซิร์ฟเวอร์, เครือข่าย) ให้อยู่ในรูปแบบที่สอดคล้องกับ "ความคาดหวัง" (Desired State) ที่กำหนดไว้อย่างสม่ำเสมอ
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg mt-6">
+              <li><strong>Infrastructure Provisioning (เช่น Terraform):</strong> สร้าง VM ใหม่, สร้าง VPC, สร้าง Database</li>
+              <li><strong>Configuration Management (เช่น Ansible):</strong> เข้าไปใน VM ที่สร้างเสร็จแล้ว เพื่อติดตั้ง Nginx, ตั้งค่าไฟล์ <code>.conf</code>, เปิด Service, สร้าง User</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Concept of Idempotency -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">หัวใจสำคัญ: การทำ Idempotency ♻️</h2>
+          <p class="text-xl mb-6">
+          "รันกี่ครั้ง ผลลัพธ์สุดท้ายก็ยังเหมือนเดิม และจะไม่ทำสิ่งที่ไม่จำเป็นซ้ำ"
+          </p>
+
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-2xl font-bold mb-2 text-red-300">❌ Non-Idempotent</h3>
+              <p class="text-sm text-gray-300 mb-4">Bash script สั่งเพิ่มข้อความต่อท้ายไฟล์ ถ้ารัน 5 ครั้ง ข้อความจะซ้ำกัน 5 บรรทัด</p>
+              <code class="bg-black/50 p-2 block text-xs font-mono text-red-400">
+                echo "export PATH=/new/path" >> ~/.bashrc
+              </code>
+            </div>
+
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <h3 class="text-2xl font-bold mb-2 text-green-300">✅ Idempotent</h3>
+              <p class="text-sm text-gray-300 mb-4">Ansible ตรวจสอบก่อนว่ามีบรรทัดนี้หรือยัง ถ้ามีแล้ว จะข้าม (Skip) ไม่ทำซ้ำ</p>
+              <code class="bg-black/50 p-2 block text-xs font-mono text-green-400">
+                - lineinfile:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;path: ~/.bashrc<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;line: "export PATH=/new/path"
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Idempotency with Modules vs Shell -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Modules vs. Command/Shell</h2>
+          <p class="text-lg text-white/90 mb-6">
+          การใช้ <code>command</code> หรือ <code>shell</code> module ทำให้เสียคุณสมบัติ Idempotency
+          </p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-yellow-500 mb-6">
+            <p class="text-gray-500"># แบบนี้ไม่ดี (จะแสดงสถานะ 'changed' ทุกครั้งที่รัน)</p>
+            <p><span class="text-blue-400">- name:</span> Install git using shell</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">shell:</span> apt-get install -y git</p>
+          </div>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-green-500">
+            <p class="text-gray-500"># แบบนี้ถูกต้อง (Ansible จะจัดการ Idempotency ให้)</p>
+            <p><span class="text-blue-400">- name:</span> Install git using apt module</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">apt:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">name:</span> git</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">state:</span> present</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Handling Idempotency manually -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การสร้าง Idempotency แบบแมนนวล</h2>
+          <p class="text-lg text-white/90 mb-6">
+          ถ้า "ต้อง" ใช้ shell module จริงๆ เราสามารถบอก Ansible ให้เช็คเงื่อนไขได้
+          </p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+            <p><span class="text-blue-400">- name:</span> Run setup script only if file doesn't exist</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">shell:</span> ./setup.sh</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">args:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">creates:</span> /opt/app/installed.txt  <span class="text-gray-500"># ถัามีไฟล์นี้แล้ว จะข้ามคำสั่งนี้ไป (ok)</span></p>
+            <br>
+            <p><span class="text-blue-400">- name:</span> Check status</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">shell:</span> myapp --status</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">register:</span> app_status</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">changed_when:</span> false  <span class="text-gray-500"># บังคับไม่ให้ขึ้นสถานะ changed เพราะแค่เช็คเฉยๆ</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Variables in Ansible -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Variables (การใช้งานตัวแปร)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-yellow-400">
+            <p class="text-xl mb-4">
+            Variables ช่วยให้ Playbook ของเรานำกลับมาใช้ใหม่ได้ (Reusable) โดยไม่ต้อง Hardcode ค่าต่างๆ ลงไป
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg mt-4 text-gray-200">
+              <li>ใช้เก็บค่าเช่น Port, Username, เวอร์ชั่นของโปรแกรม, ตำแหน่งไฟล์</li>
+              <li>เรียกใช้งานตัวแปรด้วยไวยากรณ์ Jinja2: <code>{{ variable_name }}</code></li>
+              <li>สามารถกำหนดค่าได้จากหลายที่ (Playbook, Inventory, CLI)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Defining Variables in Playbook -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การกำหนดตัวแปรใน Playbook</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border border-gray-600 shadow-2xl">
+            <p class="text-gray-500">---</p>
+            <p><span class="text-blue-400">- name:</span> Install and configure web server</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> webservers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">vars:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">http_port:</span> 8080</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">package_name:</span> nginx</p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">tasks:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">- name:</span> Install package</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">apt:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> "{{ package_name }}"</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> present</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Inventory Variables -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การกำหนดตัวแปรใน Inventory</h2>
+          <p class="text-lg text-white/90 mb-4">
+          เมื่อเราต้องการตั้งค่าให้แต่ละเครื่อง หรือแต่ละกลุ่มไม่เหมือนกัน
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-sm border-t-4 border-blue-400">
+              <p class="text-gray-400"># ไฟล์ inventory.ini</p>
+              <p class="text-purple-400">[web_dev]</p>
+              <p>192.168.1.10 <span class="text-green-300">http_port=8080</span></p>
+              <br>
+              <p class="text-purple-400">[web_prod]</p>
+              <p>192.168.1.20 <span class="text-green-300">http_port=80</span></p>
+            </div>
+
+            <div class="bg-white/10 p-4 rounded-xl text-sm">
+              <h3 class="font-bold text-yellow-300 mb-2">Best Practice: ใช้โฟลเดอร์แยก</h3>
+              <p class="text-gray-300 mb-2">แทนที่จะใส่ในไฟล์ inventory นิยมแยกโฟลเดอร์:</p>
+              <ul class="list-disc list-inside font-mono text-xs">
+                <li>/group_vars/web_dev.yml</li>
+                <li>/group_vars/web_prod.yml</li>
+                <li>/host_vars/192.168.1.10.yml</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Variable Precedence -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ลำดับความสำคัญของตัวแปร (Precedence)</h2>
+          <p class="text-lg text-white/90 mb-6">
+          ถ้าตั้งชื่อตัวแปรซ้ำกันในหลายที่ Ansible จะยึดค่าจากที่ไหน? (เรียงจากต่ำสุดไปสูงสุด)
+          </p>
+
+          <div class="space-y-2 text-left w-3/4 mx-auto relative">
+            <div class="bg-gray-800 p-3 rounded">1. Role defaults (ต่ำสุด ถูกทับง่ายสุด)</div>
+            <div class="bg-gray-700 p-3 rounded">2. Inventory group_vars</div>
+            <div class="bg-gray-600 p-3 rounded">3. Inventory host_vars</div>
+            <div class="bg-blue-800 p-3 rounded">4. Playbook vars</div>
+            <div class="bg-purple-800 p-3 rounded">5. Role vars</div>
+            <div class="bg-red-800 p-3 rounded border border-red-400">
+              6. Extra vars (<code>-e</code> ใน Command Line) (สูงสุด! ทับได้ทุกอย่าง)
+            </div>
+          </div>
+          <div class="mt-4 text-xs text-yellow-300">
+            * Command: <code>ansible-playbook setup.yml -e "http_port=80"</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Ansible Facts -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Ansible Facts (ตัวแปรระบบอัตโนมัติ)</h2>
+          <div class="bg-white/10 p-6 rounded-2xl text-left">
+            <p class="text-lg mb-4">
+            ทุกครั้งที่รัน Playbook ขั้นตอนแรกคือ <strong>Gathering Facts</strong> (สังเกตใน log) Ansible จะดึงข้อมูลทั้งหมดของเครื่องเป้าหมายมาเก็บไว้ในตัวแปรอัตโนมัติ
+            </p>
+
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-sm text-gray-300 mb-4">
+              <p>OS Family: <code>{{ ansible_os_family }}</code> (เช่น Debian, RedHat)</p>
+              <p>IP Address: <code>{{ ansible_default_ipv4.address }}</code></p>
+              <p>Total RAM: <code>{{ ansible_memtotal_mb }}</code></p>
+            </div>
+
+            <p class="text-sm text-yellow-300">
+            💡 <strong>Use Case:</strong> สามารถเขียนเงื่อนไขติดตั้ง <code>apt</code> ถ้า OS เป็น Debian และติดตั้งด้วย <code>yum</code> ถ้า OS เป็น RedHat ได้
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Introduction to Templates -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Templates (Jinja2) 📝</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-green-500">
+            <h3 class="text-2xl font-bold mb-4">ทำไมต้องใช้ Templates?</h3>
+            <p class="text-lg mb-4">
+            ในโลกความเป็นจริง ไฟล์ Configuration (เช่น <code>nginx.conf</code>, <code>my.cnf</code>) ของแต่ละสภาพแวดล้อม (Dev, Prod) จะไม่เหมือนกันเป๊ะ
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>แทนที่จะใช้ module <code>copy</code> ก๊อปปี้ไฟล์ Static ธรรมดา</li>
+              <li>เราใช้ <strong>Templates</strong> ที่สามารถฝัง "ตัวแปร" และ "เงื่อนไข" ลงไปในไฟล์ต้นฉบับได้</li>
+              <li>เมื่อรัน Playbook Ansible จะแปลง Template เป็นไฟล์ Configuration จริงที่ตรงกับค่านั้นๆ ให้เครื่องเป้าหมาย</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Jinja2 Basics -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Jinja2 Basics</h2>
+          <p class="text-lg text-white/90 mb-6">
+          Ansible ใช้เอนจิน Template ที่ชื่อว่า <strong>Jinja2</strong> (ของ Python) นามสกุลไฟล์มักใช้ <code>.j2</code>
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">1. Expressions (แสดงค่าตัวแปร)</h3>
+              <p class="text-xs mb-2">ใช้ปีกกาคู่เพื่อพิมพ์ค่า</p>
+              <code class="bg-black/40 p-2 rounded block text-green-300">
+                ListenPort {{ http_port }}<br>
+                ServerAdmin {{ admin_email }}
+              </code>
+            </div>
+
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-blue-300 mb-2">2. Statements (ลอจิกควบคุม)</h3>
+              <p class="text-xs mb-2">ใช้ปีกกาและเปอร์เซ็นต์ สำหรับ IF/FOR</p>
+              <code class="bg-black/40 p-2 rounded block text-purple-300">
+                {% if enable_ssl %}<br>
+                &nbsp;&nbsp;listen 443 ssl;<br>
+                {% endif %}
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Jinja2 Conditionals -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Jinja2 Conditionals (เงื่อนไข If/Else)</h2>
+          <p class="mb-4 text-left">การปรับเนื้อหาไฟล์ตามค่าตัวแปร</p>
+
+          <div class="bg-black/50 p-6 rounded-xl font-mono text-left text-sm border border-gray-600 shadow-xl">
+            <p class="text-gray-400"># ไฟล์ nginx.conf.j2</p>
+            <br>
+            <p>server {</p>
+            <p>&nbsp;&nbsp;listen {{ http_port }};</p>
+            <p>&nbsp;&nbsp;server_name {{ domain_name }};</p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">{% if enable_php %}</span></p>
+            <p>&nbsp;&nbsp;location ~ \.php$ {</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;fastcgi_pass 127.0.0.1:9000;</p>
+            <p>&nbsp;&nbsp;}</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">{% else %}</span></p>
+            <p>&nbsp;&nbsp;# PHP is disabled</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">{% endif %}</span></p>
+            <p>}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Jinja2 Loops -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Jinja2 Loops (การวนลูป)</h2>
+          <p class="mb-4 text-left">มีประโยชน์มากเมื่อต้องการใส่รายชื่อหลายๆ อัน เช่น DNS Servers, หรือ Allow IPs</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-gray-800 p-4 rounded-xl font-mono text-xs">
+              <p class="text-gray-400"># ใน Playbook (ตัวแปร List)</p>
+              <p><span class="text-blue-300">dns_servers:</span></p>
+              <p>&nbsp;&nbsp;- 8.8.8.8</p>
+              <p>&nbsp;&nbsp;- 1.1.1.1</p>
+              <p>&nbsp;&nbsp;- 9.9.9.9</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs">
+              <p class="text-gray-400"># ใน resolv.conf.j2</p>
+              <p><span class="text-purple-400">{% for dns in dns_servers %}</span></p>
+              <p>nameserver {{ dns }}</p>
+              <p><span class="text-purple-400">{% endfor %}</span></p>
+            </div>
+          </div>
+
+          <div class="bg-green-900/40 p-4 mt-4 rounded text-sm text-left">
+            <strong>ผลลัพธ์ที่ได้บนเซิร์ฟเวอร์:</strong><br>
+            nameserver 8.8.8.8<br>
+            nameserver 1.1.1.1<br>
+            nameserver 9.9.9.9
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Using the Template Module -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การใช้งาน Template Module ใน Playbook</h2>
+          <p class="mb-4 text-left">เมื่อเขียนไฟล์ <code>.j2</code> เสร็จแล้ว ให้เรียกใช้ด้วยโมดูล <code>template</code></p>
+
+          <div class="bg-black/50 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-blue-500">
+            <p><span class="text-blue-400">- name:</span> Configure Nginx using template</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">template:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">src:</span> templates/nginx.conf.j2  <span class="text-gray-500"># ไฟล์ต้นทางที่เครื่องเรา</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">dest:</span> /etc/nginx/nginx.conf    <span class="text-gray-500"># ไฟล์ปลายทางที่เครื่องเป้าหมาย</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">owner:</span> root</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">group:</span> root</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">mode:</span> '0644'</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">notify:</span> Restart Nginx  <span class="text-gray-500"># สั่ง Restart Service ทันทีถ้าไฟล์มีการเปลี่ยนแปลง</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: The Problem with Monolithic Playbooks -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ปัญหาของ Playbook ขนาดใหญ่</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold mb-2">Monolithic Playbook</h3>
+              <p class="text-sm">เมื่อโปรเจกต์ใหญ่ขึ้น ไฟล์ Playbook เดียวอาจมีขนาดใหญ่ถึง 1,000+ บรรทัด รวมงานติดตั้ง DB, Web, Cache ไว้ในไฟล์เดียว</p>
+              <ul class="list-disc list-inside mt-2 text-xs text-gray-300">
+                <li>อ่านยาก แก้ไขยาก</li>
+                <li>นำไปใช้ซ้ำในโปรเจกต์อื่นไม่ได้</li>
+                <li>ทำงานร่วมกันเป็นทีมลำบาก (Git merge conflicts)</li>
+              </ul>
+            </div>
+            <div class="flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-6xl mb-4">🍝</div>
+                <p class="text-yellow-300 font-bold">Spaghetti Code!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Introduction to Ansible Roles -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Ansible Roles 🎭</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-purple-500">
+            <p class="text-xl mb-4">
+            <strong>Roles</strong> คือวิธีการจัดระเบียบและแบ่ง Playbook ขนาดใหญ่ออกเป็นส่วนย่อยๆ (Modular) ตามหน้าที่การทำงาน (เช่น Role สำหรับ Nginx, Role สำหรับ MySQL)
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>ช่วยให้โค้ดเป็นระเบียบ (Structure)</li>
+              <li>สามารถนำกลับมาใช้ใหม่ได้ (Reusability)</li>
+              <li>แบ่งปันให้คนอื่นใช้ได้ง่าย (Shareability)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Directory Structure of a Role -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">โครงสร้างมาตรฐานของ Role</h2>
+          <p class="mb-4">Role หนึ่งตัวจะมีโครงสร้างโฟลเดอร์มาตรฐานที่ Ansible เข้าใจอัตโนมัติ</p>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border border-gray-600 shadow-2xl inline-block min-w-[50%]">
+            <p class="text-blue-300">roles/my_role/</p>
+            <p>├── <span class="text-yellow-300">tasks/</span>      <span class="text-gray-500"># เก็บไฟล์งาน (main.yml)</span></p>
+            <p>├── <span class="text-yellow-300">handlers/</span>   <span class="text-gray-500"># เก็บคำสั่ง service restart (main.yml)</span></p>
+            <p>├── <span class="text-yellow-300">templates/</span>  <span class="text-gray-500"># เก็บไฟล์ .j2 (Jinja2)</span></p>
+            <p>├── <span class="text-yellow-300">files/</span>      <span class="text-gray-500"># เก็บไฟล์ static ธรรมดา</span></p>
+            <p>├── <span class="text-yellow-300">vars/</span>       <span class="text-gray-500"># เก็บตัวแปรที่มี Priority สูง</span></p>
+            <p>├── <span class="text-yellow-300">defaults/</span>   <span class="text-gray-500"># เก็บตัวแปรค่าตั้งต้น (Priority ต่ำสุด)</span></p>
+            <p>└── <span class="text-yellow-300">meta/</span>       <span class="text-gray-500"># เก็บข้อมูลผู้สร้าง และ dependencies</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Anatomy of Tasks & Vars -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ส่วนประกอบใน Role</h2>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">tasks/main.yml</h3>
+              <p class="text-xs mb-2 text-gray-300">จุดเริ่มต้นของ Role ไม่ต้องมี <code>hosts:</code> หรือ <code>tasks:</code> แล้ว ใส่รายการงานได้เลย</p>
+              <code class="bg-black/40 p-2 rounded block text-xs font-mono">
+                - name: Install nginx<br>
+                &nbsp;&nbsp;apt:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;name: nginx
+              </code>
+            </div>
+
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h3 class="font-bold text-blue-300 mb-2">defaults/main.yml</h3>
+              <p class="text-xs mb-2 text-gray-300">ใส่ค่าตัวแปรเริ่มต้น ผู้ใช้ที่เรียก Role นี้สามารถตั้งค่าทับได้ง่ายๆ</p>
+              <code class="bg-black/40 p-2 rounded block text-xs font-mono">
+                nginx_port: 80<br>
+                nginx_user: www-data
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Handlers in Roles -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Handlers ใน Roles</h2>
+          <p class="text-lg text-white/90 mb-6">
+          Handlers คือ Task พิเศษที่จะทำงานก็ต่อเมื่อถูกเรียก (Notified) เท่านั้น นิยมใช้กับ Service Restart
+          </p>
+
+          <div class="bg-black/50 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-purple-500">
+            <p class="text-gray-400"># ใน handlers/main.yml</p>
+            <p><span class="text-blue-400">- name:</span> Restart Nginx</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">service:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> nginx</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> restarted</p>
+            <br>
+            <p class="text-gray-400"># ใน tasks/main.yml</p>
+            <p><span class="text-blue-400">- name:</span> Update Nginx Config</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">template:</span> src=nginx.conf.j2 dest=/etc/nginx/nginx.conf</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">notify:</span> Restart Nginx  <span class="text-gray-500"># ชื่อต้องตรงกันเป๊ะ</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Creating a Role -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การสร้าง Role ใหม่</h2>
+          <p class="mb-6 text-lg">ไม่ต้องสร้างโฟลเดอร์เองทีละอัน Ansible มีคำสั่งสำหรับสร้างโครงสร้าง Role ให้ทันที</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-lg inline-block">
+            <p class="text-green-400">$ ansible-galaxy role init my_webserver</p>
+          </div>
+
+          <p class="mt-6 text-left text-gray-300">
+          คำสั่งนี้จะสร้างโฟลเดอร์ <code>my_webserver</code> พร้อมโฟลเดอร์ย่อย (tasks, handlers, vars, ฯลฯ) ที่มีไฟล์ <code>main.yml</code> เตรียมไว้ให้คุณเข้าไปเขียนโค้ดได้เลย
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 22: Using Roles in a Playbook -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การเรียกใช้งาน Role ใน Playbook หลัก</h2>
+          <p class="mb-4 text-left">เมื่อเรามี Role แล้ว Playbook หลัก (site.yml) ของเราจะสะอาดและอ่านง่ายมาก</p>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-green-500 shadow-2xl">
+            <p class="text-gray-500"># site.yml (Playbook หลัก)</p>
+            <p class="text-gray-500">---</p>
+            <p><span class="text-blue-400">- name:</span> Configure Web Servers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> webservers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">become:</span> true</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">roles:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-green-300">common_setup</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-green-300">my_webserver</span></p>
+            <br>
+            <p><span class="text-blue-400">- name:</span> Configure Database Servers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> dbservers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">become:</span> true</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">roles:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-green-300">common_setup</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-yellow-300">role:</span> mysql_db</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">vars:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">mysql_port:</span> 3306  <span class="text-gray-500"># ส่งค่าตัวแปรเข้าไปใน Role ได้</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: The Problem with Sensitive Data -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ปัญหาการจัดการ Sensitive Data</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold mb-4 text-red-300">อันตราย!</h3>
+              <p class="text-sm">การเขียนรหัสผ่าน Database, API Keys, หรือ SSL Certificates เป็น Plain-text ลงใน Playbook และ Push ขึ้น Git (เช่น GitHub) เป็นความเสี่ยงระดับวิกฤต</p>
+              <code class="bg-black/50 p-2 mt-4 block text-xs font-mono text-gray-400">
+                db_password: "SuperSecretPassword123!"
+              </code>
+            </div>
+            <div class="flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-8xl mb-4">🔓</div>
+                <p class="text-red-400 font-bold">Data Breach Risk</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Introduction to Ansible Vault -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Ansible Vault 🔐</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-yellow-500">
+            <p class="text-xl mb-4">
+            <strong>Ansible Vault</strong> คือฟีเจอร์ที่ช่วยให้เราสามารถ <strong>เข้ารหัส (Encrypt)</strong> ข้อมูลตัวแปร หรือไฟล์ทั้งไฟล์ ด้วยอัลกอริทึม AES256
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>ไฟล์ที่ถูกเข้ารหัสสามารถ Push ขึ้น Git ได้อย่างปลอดภัย</li>
+              <li>Ansible จะทำการถอดรหัส (Decrypt) ในหน่วยความจำตอนที่รัน Playbook เท่านั้น (ไม่ต้องเขียนไฟล์ลงดิสก์)</li>
+              <li>ต้องใช้ Password หรือ Key file ในการถอดรหัสเพื่อใช้งาน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Basic Vault Commands -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งพื้นฐานของ Ansible Vault</h2>
+
+          <div class="space-y-4 text-left">
+            <div class="bg-black/40 p-4 rounded-xl border border-gray-600">
+              <strong class="text-green-300">สร้างไฟล์เข้ารหัสใหม่</strong>
+              <code class="block mt-1 font-mono text-sm">$ ansible-vault create secrets.yml</code>
+            </div>
+            <div class="bg-black/40 p-4 rounded-xl border border-gray-600">
+              <strong class="text-blue-300">แก้ไขไฟล์ที่ถูกเข้ารหัสอยู่แล้ว</strong>
+              <code class="block mt-1 font-mono text-sm">$ ansible-vault edit secrets.yml</code>
+            </div>
+            <div class="bg-black/40 p-4 rounded-xl border border-gray-600">
+              <strong class="text-yellow-300">เข้ารหัสไฟล์ธรรมดา (Plain-text -> Encrypted)</strong>
+              <code class="block mt-1 font-mono text-sm">$ ansible-vault encrypt db_vars.yml</code>
+            </div>
+            <div class="bg-black/40 p-4 rounded-xl border border-gray-600">
+              <strong class="text-red-300">ถอดรหัสไฟล์ (Encrypted -> Plain-text)</strong>
+              <code class="block mt-1 font-mono text-sm">$ ansible-vault decrypt db_vars.yml</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Encrypting Single Variables -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การเข้ารหัสแค่บางตัวแปร (Vault String)</h2>
+          <p class="text-lg text-white/90 mb-6">
+          บางครั้งเราไม่อยากเข้ารหัสทั้งไฟล์ เราสามารถเข้ารหัสเฉพาะค่าของตัวแปร (Value) ได้
+          </p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-sm inline-block w-full">
+            <p class="text-green-400">$ ansible-vault encrypt_string 'MySecretPass' --name 'db_password'</p>
+            <br>
+            <p class="text-gray-400"># นำผลลัพธ์ไปแปะในไฟล์ vars/main.yml ได้เลย:</p>
+            <p class="text-purple-400">db_password:</p> <span class="text-yellow-300">!vault |</span>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">$ANSIBLE_VAULT;1.1;AES256</span></p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">38366531393635383561336661333465353163353531636239333939616630323334346162353137</span></p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">...</span></p>
+          </div>
+          <p class="mt-4 text-sm text-left text-gray-300">วิธีนี้ทำให้เรายังสามารถอ่าน Key name (เช่น <code>db_password</code>) ได้ออก แต่ค่า (Value) ปลอดภัย</p>
+        </div>
+      </div>
+
+      <!-- Slide 27: Running Playbooks with Vault -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การรัน Playbook ที่มี Vault</h2>
+          <p class="mb-4 text-left">เมื่อเรารัน Playbook ที่มีการอ้างอิงถึงไฟล์ Vault หรือตัวแปร Vault เราต้องส่งรหัสผ่านให้ Ansible ด้วย</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl border border-blue-500">
+              <h3 class="font-bold text-blue-300 mb-2">วิธีที่ 1: พิมพ์รหัสผ่านเอง (Interactive)</h3>
+              <p class="text-xs mb-2 text-gray-300">ใช้ option <code>--ask-vault-pass</code></p>
+              <code class="bg-black/50 p-2 rounded block text-xs font-mono text-green-400">
+                ansible-playbook site.yml --ask-vault-pass
+              </code>
+            </div>
+
+            <div class="bg-white/10 p-5 rounded-xl border border-green-500">
+              <h3 class="font-bold text-green-300 mb-2">วิธีที่ 2: อ่านจากไฟล์ (Automation/CI)</h3>
+              <p class="text-xs mb-2 text-gray-300">เก็บรหัสไว้ในไฟล์ (อย่าเอาขึ้น Git!) แล้วใช้ option <code>--vault-password-file</code></p>
+              <code class="bg-black/50 p-2 rounded block text-xs font-mono text-green-400">
+                ansible-playbook site.yml --vault-password-file ~/.vault_pass.txt
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Summary of Week 9 -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สรุปบทเรียน (Summary)</h2>
+          <ul class="list-disc list-inside text-left text-lg space-y-4 bg-white/10 p-8 rounded-2xl">
+            <li><strong>Idempotency</strong> คือการทำงานซ้ำได้โดยระบบไม่พังและไม่เปลี่ยนถ้าสถานะถูกต้องแล้ว ควรใช้ Ansible Modules เสมอ</li>
+            <li><strong>Variables & Jinja2</strong> ทำให้ Configuration ไฟล์ของเรายืดหยุ่น สร้างเงื่อนไขและวนลูปได้ตาม Environment</li>
+            <li><strong>Ansible Roles</strong> ช่วยจัดระเบียบ Playbook ให้เป็นสัดส่วน (Modularity) และนำไปใช้ซ้ำได้ง่าย</li>
+            <li><strong>Ansible Vault</strong> คือเครื่องมือสำคัญในการเข้ารหัสปกป้องข้อมูลความลับ (Secrets) ไม่ให้หลุดไปใน Source Control</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 29: Lab Heads-up -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! 🧪</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">ภารกิจปฏิบัติการสัปดาห์ที่ 9:</h3>
+            <p class="text-lg mb-4">
+            ยกระดับโปรเจกต์ Ansible จากสัปดาห์ที่แล้ว ให้มีโครงสร้างระดับ Enterprise
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>✅ ใช้คำสั่ง <code>ansible-galaxy init</code> สร้าง <strong>Ansible Role</strong> สำหรับติดตั้ง Nginx</li>
+              <li>✅ เขียนไฟล์ <code>nginx.conf.j2</code> โดยใช้ <strong>Jinja2 Template</strong> และดึงค่าจากตัวแปร (Variables)</li>
+              <li>✅ ทดลองเก็บรหัสผ่านฐานข้อมูล (จำลอง) ไว้ในไฟล์แล้วเข้ารหัสด้วย <strong>Ansible Vault</strong></li>
+              <li>✅ รัน Playbook และตรวจสอบคุณสมบัติ <strong>Idempotency</strong></li>
+            </ul>
+            <div class="mt-8 text-center text-gray-300 text-sm">
+              ทบทวนคำสั่งพื้นฐานของ Ansible และโครงสร้าง YAML ให้แม่นยำก่อนเริ่ม Lab!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: Enterprise Ansible 🏢</h2>
+          <p class="text-xl text-white/90 mb-8">
+          ยกระดับการเขียน Playbook สู่มาตรฐานการทำงานจริงด้วย Roles, Templates และ Vault
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-purple-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ สร้าง Ansible Role สำหรับติดตั้งและตั้งค่า Nginx ให้รัน Web application</li>
+              <li>✅ ใช้ Jinja2 Template เพื่อสร้างไฟล์ Configuration ของ Nginx แบบไดนามิก</li>
+              <li>✅ ทดลองใช้ Ansible Vault เพื่อเก็บรหัสผ่าน (จำลอง) อย่างปลอดภัย</li>
+              <li>✅ ตรวจสอบคุณสมบัติ Idempotency ของ Playbook</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 1 - Project Setup -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: เตรียม Project และ Inventory</h2>
+          <p class="mb-4 text-left">สร้างโครงสร้างโฟลเดอร์สำหรับโปรเจกต์ใหม่และเตรียมไฟล์ Inventory</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border border-gray-600">
+            <p class="text-gray-400"># 1. สร้างโฟลเดอร์โปรเจกต์และเข้าไปในโฟลเดอร์</p>
+            <p class="text-green-400">$ mkdir ansible-advanced-lab && cd ansible-advanced-lab</p>
+            <br>
+            <p class="text-gray-400"># 2. สร้างไฟล์ Inventory</p>
+            <p class="text-green-400">$ nano hosts</p>
+            <br>
+            <p class="text-gray-400"># 3. ใส่ข้อมูลเครื่องเป้าหมาย (เปลี่ยน IP และ User ตามจริง)</p>
+            <p class="text-purple-300">[webservers]</p>
+            <p class="text-white">192.168.x.x <span class="text-blue-300">ansible_user=ubuntu</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 2 - Create Ansible Role -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 2: สร้าง Ansible Role</h2>
+          <p class="mb-4 text-left text-sm">เราจะใช้คำสั่ง <code>ansible-galaxy</code> ในการสร้างโครงสร้างโฟลเดอร์สำหรับ Role โดยอัตโนมัติ</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. สร้างโฟลเดอร์ roles เพื่อเก็บ Role ทั้งหมด</p>
+            <p class="text-green-400">$ mkdir roles && cd roles</p>
+            <br>
+            <p class="text-gray-400"># 2. สร้าง Role ใหม่ชื่อ nginx_web</p>
+            <p class="text-green-400">$ ansible-galaxy role init nginx_web</p>
+            <p class="text-white">- Role nginx_web was created successfully</p>
+            <br>
+            <p class="text-gray-400"># 3. กลับมาที่โฟลเดอร์หลัก</p>
+            <p class="text-green-400">$ cd ..</p>
+          </div>
+          <div class="mt-4 bg-blue-900/40 p-3 rounded text-xs text-left">
+            💡 โครงสร้างไฟล์มากมายจะถูกสร้างขึ้นใน <code>roles/nginx_web/</code> เช่น tasks/, handlers/, templates/ เป็นต้น
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 3 - Define Variables -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 3: กำหนดตัวแปร (Defaults)</h2>
+          <p class="mb-4 text-left">กำหนดค่าพื้นฐานให้กับ Role ของเรา เพื่อให้นำไปใช้ซ้ำหรือปรับแก้ได้ง่าย</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-yellow-500">
+            <p class="text-gray-400"># แก้ไขไฟล์ roles/nginx_web/defaults/main.yml</p>
+            <p class="text-green-400">$ nano roles/nginx_web/defaults/main.yml</p>
+            <br>
+            <p class="text-gray-500">---</p>
+            <p class="text-gray-500"># defaults file for nginx_web</p>
+            <p><span class="text-blue-400">http_port:</span> 80</p>
+            <p><span class="text-blue-400">server_name:</span> localhost</p>
+            <p><span class="text-blue-400">app_greeting:</span> "Welcome to Ansible Roles & Vault!"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Step 4 - Create Jinja2 Template -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 4: สร้าง Jinja2 Template สำหรับ Nginx</h2>
+          <p class="mb-4 text-left text-sm">สร้างไฟล์ Configuration ของ Nginx ที่จะเปลี่ยนค่าไปตามตัวแปรที่เรากำหนด</p>
+
+          <div class="bg-black/50 p-5 rounded-xl text-left font-mono text-xs border-l-4 border-green-500">
+            <p class="text-gray-400"># สร้างไฟล์ roles/nginx_web/templates/nginx.conf.j2</p>
+            <p class="text-green-400">$ nano roles/nginx_web/templates/nginx.conf.j2</p>
+            <br>
+            <p>server {</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;listen <span class="text-yellow-300">{{ http_port }}</span> default_server;</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;server_name <span class="text-yellow-300">{{ server_name }}</span>;</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;root /var/www/html;</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;index index.html;</p>
+            <br>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;location / {</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try_files $uri $uri/ =404;</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;}</p>
+            <p>}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 35: Step 5 - Create Web Content Template -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 5: สร้าง HTML แบบไดนามิก (Jinja2)</h2>
+          <p class="mb-4 text-left text-sm">แทนที่จะใช้ไฟล์ Static ธรรมดา เราจะใช้ Template ฝังตัวแปรลงในหน้าเว็บ</p>
+
+          <div class="bg-black/50 p-5 rounded-xl text-left font-mono text-xs border-l-4 border-green-500">
+            <p class="text-gray-400"># สร้างไฟล์ roles/nginx_web/templates/index.html.j2</p>
+            <p class="text-green-400">$ nano roles/nginx_web/templates/index.html.j2</p>
+            <br>
+            <p class="text-white">&lt;!DOCTYPE html&gt;</p>
+            <p class="text-white">&lt;html&gt;</p>
+            <p class="text-white">&lt;body style="background-color: #1a202c; color: white; text-align: center; padding-top: 100px;"&gt;</p>
+            <p class="text-white">&nbsp;&nbsp;&nbsp;&nbsp;&lt;h1&gt;<span class="text-yellow-300">{{ app_greeting }}</span>&lt;/h1&gt;</p>
+            <p class="text-white">&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Server Name: <span class="text-yellow-300">{{ server_name }}</span>&lt;/p&gt;</p>
+            <p class="text-white">&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Simulated DB Password: <span class="text-red-400">{{ db_password | default('Not Provided') }}</span>&lt;/p&gt;</p>
+            <p class="text-white">&lt;/body&gt;</p>
+            <p class="text-white">&lt;/html&gt;</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 36: Step 6 - Add Handlers -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 6: สร้าง Handlers (Restart Service)</h2>
+          <p class="mb-4 text-left text-sm">เมื่อมีการแก้ไขไฟล์ Configuration ควรให้ Nginx สั่ง Restart ตัวเอง</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-purple-500">
+            <p class="text-gray-400"># แก้ไขไฟล์ roles/nginx_web/handlers/main.yml</p>
+            <p class="text-green-400">$ nano roles/nginx_web/handlers/main.yml</p>
+            <br>
+            <p class="text-gray-500">---</p>
+            <p class="text-gray-500"># handlers file for nginx_web</p>
+            <p><span class="text-blue-400">- name:</span> Restart Nginx</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">service:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> nginx</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">state:</span> restarted</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 37: Step 7 - Write Tasks -->
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 7: เขียน Tasks หลักสำหรับ Role</h2>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs overflow-auto h-72 border-l-4 border-blue-500">
+            <p class="text-gray-400"># แก้ไขไฟล์ roles/nginx_web/tasks/main.yml</p>
+            <p class="text-gray-500">---</p>
+            <p><span class="text-blue-400">- name:</span> Install Nginx</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">apt:</span> name=nginx state=present update_cache=yes</p>
+            <br>
+            <p><span class="text-blue-400">- name:</span> Deploy Nginx configuration</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">template:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">src:</span> nginx.conf.j2</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">dest:</span> /etc/nginx/sites-available/default</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">notify:</span> Restart Nginx <span class="text-gray-500"># เรียกใช้ Handler เมื่อไฟล์เปลี่ยน</span></p>
+            <br>
+            <p><span class="text-blue-400">- name:</span> Deploy Web Application (index.html)</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">template:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">src:</span> index.html.j2</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">dest:</span> /var/www/html/index.html</p>
+            <br>
+            <p><span class="text-blue-400">- name:</span> Ensure Nginx is running</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">service:</span> name=nginx state=started enabled=yes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 38: Step 8 - Ansible Vault -->
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 8: สร้างไฟล์ความลับด้วย Ansible Vault</h2>
+          <p class="mb-4 text-left text-sm">เราจะจำลองการเก็บรหัสผ่าน Database และใช้ Vault เพื่อเข้ารหัสไฟล์</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. สร้างโฟลเดอร์ group_vars สำหรับกลุ่ม webservers</p>
+            <p class="text-green-400">$ mkdir -p group_vars/webservers</p>
+            <br>
+            <p class="text-gray-400"># 2. สร้างและเข้ารหัสไฟล์ vault</p>
+            <p class="text-green-400">$ ansible-vault create group_vars/webservers/secrets.yml</p>
+            <p class="text-white">New Vault password: <span class="text-gray-500">(ตั้งรหัสผ่านของคุณ เช่น secret123)</span></p>
+            <p class="text-white">Confirm New Vault password: </p>
+            <br>
+            <p class="text-gray-400"># 3. Text Editor จะเปิดขึ้นมา ให้พิมพ์ข้อมูลนี้ลงไป:</p>
+            <p class="text-blue-300">db_password: "SuperSecretPassword123!"</p>
+            <p class="text-gray-400"># (Save และ Exit ไฟล์)</p>
+          </div>
+          <p class="mt-4 text-xs text-yellow-300 text-left">คุณสามารถใช้ `cat group_vars/webservers/secrets.yml` เพื่อดูว่าไฟล์ถูกเข้ารหัสแล้ว (อ่านไม่รู้เรื่อง)</p>
+        </div>
+      </div>
+
+      <!-- Slide 39: Step 9 - Main Playbook -->
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 9: ประกอบร่าง Main Playbook</h2>
+          <p class="mb-4 text-left">กลับมาที่โฟลเดอร์หลัก สร้างไฟล์ <code>site.yml</code> เพื่อเรียกใช้งาน Role</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-blue-400">
+            <p class="text-green-400">$ nano site.yml</p>
+            <br>
+            <p class="text-gray-500">---</p>
+            <p><span class="text-blue-400">- name:</span> Configure Web Infrastructure</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">hosts:</span> webservers</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">become:</span> yes</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">roles:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-green-300">nginx_web</span></p>
+          </div>
+          <div class="mt-4 bg-white/10 p-3 rounded text-sm text-left">
+            สังเกตว่า Playbook หลักสั้นและอ่านง่ายมาก เพราะความซับซ้อนถูกซ่อนไว้ใน Role หมดแล้ว
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 40: Step 10 - Run and Verify -->
+      <div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 10: Execute Playbook</h2>
+          <p class="mb-4 text-left text-sm">ต้องใช้ flag <code>--ask-vault-pass</code> เพื่อปลดล็อกตัวแปรความลับส่งไปให้ Jinja2 Template</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs">
+              <p class="text-green-400">$ ansible-playbook -i hosts site.yml -K --ask-vault-pass</p>
+              <p class="text-white mt-2">Vault password: <span class="text-gray-500">(พิมพ์รหัส vault ที่ตั้งไว้)</span></p>
+              <p class="text-white">BECOME password: <span class="text-gray-500">(พิมพ์รหัส sudo ของเครื่องปลายทาง)</span></p>
+              <br>
+              <p class="text-gray-400"># สังเกตผลลัพธ์ Tasks ที่รันจาก Role</p>
+              <p class="text-yellow-400">changed: [192.168.x.x] => (item=Install Nginx)</p>
+              <p class="text-yellow-400">changed: [192.168.x.x] => (item=Deploy Config)</p>
+            </div>
+
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">ตรวจสอบใน Web Browser</h3>
+              <p class="text-sm">นำ IP เครื่องเป้าหมายไปเปิดในเบราว์เซอร์ จะเห็นข้อความและ <strong>รหัสผ่านจาก Vault</strong> แสดงอยู่ (ในทางปฏิบัติจริง เราจะไม่ Print Password ออกหน้าเว็บ แต่ใน Lab นี้ทำเพื่อพิสูจน์ว่า Vault ทำงานได้)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 41: Step 11 - Test Idempotency -->
+      <div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 11: ทดสอบ Idempotency</h2>
+          <p class="mb-4 text-left text-lg">รันคำสั่งเดิมซ้ำอีกครั้ง เพื่อดูความฉลาดของ Ansible</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm">
+            <p class="text-green-400">$ ansible-playbook -i hosts site.yml -K --ask-vault-pass</p>
+            <br>
+            <p class="text-white">TASK [nginx_web : Install Nginx]</p>
+            <p class="text-green-500">ok: [192.168.x.x]</p>
+            <p class="text-white">TASK [nginx_web : Deploy Nginx configuration]</p>
+            <p class="text-green-500">ok: [192.168.x.x]</p>
+            <br>
+            <p class="text-white">PLAY RECAP ***************************************</p>
+            <p class="text-green-500 font-bold">192.168.x.x : ok=5  changed=0  unreachable=0  failed=0</p>
+          </div>
+
+          <p class="mt-4 text-yellow-300 text-left text-sm">
+          *ผลคือ <span class="text-green-400 font-bold">ok=5 changed=0</span> เพราะ Ansible รู้ว่าไม่มีอะไรต้องอัปเดต และ Handler "Restart Nginx" ก็จะไม่ถูกเรียกทำงาน!
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 42: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🎉</div>
+          <h2 class="text-4xl font-bold mb-6">Lab Complete! การส่งงาน (Submission)</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">สิ่งที่ต้องส่ง:</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>Source Code (.zip หรือ Github Repo):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>โครงสร้างโฟลเดอร์ของ Role (<code>roles/nginx_web</code>)</li>
+                  <li>ไฟล์ <code>site.yml</code> และ <code>hosts</code></li>
+                  <li>ไฟล์เข้ารหัส <code>group_vars/webservers/secrets.yml</code></li>
+                </ul>
+              </li>
+              <li>
+                <strong>Screenshots (รวมเป็น PDF):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ภาพผลลัพธ์การรันรอบแรก (มีสถานะ changed)</li>
+                  <li>ภาพหน้าเว็บที่แสดงข้อความและรหัสผ่านจาก Vault</li>
+                  <li>ภาพผลลัพธ์การรันรอบสองที่พิสูจน์ Idempotency (สถานะ ok=0 changed=0)</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
