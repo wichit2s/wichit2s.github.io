@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0202.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Binary Search Implementation</span> <br>
+            <span class="mt-8 text-yellow-300">จากทฤษฎีสู่การเขียนโค้ดจริง</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ช่วงบ่าย (13.00 - 15.00): เจาะลึกการ 구현 บนอาเรย์และคำตอบ 
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">สิ่งที่เราจะทำในเซสชันนี้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>เขียนโค้ด Binary Search 2 รูปแบบมาตรฐาน </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>ฝึกใช้ STL <code>lower_bound</code> เพื่อลดเวลาเขียนโค้ด </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>Implementation: Binary Search on Answer สำหรับโจทย์ Optimization </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300">ทบทวน: กระบวนการ Binary Search</h2>
+          <p class="text-lg mb-6 opacity-90">อัลกอริทึมจะทำการตรวจสอบค่าที่ <b>"จุดกึ่งกลาง"</b> ของขอบเขตการค้นหาเสมอ </p>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-black/30 p-6 rounded-xl">
+              <h4 class="font-bold text-green-400 mb-2">ถ้าค่ากึ่งกลางคือคำตอบ</h4>
+              <p class="text-sm">หยุดการทำงานและคืนค่าตำแหน่งนั้นทันที </p>
+            </div>
+            <div class="bg-black/30 p-6 rounded-xl">
+              <h4 class="font-bold text-red-400 mb-2">ถ้าไม่ใช่คำตอบ</h4>
+              <p class="text-sm">เลื่อนขอบเขต (low หรือ high) เพื่อทิ้งข้อมูลครึ่งหนึ่งที่ไม่เกี่ยวข้อง </p>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-xl italic font-bold">"ข้อมูลต้องเรียงลำดับเสมอ (Sorted Array)" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Implementation 1: <code>while (low <= high)</code></h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            int low = 0, high = n - 1;<br>
+            while (low <= high) {<br>
+            &nbsp;&nbsp;int mid = low + (high - low) / 2;<br>
+            &nbsp;&nbsp;if (array[mid] == x) return mid; <span class="text-gray-500">// พบคำตอบ</span><br>
+            &nbsp;&nbsp;if (array[mid] > x) high = mid - 1;<br>
+            &nbsp;&nbsp;else low = mid + 1;<br>
+            }<br>
+            return -1;
+          </div>
+          <p class="text-sm opacity-70">ในวิธีนี้ ขอบเขตจะถูกบีบเข้าหากันจน <code>low > high</code> จึงจบการทำงาน </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">ทำไมไม่ใช้ <code>(low + high) / 2</code>?</h2>
+          <div class="bg-red-900/30 p-8 rounded-3xl border-2 border-red-500 mb-8">
+            <p class="text-xl font-mono">low + high อาจทำให้เกิด <b>Integer Overflow</b> </p>
+          </div>
+          <div class="bg-green-900/30 p-6 rounded-2xl border-2 border-green-500">
+            <p class="text-2xl font-bold">ควรใช้: <code>low + (high - low) / 2</code></p>
+          </div>
+          <p class="mt-8 opacity-70 italic text-sm">เป็นแนวทางปฏิบัติที่ช่วยให้โค้ดของคุณปลอดภัยแม้ข้อมูลจะมีขนาดใหญ่ถึง \(10^9\) </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-blue-400">Implementation 2: Jump Method</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            int k = 0;<br>
+            for (int b = n/2; b >= 1; b /= 2) {<br>
+            &nbsp;&nbsp;while (k+b < n && array[k+b] <= x) k += b;<br>
+            }<br>
+            if (array[k] == x) { <span class="text-gray-500">// พบคำตอบที่ตำแหน่ง k</span> }
+          </div>
+          <p class="text-sm opacity-80">แนวคิดคือการ <b>"กระโดด"</b> ไปข้างหน้าด้วยระยะทางที่ลดลงทีละครึ่ง </p>
+          <div class="mt-4 p-4 bg-yellow-500/20 rounded border border-yellow-500 text-xs">
+            <b>ข้อดี:</b> เขียนง่าย ลดข้อผิดพลาดเรื่อง index นอกขอบเขต (Out of bounds) 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">อย่าเขียนเองถ้าไม่จำเป็น!</h2>
+          <p class="mb-6 opacity-90">C++ มีฟังก์ชันที่มีประสิทธิภาพสูงให้ใช้อยู่แล้วใน <code>&lt;algorithm&gt;</code> </p>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-black/40 p-5 rounded-xl border-l-4 border-green-400">
+              <h4 class="font-bold font-mono">lower_bound</h4>
+              <p class="text-xs">หาตัวแรกที่ <b>ค่า \(\ge x\)</b> </p>
+            </div>
+            <div class="bg-black/40 p-5 rounded-xl border-l-4 border-red-400">
+              <h4 class="font-bold font-mono">upper_bound</h4>
+              <p class="text-xs">หาตัวแรกที่ <b>ค่า \(> x\)</b> </p>
+            </div>
+          </div>
+          <p class="mt-6 text-sm italic text-white/60 underline">"ประหยัดเวลาและลดโอกาสเกิด Bug ในการแข่งขัน" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-300 font-mono">Counting Elements with STL</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            auto a = lower_bound(arr, arr+n, x);<br>
+            auto b = upper_bound(arr, arr+n, x);<br>
+            cout << b - a << "\n"; <span class="text-gray-500">// จำนวนครั้งที่ x ปรากฏในอาเรย์</span>
+          </div>
+          <div class="bg-white/10 p-4 rounded-lg">
+            <p class="text-sm">การใช้ <code>b - a</code> ทำได้เพราะ STL คืนค่าเป็น <b>Iterators</b> </p>
+            <p class="text-xs mt-2 opacity-60">*หมายเหตุ: อาเรย์ต้องถูกเรียงลำดับก่อนเสมอ </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 uppercase italic">Binary Search on Answer</h2>
+          <p class="text-lg mb-6 leading-relaxed">ใช้เมื่อเราต้องการหาค่า \(k\) ที่น้อยที่สุดหรือมากที่สุดที่ <b>เป็นไปได้</b> </p>
+          <div class="bg-black/30 p-6 rounded-2xl border-l-8 border-yellow-400">
+            <h3 class="font-bold mb-2">เงื่อนไขที่ต้องมี:</h3>
+            <p class="text-sm">ต้องมีฟังก์ชัน <code>ok(x)</code> ที่มีความเป็น <b>Monotone</b> (เช่น ถ้า \(x\) ใช้ได้ ทุกค่าที่มากกว่า \(x\) ก็ต้องใช้ได้) </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono">The Decision Function</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            bool ok(long long x) {<br>
+            &nbsp;&nbsp;<span class="text-gray-500">// ลอจิกตรวจสอบว่าคำตอบ x "ใช้ได้" หรือไม่</span><br>
+            &nbsp;&nbsp;<span class="text-gray-500">// มักจะใช้ Greedy หรือการวนลูปเช็คพื้นฐาน O(N)</span><br>
+            &nbsp;&nbsp;if (is_valid) return true;<br>
+            &nbsp;&nbsp;return false;<br>
+            }
+          </div>
+          <p class="text-sm opacity-80 italic">"ความซับซ้อนรวมจะเป็น \(O(N \log Z)\)[เมื่อ \(Z\) คือขอบเขตคำตอบ" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-yellow-300 font-mono">Finding Smallest k</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            long long x = -1;<br>
+            for (long long b = z; b >= 1; b /= 2) {<br>
+            &nbsp;&nbsp;while (!ok(x + b)) x += b;<br>
+            }<br>
+            long long k = x + 1; <span class="text-gray-500">// k คือคำตอบที่น้อยที่สุด</span>
+          </div>
+          <p class="text-sm opacity-70">โค้ดนี้จะหาค่า \(x\) ที่ใหญ่ที่สุดที่ <b>ok(x) เป็นเท็จ</b> แล้วบวกเพิ่มอีก 1 </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 italic underline">กรณีศึกษา: การตัดไส้กรอก</h2>
+          <div class="bg-white/10 p-6 rounded-xl mb-6">
+            <p class="text-sm leading-relaxed">
+            มีไส้กรอก \(N\) ชิ้นยาวต่างกัน ต้องการตัดให้ได้ \(M\) ชิ้นยาวเท่ากัน <b>โดยยาวที่สุดที่เป็นไปได้</b> 
+            </p>
+          </div>
+          <p class="font-bold text-green-300 mb-2">แนวทางการ 구현:</p>
+          <ul class="list-disc ml-8 text-sm space-y-2 opacity-90">
+            <li>แทนที่จะหาค่าสูงสุดตรงๆ ให้สร้างฟังก์ชัน <code>ok(len)</code> </li>
+            <li><code>ok(len)</code>: เช็คว่าถ้าตัดยาว <code>len</code> จะได้ไส้กรอก \(\ge M\) ชิ้นหรือไม่ </li>
+            <li>ใช้ Binary Search บีบช่วงความยาว </li>
+          </ul>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300">BS on Real Numbers</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            for (int i = 0; i < 100; i++) {<br>
+            &nbsp;&nbsp;double mid = (lo + hi) / 2;<br>
+            &nbsp;&nbsp;if (ok(mid)) lo = mid;<br>
+            &nbsp;&nbsp;else hi = mid;<br>
+            }
+          </div>
+          <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-400">
+            <p class="text-sm"><b>ทำไมต้องวน 100 รอบ?</b></p>
+            <p class="text-xs mt-1">เพื่อให้ได้ความแม่นยำสูงสุด (Precision) และปลอดภัยจากการวนลูปไม่รู้จบ (Infinite loop) </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-red-400 underline uppercase">Precision Warning!</h2>
+          <div class="bg-black/40 p-8 rounded-3xl border-2 border-red-500 shadow-2xl">
+            <p class="text-lg leading-relaxed italic">
+            "<code>double</code> มีความละเอียดเพียงประมาณ 15-17 หลัก" 
+            </p>
+            <p class="mt-4 text-sm opacity-80">
+            การใช้ <code>while (hi - lo > 1e-9)</code> อาจเกิดปัญหากับคำตอบที่มีค่าขนาดใหญ่มาก 
+            </p>
+          </div>
+          <p class="mt-8 text-yellow-300 font-bold">ใช้ Fixed Iterations (เช่น 100 รอบ) เสมอในการแข่งขัน </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 italic">นอกเหนือจากอาเรย์</h2>
+          <div class="grid gap-4">
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-400">
+              <h4 class="font-bold text-blue-300">Searching on Functions:</h4>
+              <p class="text-xs opacity-80">หาค่าสูงสุด/ต่ำสุดของฟังก์ชันที่มีความต่อเนื่อง (Monotonic Functions) </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-400">
+              <h4 class="font-bold text-blue-300">Finding Invariants:</h4>
+              <p class="text-xs opacity-80">ใช้เพื่อตรวจสอบคุณสมบัติที่ไม่เปลี่ยนแปลงในระหว่างกระบวนการแก้ปัญหา </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 text-center">
+          <h2 class="text-3xl font-bold mb-6 text-green-400 uppercase tracking-widest">Exercise 1: Basic</h2>
+          <div class="bg-white text-black p-8 rounded-3xl shadow-xl">
+            <h3 class="text-xl font-bold mb-4 italic">"Implement Search in Sorted Array"</h3>
+            <p class="text-sm opacity-80">เขียนฟังก์ชัน Binary Search ของคุณเองและเปรียบเทียบกับ <code>std::lower_bound</code> </p>
+            <div class="mt-6 font-mono text-xs text-blue-700">Constraint: N = 10^6, T = 1s</div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 text-center">
+          <h2 class="text-3xl font-bold mb-6 text-red-400 uppercase tracking-widest">Exercise 2: Advanced</h2>
+          <div class="bg-white text-black p-8 rounded-3xl shadow-xl">
+            <h3 class="text-xl font-bold mb-4 italic">"Minimize Maximum (Minimax)"</h3>
+            <p class="text-sm opacity-80">จงหาค่าที่น้อยที่สุดที่เป็นไปได้ของค่าที่มากที่สุดจากชุดข้อมูล (โจทย์แนวการแบ่งงาน) </p>
+            <div class="mt-6 font-mono text-xs text-red-700 italic">"Hint: ใช้ Binary Search on Answer" </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 italic">เทคนิคการหา Bug ใน Binary Search</h2>
+          <div class="space-y-4">
+            <div class="bg-white/10 p-5 rounded-xl border border-white/20">
+              <p class="text-sm"><span class="text-green-400 font-bold">1. Print Mid:</span> แสดงค่า mid และผลของ ok(mid) ในทุกรอบ </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border border-white/20">
+              <p class="text-sm"><span class="text-green-400 font-bold">2. Test Edge Cases:</span> ทดสอบกับ \(N=0, 1\) หรือกรณีที่ไม่มีคำตอบ </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border border-white/20">
+              <p class="text-sm"><span class="text-green-400 font-bold">3. Local Testing:</span> ใช้ไฟล์ input.txt และ output.txt เพื่อความรวดเร็ว </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">แหล่งฝึกฝนเพิ่มเติม</h2>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-black/30 p-6 rounded-2xl border-t-4 border-blue-400 shadow-lg">
+              <h4 class="font-bold text-xl mb-4">CSES Problem Set</h4>
+              <p class="text-xs opacity-80 mb-4">ส่วนของ Sorting and Searching ที่แนะนำโดยผู้เชี่ยวชาญ </p>
+            </div>
+            <div class="bg-black/30 p-6 rounded-2xl border-t-4 border-green-400 shadow-lg">
+              <h4 class="font-bold text-xl mb-4">Codeforces</h4>
+              <p class="text-xs opacity-80 mb-4">ค้นหา Tag: 'binary search' เพื่อโจทย์ระดับสากล </p>
+            </div>
+          </div>
+          <p class="mt-10 italic text-white/50 text-sm italic">"การทำโจทย์ย้อนหลังคือวิธีพัฒนาที่เร็วที่สุด (Up-solving)" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center uppercase">Key Takeaways</h2>
+          <div class="grid gap-4">
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>การ 구현 ต้องระวัง Integer Overflow ใน <code>mid</code> </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>STL คือเครื่องมือที่ทรงพลังและแม่นยำที่สุด </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>Binary Search on Answer เปลี่ยนปัญหา Optimization เป็นการตัดสินใจ </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>ใช้ Fixed Iterations กับเลขทศนิยมเสมอ </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-10 text-yellow-300 uppercase tracking-tighter">Coding Session</h2>
+          <div class="bg-white/10 backdrop-blur p-12 rounded-full border-8 border-white/10 inline-block mb-10 shadow-2xl">
+            <p class="text-3xl font-light">15.00 - 17.00 น.</p>
+            <p class="text-xl mt-2 opacity-70 italic font-bold">Practice: Binary Search Problems </p>
+          </div>
+          <p class="text-xl opacity-60">"โค้ดของคุณคือคำตอบที่ดีที่สุด" เจอกันในแล็บครับ!</p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

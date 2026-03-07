@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0301.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>C++ Standard Template Library (STL)</span> <br>
+            <span class="mt-8 text-yellow-300">อาวุธลับของนักโปรแกรมเชิงแข่งขัน</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            วันที่ 3 ช่วงเช้า: โครงสร้างข้อมูลพื้นฐาน (Sequential Containers)
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">สิ่งที่จะเรียนรู้ในส่วนที่ 1</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ภาพรวมของ STL และการประยุกต์ใช้ในการแข่งขัน </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>std::vector: อาเรย์ที่ยืดหยุ่นและทรงพลัง </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>Stack, Queue และ Priority Queue </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300">Standard Template Library (STL)</h2>
+          <div class="bg-white/10 p-6 rounded-xl border-l-4 border-yellow-400 mb-6">
+            <p class="text-xl leading-relaxed">
+            "STL คือคลังโปรแกรมมาตรฐานของ C++ ที่รวบรวม <b>โครงสร้างข้อมูล</b> และ <b>อัลกอริทึม</b> ที่ผ่านการปรับแต่งประสิทธิภาพมาอย่างดีเยี่ยม" 
+            </p>
+          </div>
+          <ul class="space-y-4 text-lg">
+            <li class="flex items-center gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>ประหยัดเวลาในการเขียนโค้ดพื้นฐานเอง </span>
+            </li>
+            <li class="flex items-center gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>ลดโอกาสเกิดข้อผิดพลาด (Bug) ในการจัดการหน่วยความจำ </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-10 text-yellow-300">3 เสาหลักของ STL</h2>
+          <div class="grid grid-cols-3 gap-6">
+            <div class="bg-white/10 p-6 rounded-xl border border-blue-400">
+              <h3 class="font-bold text-blue-300 mb-4">Containers</h3>
+              <p class="text-sm opacity-80">ใช้สำหรับเก็บข้อมูล (เช่น vector, set, map) </p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-green-400">
+              <h3 class="font-bold text-green-300 mb-4">Iterators</h3>
+              <p class="text-sm opacity-80">ตัวชี้ตำแหน่งเพื่อเข้าถึงข้อมูลใน Container </p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-red-400">
+              <h3 class="font-bold text-red-300 mb-4">Algorithms</h3>
+              <p class="text-sm opacity-80">ฟังก์ชันสำเร็จรูป (เช่น sort, binary_search) </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300">The "Magic" Header</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-xl text-green-400 mb-6">
+            #include &lt;bits/stdc++.h&gt;
+          </div>
+          <div class="bg-white/10 p-6 rounded-2xl">
+            <ul class="list-disc ml-6 space-y-3 opacity-90">
+              <li>รวมไลบรารีมาตรฐานทุกตัวไว้ในคำสั่งเดียว </li>
+              <li>ช่วยให้ไม่ต้องจำชื่อ Header ของแต่ละ Container </li>
+              <li class="text-red-300"><b>ข้อระวัง:</b> ใช้สำหรับการแข่งขันเท่านั้น ไม่แนะนำในงานโปรดักชันเพราะคอมไพล์ช้า </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::vector</h2>
+          <p class="text-2xl font-light mb-8">
+          "อาเรย์ที่มีความยืดหยุ่น สามารถปรับขนาดได้เองระหว่างการทำงาน" 
+          </p>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-black/30 p-6 rounded-xl border-t-2 border-blue-400 text-left">
+              <h3 class="font-bold mb-2">จุดเด่น</h3>
+              <ul class="text-sm space-y-2 opacity-80">
+                <li>• เข้าถึงข้อมูลทุกตำแหน่งใน \(O(1)\) </li>
+                <li>• เพิ่มข้อมูลต่อท้ายใน Amortized \(O(1)\) </li>
+                <li>• จัดการหน่วยความจำให้อัตโนมัติ </li>
+              </ul>
+            </div>
+            <div class="bg-black/30 p-6 rounded-xl border-t-2 border-red-400 text-left">
+              <h3 class="font-bold mb-2">ข้อจำกัด</h3>
+              <p class="text-sm opacity-80">การเพิ่มหรือลบข้อมูลตรงกลางทำได้ช้า (\(O(N)\)) เพราะต้องขยับข้อมูลตัวอื่น </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono">Vector Declaration</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            <span class="text-blue-400">vector</span>&lt;int&gt; v; <span class="text-gray-500">// สร้างเวกเตอร์ว่าง</span><br>
+            <span class="text-blue-400">vector</span>&lt;int&gt; v(5, 0); <span class="text-gray-500">// ขนาด 5 ตัว เริ่มต้นด้วยเลข 0</span> <br>
+            <span class="text-blue-400">vector</span>&lt;int&gt; v = {1, 2, 3, 4, 5}; <span class="text-gray-500">// C++11 initializer list</span> 
+          </div>
+          <div class="p-4 bg-yellow-500/20 rounded border border-yellow-500">
+            <p class="text-sm italic">"เราต้องระบุประเภทข้อมูลภายในเครื่องหมาย <code>&lt; &gt;</code> เสมอ" </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Basic Operations</h2>
+          <div class="space-y-4">
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>push_back(x)</code>
+              <span class="text-sm opacity-80 italic">เพิ่มค่า x ต่อท้ายเวกเตอร์ </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>pop_back()</code>
+              <span class="text-sm opacity-80 italic">ลบค่าตัวสุดท้ายทิ้ง </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>size()</code>
+              <span class="text-sm opacity-80 italic">คืนค่าจำนวนสมาชิกปัจจุบัน </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>empty()</code>
+              <span class="text-sm opacity-80 italic">เช็คว่าเวกเตอร์ว่างหรือไม่ (true/false) </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 font-mono">Accessing Elements</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-lg mb-6">
+            cout << v << endl; <span class="text-gray-500">// ตัวแรก (เริ่มที่ 0) </span><br>
+            cout << v.back() << endl; <span class="text-gray-500">// ตัวสุดท้าย </span>
+          </div>
+          <div class="bg-red-900/40 p-6 rounded-2xl border border-red-500">
+            <h3 class="font-bold text-red-300 mb-2">ข้อควรระวัง!</h3>
+            <p class="text-sm opacity-90">การเรียก <code>v[i]</code> ที่อยู่นอกเหนือช่วงที่มีอยู่ จะทำให้เกิดพฤติกรรมที่ไม่คาดคิด (Undefined Behavior) </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">Range-based For Loop</h2>
+          <p class="mb-6 opacity-90">วิธีที่สั้นและปลอดภัยที่สุดในการเข้าถึงข้อมูลทุกตัวในเวกเตอร์ </p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-left text-lg">
+            <span class="text-blue-400">for</span> (<span class="text-blue-400">auto</span> x : v) {<br>
+            &nbsp;&nbsp;cout << x << <span class="text-red-400">"\n"</span>;<br>
+            }
+          </div>
+          <p class="mt-6 text-sm italic opacity-60">
+          Keyword <code>auto</code> จะช่วยเดาประเภทข้อมูลในเวกเตอร์ให้เราโดยอัตโนมัติ 
+          </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">เมื่อไหร่ควรใช้ Vector?</h2>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-blue-400">
+              <h3 class="font-bold mb-4">Vector (แนะนำ)</h3>
+              <p class="text-xs space-y-2">
+              - ไม่รู้จำนวนข้อมูลล่วงหน้า <br>
+              - ต้องการส่งเวกเตอร์ไปในฟังก์ชันได้ง่าย <br>
+              - ต้องการใช้ฟังก์ชัน <code>v.clear()</code> เพื่อใช้ซ้ำ 
+              </p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-gray-400">
+              <h3 class="font-bold mb-4">Static Array</h3>
+              <p class="text-xs space-y-2">
+              - รู้ขนาดที่แน่นอนและข้อมูลใหญ่มาก (เช่น 10^7)<br>
+              - ทำงานเร็วกว่านิดหน่อยเนื่องจากไม่มี overhead<br>
+              - ประกาศแบบ Global เพื่อกัน Stack Overflow 
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::stack</h2>
+          <div class="flex gap-8 items-center mb-8">
+            <div class="bg-white/10 p-6 rounded-2xl flex-1 border-l-8 border-blue-400">
+              <p class="text-xl font-bold mb-2">LIFO Concept</p>
+              <p class="text-sm opacity-80 font-light">"Last-In First-Out: สิ่งที่เข้าทีหลังสุด จะได้ออกก่อนเสมอ" </p>
+            </div>
+          </div>
+          <p class="text-center text-gray-300 italic underline underline-offset-4">นึกถึงการวาง "จาน" ที่วางทับซ้อนกันอยู่ </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 uppercase">การทำงานของ Stack</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="p-3 bg-white/10 rounded"><code>push(x)</code>: เพิ่มข้อมูลที่หัวแถว</div>
+              <div class="p-3 bg-white/10 rounded"><code>pop()</code>: ลบข้อมูลที่หัวแถวทิ้ง</div>
+              <div class="p-3 bg-white/10 rounded"><code>top()</code>: ดูข้อมูลที่หัวแถว</div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl border border-green-500">
+              <h4 class="font-bold text-green-400 mb-4">Time Complexity</h4>
+              <p class="text-3xl font-black text-center">\[O(1)\]</p>
+              <p class="text-xs mt-4 opacity-70 text-center">ทุกการดำเนินการทำงานด้วยความเร็วคงที่ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-blue-300 font-mono">Stack Implementation</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            #include &lt;stack&gt;<br>
+            stack&lt;int&gt; s;<br>
+            s.push(3); s.push(2); s.push(5);<br><br>
+            cout << s.top(); <span class="text-green-400">// ผลลัพธ์: 5</span> <br>
+            s.pop(); <br>
+            cout << s.top(); <span class="text-green-400">// ผลลัพธ์: 2</span> 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::queue</h2>
+          <div class="flex gap-8 items-center mb-8">
+            <div class="bg-white/10 p-6 rounded-2xl flex-1 border-l-8 border-green-400">
+              <p class="text-xl font-bold mb-2">FIFO Concept</p>
+              <p class="text-sm opacity-80 font-light">"First-In First-Out: สิ่งที่เข้ามาก่อน จะได้ออกไปก่อน" </p>
+            </div>
+          </div>
+          <p class="text-center text-gray-300 italic underline underline-offset-4">นึกถึงการ "เข้าแถว" ซื้อของในชีวิตจริง </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 uppercase">Queue Operations</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="p-3 bg-white/10 rounded"><code>push(x)</code>: เพิ่มข้อมูลที่ท้ายแถว</div>
+              <div class="p-3 bg-white/10 rounded"><code>pop()</code>: ลบข้อมูลที่หน้าแถวทิ้ง</div>
+              <div class="p-3 bg-white/10 rounded"><code>front()</code>: ดูข้อมูลตัวหน้าสุด</div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl border border-green-500">
+              <h4 class="font-bold text-green-400 mb-4">Time Complexity</h4>
+              <p class="text-3xl font-black text-center">\(O(1)\)</p>
+              <p class="text-xs mt-4 opacity-70 text-center">มีประสิทธิภาพเท่ากับ Stack </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-300 font-mono">Queue Implementation</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            #include &lt;queue&gt;<br>
+            queue&lt;int&gt; q;<br>
+            q.push(1); q.push(2); q.push(3);<br><br>
+            cout << q.front(); <span class="text-green-400">// ผลลัพธ์: 1</span> <br>
+            q.pop(); <br>
+            cout << q.front(); <span class="text-green-400">// ผลลัพธ์: 2</span> 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 uppercase italic">Priority Queue</h2>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-yellow-500 shadow-2xl mb-8">
+            <p class="text-xl leading-relaxed">
+            "เหมือน Queue แต่สมาชิกที่ถูกดึงออกมาจะเป็นตัวที่มี <b>ความสำคัญ (ค่า) สูงสุด</b> เสมอ" 
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-white/5 rounded-xl">
+              <h4 class="font-bold text-blue-400">ชื่อเล่นใน CP</h4>
+              <p>มักเรียกว่า <b>"Heap"</b> </p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-xl">
+              <h4 class="font-bold text-red-400">Default</h4>
+              <p>เป็น <b>Max-Heap</b> (เอาค่ามากสุดขึ้นก่อน) </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-3xl font-bold mb-10 text-yellow-300 underline">Time Complexity Analysis</h2>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-black/40 p-8 rounded-2xl border-t-4 border-green-500">
+              <h3 class="text-xl font-bold mb-4">push / pop</h3>
+              <p class="text-5xl font-black text-green-400">\[O(\log N)\]</p>
+            </div>
+            <div class="bg-black/40 p-8 rounded-2xl border-t-4 border-blue-500">
+              <h3 class="text-xl font-bold mb-4">top</h3>
+              <p class="text-5xl font-black text-blue-400">\[O(1)\]</p>
+            </div>
+          </div>
+          <p class="mt-10 opacity-70 italic text-sm">การทำงานเบื้องหลังคือ Binary Heap </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-yellow-300 font-mono">Max-Heap Example</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            priority_queue&lt;int&gt; pq;<br>
+            pq.push(3); pq.push(10); pq.push(5);<br><br>
+            cout << pq.top(); <span class="text-green-400">// ผลลัพธ์: 10</span> <br>
+            pq.pop();<br>
+            cout << pq.top(); <span class="text-green-400">// ผลลัพธ์: 5</span> 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 italic">Customizing Priority</h2>
+          <p class="mb-4 text-lg">หากต้องการดึง <b>ค่าน้อยที่สุด</b> ออกมาก่อน ต้องประกาศแบบนี้:</p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm text-left mb-6">
+            priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;
+          </div>
+          <p class="text-xs text-white/50 italic font-bold text-red-300 underline">"พบบ่อยมากใน Dijkstra's Algorithm และ Prim's Algorithm" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Complexity Summary Table</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse">
+              <thead class="bg-white/20">
+                <tr>
+                  <th class="p-3 border border-white/30">Container</th>
+                  <th class="p-3 border border-white/30">Insert (Average)</th>
+                  <th class="p-3 border border-white/30">Access</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white/5">
+                <tr><td class="p-3 border border-white/10">Vector</td><td class="p-3 border border-white/10">\(O(1)\) amortized </td><td class="p-3 border border-white/10">\(O(1)\) </td></tr>
+                <tr><td class="p-3 border border-white/10">Stack / Queue</td><td class="p-3 border border-white/10">\(O(1)\) </td><td class="p-3 border border-white/10">\(O(1)\) (เฉพาะตัวหัว/ท้าย) </td></tr>
+                <tr><td class="p-3 border border-white/10">Priority Queue</td><td class="p-3 border border-white/10">\(O(\log N)\) </td><td class="p-3 border border-white/10">\(O(1)\) (เฉพาะค่าสูงสุด) </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">Decision Tree</h2>
+          <div class="space-y-4">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              <p class="font-bold">1. ต้องการหาข้อมูลตามตำแหน่ง Index?</p>
+              <p class="text-sm opacity-80">\(\rightarrow\) ใช้ <b>std::vector</b> </p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              <p class="font-bold">2. ต้องการดึงค่าที่เพิ่งใส่เข้าไปล่าสุด?</p>
+              <p class="text-sm opacity-80">\(\rightarrow\) ใช้ <b>std::stack</b> </p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-red-400">
+              <p class="font-bold">3. ต้องการจัดการข้อมูลตามลำดับก่อน-หลัง?</p>
+              <p class="text-sm opacity-80">\(\rightarrow\) ใช้ <b>std::queue</b> </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">Test Your Understanding</h2>
+          <div class="bg-white/10 p-8 rounded-3xl backdrop-blur-md border border-white/20">
+            <p class="text-2xl mb-6">ถ้าข้อมูลมีขนาด 1,000,000 ตัว การเรียกใช้ <code>pq.push()</code> จะใช้การเปรียบเทียบข้อมูลสูงสุดกี่ครั้ง?</p>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="p-4 bg-red-500/20 rounded-xl border border-red-500 opacity-50">~1,000,000 ครั้ง</div>
+              <div class="p-4 bg-green-500/50 rounded-xl border border-green-400 font-black text-2xl shadow-lg">~20 ครั้ง</div>
+              <div class="p-4 bg-red-500/20 rounded-xl border border-red-500 opacity-50">~1 ครั้ง</div>
+            </div>
+          </div>
+          <p class="mt-8 text-sm italic opacity-60">คำใบ้: \(\log_2(10^6) \approx 20\) </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Code Optimization: Typedef</h2>
+          <p class="text-lg mb-8 opacity-80">ลดความยาวของโค้ดเมื่อใช้ Container ที่ซับซ้อน </p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm text-left mb-6 leading-relaxed">
+            <span class="text-blue-300">typedef</span> vector&lt;int&gt; vi;<br>
+            <span class="text-blue-300">typedef</span> pair&lt;int, int&gt; pii;<br>
+            <span class="text-blue-300">typedef</span> long long ll;<br><br>
+            vi v = {1, 2, 3}; <span class="text-gray-500">// สั้นลงมาก!</span> 
+          </div>
+          <p class="mt-6 text-sm italic text-white/50 underline italic">"ช่วยประหยัดเวลาพิมพ์ได้มหาศาลในการแข่งขัน" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">Up Next...</h2>
+          <div class="bg-white/10 backdrop-blur p-10 rounded-3xl border border-white/20 mb-8 shadow-2xl">
+            <p class="text-2xl font-light mb-4">เหนือกว่า Sequential Containers คือ...</p>
+            <p class="text-5xl font-black italic">Associative Containers</p>
+            <p class="text-xl mt-6 opacity-70 underline decoration-green-400">เจาะลึก std::set และ std::map เพื่อการค้นหาใน \(O(\log N)\) </p>
+          </div>
+          <p class="text-xl opacity-60">พัก 15 นาที ก่อนเข้าสู่ส่วนที่ 2 ครับ!</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Iterators และ STL II</span> <br>
+            <span class="mt-8 text-yellow-300">การจัดการข้อมูลขั้นสูงด้วย Tree และ Hash</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            วันที่ 3 ช่วงเช้า (ต่อ): เจาะลึก Iterator และ Associative Containers
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อในส่วนนี้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span><b>Iterators:</b> ตัวชี้ตำแหน่งสากลสำหรับทุกโครงสร้างข้อมูล </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span><b>std::set & std::multiset:</b> การเก็บข้อมูลแบบเรียงลำดับ </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span><b>std::map & Unordered Containers:</b> พจนานุกรมความเร็วสูง </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300">รู้จักกับ Iterator</h2>
+          <div class="bg-white/10 p-6 rounded-xl border-l-4 border-yellow-400 mb-6">
+            <p class="text-xl leading-relaxed">
+            "Iterator คือวัตถุที่ทำหน้าที่ <b>'ชี้ตำแหน่ง'</b> ของสมาชิกในโครงสร้างข้อมูล "
+            </p>
+          </div>
+          <ul class="space-y-4 text-lg">
+            <li class="flex items-center gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>ใช้เพื่อเข้าถึงข้อมูลใน Container ที่ไม่ได้เก็บแบบอาเรย์ปกติ (เช่น set) </span>
+            </li>
+            <li class="flex items-center gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full"></div>
+              <span>มีพฤติกรรมคล้าย Pointer ในภาษา C </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-10 text-yellow-300">begin() และ end()</h2>
+          <div class="bg-black/30 p-8 rounded-2xl mb-8">
+            <p class="text-xl mb-4 font-mono">
+            { 3, 4, 6, 8, 12, 13, 14, 17 } <br>
+            ↑&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑ <br>
+            s.begin()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s.end()
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-white/5 p-6 rounded-xl border border-blue-400">
+              <h3 class="font-bold text-blue-300 mb-2">s.begin()</h3>
+              <p class="text-sm">ชี้ที่ <b>สมาชิกตัวแรก</b> ของ Container </p>
+            </div>
+            <div class="bg-white/5 p-6 rounded-xl border border-red-400">
+              <h3 class="font-bold text-red-300 mb-2">s.end()</h3>
+              <p class="text-sm">ชี้ที่ <b>ตำแหน่งถัดจากตัวสุดท้าย</b> (ว่างเปล่า) </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Iterator Syntax</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            <span class="text-gray-500">// แบบยาว (ไม่นิยม)</span><br>
+            vector&lt;int&gt;::iterator it = v.begin();<br><br>
+            <span class="text-gray-500">// แบบสั้นด้วย auto (แนะนำ) </span><br>
+            <span class="text-blue-400">auto</span> it = v.begin();<br>
+            cout << <span class="text-yellow-300">*it</span>; <span class="text-gray-500">// ใช้ * เพื่อดึงค่าที่ชี้อยู่ </span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Moving Iterators</h2>
+          <div class="grid gap-4">
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>it++</code> หรือ <code>++it</code>
+              <span class="text-sm opacity-80">เลื่อนไปสมาชิกถัดไป </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>it--</code> หรือ <code>--it</code>
+              <span class="text-sm opacity-80">ถอยกลับไปสมาชิกก่อนหน้า </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+              <code>it + n</code>
+              <span class="text-sm opacity-80 italic">กระโดดไป n ตำแหน่ง (ใช้ได้กับ vector เท่านั้น) </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::set</h2>
+          <p class="text-xl font-light mb-8">
+          โครงสร้างข้อมูลที่เก็บสมาชิกแบบ <b>เรียงลำดับ (Sorted)</b> และ <b>ไม่มีตัวซ้ำ (Unique)</b> 
+          </p>
+          <div class="bg-black/40 p-6 rounded-xl border border-green-500">
+            <h3 class="font-bold text-green-400 mb-2">คุณสมบัติสำคัญ</h3>
+            <ul class="text-sm space-y-2 opacity-80">
+              <li>• สมาชิกทุกตัวต้องแตกต่างกัน (Distinct) </li>
+              <li>• แทรก/ลบ/ค้นหา ในเวลา <b>\(O(\log N)\)</b> </li>
+              <li>• ภายในคือ <b>Balanced Binary Search Tree</b> (Red-Black Tree) </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-blue-300 font-mono">Set Operations </h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            set&lt;int&gt; s;<br>
+            s.insert(3); s.insert(2); s.insert(5);<br>
+            s.insert(5); <span class="text-gray-500">// จะไม่มีอะไรเกิดขึ้นเพราะ 5 มีอยู่แล้ว </span><br><br>
+            cout << s.count(3); <span class="text-green-400">// 1 (มีค่าอยู่)</span><br>
+            s.erase(3); <span class="text-gray-500">// ลบค่า 3 ออก </span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Iterating through a Set</h2>
+          <p class="mb-6 opacity-90">ข้อมูลจะถูกพิมพ์ออกมาแบบ <b>เรียงจากน้อยไปมาก</b> เสมอ </p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-left text-lg">
+            <span class="text-blue-400">for</span> (<span class="text-blue-400">auto</span> x : s) {<br>
+            &nbsp;&nbsp;cout << x << <span class="text-red-400">"\n"</span>;<br>
+            }
+          </div>
+          <p class="mt-6 text-sm text-red-300 italic">"หมายเหตุ: set ไม่สามารถใช้ [index] เข้าถึงข้อมูลได้เหมือน vector "</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 font-mono">find(x) Member Function</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-lg mb-6">
+            <span class="text-blue-400">auto</span> it = s.find(x);<br>
+            <span class="text-blue-400">if</span> (it == s.end()) {<br>
+            &nbsp;&nbsp;<span class="text-gray-500">// x ไม่ได้อยู่ในเซต </span><br>
+            }
+          </div>
+          <div class="bg-yellow-900/40 p-6 rounded-2xl border border-yellow-500">
+            <p class="text-sm">การใช้ <code>s.find(x)</code> เร็วกว่า <code>std::find(begin, end, x)</code> มากเพราะใช้โครงสร้างต้นไม้ช่วยค้นหา (\(O(\log N)\) vs \(O(N)\))</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">Binary Search in Set </h2>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border-t-2 border-blue-400">
+              <h3 class="font-bold mb-2">lower_bound(x)</h3>
+              <p class="text-xs">ชี้ที่ตัวแรกที่มีค่า <b>\(\ge x\)</b></p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border-t-2 border-red-400">
+              <h3 class="font-bold mb-2">upper_bound(x)</h3>
+              <p class="text-xs">ชี้ที่ตัวแรกที่มีค่า <b>\(> x\)</b></p>
+            </div>
+          </div>
+          <p class="mt-8 text-sm opacity-70">หากไม่มีตัวที่เข้าเงื่อนไข ทั้งคู่จะคืนค่าเป็น <code>s.end()</code> </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::multiset</h2>
+          <p class="text-2xl font-light mb-8">
+          "เหมือน set ทุกอย่าง แต่สามารถมีค่าที่ <b>ซ้ำกันได้</b> "
+          </p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm mb-6">
+            multiset&lt;int&gt; ms;<br>
+            ms.insert(5); ms.insert(5); ms.insert(5);<br>
+            cout << ms.count(5); <span class="text-green-400">// ผลลัพธ์: 3 </span>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-red-400 underline uppercase">Multiset Erase Caution!</h2>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-red-500/10 p-6 rounded-xl border border-red-500">
+              <h3 class="font-bold mb-2 text-sm">s.erase(5)</h3>
+              <p class="text-xs opacity-80">จะลบเลข 5 <b>"ทุกตัว"</b> ทิ้งไป </p>
+            </div>
+            <div class="bg-green-500/10 p-6 rounded-xl border border-green-500">
+              <h3 class="font-bold mb-2 text-sm">s.erase(s.find(5))</h3>
+              <p class="text-xs opacity-80">จะลบเลข 5 เพียง <b>"ตัวเดียว"</b> (ตัวที่ iterator ชี้) </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::map</h2>
+          <p class="text-xl font-light mb-8">
+          "อาเรย์แบบทั่วไปที่ใช้ข้อมูลอะไรก็ได้เป็น Index (Key) เพื่อเก็บข้อมูล (Value) "
+          </p>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-blue-500 shadow-2xl">
+            <p class="text-lg">ภายในเป็น <b>Balanced BST</b> เหมือน set </p>
+            <ul class="mt-4 list-disc ml-6 text-sm opacity-80">
+              <li>เก็บข้อมูลเป็นคู่ <code>pair&lt;Key, Value&gt;</code></li>
+              <li><b>Key</b> ต้องไม่ซ้ำกัน และจะถูก <b>เรียงลำดับ</b> เสมอ</li>
+              <li>Time Complexity: <b>\(O(\log N)\)</b> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono">Map Usage </h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            map&lt;string, int&gt; m;<br>
+            m["banana"] = 4;<br>
+            m["apple"] = 10;<br><br>
+            cout << m["banana"] << endl; <span class="text-green-400">// 4</span><br>
+            cout << m["orange"] << endl; <span class="text-gray-500">// 0 (สร้างให้อัตโนมัติถ้าไม่มี!) </span>
+          </div>
+          <p class="text-sm italic text-yellow-300">"ระวัง: การเรียก m[key] ที่ไม่มีอยู่จริง จะทำให้ map จองที่และใส่ค่า default ให้ทันที"</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Iterating with Pairs </h2>
+          <p class="mb-4 text-lg">เมื่อวนลูป สมาชิกแต่ละตัวจะเป็น <code>pair</code>:</p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-lg mb-6">
+            <span class="text-blue-400">for</span> (<span class="text-blue-400">auto</span> x : m) {<br>
+            &nbsp;&nbsp;cout << x.first << <span class="text-red-400">" "</span> << x.second << endl;<br>
+            }
+          </div>
+          <div class="flex gap-4">
+            <div class="bg-blue-500/20 p-2 rounded text-xs"><b>x.first</b> คือ Key</div>
+            <div class="bg-green-500/20 p-2 rounded text-xs"><b>x.second</b> คือ Value</div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">std::unordered_map / set</h2>
+          <div class="bg-white/10 p-6 rounded-xl border-l-8 border-red-500 mb-8">
+            <p class="text-xl">"ทำงานด้วย <b>Hash Table</b> แทนที่จะเป็น Tree "</p>
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-black/30 p-4 rounded-xl">
+              <h4 class="font-bold text-green-400">ข้อดี</h4>
+              <p class="text-xs">เร็วมาก! ค่าเฉลี่ยคือ <b>\(O(1)\)</b> </p>
+            </div>
+            <div class="bg-black/30 p-4 rounded-xl">
+              <h4 class="font-bold text-red-400">ข้อเสีย</h4>
+              <p class="text-xs">ข้อมูลไม่เรียงลำดับ และ Worst-case อาจเป็น <b>\(O(N)\)</b> </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">STL Complexity Table </h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse">
+              <thead class="bg-white/20">
+                <tr>
+                  <th class="p-3 border border-white/30">Container</th>
+                  <th class="p-3 border border-white/30">Data Structure</th>
+                  <th class="p-3 border border-white/30">Time Complexity</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white/5">
+                <tr><td class="p-3 border border-white/10">Set / Map</td><td class="p-3 border border-white/10">Red-Black Tree</td><td class="p-3 border border-white/10">\(O(\log N)\)</td></tr>
+                <tr><td class="p-3 border border-white/10">Unordered Set/Map</td><td class="p-3 border border-white/10">Hash Table</td><td class="p-3 border border-white/10">\(O(1)\) (Avg)</td></tr>
+                <tr><td class="p-3 border border-white/10">Priority Queue</td><td class="p-3 border border-white/10">Heap</td><td class="p-3 border border-white/10">\(O(\log N)\)</td></tr>
+                <tr><td class="p-3 border border-white/10">Vector</td><td class="p-3 border border-white/10">Dynamic Array</td><td class="p-3 border border-white/10">\(O(1)\) amortized</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">Which Data Structure? </h2>
+          <div class="space-y-4">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              <p class="font-bold">1. ต้องการความเร็วในการค้นหา \(O(1)\) และไม่สนลำดับ?</p>
+              <p class="text-sm opacity-80">\(\rightarrow\) ใช้ <b>unordered_set / map</b></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              <p class="font-bold">2. ต้องการข้อมูลที่เรียงลำดับตลอดเวลา?</p>
+              <p class="text-sm opacity-80">\(\rightarrow\) ใช้ <b>set / map</b></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-red-400">
+              <p class="font-bold">3. ต้องการรับสมาชิกที่มีค่าซ้ำกันได้และเรียงลำดับ?</p>
+              <p class="text-sm opacity-80">\(\rightarrow\) ใช้ <b>multiset</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 italic">Utilities: pair & tuple </h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-black/30 p-6 rounded-xl border border-blue-400">
+              <h4 class="font-bold mb-2">std::pair</h4>
+              <p class="text-xs mb-4">เก็บข้อมูล 2 ตัว (มักเป็น Key, Value)</p>
+              <code class="text-[10px] block bg-gray-900 p-1">pair&lt;int, string&gt; p = {1, "hi"};</code>
+            </div>
+            <div class="bg-black/30 p-6 rounded-xl border border-purple-400">
+              <h4 class="font-bold mb-2">std::tuple</h4>
+              <p class="text-xs mb-4">เก็บข้อมูลกี่ตัวก็ได้ (C++11+) </p>
+              <code class="text-[10px] block bg-gray-900 p-1">tuple&lt;int, int, int&gt; t = {1, 2, 5};</code>
+            </div>
+          </div>
+          <p class="mt-6 text-sm text-center italic text-green-300">"STL Sort สามารถเรียงลำดับ pair/tuple ได้ทันทีโดยเปรียบเทียบจากตัวแรกไปตัวหลัง "</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 44 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 italic">std::sort </h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-left text-lg mb-6">
+            vector&lt;int&gt; v = {4, 2, 5, 3, 1};<br>
+            <span class="text-blue-400">sort</span>(v.begin(), v.end());<br>
+            <span class="text-gray-500">// v จะกลายเป็น {1, 2, 3, 4, 5}</span>
+          </div>
+          <div class="p-4 bg-blue-900/30 rounded border border-blue-500 text-sm">
+            <b>ความซับซ้อน:</b> \(O(N \log N)\)
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 45 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">Ready-to-use Algorithms </h2>
+          <div class="grid grid-cols-2 gap-4 text-left font-mono text-sm">
+            <div class="bg-white/10 p-4 rounded">reverse(begin, end)</div>
+            <div class="bg-white/10 p-4 rounded">random_shuffle(begin, end)</div>
+            <div class="bg-white/10 p-4 rounded">next_permutation(begin, end)</div>
+            <div class="bg-white/10 p-4 rounded">max_element(begin, end)</div>
+          </div>
+          <p class="mt-6 text-xs opacity-70">ทุกตัวรับพารามิเตอร์เป็น Iterator ช่วง <code>[begin, end)</code></p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 46 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-yellow-300 font-mono">next_permutation Pattern </h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            sort(v.begin(), v.end()); <span class="text-gray-500">// ต้องเรียงลำดับก่อนเสมอ </span><br>
+            <span class="text-blue-400">do</span> {<br>
+            &nbsp;&nbsp;<span class="text-gray-500">// ประมวลผลแต่ละวิธีเรียงสับเปลี่ยน </span><br>
+            } <span class="text-blue-400">while</span> (next_permutation(v.begin(), v.end()));
+          </div>
+          <p class="text-xs opacity-80">มีประโยชน์มากในโจทย์ Complete Search ที่ต้องลองทุกรูปแบบการสลับ </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 47 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-red-400 uppercase italic">Competitive Tip!</h2>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-red-500 shadow-2xl">
+            <p class="text-lg leading-relaxed mb-4">
+            "ระวังการแก้ไข Container (เช่น push_back หรือ insert) ขณะที่ยังมี Iterator ชี้อยู่" 
+            </p>
+            <p class="text-sm opacity-80 italic">
+            การขยายขนาดของ vector อาจทำให้ memory ถูกย้ายตำแหน่ง <br>
+            ซึ่งจะทำให้ Iterator ตัวเดิม <b>"เสียไป" (Invalidated)</b> และโปรแกรมอาจแครชได้ 
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 48 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">Test Your Knowledge</h2>
+          <div class="bg-white/10 p-8 rounded-3xl backdrop-blur-md border border-white/20">
+            <p class="text-2xl mb-6">หากต้องการลบเลข 5 เพียง 1 ตัวออกจาก multiset s จะต้องใช้คำสั่งใด? </p>
+            <div class="grid grid-cols-2 gap-4 font-mono text-sm">
+              <div class="p-4 bg-red-500/20 rounded-xl border border-red-500">s.erase(5)</div>
+              <div class="p-4 bg-green-500/50 rounded-xl border border-green-400 shadow-lg">s.erase(s.find(5))</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

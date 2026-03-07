@@ -13,5 +13,6 @@ Courses
    dstoolbox/index
    oop/index
    devops/index
+   toi/index
 
 
