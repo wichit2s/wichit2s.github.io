@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0703.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Practice: Graph & DSU Problems</span> <br>
+            <span class="mt-8 text-yellow-300">ลงมือทำ: การสร้างกราฟและการแก้โจทย์ด้วย DSU</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 07 Afternoon: เปลี่ยนทฤษฎีสู่การเขียนโปรแกรมเพื่อแก้ปัญหาจริง
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ภารกิจในเซสชันนี้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>การสร้างกราฟจาก Input รูปแบบต่างๆ (Edge List, Matrix, List)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>การแก้ปัญหา Connected Components ด้วย DSU</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>การจัดการปัญหา Dynamic Connectivity (การเชื่อมต่อที่เปลี่ยนตามเวลา)</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Building the Graph</span> <br>
+            <span class="mt-8 text-yellow-300">การสร้างโครงสร้างข้อมูลจากโจทย์</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h3 class="text-xl font-bold mb-3 underline">Common Input Format:</h3>
+            <p class="mb-4">บรรทัดแรก: (n) (โหนด) และ (m) (เส้นเชื่อม)<br>ถัดมา (m) บรรทัด: (u) (v) หรือ (u) (v) (w)</p>
+            <div class="bg-black/30 p-4 rounded-xl font-mono text-sm">
+              for (int i = 0; i < m; i++) {<br>
+              &nbsp;&nbsp;int u, v; cin >> u >> v;<br>
+              &nbsp;&nbsp;adj[u].push_back(v);<br>
+              &nbsp;&nbsp;adj[v].push_back(u); // กรณีไม่ระบุทิศทาง<br>
+              }
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/graph-and-its-representations/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DSU Code Review</span> <br>
+            <span class="mt-8 text-yellow-300">ทบทวนฟังก์ชัน DSU มาตรฐาน</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-xs">
+            <p>// 1. find with path compression</p>
+            <p>int find(int x) { return link[x] == x ? x : link[x] = find(link[x]); }</p>
+            <p class="mt-4">// 2. unite with union by size</p>
+            <p>void unite(int a, int b) {</p>
+            <p class="ml-4">a = find(a); b = find(b);</p>
+            <p class="ml-4">if (a != b) {</p>
+            <p class="ml-8">if (size[a] < size[b]) swap(a, b);</p>
+            <p class="ml-8">size[a] += size[b]; link[b] = a;</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Problem: Road Construction</span> <br>
+            <span class="mt-8 text-yellow-300">โจทย์สร้างถนน (Connected Components)</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm">
+            <p class="font-bold text-lg mb-2">เงื่อนไขโจทย์:</p>
+            <p>มีเมือง (n) เมือง และเริ่มสร้างถนนเชื่อมเมืองทีละเส้น</p>
+            <p class="mt-2 text-green-300 font-bold italic">เป้าหมาย: ในทุกครั้งที่สร้างถนนเส้นใหม่ ให้ตอบว่า:</p>
+            <ul class="list-disc ml-6 mt-2 space-y-1">
+              <li>จำนวนกลุ่มเมือง (Components) ที่แยกจากกันในขณะนั้นคือเท่าใด?</li>
+              <li>ขนาดของกลุ่มเมืองที่ใหญ่ที่สุดคือเท่าใด?</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/problemset/task/1676</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Counting Strategy</span> <br>
+            <span class="mt-8 text-yellow-300">กลยุทธ์การนับด้วย DSU</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <ul class="space-y-4 text-lg">
+              <li class="flex gap-3">
+                <span class="text-yellow-300">●</span>
+                <span>เริ่มแรกให้จำนวนกลุ่ม (count) เท่ากับเมืองทั้งหมด (n)</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-yellow-300">●</span>
+                <span>ทุกครั้งที่ทำ <b>unite(u, v)</b> สำเร็จ (u และ v เดิมอยู่คนละกลุ่ม)</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-green-300 font-bold">➜</span>
+                <span>ให้ลดค่า (count) ลง 1</span>
+              </li>
+              <li class="flex gap-3 text-sm italic opacity-80">
+                <span>สมการ: (count_{current} = n - successful\_merges)</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Tracking Max Size</span> <br>
+            <span class="mt-8 text-yellow-300">การหาขนาดกลุ่มที่ใหญ่ที่สุด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4">ใช้ตัวแปร `max_size` เพื่อเก็บค่าสูงสุดที่เคยเกิดขึ้น:</p>
+            <div class="bg-black/30 p-6 rounded-xl font-mono text-sm leading-relaxed">
+              if (a != b) {<br>
+              &nbsp;&nbsp;unite(a, b);<br>
+              &nbsp;&nbsp;max_size = max(max_size, size[find(a)]);<br>
+              }
+            </div>
+            <p class="mt-4 text-sm font-light italic">"เมื่อกลุ่มสองกลุ่มรวมกัน ขนาดใหม่จะเป็นผลรวมของขนาดเดิมเสมอ"</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/disjoint-set-data-structures/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Problem: Cycle Detection</span> <br>
+            <span class="mt-8 text-yellow-300">การตรวจหาวงรอบในกราฟไม่ระบุทิศทาง</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="text-lg mb-4 italic">"ถนนเส้นนี้จำเป็นหรือไม่?"</p>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-center gap-3">
+                <span class="w-6 h-6 bg-red-400 rounded-full flex justify-center items-center font-bold">!</span>
+                <span>ถ้าเมือง (u) และ (v) มี <b>find(u) == find(v)</b> อยู่แล้วก่อนเชื่อมถนน</span>
+              </li>
+              <li class="flex items-center gap-3 border-l-2 border-red-400 ml-3 pl-5">
+                <span>ถนนเส้นนี้จะทำให้เกิด <b>Cycle</b> (วงรอบ)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-6 h-6 bg-blue-400 rounded-full flex justify-center items-center font-bold">i</span>
+                <span>เหมาะสำหรับโจทย์ที่ถามว่ากราฟเป็น <b>Tree</b> หรือไม่ (Tree ต้องเชื่อมต่อกันและไม่มี Cycle)</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Dynamic Connectivity</span> <br>
+            <span class="mt-8 text-yellow-300">ความเชื่อมต่อที่มีการเปลี่ยนแปลง</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm leading-relaxed">
+            <p>DSU รองรับการ <b>Add Edges</b> อย่างมีประสิทธิภาพ (Additions only)</p>
+            <ul class="list-disc ml-6 mt-4 space-y-2">
+              <li>ถ้ามี Query ถามตลอดเวลาว่า (u) เชื่อมกับ (v) หรือไม่: ใช้ `find(u) == find(v)` ตอบได้ทันที</li>
+              <li>มีประสิทธิภาพดีกว่าการรัน DFS ใหม่ทุกครั้งที่รับ Input (ซึ่งใช้เวลา (O(Q \cdot (V+E))))</li>
+              <li>เวลาเฉลี่ยของ DSU คือ (O(Q \cdot \alpha(V))) ซึ่งรวดเร็วกว่ามหาศาล</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Implementation Gotchas</span> <br>
+            <span class="mt-8 text-yellow-300">ข้อควรระวังในการเขียนกราฟและ DSU</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm grid grid-cols-2 gap-4">
+            <div class="border-r border-white/20 pr-4">
+              <h3 class="font-bold text-yellow-300 mb-2">1. Indexing</h3>
+              <p>เช็คว่าโหนดเริ่มที่ 0 หรือ 1 (1-based vs 0-based) เสมอเพื่อจองอาเรย์ให้พอ</p>
+            </div>
+            <div class="pl-4">
+              <h3 class="font-bold text-yellow-300 mb-2">2. Self-loops</h3>
+              <p>ถนนจากเมืองไปหาตัวเอง (u=v) ต้องข้ามไปหรือไม่? เช็คเงื่อนไขโจทย์ให้ดี</p>
+            </div>
+            <div class="border-t border-white/20 pt-4 pr-4">
+              <h3 class="font-bold text-yellow-300 mb-2">3. Multiple Edges</h3>
+              <p>ถนนสองเส้นระหว่างเมืองคู่เดิม (Duplicate Edges) อาจไม่มีผลใน DSU แต่ส่งผลกับน้ำหนักใน MST</p>
+            </div>
+            <div class="border-t border-white/20 pt-4 pl-4">
+              <h3 class="font-bold text-yellow-300 mb-2">4. Memory</h3>
+              <p>Adjacency List ประหยัดที่สุด แต่ถ้าโหนดเยอะอาเรย์ของ Vector อาจใช้แรมมหาศาล</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Ready for the Challenge?</span> <br>
+            <span class="mt-8 text-yellow-300">แหล่งฝึกฝนเพิ่มเติม</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+            <h3 class="text-2xl font-bold mb-6 italic underline">Recommended Problems:</h3>
+            <div class="flex justify-around text-left">
+              <ul class="space-y-3">
+                <li><b>CSES:</b> Road Construction</li>
+                <li><b>CSES:</b> Building Roads</li>
+                <li><b>CSES:</b> Counting Rooms (BFS/DFS)</li>
+              </ul>
+              <ul class="space-y-3">
+                <li><b>Kattis:</b> Union-Find</li>
+                <li><b>Codeforces:</b> DSU Problems Tag</li>
+                <li><b>AtCoder:</b> Disjoint Set Union</li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-2xl font-bold text-green-300 animate-bounce mt-4">"Happy Coding!"</p>
+          <p class="text-xs opacity-60 mt-8">แหล่งอ้างอิง: https://cses.fi/problemset/</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

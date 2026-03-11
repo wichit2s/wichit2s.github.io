@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0701.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Graphs & DSU Foundations</span> <br>
+            <span class="mt-8 text-yellow-300">การแทนกราฟและโครงสร้างเซตแยกจากกัน</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 06 Morning: รากฐานของโครงสร้างข้อมูลความสัมพันธ์และอัลกอริทึมกลุ่มโหนด
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">สิ่งที่จะได้เรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>การแทนกราฟด้วย Adjacency Matrix และ List</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>นิยามพื้นฐาน Path, Cycle และ Connectivity</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>โครงสร้าง Disjoint Set Union (DSU) และการเพิ่มประสิทธิภาพ</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Graph Definition</span> <br>
+            <span class="mt-8 text-yellow-300">นิยามและองค์ประกอบของกราฟ</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            กราฟ (G = (V, E)) ประกอบด้วยโหนดและเส้นเชื่อม
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ส่วนประกอบหลัก</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span><b>Nodes (Vertices - V):</b> วัตถุหรือตำแหน่งในระบบ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span><b>Edges (E):</b> เส้นเชื่อมระหว่างโหนด อาจมีทิศทางหรือไม่มีก็ได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span><b>Weights:</b> ค่าน้ำหนักกำกับเส้นเชื่อม เช่น ระยะทางหรือต้นทุน</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Graph Terminology</span> <br>
+            <span class="mt-8 text-yellow-300">คำศัพท์ที่ต้องรู้จัก</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            พื้นฐานการท่องไปและการเชื่อมต่อในกราฟ
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">นิยามสำคัญ</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span><b>Path:</b> เส้นทางจากโหนดหนึ่งไปอีกโหนดหนึ่งผ่านเส้นเชื่อม</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span><b>Cycle:</b> เส้นทางที่จุดเริ่มต้นและจุดสิ้นสุดเป็นโหนดเดียวกัน</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span><b>Connected:</b> กราฟที่ทุกโหนดมีเส้นทางถึงกันได้</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Adjacency Matrix</span> <br>
+            <span class="mt-8 text-yellow-300">การแทนกราฟด้วยเมทริกซ์</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การใช้ Array 2 มิติ ขนาด (V \times V) เพื่อเก็บเส้นเชื่อม
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">คุณสมบัติ</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ตรวจสอบการมีอยู่ของเส้นเชื่อมได้ในเวลา (O(1))</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>ใช้หน่วยความจำ (O(V^2)) ซึ่งอาจมากเกินไปสำหรับกราฟเบาบาง</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>เหมาะสำหรับกราฟหนาแน่น (Dense Graphs)</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Adjacency List</span> <br>
+            <span class="mt-8 text-yellow-300">การแทนกราฟด้วยรายการโหนดข้างเคียง</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            โครงสร้างที่นิยมที่สุด: `vector<int> adj[N]`
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">ข้อดีและการใช้งาน</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ประหยัดหน่วยความจำ ใช้เพียง (O(V+E))</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>ไล่ดูเพื่อนบ้านของโหนดได้รวดเร็ว เหมาะกับ BFS/DFS</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>เหมาะสำหรับกราฟเบาบาง (Sparse Graphs) ที่มีในโจทย์ส่วนใหญ่</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Disjoint Set Union (DSU)</span> <br>
+            <span class="mt-8 text-yellow-300">โครงสร้างข้อมูลเซตที่แยกจากกัน</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            หรือเรียกอีกชื่อว่า Union-Find สำหรับจัดการกลุ่มข้อมูล
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">เป้าหมายหลัก</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ตรวจสอบว่าโหนดสองโหนดอยู่ในกลุ่มเดียวกันหรือไม่</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>รวมกลุ่มโหนดสองกลุ่มเข้าด้วยกันอย่างรวดเร็ว</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ใช้ในการตรวจสอบ Cycle และอัลกอริทึม MST</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Find and Unite</span> <br>
+            <span class="mt-8 text-yellow-300">การดำเนินการหลักของ DSU</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การจัดการกลุ่มผ่านตัวแทน (Representative)
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">กระบวนการ</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span><b>Find(x):</b> หาโหนดตัวแทนสูงสุดของกลุ่มที่ (x) สังกัดอยู่</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span><b>Unite(a, b):</b> นำโหนดตัวแทนของ (a) มาชี้ที่ตัวแทนของ (b) เพื่อรวมกลุ่ม</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>เริ่มแรกทุกโหนดเป็นตัวแทนของตัวเอง (Parent[i] = i)</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Path Compression</span> <br>
+            <span class="mt-8 text-yellow-300">การบีบอัดเส้นทางเพื่อความเร็ว</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ลดความลึกของโครงสร้างต้นไม้ใน DSU
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">เทคนิค</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ในขณะที่ทำ Find(x) ให้ทุกโหนดในเส้นทางชี้ตรงไปที่ตัวแทนกลุ่มทันที</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>เปลี่ยนความซับซ้อนจากเส้นตรงให้กลายเป็นเกือบค่าคงที่</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>`return parent[x] = find(parent[x]);`</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Union by Size</span> <br>
+            <span class="mt-8 text-yellow-300">การรวมกลุ่มตามขนาดเพื่อความสมดุล</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ป้องกันไม่ให้ต้นไม้มีความสูงมากเกินไป
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">กฎการรวม</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ตรวจสอบขนาดของทั้งสองกลุ่มก่อนทำการรวม</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>นำกลุ่มที่มีขนาดเล็กกว่าไปต่อใต้กลุ่มที่มีขนาดใหญ่กว่าเสมอ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ช่วยควบคุมความลึกของต้นไม้ให้ไม่เกิน (O(\log N))</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Amortized Complexity</span> <br>
+            <span class="mt-8 text-yellow-300">ประสิทธิภาพการทำงานที่เหนือชั้น</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เมื่อใช้ทั้งสองเทคนิคเพิ่มประสิทธิภาพร่วมกัน
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">บทสรุปความเร็ว</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>ความซับซ้อนเฉลี่ยต่อการทำงานจะอยู่ที่ (O(\alpha(N)))</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>(\alpha(N)) คือ Inverse Ackermann function ซึ่งมีค่าน้อยมาก (< 5)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>ในทางปฏิบัติถือว่าทำงานได้เป็นค่าคงที่ (Constant Time)</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Adjacency List in C++</span> <br>
+            <span class="mt-8 text-yellow-300">การเขียนโค้ดเพื่อเก็บข้อมูลกราฟ</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ใช้ Vector Array เพื่อความยืดหยุ่นและประหยัดพื้นที่
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+            <p class="text-yellow-200 mb-2">// การประกาศโครงสร้างกราฟ</p>
+            <p>vector&lt;int&gt; adj[N];</p>
+            <p class="text-yellow-200 my-2">// การเพิ่มเส้นเชื่อม (กรณี Undirected Graph)</p>
+            <p>adj[u].push_back(v);</p>
+            <p>adj[v].push_back(u);</p>
+            <p class="text-yellow-200 my-2">// การเข้าถึงเพื่อนบ้านของโหนด x</p>
+            <p>for (auto b : adj[x]) { /* ประมวลผลโหนด b */ }</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Adjacency Matrix in C++</span> <br>
+            <span class="mt-8 text-yellow-300">การใช้ Array 2 มิติ</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เหมาะสำหรับกราฟขนาดเล็ก (n &lt; 5000)
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+            <p class="text-yellow-200 mb-2">// การประกาศเมทริกซ์</p>
+            <p>int adj[N][N];</p>
+            <p class="text-yellow-200 my-2">// การเพิ่มเส้นเชื่อม</p>
+            <p>adj[a][b] = 1;</p>
+            <p>adj[b][a] = 1;</p>
+            <p class="text-yellow-200 my-2">// การตรวจสอบว่า u และ v เชื่อมกันหรือไม่</p>
+            <p>if (adj[u][v]) { /* เชื่อมต่อกัน */ }</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>When to use which?</span> <br>
+            <span class="mt-8 text-yellow-300">การเลือกโครงสร้างให้เหมาะกับงาน</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <div class="grid grid-cols-2 gap-8 text-left">
+              <div>
+                <h3 class="text-xl font-bold text-yellow-300 mb-2">Adjacency List</h3>
+                <ul class="list-disc ml-5 space-y-1 text-sm">
+                  <li>ใช้เมื่อโหนดเยอะแต่เส้นเชื่อมน้อย (Sparse)</li>
+                  <li>พื้นที่: (O(V+E))</li>
+                  <li>การท่องกราฟ: รวดเร็วมาก</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-yellow-300 mb-2">Adjacency Matrix</h3>
+                <ul class="list-disc ml-5 space-y-1 text-sm">
+                  <li>ใช้เมื่อกราฟมีความหนาแน่นมาก (Dense)</li>
+                  <li>พื้นที่: (O(V^2))</li>
+                  <li>การลบ/ตรวจสอบเส้นเชื่อม: (O(1))</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Graph Traversal Overview</span> <br>
+            <span class="mt-8 text-yellow-300">พื้นฐานการท่องไปในกราฟ</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การเข้าถึงทุกโหนดในกราฟอย่างมีระบบ
+          </div>
+          <div class="grid grid-cols-2 gap-6 mb-8">
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h2 class="text-2xl font-bold mb-2">BFS</h2>
+              <p class="text-sm opacity-80 font-light italic">Breadth-First Search</p>
+              <p class="mt-2 text-sm">หาเส้นทางที่สั้นที่สุดในกราฟที่ไม่มีน้ำหนัก</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h2 class="text-2xl font-bold mb-2">DFS</h2>
+              <p class="text-sm opacity-80 font-light italic">Depth-First Search</p>
+              <p class="mt-2 text-sm">ใช้ตรวจสอบความเชื่อมต่อและหา Topological Sort</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>BFS & Queue Structure</span> <br>
+            <span class="mt-8 text-yellow-300">การทำงานของ Breadth-First Search</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-xl font-semibold mb-4 underline">ขั้นตอนการทำงาน</h2>
+            <ol class="list-decimal ml-6 space-y-3">
+              <li>ใช้ Queue เพื่อเก็บโหนดที่รอการประมวลผล</li>
+              <li>ใช้ Array `visited[]` และ `distance[]` เพื่อป้องกันการวนซ้ำ</li>
+              <li>โหนดใหม่จะถูกเพิ่มเข้าที่ท้าย Queue เสมอ</li>
+              <li>ดึงโหนดจากหน้า Queue มาประมวลผลเพื่อนบ้านที่ยังไม่เคยไป</li>
+            </ol>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DSU: Find Operation</span> <br>
+            <span class="mt-8 text-yellow-300">การหาตัวแทนกลุ่มด้วย Path Compression</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+            <p class="text-yellow-200 mb-2">// Find แบบมีประสิทธิภาพสูง</p>
+            <p>int find(int x) {</p>
+            <p class="ml-4">if (x == link[x]) return x;</p>
+            <p class="ml-4 text-green-300">return link[x] = find(link[x]); // Path Compression</p>
+            <p>}</p>
+            <p class="mt-4 text-white/70 italic text-xs">// บรรทัดสีเขียวจะทำการปรับโครงสร้างต้นไม้ให้แบนลงในทุกครั้งที่เรียกใช้</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DSU: Unite Operation</span> <br>
+            <span class="mt-8 text-yellow-300">การรวมกลุ่มด้วย Union by Size</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-xs">
+            <p>void unite(int a, int b) {</p>
+            <p class="ml-4 text-yellow-200">// หาตัวแทนของทั้งสองกลุ่ม</p>
+            <p class="ml-4">a = find(a); b = find(b);</p>
+            <p class="ml-4">if (a != b) {</p>
+            <p class="ml-8 text-yellow-200">// นำกลุ่มที่เล็กกว่าไปต่อกลุ่มที่ใหญ่กว่า</p>
+            <p class="ml-8">if (size[a] &lt; size[b]) swap(a, b);</p>
+            <p class="ml-8">size[a] += size[b];</p>
+            <p class="ml-8">link[b] = a;</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Cycle Detection</span> <br>
+            <span class="mt-8 text-yellow-300">การใช้ DSU ตรวจสอบวงรอบ</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            เทคนิคสำคัญสำหรับ Kruskal's Algorithm
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4">เมื่อพิจารณาเส้นเชื่อมระหว่างโหนด (u) และ (v):</p>
+            <div class="flex gap-4 items-center bg-red-400/20 p-4 rounded-xl mb-4 border border-red-400/50">
+              <span class="font-bold text-red-300 underline">Case 1:</span>
+              <span>ถ้า <b>find(u) == find(v)</b> แสดงว่าทั้งคู่เชื่อมกันอยู่แล้ว การเพิ่มเส้นเชื่อมนี้จะทำให้เกิด <b>Cycle</b></span>
+            </div>
+            <div class="flex gap-4 items-center bg-green-400/20 p-4 rounded-xl border border-green-400/50">
+              <span class="font-bold text-green-300 underline">Case 2:</span>
+              <span>ถ้า <b>find(u) != find(v)</b> แสดงว่าอยู่คนละส่วน สามารถทำ <b>unite(u, v)</b> ได้อย่างปลอดภัย</span>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Dynamic Connectivity</span> <br>
+            <span class="mt-8 text-yellow-300">การจัดการกราฟที่มีการเปลี่ยนแปลง</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            DSU สามารถจัดการการเพิ่มเส้นเชื่อมในระหว่างการประมวลผลได้
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="text-sm italic mb-4">"โหนด (v) และ (w) เชื่อมต่อกันในปัจจุบันหรือไม่?"</p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm"><span class="w-2 h-2 bg-yellow-300 rounded-full"></span> ใช้แก้ปัญหาที่กราฟมีการเปลี่ยนแปลงตลอดเวลา (Additions only)</li>
+              <li class="flex items-center gap-2 text-sm"><span class="w-2 h-2 bg-yellow-300 rounded-full"></span> ทำงานได้เร็วกว่าการทำ BFS/DFS ใหม่ทุกครั้งที่เพิ่มเส้นเชื่อม</li>
+              <li class="flex items-center gap-2 text-sm"><span class="w-2 h-2 bg-yellow-300 rounded-full"></span> ประยุกต์ใช้ในปัญหาที่ต้องนับจำนวน Connected Components แบบ Real-time</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Preparation for MST</span> <br>
+            <span class="mt-8 text-yellow-300">เตรียมความพร้อมสู่ช่วงบ่าย</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            DSU เป็นหัวใจสำคัญของ Minimum Spanning Tree
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-light leading-relaxed">
+            <p>ในบทถัดไป เราจะนำ <b>DSU</b> ไปใช้ใน <b>Kruskal’s Algorithm</b> ซึ่งมีขั้นตอนดังนี้:</p>
+            <ul class="list-disc ml-6 mt-2 space-y-1">
+              <li>เรียงลำดับเส้นเชื่อมตามน้ำหนัก (Sorting Edges)</li>
+              <li>วนซ้ำทุกเส้นเชื่อมและตรวจสอบวงรอบด้วย <span class="text-yellow-300">sameSet()</span></li>
+              <li>รวมโหนดเข้าด้วยกันเพื่อสร้างต้นไม้ที่ครอบคลุมทุกโหนด</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DFS Implementation</span> <br>
+            <span class="mt-8 text-yellow-300">การเขียนโค้ดท่องกราฟแบบแนวลึก</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+            <p class="text-yellow-200">void dfs(int s) {</p>
+            <p class="ml-4">if (visited[s]) return;</p>
+            <p class="ml-4">visited[s] = true;</p>
+            <p class="ml-4 text-white/70">// ประมวลผลโหนด s ที่นี่</p>
+            <p class="ml-4">for (auto u : adj[s]) {</p>
+            <p class="ml-8">dfs(u);</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Connectivity Check</span> <br>
+            <span class="mt-8 text-yellow-300">การตรวจสอบการเชื่อมต่อของกราฟ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4">กราฟจะถือว่าเป็น **Connected** หากมีเส้นทางเชื่อมระหว่างทุกคู่โหนด:</p>
+            <ul class="list-disc ml-6 space-y-3">
+              <li>เริ่มทำ DFS หรือ BFS จากโหนดใดโหนดหนึ่ง (เช่น โหนด 1)</li>
+              <li>หลังจากจบการทำงาน ให้ตรวจสอบ Array `visited[]`</li>
+              <li>หากมีโหนดใดที่ `visited` ยังเป็น `false` แสดงว่ากราฟไม่เชื่อมต่อกัน (Not Connected)</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Connected Components</span> <br>
+            <span class="mt-8 text-yellow-300">การนับจำนวนกลุ่มในกราฟ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-xs">
+            <p class="text-yellow-200">int components = 0;</p>
+            <p>for (int i = 1; i <= n; i++) {</p>
+            <p class="ml-4">if (!visited[i]) {</p>
+            <p class="ml-8 text-green-300">components++;</p>
+            <p class="ml-8">dfs(i);</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+            <p class="mt-4 text-white/70 italic text-xs">// จำนวนครั้งที่เริ่ม DFS ใหม่คือจำนวน Component ทั้งหมด</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Bipartite Graphs</span> <br>
+            <span class="mt-8 text-yellow-300">กราฟสองส่วน</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4">คือโหนดในกราฟที่สามารถระบายสีได้ 2 สี โดยที่โหนดติดกันต้อง **คนละสี**:</p>
+            <ul class="list-disc ml-6 space-y-3">
+              <li>ใช้ตรวจสอบว่ากราฟมี Cycle ที่เป็นจำนวนคี่หรือไม่</li>
+              <li>หากมี Odd Cycle กราฟนั้นจะ **ไม่เป็น** Bipartite</li>
+              <li>สามารถตรวจสอบได้โดยใช้ DFS/BFS และการระบายสีสลับกัน (2-Coloring)</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Weighted Edge List</span> <br>
+            <span class="mt-8 text-yellow-300">การเก็บข้อมูลเส้นเชื่อมมีน้ำหนัก</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+            <p class="text-yellow-200">// โครงสร้างสำหรับเก็บน้ำหนัก</p>
+            <p>struct Edge {</p>
+            <p class="ml-4">int u, v, w;</p>
+            <p class="ml-4 text-white/50">bool operator&lt;(const Edge&amp; other) {</p>
+            <p class="ml-8">return w &lt; other.w;</p>
+            <p class="ml-4">}</p>
+            <p>};</p>
+            <p class="mt-2 text-yellow-200">vector&lt;Edge&gt; edges;</p>
+          </div>
+          <p class="text-xs opacity-60 text-left italic">* เหมาะสำหรับการ Sort ข้อมูลเพื่อใช้ใน Kruskal's Algorithm</p>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DSU: Counting Components</span> <br>
+            <span class="mt-8 text-yellow-300">นับกลุ่มด้วย DSU</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4">เทคนิคการนับจำนวน Connected Components แบบ Dynamic:</p>
+            <ul class="list-disc ml-6 space-y-3 text-sm">
+              <li>เริ่มต้นให้ `count = N` (ทุกโหนดเป็นอิสระต่อกัน)</li>
+              <li>ทุกครั้งที่เรียก `unite(a, b)` แล้วพบว่าอยู่คนละกลุ่มกันจริง (find(a) != find(b))</li>
+              <li>ให้ทำ `count--`</li>
+              <li>ค่า `count` สุดท้ายคือจำนวน Component ในปัจจุบัน</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Trees as Graphs</span> <br>
+            <span class="mt-8 text-yellow-300">ความแตกต่างระหว่าง Tree และ Graph</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-2 italic text-yellow-200">"Tree is a special type of Graph"</p>
+            <div class="grid grid-cols-2 gap-4 text-xs">
+              <div class="bg-white/5 p-4 rounded-xl">
+                <h3 class="font-bold border-b mb-2 text-green-300">Tree Properties</h3>
+                <ul class="list-disc ml-4 space-y-1">
+                  <li>Connected</li>
+                  <li>Acyclic (No Cycles)</li>
+                  <li>(E = V - 1)</li>
+                  <li>Exactly one path between any two nodes</li>
+                </ul>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl">
+                <h3 class="font-bold border-b mb-2 text-red-300">General Graph</h3>
+                <ul class="list-disc ml-4 space-y-1">
+                  <li>May be disconnected</li>
+                  <li>May contain cycles</li>
+                  <li>(E) can be up to (V(V-1)/2)</li>
+                  <li>Multiple paths possible</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DSU: Tracking Max Size</span> <br>
+            <span class="mt-8 text-yellow-300">การติดตามขนาดกลุ่มที่ใหญ่ที่สุด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+            <p class="text-yellow-200">// ภายในฟังก์ชัน unite(a, b)</p>
+            <p>if (a != b) {</p>
+            <p class="ml-4">link[b] = a;</p>
+            <p class="ml-4">size[a] += size[b];</p>
+            <p class="ml-4 text-green-300">max_size = max(max_size, size[a]);</p>
+            <p>}</p>
+            <p class="mt-4 text-xs italic text-white/70 font-sans">ช่วยให้ตอบคำถาม "กลุ่มที่ใหญ่ที่สุดในตอนนี้มีขนาดเท่าไหร่?" ได้ในเวลา (O(1))</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/disjoint-set-data-structures/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+            <span>Complexity Summary</span> <br>
+            <span class="mt-8 text-yellow-300">ตารางสรุปความซับซ้อน</span>
+          </h1>
+          <div class="overflow-hidden rounded-2xl border border-white/20">
+            <table class="w-full text-sm text-left bg-white/10 backdrop-blur-md">
+              <thead class="bg-white/20 text-yellow-300 font-bold">
+                <tr>
+                  <th class="p-3">Operation</th>
+                  <th class="p-3">Matrix</th>
+                  <th class="p-3">List</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/10">
+                <tr><td class="p-3">Space</td><td class="p-3">(V^2)</td><td class="p-3">(V + E)</td></tr>
+                <tr><td class="p-3">Add Edge</td><td class="p-3">(O(1))</td><td class="p-3">(O(1))</td></tr>
+                <tr><td class="p-3">Check Neighbor</td><td class="p-3">(O(1))</td><td class="p-3">(O(V))</td></tr>
+                <tr><td class="p-3">Iterate Neighbors</td><td class="p-3">(O(V))</td><td class="p-3">(O(degree(v)))</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs opacity-60 mt-4">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Morning Session Recap</span> <br>
+            <span class="mt-8 text-yellow-300">สรุปบทเรียนช่วงเช้า</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left grid grid-cols-2 gap-6 text-sm">
+            <div>
+              <h2 class="font-bold underline mb-2">Graphs</h2>
+              <ul class="list-disc ml-4 space-y-1">
+                <li>เลือกใช้ Adjacency List เป็นหลัก</li>
+                <li>BFS ใช้ Queue (ทางลัดที่สุด)</li>
+                <li>DFS ใช้ Recursion (ตรวจสอบ Connectivity)</li>
+              </ul>
+            </div>
+            <div>
+              <h2 class="font-bold underline mb-2">DSU</h2>
+              <ul class="list-disc ml-4 space-y-1">
+                <li>ใช้จัดการกลุ่มและตรวจสอบ Cycle</li>
+                <li>อย่าลืม Path Compression</li>
+                <li>หัวใจสำคัญของ Kruskal (MST) ในบ่ายนี้</li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-lg italic text-green-300 animate-pulse font-bold">"เตรียมตัวให้พร้อมสำหรับช่วงบ่าย: MST & Topological Sort"</p>
+          <p class="text-xs opacity-60 mt-4">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
