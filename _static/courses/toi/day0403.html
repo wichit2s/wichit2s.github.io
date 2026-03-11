@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0401.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Day 04: Lab Practice</span> <br>
+            <span class="mt-8 text-yellow-300">Mastering Backtracking</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">โจทย์ 10 ข้อเพื่อท้าทายทักษะการย้อนรอย</h2>
+            <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+              <span>1. <b>Generating Subsets:</b> สร้างทุกสับเซต</span>
+              <span>2. <b>Generating Permutations:</b> สร้างทุกการสลับ</span>
+              <span>3. <b>N-Queens Problem:</b> ปริศนาควีน N ตัว</span>
+              <span>4. <b>Subset Sum:</b> หาเซตที่รวมได้ค่า T</span>
+              <span>5. <b>4 thought:</b> การเติมเครื่องหมาย (Kattis)</span>
+              <span>6. <b>Grid Paths:</b> เส้นทางในตารางและ Pruning</span>
+              <span>7. <b>Knight’s Tour:</b> การเดินอัศวินให้ครบช่อง</span>
+              <span>8. <b>Balanced Parentheses:</b> สร้างวงเล็บที่สมดุล</span>
+              <span>9. <b>Binomial Coefficients:</b> การเลือกแบบเวียนเกิด</span>
+              <span>10. <b>Palindrome Partitioning:</b> การแบ่งสตริง</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-4 text-yellow-300">1. Subsets & 2. Permutations</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-black/30 p-4 rounded-xl border border-blue-400">
+              <h4 class="font-bold">Subsets:</h4>
+              <p class="text-xs">สร้างเซตย่อยทั้งหมดจากเซต {0, 1, ..., n-1}</p>
+              <p class="text-[10px] mt-2 italic text-blue-300">คำใบ้: ในแต่ละตัวเลข มี 2 ทางเลือกคือ "เลือก" หรือ "ไม่เลือก" </p>
+            </div>
+            <div class="bg-black/30 p-4 rounded-xl border border-green-400">
+              <h4 class="font-bold">Permutations:</h4>
+              <p class="text-xs">เรียงสับเปลี่ยนเลข $n$ ตัวในทุกรูปแบบที่เป็นไปได้</p>
+              <p class="text-[10px] mt-2 italic text-green-300">คำใบ้: ใช้ array <code>chosen</code> เพื่อจำว่าเลขใดใช้ไปแล้ว </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">ขั้นตอนการแก้โจทย์</h2>
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="bg-white/10 p-3 rounded border border-white/20">
+              <b>Subsets:</b> เรียก <code>search(k+1)</code> สองครั้ง ครั้งแรกไม่ต้องใส่ค่า $k$ ครั้งที่สองให้ <code>push_back(k)</code> ก่อนเรียก และอย่าลืม <code>pop_back()</code> หลังเรียกเสร็จ 
+            </div>
+            <div class="bg-white/10 p-3 rounded border border-white/20">
+              <b>Permutations:</b> วนลูป 0 ถึง $n-1$ หาก <code>!chosen[i]</code> ให้ทำ <code>chosen[i]=true</code>, ใส่ลงในเวกเตอร์, เรียกตัวเอง, แล้วทำ <code>chosen[i]=false</code> และดึงออก (Undo) 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-red-400 uppercase">3. The N-Queens Challenge</h2>
+          <div class="bg-white text-black p-6 rounded-2xl mb-6 shadow-xl">
+            <p class="text-sm">วางควีน $n$ ตัวบนกระดาน $n \times n$ ไม่ให้โจมตีกัน</p>
+            <p class="text-[10px] mt-4 font-bold text-red-600 italic underline">คำใบ้: วางทีละแถว (Row) และเช็คแนวตั้ง (Column) รวมถึงแนวทแยงทั้งสอง (Diagonals) </p>
+          </div>
+          <div class="p-3 bg-blue-900/30 rounded border border-blue-400 text-xs">
+            <b>Optimization Tip:</b> ใช้ array เก็บสถานะแนวทแยง <code>diag1[x+y]</code> และ <code>diag2[x-y+n-1]</code> เพื่อเช็คใน $O(1)$ 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono">Backtracking Strategy</h2>
+          <ol class="space-y-3 text-sm">
+            <li>1. เริ่มต้นที่แถว $y=0$</li>
+            <li>2. วนลูปตำแหน่ง $x$ (คอลัมน์) แต่ละช่องบนแถวนั้น</li>
+            <li>3. ตรวจสอบว่าคอลัมน์ $x$ และแนวทแยงทั้งสองว่างหรือไม่ </li>
+            <li>4. ถ้าว่าง: ทำเครื่องหมายว่าไม่ว่าง (Mark) และเรียก <code>search(y+1)</code></li>
+            <li>5. **สำคัญ:** เมื่อกลับจากฟังก์ชัน ให้ล้างเครื่องหมาย (Unmark) เพื่อลองตำแหน่งอื่น </li>
+          </ol>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">4. Subset Sum & 5. 4 thought</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h4 class="font-bold text-blue-300">Subset Sum:</h4>
+              <p class="text-[11px]">เลือกตัวเลขจากเซต $S$ ให้รวมกันได้ $T$ </p>
+              <p class="text-[10px] mt-2 italic opacity-70 italic">คำใบ้: เหมือนการสร้างสับเซตแต่ส่งผลรวมปัจจุบัน (Current Sum) ไปในพารามิเตอร์ด้วย</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl">
+              <h4 class="font-bold text-purple-300">4 thought:</h4>
+              <p class="text-[11px]">ใช้เลข 4 สี่ตัวและเครื่องหมาย $+ - * /$ เพื่อหาผลลัพธ์ $n$ </p>
+              <p class="text-[10px] mt-2 italic opacity-70 italic">คำใบ้: มีช่องว่าง 3 ช่อง แต่ละช่องเลือกได้ 4 เครื่องหมาย รวม $4^3=64$ วิธี</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Logic Guide</h2>
+          <div class="space-y-4 text-sm">
+            <div class="bg-black/30 p-3 rounded">
+              <b>Subset Sum:</b> <code>search(idx, current_sum)</code> ถ้า <code>current_sum == T</code> ตอบ YES. ถ้า <code>idx == n</code> หรือ <code>current_sum > T</code> (Pruning) ให้ย้อนกลับ 
+            </div>
+            <div class="bg-black/30 p-3 rounded">
+              <b>4 thought:</b> เขียนลูปซ้อนกัน 3 ชั้นเพื่อสุ่มเครื่องหมาย แล้วสร้างฟังก์ชันคำนวณลำดับความสำคัญ (Precedence) ของ $+ - * /$ ให้ถูกต้อง 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300">6. Grid Paths & 7. Knight's Tour</h2>
+          <div class="space-y-4">
+            <div class="bg-black/40 p-4 rounded-xl border-l-4 border-red-500">
+              <h4 class="font-bold">Grid Paths (Pruning):</h4>
+              <p class="text-xs">เดินในตาราง $7 \times 7$ ให้ครบทุกช่องโดยไม่ซ้ำจุดเดิม </p>
+              <p class="text-[10px] mt-2 italic text-red-300 italic">คำใบ้: ใช้ Symmetry Pruning เพื่อลดการคำนวณลงครึ่งหนึ่ง </p>
+            </div>
+            <div class="bg-black/40 p-4 rounded-xl border-l-4 border-yellow-500">
+              <h4 class="font-bold">Knight's Tour:</h4>
+              <p class="text-xs">เดินม้าหมากรุกให้ครบ 64 ช่องบนกระดาน $8 \times 8$ </p>
+              <p class="text-[10px] mt-2 italic text-yellow-300 italic">คำใบ้: ลองเดินไปยังช่องที่มีทางไปต่อ "น้อยที่สุด" ก่อน (Warnsdorf's Rule)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono">Advanced Backtracking</h2>
+          <div class="space-y-3 text-sm">
+            <p><b>Grid Paths:</b> หากถึงจุดจบก่อนเวลา หรือชนกำแพงที่แบ่งตารางเป็นสองส่วนที่ไม่สามารถไปถึงได้ทั้งคู่ ให้ตัดกิ่งทันที (Pruning) </p>
+            <p><b>Knight's Tour:</b> สร้างอาเรย์การเคลื่อนที่ของม้า 8 ทิศทาง เช็คขอบกระดานและช่องที่เคยไปแล้ว หากไปครบ 64 ช่องให้พิมพ์คำตอบและจบโปรแกรม </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 uppercase italic underline underline-offset-8">8. Parentheses | 9. Binomial | 10. Partitioning</h2>
+          <div class="grid grid-cols-3 gap-4 text-left text-[10px]">
+            <div class="bg-white/5 p-4 rounded border border-white/20">
+              <h5 class="font-bold text-green-400 underline">8. Balanced Brackets</h5>
+              สร้างวงเล็บ $n$ คู่ที่ถูกต้อง เช่น <code>(())</code>. คำใบ้: นับจำนวนวงเล็บเปิดและปิดที่เหลือ
+            </div>
+            <div class="bg-white/5 p-4 rounded border border-white/20">
+              <h5 class="font-bold text-green-400 underline">9. Binomial Coeff.</h5>
+              หา $\binom{n}{k}$ ด้วยสูตร $\binom{n-1}{k-1} + \binom{n-1}{k}$.  คำใบ้: อย่าลืม Base Case $k=0$ หรือ $k=n$
+            </div>
+            <div class="bg-white/5 p-4 rounded border border-white/20">
+              <h5 class="font-bold text-green-400 underline">10. Palindrome Partition</h5>
+              แบ่งสตริงเป็นส่วนๆ โดยทุกส่วนต้องเป็นพาลินโดรม. คำใบ้: ลองตัดสตริงที่ตำแหน่ง $i$ แล้วเช็คพาลินโดรมก่อนทำต่อ
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Final Logic Sets</h2>
+          <div class="space-y-4 text-sm">
+            <p><b>8. Brackets:</b> <code>solve(open, close, s)</code> ถ้า <code>open > 0</code> ใส่ <code>(</code> ได้. ถ้า <code>close > open</code> ใส่ <code>)</code> ได้ เพื่อรักษาความสมดุล</p>
+            <p><b>9. Binomial:</b> การเขียนแบบ Recursive ตรงๆ จะช้ามากหาก $n$ ใหญ่ ควรใช้ **Memoization** เข้ามาช่วยจดบันทึกค่าที่คำนวณแล้ว </p>
+            <p><b>10. Palindrome:</b> วนลูปจุดตัดจากตำแหน่งปัจจุบัน หากส่วนหน้าเป็นพาลินโดรม ให้เรียกฟังก์ชันย้อนรอยกับส่วนสตริงที่เหลือ</p>
+          </div>
+          <div class="mt-6 text-center italic opacity-60">"The secret of mastering backtracking is to visualize the recursion tree."</div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0402.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Complete Search & Backtracking</span> <br>
+            <span class="mt-8 text-yellow-300">การค้นหาทุกความเป็นไปได้และการย้อนรอย</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 04 Afternoon: เทคนิคการสร้างคำตอบและการใช้ Pruning เพื่อเพิ่มความเร็ว
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่จะเรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span><b>Complete Search:</b> แนวคิดการลองทุกวิธีเพื่อหาคำตอบ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span><b>Generating Subsets & Permutations:</b> การสร้างสับเซตและวิธีเรียงสับเปลี่ยน </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span><b>Pruning Techniques:</b> การตัดกิ่งที่ไม่จำเป็นเพื่อลดเวลาทำงาน </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300">แนวคิด Complete Search</h2>
+          <div class="bg-white/10 p-6 rounded-xl border-l-4 border-yellow-400 mb-6">
+            <p class="text-xl leading-relaxed">
+            "เป็นวิธีการแก้ปัญหาโดยการ <b>สร้างความเป็นไปได้ทั้งหมด</b> ของคำตอบ แล้วตรวจสอบว่าแต่ละวิธีถูกต้องหรือไม่"
+            </p>
+          </div>
+          <ul class="space-y-4 text-lg">
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full mt-2"></div>
+              <span>ใช้ได้กับเกือบทุกปัญหา แต่ต้องระวังเรื่อง <b>Time Complexity</b></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full mt-2"></div>
+              <span>มักใช้เมื่อขนาดของข้อมูล (N) มีค่าไม่มากนัก</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 bg-yellow-300 rounded-full mt-2"></div>
+              <span>หากเขียนแบบ Recursive จะเรียกว่า <b>Backtracking</b> </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-green-400">Method 1: Recursion </h2>
+          <p class="mb-4 opacity-90">ใช้หลักการ "เลือก" หรือ "ไม่เลือก" สมาชิกแต่ละตัว</p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            void search(int k) {<br>
+            &nbsp;&nbsp;if (k == n) { process(subset); return; }<br>
+            &nbsp;&nbsp;<span class="text-gray-500">// ไม่เลือกสมาชิกตัวที่ k</span><br>
+            &nbsp;&nbsp;search(k + 1);<br>
+            &nbsp;&nbsp;<span class="text-gray-500">// เลือกสมาชิกตัวที่ k</span><br>
+            &nbsp;&nbsp;subset.push_back(k);<br>
+            &nbsp;&nbsp;search(k + 1);<br>
+            &nbsp;&nbsp;subset.pop_back(); <span class="text-red-400">// Backtrack!</span><br>
+            }
+          </div>
+          <p class="text-sm italic text-white/70">Complexity: $O(2^n)$ </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-blue-400">Method 2: Bit Representation </h2>
+          <p class="mb-4 opacity-90">ใช้บิต 0 และ 1 แทนสถานะการเลือกสมาชิก</p>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-lg mb-6">
+            for (int b = 0; b < (1 &lt;&lt; n); b++) {<br>
+            &nbsp;&nbsp;for (int i = 0; i < n; i++) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if (b & (1 &lt;&lt; i)) { <span class="text-green-400">// สมาชิกตัวที่ i อยู่ในเซต</span> }<br>
+            &nbsp;&nbsp;}<br>
+            }
+          </div>
+          <div class="p-4 bg-white/10 rounded-lg border-l-4 border-blue-400">
+            <b>ข้อดี:</b> เขียนโค้ดสั้นกว่าแบบ Recursion และทำงานได้รวดเร็วในเชิง Iterative 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-yellow-300">Recursive Permutations </h2>
+          <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs leading-relaxed mb-4">
+            void search() {<br>
+            &nbsp;&nbsp;if (permutation.size() == n) { process(); return; }<br>
+            &nbsp;&nbsp;for (int i = 0; i < n; i++) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if (chosen[i]) continue;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;chosen[i] = true;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;permutation.push_back(i);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;search();<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;chosen[i] = false; <span class="text-red-400">// คืนค่าสถานะ</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;permutation.pop_back();<br>
+            &nbsp;&nbsp;}<br>
+            }
+          </div>
+          <div class="bg-green-500/20 p-3 rounded text-sm border border-green-500">
+            <b>STL Alternative:</b> ใช้ <code>std::next_permutation</code> เพื่อสร้างวิธีถัดไปใน $O(N)$ 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 uppercase italic">Backtracking Framework</h2>
+          <div class="bg-white text-blue-900 p-8 rounded-3xl shadow-2xl mb-8">
+            <p class="text-2xl font-black mb-4">"Try - Recurse - Undo"</p>
+            <div class="text-left text-lg space-y-2 font-medium">
+              <p>1. <b>Try:</b> วางชิ้นส่วนคำตอบลงในตำแหน่งปัจจุบัน</p>
+              <p>2. <b>Recurse:</b> เรียกฟังก์ชันเดิมเพื่อวางชิ้นส่วนถัดไป</p>
+              <p>3. <b>Undo:</b> ดึงชิ้นส่วนออกเพื่อลองความเป็นไปได้อื่น</p>
+            </div>
+          </div>
+          <p class="text-xl opacity-80 leading-relaxed italic">
+          "หัวใจสำคัญคือการล้างค่าสถานะ (Reset state) หลังจากการเรียกเสร็จสิ้น"
+          </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-red-400">ตัวอย่าง: ปัญหาการวางควีน N ตัว</h2>
+          <div class="grid grid-cols-2 gap-8 items-center">
+            <div class="space-y-4">
+              <p class="text-lg">วางควีน $N$ ตัวในกระดาน $N \times N$ โดยไม่ให้ควีนตัวใดกินกันได้เลย</p>
+              <div class="bg-white/10 p-4 rounded-lg">
+                <h4 class="font-bold text-green-300">กฎการตรวจสอบ:</h4>
+                <p class="text-sm">• แถวเดียวกัน (Row)<br>• คอลัมน์เดียวกัน (Col)<br>• แนวทแยง (Diagonals)</p>
+              </div>
+            </div>
+            <div class="bg-black/30 p-6 rounded-2xl border-2 border-white/20 text-center italic">
+              "ใช้ Backtracking เพื่อวางควีนทีละแถว และเช็คเงื่อนไขก่อนวางตัวถัดไป"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-10 text-yellow-300 underline">Pruning: เพิ่มความฉลาดให้ตัวค้นหา</h2>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-black/40 p-8 rounded-2xl border-t-4 border-green-500">
+              <h3 class="text-xl font-bold mb-4 italic">Symmetry Pruning</h3>
+              <p class="text-sm opacity-80">หากปัญหาเหมือนกันในมุมกลับ ให้คำนวณด้านเดียวแล้วคูณสอง</p>
+            </div>
+            <div class="bg-black/40 p-8 rounded-2xl border-t-4 border-red-500">
+              <h3 class="text-xl font-bold mb-4 italic">Early Termination</h3>
+              <p class="text-sm opacity-80">หากรู้แน่ๆ ว่าเส้นทางนี้ไม่มีทางได้คำตอบ ให้หยุดและย้อนกลับทันที </p>
+            </div>
+          </div>
+          <p class="mt-10 opacity-70 italic text-sm">การตัดกิ่งที่ดีสามารถลดเวลาทำงานจากนาทีให้เหลือเพียงวินาทีได้</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center uppercase">Contest Strategy: Subtasks</h2>
+          <div class="bg-white text-black p-8 rounded-3xl shadow-xl mb-6">
+            <p class="text-lg leading-relaxed font-medium">
+            "ในโจทย์ระดับ IOI Style อัลกอริทึม Backtracking แบบพื้นฐานอาจจะได้เพียง 20-30 แต้ม <br>
+            แต่ถ้าเราเพิ่ม <b>Pruning</b> ที่ฉลาดเข้าไป เราอาจจะเก็บคะแนนได้ถึง 60-100 แต้ม!" 
+            </p>
+          </div>
+          <p class="text-center italic opacity-60">"First make it work, then make it fast" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-10 text-yellow-300 uppercase tracking-tighter italic">Ready to Code?</h2>
+          <div class="bg-white/10 backdrop-blur p-12 rounded-full border-8 border-white/10 inline-block mb-10 shadow-2xl">
+            <p class="text-3xl font-light">15.00 - 17.00 น.</p>
+            <p class="text-xl mt-2 opacity-70 italic font-bold">Practice: N-Queens, Subsets, Permutations</p>
+          </div>
+          <p class="text-xl opacity-60">"โค้ดที่ดีที่สุดคือโค้ดที่คุณเขียนด้วยตัวเอง" เจอกันในแล็บครับ!</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

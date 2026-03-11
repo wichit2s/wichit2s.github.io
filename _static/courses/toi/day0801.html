@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0801.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Shortest Paths I</span> <br>
+            <span class="mt-8 text-yellow-300">อัลกอริทึมของ Dijkstra</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 08 Morning: การหาเส้นทางที่สั้นที่สุดจากจุดเริ่มต้นเดียวในกราฟที่มีน้ำหนัก
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่จะเรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>นิยามของ Single-Source Shortest Path (SSSP)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>กลยุทธ์แบบ Greedy และการเลือกโหนดที่ใกล้ที่สุด</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>การใช้ Priority Queue เพื่อเพิ่มประสิทธิภาพอัลกอริทึม</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>What is SSSP?</span> <br>
+            <span class="mt-8 text-yellow-300">นิยามปัญหาเส้นทางสั้นที่สุด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="text-lg mb-4 italic">"กำหนดกราฟที่มีน้ำหนัก (G = (V, E)) และจุดเริ่มต้น (s) จงหาระยะทางที่สั้นที่สุด (d(s, v)) สำหรับทุกโหนด (v) ในกราฟ"</p>
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3">
+                <span class="text-green-400">●</span>
+                <span>ในกราฟไม่มีน้ำหนัก เราใช้ <b>BFS</b> เพื่อหาคำตอบ</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-yellow-400">●</span>
+                <span>ในกราฟมีน้ำหนัก ระยะทางคือผลรวมของน้ำหนักเส้นเชื่อมตามเส้นทาง</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="text-blue-400">●</span>
+                <span>Dijkstra เป็นอัลกอริทึมมาตรฐานสำหรับปัญหานี้</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>The Greedy Strategy</span> <br>
+            <span class="mt-8 text-yellow-300">แนวคิดพื้นฐาน: ความใกล้ชิดเป็นสำคัญ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p>Dijkstra ทำงานโดยการ <b>ขยายขอบเขต</b> ของโหนดที่เรามั่นใจระยะทางสั้นที่สุดแล้ว:</p>
+            <ol class="list-decimal ml-6 mt-4 space-y-3">
+              <li>เริ่มจากโหนดเริ่มต้น (s) โดยให้ (dist[s] = 0) และโหนดอื่นเป็น (\infty)</li>
+              <li>เลือกโหนด (u) ที่ <b>ยังไม่ถูกประมวลผล</b> และมี (dist[u]) น้อยที่สุดในขณะนั้น</li>
+              <li>ทำการ <b>Relax</b> เส้นเชื่อมรอบๆ โหนด (u) เพื่อปรับปรุงระยะทางของเพื่อนบ้าน</li>
+              <li>ทำซ้ำจนกว่าจะประมวลผลครบทุกโหนดที่เข้าถึงได้</li>
+            </ol>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Essential Constraint</span> <br>
+            <span class="mt-8 text-red-300 text-3xl">ข้อจำกัดสำคัญ: น้ำหนักต้องไม่ติดลบ</span>
+          </h1>
+          <div class="bg-red-500/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-red-500/30">
+            <p class="text-2xl font-medium mb-4">
+              Dijkstra <b>ไม่รับรอง</b> ความถูกต้องหากกราฟมีเส้นเชื่อมน้ำหนักติดลบ
+            </p>
+            <p class="text-sm opacity-90">
+              เพราะหัวใจของอัลกอริทึมคือการเชื่อว่า "ถ้าเราเลือกโหนดที่ใกล้ที่สุดในปัจจุบัน ระยะทางนั้นจะไม่มีทางถูกทำให้สั้นลงได้อีกโดยการเดินผ่านโหนดอื่นที่ไกลกว่า" 
+              ซึ่งข้อสมมตินี้จะผิดทันทีถ้ามีการลดระยะทางด้วยน้ำหนักติดลบ
+            </p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Priority Queue Efficiency</span> <br>
+            <span class="mt-8 text-yellow-300">โครงสร้างข้อมูลที่ใช้</span>
+          </h1>
+          <div class="grid grid-cols-2 gap-6 mb-8 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-blue-300 mb-2">Distance Array</h3>
+              <p class="text-sm">เก็บระยะทางที่สั้นที่สุดที่พบในปัจจุบันสำหรับแต่ละโหนด (dist[V])</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-blue-300 mb-2">Min-Priority Queue</h3>
+              <p class="text-sm">ใช้เก็บคู่ของ (distance, node) เพื่อดึงโหนดที่มีระยะทางน้อยที่สุดออกมาอย่างรวดเร็ว</p>
+            </div>
+          </div>
+          <div class="italic text-sm opacity-80 underline">
+            "ใน C++ มักใช้ priority_queue และใส่ค่าติดลบเพื่อจำลอง Min-Heap"
+          </div>
+          <p class="text-xs opacity-60 mt-8">แหล่งอ้างอิง: https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Edge Relaxation</span> <br>
+            <span class="mt-8 text-yellow-300">การผ่อนคลายเส้นเชื่อม</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border-l-4 border-yellow-300 text-left">
+            <p class="text-xl italic mb-4 text-center font-mono">
+              if (dist[u] + weight(u, v) < dist[v]) { <br>
+              &nbsp;&nbsp;dist[v] = dist[u] + weight(u, v); <br>
+              }
+            </p>
+            <p class="text-sm">
+              คือการตรวจสอบว่า การเดินทางไปยังโหนด (v) โดยผ่านโหนด (u) นั้น ให้ระยะทางที่ <b>สั้นกว่า</b> เส้นทางที่เราเคยรู้จักมาก่อนหน้านี้หรือไม่
+            </p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+            <span>Dijkstra's Process</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">ลำดับการทำงานทีละขั้นตอน</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left space-y-4 text-sm">
+            <p>1. ตั้งค่า (dist[start] = 0) และ (dist[others] = \infty)</p>
+            <p>2. ใส่ (0, start) ลงใน Priority Queue</p>
+            <p>3. ขณะที่ Queue ไม่ว่าง: ดึงโหนด (u) ที่มีระยะทางน้อยที่สุดออกมา</p>
+            <p>4. <b>สำคัญ:</b> ถ้าโหนด (u) ถูกประมวลผล (Processed) แล้ว ให้ข้ามไป</p>
+            <p>5. สำหรับแต่ละโหนดเพื่อนบ้าน (v) ของ (u): ถ้าเส้นเชื่อม (u \to v) ช่วยลดระยะทาง (Relax) ให้ปรับปรุง (dist[v]) และใส่เข้า Queue ใหม่</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Implementation in C++</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">ตัวอย่างโค้ดมาตรฐาน</span>
+          </h1>
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-xs leading-relaxed overflow-x-auto">
+            <p>priority_queue&lt;pair&lt;int,int&gt;&gt; q;</p>
+            <p>distance[x] = 0; q.push({0, x});</p>
+            <p>while (!q.empty()) {</p>
+            <p class="ml-4">int a = q.top().second; q.pop();</p>
+            <p class="ml-4">if (processed[a]) continue;</p>
+            <p class="ml-4">processed[a] = true;</p>
+            <p class="ml-4">for (auto u : adj[a]) {</p>
+            <p class="ml-8">int b = u.first, w = u.second;</p>
+            <p class="ml-8">if (distance[a]+w < distance[b]) {</p>
+            <p class="ml-12">distance[b] = distance[a]+w;</p>
+            <p class="ml-12">q.push({-distance[b], b}); // Use negative for min-heap</p>
+            <p class="ml-8">}</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Time Complexity</span> <br>
+            <span class="mt-8 text-yellow-300">วิเคราะห์ประสิทธิภาพ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white/20">
+            <p class="text-3xl font-bold mb-4 italic">(O(V + E \log E))</p>
+            <div class="text-left text-lg space-y-4">
+              <p>• (V) คือจำนวนโหนด และ (E) คือจำนวนเส้นเชื่อม</p>
+              <p>• การวนรอบผ่านเส้นเชื่อมทุกเส้นใช้ (E)</p>
+              <p>• การดำเนินการใน Priority Queue (push/pop) ใช้ (\log E)</p>
+              <p>• ในกราฟทั่วไป มักเขียนในรูป (O(E \log V))</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>BFS vs. Dijkstra</span> <br>
+            <span class="mt-8 text-yellow-300">ความแตกต่างที่ต้องจำ</span>
+          </h1>
+          <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-white/5 p-6 rounded-2xl border border-blue-400/30">
+              <h3 class="text-xl font-bold mb-2 text-blue-300 text-center">BFS</h3>
+              <ul class="text-sm space-y-2 opacity-90 text-left">
+                <li>• ใช้กับกราฟ <b>ไม่มีน้ำหนัก</b></li>
+                <li>• ใช้ <b>Queue</b> ธรรมดา (FIFO)</li>
+                <li>• เร็วกว่า ((O(V+E)))</li>
+                <li>• โหนดที่ดึงออกมาครั้งแรกคือทางที่สั้นที่สุดเสมอ</li>
+              </ul>
+            </div>
+            <div class="bg-white/5 p-6 rounded-2xl border border-green-400/30">
+              <h3 class="text-xl font-bold mb-2 text-green-300 text-center">Dijkstra</h3>
+              <ul class="text-sm space-y-2 opacity-90 text-left">
+                <li>• ใช้กับกราฟ <b>มีน้ำหนัก</b> (เป็นบวก)</li>
+                <li>• ใช้ <b>Priority Queue</b></li>
+                <li>• ซับซ้อนกว่า ((O(E \log V)))</li>
+                <li>• ต้องมีการ Relax เส้นเชื่อม</li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Path Reconstruction</span> <br>
+            <span class="mt-8 text-yellow-300">การหาเส้นทางจริงไม่ใช่แค่ระยะทาง</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="mb-4">ในการหาว่าเส้นทางที่สั้นที่สุดผ่านโหนดใดบ้าง เราต้องบันทึกโหนดก่อนหน้า (Parent):</p>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 font-bold">1.</span>
+                <span>สร้าง Array <b>parent[V]</b> เพื่อเก็บโหนดที่เป็นทางผ่านก่อนจะถึงโหนดปัจจุบัน</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 font-bold">2.</span>
+                <span>เมื่อมีการ Relax สำเร็จ: (parent[v] = u)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 font-bold">3.</span>
+                <span><b>Backtrack:</b> เริ่มจากโหนดปลายทาง ไล่ย้อนกลับไปหาต้นทางผ่าน parent array</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Dijkstra on Dense Graphs</span> <br>
+            <span class="mt-8 text-yellow-300">เมื่อกราฟมีเส้นเชื่อมหนาแน่นมาก</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left border-l-4 border-blue-400">
+            <p class="mb-4">หากกราฟมีจำนวนเส้นเชื่อมใกล้เคียงกับ (V^2) (Dense Graphs):</p>
+            <ul class="list-disc ml-6 space-y-2 text-sm">
+              <li>การใช้ Priority Queue อาจช้าลงเนื่องจาก overhead ของ heap</li>
+              <li>การใช้อัลกอริทึมเวอร์ชัน (O(V^2)) แบบวนรอบหาโหนดที่สั้นที่สุดโดยตรงจาก Array จะมีประสิทธิภาพดีกว่า</li>
+              <li>เหมาะสำหรับการใช้คู่กับ <b>Adjacency Matrix</b></li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Zero-Weight Edges</span> <br>
+            <span class="mt-8 text-yellow-300">เส้นเชื่อมที่มีน้ำหนักเป็นศูนย์</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h3 class="text-xl font-bold mb-3 text-green-300 italic">"Dijkstra ยังคงทำงานได้ถูกต้อง!"</h3>
+            <p class="text-sm leading-relaxed mb-4">
+              ตราบใดที่น้ำหนักเส้นเชื่อม <b>ไม่ติดลบ</b> ((\ge 0)) Dijkstra จะหาคำตอบที่สั้นที่สุดได้เสมอ 
+              แต่ระวังหากกราฟมี Cycle ที่เป็นศูนย์ทั้งหมด อาจทำให้มีหลายเส้นทางที่สั้นที่สุดเท่ากัน
+            </p>
+            <div class="p-4 bg-black/20 rounded-xl border border-white/10 text-xs italic">
+              หมายเหตุ: หากกราฟมีน้ำหนัก 0 และเราต้องการจำนวนโหนดที่น้อยที่สุดในเส้นทางด้วย อาจต้องปรับจูนเงื่อนไขการ Relax เล็กน้อย
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Why Processed Check?</span> <br>
+            <span class="mt-8 text-yellow-300">ความสำคัญของการตรวจสอบโหนดซ้ำ</span>
+          </h1>
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm border border-red-400/30">
+            <p class="text-red-300 italic mb-2">// บรรทัดที่ห้ามลืม!</p>
+            <p>if (d > distance[u]) continue;</p>
+            <p class="mt-4 text-white/80 font-sans text-sm">
+              เนื่องจาก Priority Queue ใน STL ไม่รองรับการอัปเดตค่า (Decrease Key) เราจึงต้องใส่โหนดเดิมที่มีระยะทางใหม่เข้าไป 
+              บรรทัดนี้จะช่วยข้ามโหนด "ขยะ" ที่มีระยะทางมากกว่าค่าปัจจุบัน ทำให้ความซับซ้อนคงอยู่ที่ (O(E \log E))
+            </p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Pathfinding on Grids</span> <br>
+            <span class="mt-8 text-yellow-300">การประยุกต์ใช้กับตาราง 2 มิติ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm">
+            <p class="mb-4">โหนดในที่นี้คือพิกัด (r, c) และเส้นเชื่อมคือการเคลื่อนที่ไปยังช่องข้างเคียง:</p>
+            <ul class="space-y-3">
+              <li><b>State:</b> (r, c) แทนตำแหน่งในตาราง</li>
+              <li><b>Weight:</b> ค่าน้ำหนักในช่องตารางหรือค่าผ่านทาง</li>
+              <li><b>Neighbors:</b> โดยทั่วไปจะมี 4 ทิศทาง (บน, ล่าง, ซ้าย, ขวา) หรือ 8 ทิศทาง</li>
+              <li>ใช้ <b>Priority Queue</b> เก็บคู่ของ (distance, (r, c))</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Multi-Source Dijkstra</span> <br>
+            <span class="mt-8 text-yellow-300">จุดเริ่มต้นหลายจุด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <p class="text-lg italic mb-4">"โหนดใดอยู่ใกล้สถานีดับเพลิงที่สุด?"</p>
+            <p class="text-sm leading-relaxed mb-4">
+              แทนที่จะรัน Dijkstra ทีละสถานี เราสามารถใส่โหนดสถานีทั้งหมดลงใน Priority Queue พร้อมกันตั้งแต่เริ่มต้น:
+            </p>
+            <div class="bg-black/20 p-4 rounded-lg font-mono text-xs">
+              for (int start_node : all_sources) { <br>
+              &nbsp;&nbsp;dist[start_node] = 0; <br>
+              &nbsp;&nbsp;pq.push({0, start_node}); <br>
+              }
+            </div>
+            <p class="mt-4 text-xs">ผลลัพธ์คือระยะทางสั้นที่สุดจากโหนดใดก็ได้ในกลุ่มต้นทางไปยังจุดอื่นๆ</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Min-Heap Implementation</span> <br>
+            <span class="mt-8 text-yellow-300">เทคนิคการใช้ Priority Queue ใน C++</span>
+          </h1>
+          <div class="grid grid-cols-2 gap-4 mb-8 text-left">
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h4 class="font-bold text-blue-300 mb-2 italic">แบบที่ 1: Negative Values</h4>
+              <p class="text-xs">ใส่ระยะทางเป็นค่าติดลบเพื่อให้ตัวที่น้อยที่สุด (แต่ค่าลบมากสุด) อยู่บนสุด</p>
+              <p class="font-mono text-[10px] mt-2 text-green-300">pq.push({-d, u});</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h4 class="font-bold text-blue-300 mb-2 italic">แบบที่ 2: std::greater</h4>
+              <p class="text-xs">ใช้ตัวดำเนินการเปรียบเทียบมาตรฐานของ C++ เพื่อสร้าง Min-Heap โดยตรง</p>
+              <p class="font-mono text-[10px] mt-2 text-green-300">priority_queue&lt;T, vector&lt;T&gt;, greater&lt;T&gt;&gt; pq;</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/custom-comparator-in-priority_queue-in-cpp-stl/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Why it Fails?</span> <br>
+            <span class="mt-8 text-red-400">กรณีตัวอย่างน้ำหนักติดลบ</span>
+          </h1>
+          <div class="bg-red-500/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-red-500/20">
+            <p class="text-sm leading-relaxed">
+              พิจารณาทางเดิน: A → B (น้ำหนัก 2), A → C (น้ำหนัก 5), B → C (น้ำหนัก -10)<br><br>
+              1. Dijkstra จะเลือก B ก่อน (ระยะทาง 2) แล้วข้ามไปที่ C (ระยะทาง 5)<br>
+              2. Dijkstra จะมองว่า C "เสร็จแล้ว" และจะไม่กลับมาแก้ไขระยะทางผ่าน B (ซึ่งจริงๆ คือ 2 - 10 = -8)<br><br>
+              <b>สรุป:</b> ความละโมบ (Greedy) ของ Dijkstra จะใช้งานไม่ได้เมื่อ "ทางอ้อม" สามารถให้ผลลัพธ์ที่สั้นกว่าได้ไม่จำกัด
+            </p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Dijkstra on State Space</span> <br>
+            <span class="mt-8 text-yellow-300">การหาเส้นทางบน "สถานะ"</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="mb-4 text-sm font-bold">เทคนิคขั้นสูง: โหนดไม่จำเป็นต้องเป็นจุดในแผนที่</p>
+            <ul class="list-disc ml-6 space-y-3 text-xs">
+              <li><b>โหนด (Node):</b> อาจเป็นสถานะของปัญหา เช่น (ตำแหน่งปัจจุบัน, พลังงานที่เหลือ, รายการไอเทมที่เก็บ)</li>
+              <li><b>เส้นเชื่อม (Edge):</b> การเปลี่ยนสถานะด้วยต้นทุน (น้ำหนัก) ที่ต่างกัน</li>
+              <li>ช่วยแก้ปัญหาที่มีเงื่อนไขซับซ้อน เช่น "หาทางสั้นที่สุดแต่ต้องเติมน้ำมันไม่เกิน 3 ครั้ง"</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Scaling for Competition</span> <br>
+            <span class="mt-8 text-yellow-300">ขีดจำกัดและการประมวลผล</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span>รองรับ (V, E) ได้ถึงระดับ (10^5) ถึง (10^6) ภายในเวลา 1 วินาที</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span>ใช้หน่วยความจำส่วนใหญ่ไปกับ <b>Adjacency List</b></span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-red-400 rounded-full"></span>
+                <span>ระวัง: หากน้ำหนักรวมเกิน (2 \times 10^9) ต้องใช้ <b>long long</b> เก็บระยะทาง</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-lg italic text-green-300 animate-pulse font-bold">"เตรียมพร้อมสู่เซสชันบ่าย: เมื่อ Dijkstra รับมือไม่ได้ เราจะทำอย่างไร?"</p>
+          <p class="text-xs opacity-60 mt-4">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Counting Shortest Paths</span> <br>
+            <span class="mt-8 text-yellow-300">การนับจำนวนเส้นทางที่สั้นที่สุด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="mb-4 text-sm">เราสามารถดัดแปลง Dijkstra เพื่อหาว่ามีกี่เส้นทางที่ให้ระยะทางสั้นที่สุดเท่ากัน:</p>
+            <ul class="space-y-3 text-sm">
+              <li>สร้าง Array <b>count[V]</b> โดยให้ (count[start] = 1)</li>
+              <li>เมื่อพบทางที่สั้นกว่าเดิม (Relax สำเร็จ): ให้ (count[v] = count[u])</li>
+              <li>เมื่อพบทางที่มีระยะทาง <b>เท่ากับ</b> ค่าปัจจุบัน: ให้ (count[v] = (count[v] + count[u]) \pmod M)</li>
+              <li>เทคนิคนี้ใช้บ่อยในโจทย์ที่ต้องการหาโครงสร้างของกราฟที่สั้นที่สุด</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Dijkstra with std::set</span> <br>
+            <span class="mt-8 text-yellow-300">ทางเลือกอื่นในการ Implement</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 text-sm">นอกจากการใช้ Priority Queue เรายังสามารถใช้ <b>std::set</b> ใน C++ ได้:</p>
+            <ul class="list-disc ml-6 space-y-2 text-sm">
+              <li><b>std::set</b> เก็บข้อมูลแบบเรียงลำดับและลบโหนดเดิมออกได้ (Actual Decrease Key)</li>
+              <li>ขั้นตอน: ลบ (dist[v], v) เดิมออก -> อัปเดตค่า -> ใส่ (dist[v], v) ใหม่เข้าไป</li>
+              <li><b>ข้อดี:</b> ไม่ต้องมีเช็ค `processed[u]` และประหยัดหน่วยความจำในบางกรณี</li>
+              <li><b>ข้อเสีย:</b> ความเร็วในทางปฏิบัติอาจช้ากว่า Priority Queue เล็กน้อยเนื่องจากโครงสร้าง Tree</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Priority Queue vs std::set</span> <br>
+            <span class="mt-8 text-yellow-300">เปรียบเทียบประสิทธิภาพ</span>
+          </h1>
+          <div class="overflow-hidden rounded-2xl border border-white/20">
+            <table class="w-full text-sm text-left bg-white/10">
+              <thead class="bg-white/20 text-yellow-300 font-bold">
+                <tr><th class="p-3">Feature</th><th class="p-3">Priority Queue (Lazy)</th><th class="p-3">std::set (Red-Black Tree)</th></tr>
+              </thead>
+              <tbody class="divide-y divide-white/10">
+                <tr><td class="p-3">Memory</td><td class="p-3">High (up to (E) entries)</td><td class="p-3">Low (exactly (V) entries)</td></tr>
+                <tr><td class="p-3">Complexity</td><td class="p-3">(O(E \log E))</td><td class="p-3">(O(E \log V))</td></tr>
+                <tr><td class="p-3">Coding Speed</td><td class="p-3">Fast/Simple</td><td class="p-3">Slightly complex</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs opacity-60 mt-4 text-center italic">"ในสมรภูมิ Competitive Programming ส่วนใหญ่ Priority Queue คือผู้ชนะ"</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Bidirectional Dijkstra</span> <br>
+            <span class="mt-8 text-yellow-300">การค้นหาจากสองทิศทาง</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm leading-relaxed">
+            <p>เพื่อหาทางสั้นที่สุดระหว่าง (s) และ (t) เราสามารถรัน Dijkstra สองตัวพร้อมกัน:</p>
+            <ul class="list-disc ml-6 mt-2 space-y-2">
+              <li>ตัวแรกเริ่มจาก (s) ไปข้างหน้า (Forward Search)</li>
+              <li>ตัวที่สองเริ่มจาก (t) ย้อนกลับมา (Backward Search - ต้องกลับทิศเส้นเชื่อม)</li>
+              <li>อัลกอริทึมหยุดเมื่อขอบเขตการค้นหาทั้งสองมาบรรจบกัน</li>
+              <li><b>ทำไม?</b> ช่วยลดจำนวนโหนดที่ต้องประมวลผลลงมหาศาล (พื้นที่วงกลมใหญ่ 1 วง vs วงกลมเล็ก 2 วง)</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>CSES: Shortest Routes I</span> <br>
+            <span class="mt-8 text-yellow-300 italic">โจทย์ตัวอย่างคลาสสิก</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="font-bold text-lg mb-2 underline text-blue-300">Problem Description:</p>
+            <p class="text-sm">กำหนดเมือง (n) เมือง และเส้นทางบิน (m) เส้นทาง จงหาระยะทางที่สั้นที่สุดจากเมืองที่ 1 ไปยังทุกเมือง</p>
+            <div class="mt-4 p-4 bg-yellow-500/20 border border-yellow-300 rounded-xl">
+              <span class="font-bold">Constraints:</span><br>
+              (n \le 10^5, m \le 2 \times 10^5)<br>
+              (w_i \le 10^9) (ค่าน้ำหนักมหาศาล!)
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/problemset/task/1671</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Beware of Overflows!</span> <br>
+            <span class="mt-8 text-red-400">ระวังเรื่องชนิดข้อมูล</span>
+          </h1>
+          <div class="bg-red-500/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-red-500/30">
+            <p class="text-xl mb-4 italic">"น้ำหนักรวมของเส้นทางอาจเกินช่วงของ int ((\approx 2 \times 10^9))"</p>
+            <ul class="text-left space-y-4 text-sm font-mono text-green-300">
+              <li>typedef long long ll;</li>
+              <li>vector&lt;pair&lt;int, ll&gt;&gt; adj[N];</li>
+              <li>priority_queue&lt;pair&lt;ll, int&gt;&gt; pq;</li>
+              <li>const ll INF = 1e18; // ใช้ค่าที่ใหญ่พอจริงๆ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Memory Management</span> <br>
+            <span class="mt-8 text-yellow-300">การจองหน่วยความจำเพื่อความเร็ว</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <ul class="space-y-4 text-sm">
+              <li><span class="text-blue-300 font-bold">Arrays (N):</span> ประกาศ Global รวดเร็วที่สุด เข้าถึงหน่วยความจำแบบต่อเนื่อง</li>
+              <li><span class="text-blue-300 font-bold">std::vector:</span> ยืดหยุ่นแต่มีการ Re-allocation อาจช้ากว่าในโจทย์ที่มี Time Limit บีบมากๆ</li>
+              <li><b>Tip:</b> หากทราบขนาดที่แน่นอน (N) การใช้ Global Array `ll dist` มักเป็นทางเลือกที่ปลอดภัยที่สุดในโอลิมปิกคอมพิวเตอร์</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Debugging Tips</span> <br>
+            <span class="mt-8 text-yellow-300">ข้อผิดพลาดที่พบบ่อย</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left grid grid-cols-2 gap-4 text-xs">
+            <div class="p-4 bg-black/20 rounded-xl border border-red-500/30">
+              <h4 class="font-bold text-red-300 mb-2">1. PQ Ordering</h4>
+              <p>ลืมใส่ค่าติดลบหรือลืมใช้ `greater&lt;&gt;` ทำให้กลายเป็น Max-Heap (ช้ามาก!)</p>
+            </div>
+            <div class="p-4 bg-black/20 rounded-xl border border-red-500/30">
+              <h4 class="font-bold text-red-300 mb-2">2. Processing Check</h4>
+              <p>ลืมเช็ค `if (d > dist[u]) continue;` ทำให้วนซ้ำโหนดเดิมหลายรอบ</p>
+            </div>
+            <div class="p-4 bg-black/20 rounded-xl border border-red-500/30">
+              <h4 class="font-bold text-red-300 mb-2">3. Initial dist[s]</h4>
+              <p>ลืมตั้งระยะทางเริ่มต้นเป็น 0 (ทำให้ Dijkstra ไม่เริ่มทำงาน)</p>
+            </div>
+            <div class="p-4 bg-black/20 rounded-xl border border-red-500/30">
+              <h4 class="font-bold text-red-300 mb-2">4. Directed Graphs</h4>
+              <p>ใส่เส้นเชื่อมสลับทิศทางหรือไม่ครบตามโจทย์กำหนด</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Why Dijkstra Wins?</span> <br>
+            <span class="mt-8 text-yellow-300">สรุปความทรงพลัง</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left space-y-4">
+            <p class="text-lg italic border-b pb-2">"ประสิทธิภาพที่เหนือชั้นในทางปฏิบัติ"</p>
+            <ul class="space-y-3 text-sm">
+              <li>เป็นอัลกอริทึมที่ให้ผลลัพธ์ที่ถูกต้องที่สุดในกราฟบวก</li>
+              <li>ความเร็ว (O(V + E \log V)) เพียงพอสำหรับเกือบทุกสถานการณ์</li>
+              <li>เป็นรากฐานของอัลกอริทึมขั้นสูง เช่น A* หรือ Johnson's Algorithm</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Morning Wrap-up</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">สรุปบทเรียนช่วงเช้าวันที่ 8</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left grid grid-cols-2 gap-6 text-sm">
+            <div>
+              <h2 class="font-bold underline mb-2">Core Dijkstra</h2>
+              <ul class="list-disc ml-4 space-y-1">
+                <li>Greedy selection of nearest node</li>
+                <li>Priority Queue for efficiency</li>
+                <li>Positive weights only!</li>
+              </ul>
+            </div>
+            <div>
+              <h2 class="font-bold underline mb-2">Key Skills</h2>
+              <ul class="list-disc ml-4 space-y-1">
+                <li>Implementation with long long</li>
+                <li>Path reconstruction</li>
+                <li>Avoiding TLE with proper checks</li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-lg italic text-green-300 font-bold animate-pulse">"พักเที่ยง! กลับมาพบกับ Bellman-Ford และคู่อริอย่าง Negative Cycles"</p>
+          <p class="text-xs opacity-60 mt-4 text-center">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Next Session Preview</span> <br>
+            <span class="mt-8 text-yellow-300 text-2xl">เมื่อความละโมบ (Greedy) พ่ายแพ้</span>
+          </h1>
+          <div class="bg-black/30 backdrop-blur-md rounded-2xl p-10 mb-8 border border-white/10">
+            <p class="text-2xl font-light leading-relaxed">
+              ในช่วงบ่าย เราจะมาดูสถานการณ์ที่ Dijkstra รับมือไม่ได้... <br>
+              <span class="text-red-400 font-bold mt-4 block underline">13.00 - 15.00 น. Shortest Paths II</span>
+              <span class="text-white/80 text-lg mt-2 block">Bellman-Ford, Floyd-Warshall และการค้นหาเส้นทางในกราฟ "ติดลบ"</span>
+            </p>
+          </div>
+          <p class="text-xs opacity-40">เตรียมโจทย์ CSES: Shortest Routes II ไว้รอกันได้เลยครับ</p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0803.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Practice: Pathfinding Problems</span> <br>
+            <span class="mt-8 text-yellow-300">เซสชันฝึกซ้อม: โจทย์การหาเส้นทางสั้นที่สุด</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 08 Evening: ลงมือแก้โจทย์จาก CSES Graph Section ด้วย Dijkstra, Bellman-Ford และ Floyd-Warshall
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">เป้าหมายของเซสชันนี้</h2>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span>ฝึกการ Implement <b>Dijkstra</b> ให้แม่นยำและรวดเร็ว</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span>จัดการปัญหา <b>All-pairs shortest paths</b> ด้วย Floyd-Warshall</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span>ตรวจจับและจัดการกับ <b>Negative Cycles</b> ด้วย Bellman-Ford</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งฝึกฝน: https://cses.fi/problemset/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Shortest Routes I</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">การประยุกต์ใช้ Dijkstra พื้นฐาน</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-bold text-blue-300 underline">โจทย์ (Task 1671):</p>
+            <p class="text-sm leading-relaxed mb-4">
+              มีเมือง ( n ) เมือง และเส้นทางบิน ( m ) เส้นทาง จงหาระยะทางที่สั้นที่สุดจากเมืองที่ 1 ไปยังทุกเมือง
+            </p>
+            <h3 class="font-bold text-yellow-200 mb-2">Key Strategy:</h3>
+            <ul class="list-disc ml-6 text-xs space-y-2">
+              <li>ใช้ <b>Priority Queue</b> ร่วมกับ Adjacency List</li>
+              <li><b>ระวัง:</b> ระยะทางรวมอาจมีค่าสูงมาก ต้องใช้ <b>long long</b> เก็บค่าระยะทาง</li>
+              <li>ใช้โครงสร้าง ( (distance, node) ) ใน PQ และใช้ค่าติดลบหรือ `greater` เพื่อทำ Min-Heap</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Dijkstra Checklist</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">ตรวจสอบโค้ดก่อนส่ง</span>
+          </h1>
+          <div class="grid grid-cols-2 gap-4 text-left text-sm mb-8">
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold mb-2">1. Priority Queue</h4>
+              <p class="opacity-80 text-xs">ประกาศเป็น `priority_queue<pair<ll, int>>` และใส่ข้อมูลแบบ `pq.push({-d, u})` หรือใช้ `greater` สม่ำเสมอ</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold mb-2">2. Processing Check</h4>
+              <p class="opacity-80 text-xs">ใส่เงื่อนไข `if (d > dist[u]) continue;` เพื่อป้องกันการประมวลผลซ้ำในโหนดที่ระยะทางแย่กว่า</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold mb-2">3. Initial Distances</h4>
+              <p class="opacity-80 text-xs">ตั้งค่าเริ่มต้นเป็น 0 สำหรับจุดเริ่ม และ ( \infty ) (ประมาณ 1e18) สำหรับโหนดอื่น</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold mb-2">4. Graph Memory</h4>
+              <p class="opacity-80 text-xs">ใช้ `vector<pair<int, int>> adj[N]` เพื่อเก็บเส้นเชื่อมที่มีน้ำหนักอย่างประหยัดพื้นที่</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Shortest Routes II</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">All-pairs Shortest Paths</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-bold text-blue-300 underline">โจทย์ (Task 1672):</p>
+            <p class="text-sm leading-relaxed mb-4">
+              มีคำถาม ( q ) ข้อ แต่ละข้อถามระยะทางที่สั้นที่สุดระหว่างเมือง ( a ) และ ( b ) 
+              โดย ( n \le 500 ) และ ( q \le 10^5 )
+            </p>
+            <h3 class="font-bold text-yellow-200 mb-2">Key Strategy:</h3>
+            <ul class="list-disc ml-6 text-xs space-y-2">
+              <li>เนื่องจาก ( n ) มีขนาดเล็กพอ แต่อยากรู้ระหว่างทุกคู่โหนด: ใช้ <b>Floyd-Warshall</b></li>
+              <li>ความซับซ้อน ( O(n^3) ) ซึ่งประมาณ ( 500^3 = 125,000,000 ) การดำเนินการ (ทันใน 1 วินาที)</li>
+              <li>เตรียม Adjacency Matrix และรัน 3 Nested Loops โดยให้ ( k ) (โหนดตัวกลาง) เป็นลูปนอกสุด</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Floyd-Warshall Tips</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">ข้อควรระวังสำหรับโจทย์ All-pairs</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left border-l-4 border-yellow-300">
+            <ul class="space-y-4 text-sm leading-relaxed">
+              <li>• <b>Multiple Edges:</b> ระหว่างสองเมืองอาจมีถนนมากกว่าหนึ่งเส้น ตอนรับ Input ต้องเก็บเฉพาะเส้นที่สั้นที่สุดไว้ใน Matrix</li>
+              <li>• <b>Initial State:</b> ตั้งค่า ( dist[i][i] = 0 ) และ ( dist[i][j] = \infty ) หากไม่มีเส้นเชื่อมตรง</li>
+              <li>• <b>Infinity Check:</b> เมื่อตอบคำถาม หาก ( dist[a][b] ) ยังเป็น ( \infty ) ให้แสดงผล -1</li>
+              <li>• <b>Complexity:</b> อัลกอริทึมนี้จะช้าเกินไปทันทีถ้า ( n > 500 )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>High Score</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">Longest Path & Negative Cycles</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-bold text-blue-300 underline">โจทย์ (Task 1673):</p>
+            <p class="text-sm leading-relaxed">
+              ต้องการหาทางที่ได้ "คะแนนรวมสูงสุด" จากโหนด 1 ไป ( n ) โดยกราฟมีน้ำหนักได้ทั้งบวกและลบ
+            </p>
+            <div class="bg-red-500/20 p-4 rounded-xl mt-4 border border-red-500/30 text-xs">
+              <span class="font-bold">Challenge:</span> การหาคะแนนสูงสุด คือการหาเส้นทางที่ "ติดลบน้อยที่สุด" หากกลับค่าน้ำหนักเป็น ( -w ) จะเปลี่ยนเป็นปัญหาหา Shortest Path ในกราฟที่มีน้ำหนักติดลบได้ ซึ่งต้องใช้ <b>Bellman-Ford</b>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Handling -Infinity</span> <br>
+            <span class="mt-8 text-red-300 text-3xl">เมื่อคะแนนสามารถเพิ่มได้ไม่จำกัด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="mb-4 text-sm font-bold underline">ขั้นตอนการตรวจสอบ:</p>
+            <ol class="list-decimal ml-6 text-sm space-y-3">
+              <li>โจทย์ถามคะแนนสูงสุด ( ( \infty ) ) หากพบวงรอบที่เพิ่มคะแนนได้เรื่อยๆ (Positive Cycle ในโจทย์เดิม หรือ Negative Cycle หลังกลับค่า)</li>
+              <li><b>แต่ระวัง:</b> วงรอบนั้นต้องอยู่บน <b>เส้นทาง</b> จาก 1 ไป ( n ) เท่านั้น</li>
+              <li>วิธีเช็ค: โหนด ( u ) ที่อยู่ในวงรอบต้องสามารถไปถึง ( n ) ได้ และ ( 1 ) ต้องสามารถไปถึง ( u ) ได้ (ใช้ DFS/BFS ตรวจสอบ Reachability)</li>
+            </ol>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Cycle Finding</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">การตรวจจับวงรอบติดลบและการสร้างใหม่</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-bold text-blue-300 underline">โจทย์ (Task 1197):</p>
+            <p class="text-sm leading-relaxed mb-4">จงหาว่ามี Negative Cycle ในกราฟหรือไม่ หากมี ให้แสดงผลโหนดที่อยู่ในวงรอบนั้น</p>
+            <h3 class="font-bold text-yellow-200 mb-2">Key Strategy:</h3>
+            <ul class="list-disc ml-6 text-xs space-y-2">
+              <li>รัน Bellman-Ford จำนวน ( n ) รอบ</li>
+              <li>หากในรอบที่ ( n ) ยังมีการ Relax สำเร็จ แสดงว่าพบวงรอบติดลบ</li>
+              <li>ใช้โหนดก่อนหน้า (Parent) ที่เก็บไว้ตอน Relax เพื่อย้อนรอยหาโหนดทั้งหมดในวงรอบ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Optimization for Limits</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">เทคนิคเพื่อความเร็ว</span>
+          </h1>
+          <div class="bg-black/30 backdrop-blur-md rounded-2xl p-6 mb-8 text-left grid grid-cols-2 gap-4 text-sm border border-white/10">
+            <div>
+              <h4 class="font-bold text-green-300 mb-2">1. Fast I/O</h4>
+              <p>ใช้ `ios::sync_with_stdio(0); cin.tie(0);` เสมอเพราะ Input กราฟมักมีขนาดใหญ่</p>
+            </div>
+            <div>
+              <h4 class="font-bold text-green-300 mb-2">2. Array vs Vector</h4>
+              <p>จองอาร์เรย์ขนาดใหญ่แบบ Global ดีกว่าประกาศ Vector ในฟังก์ชัน</p>
+            </div>
+            <div>
+              <h4 class="font-bold text-green-300 mb-2">3. INF Constant</h4>
+              <p>ใช้ค่าที่ใหญ่พอ เช่น `1e18` ( (10^{18}) ) สำหรับ `long long` เพื่อป้องกันระยะทางหลอก</p>
+            </div>
+            <div>
+              <h4 class="font-bold text-green-300 mb-2">4. Self-loops</h4>
+              <p>ระวังเมืองที่มีถนนเชื่อมหาตัวเองและมีน้ำหนักติดลบ (Self-negative-cycle)</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Go Solve!</span> <br>
+            <span class="mt-8 text-green-400">เริ่มการฝึกซ้อม</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-10 mb-8 text-2xl font-light italic leading-relaxed">
+            "เครื่องมือพร้อม ทฤษฎีแน่น ถึงเวลาพิสูจน์ฝีมือในระบบ CSES"
+          </div>
+          <div class="text-left max-w-lg mx-auto mb-8">
+            <p class="font-bold underline mb-2">ลำดับแนะนำ:</p>
+            <ul class="list-decimal ml-6 space-y-2">
+              <li>Shortest Routes I (Dijkstra)</li>
+              <li>Shortest Routes II (Floyd-Warshall)</li>
+              <li>High Score (Bellman-Ford)</li>
+              <li>Cycle Finding (Cycle reconstruction)</li>
+            </ul>
+          </div>
+          <p class="text-2xl font-bold text-yellow-300 animate-bounce">"Happy Coding!"</p>
+          <p class="text-xs opacity-40 mt-8">URL: https://cses.fi/problemset/list/</p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0502.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Standard DP Problems</span> <br>
+            <span class="mt-8 text-yellow-300">เจาะลึกโจทย์มาตรฐาน: Coin, Knapsack & LIS</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 05 Afternoon: จากทฤษฎีพื้นฐานสู่การประยุกต์ใช้ในระดับแข่งขัน 
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อหลักในช่วงบ่าย</h2>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-blue-500/20 p-4 rounded-xl border border-blue-400">
+                <p class="font-bold">Coin Change</p>
+                <p class="text-xs opacity-80">การทอนเหรียญและจำนวนวิธี </p>
+              </div>
+              <div class="bg-green-500/20 p-4 rounded-xl border border-green-400">
+                <p class="font-bold">Knapsack</p>
+                <p class="text-xs opacity-80">การเลือกสิ่งของภายใต้ข้อจำกัด </p>
+              </div>
+              <div class="bg-red-500/20 p-4 rounded-xl border border-red-400">
+                <p class="font-bold">LIS</p>
+                <p class="text-xs opacity-80">ลำดับย่อยที่ยาวที่สุด </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Why these problems matter? -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">ทำไมต้องเรียนโจทย์เหล่านี้?</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+            <p class="text-lg">• **เป็นรากฐานของโจทย์ซับซ้อน**: โจทย์ในการแข่งขันส่วนใหญ่คือการดัดแปลงจากโจทย์มาตรฐานเหล่านี้ </p>
+            <p class="text-lg">• **ครอบคลุมมิติของสถานะ (States)**: มีทั้งแบบ 1 มิติ (Coin) และ 2 มิติ (Knapsack) </p>
+            <p class="text-lg">• **แสดงจุดอ่อนของ Greedy**: โจทย์เหล่านี้พิสูจน์ว่าทำไมการเลือกแบบเฉพาะหน้าถึงไม่ได้คำตอบที่ดีที่สุดเสมอไป </p>
+            <p class="text-lg">• **เทคนิคการประหยัดพื้นที่**: เรียนรู้วิธีลดหน่วยความจำจาก \(O(N)\) เหลือ \(O(1)\) หรือจาก \(O(N^2)\) เหลือ \(O(N)\) </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Coin Change - Minimizing Coins -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">ปัญหาการทอนเหรียญ (Minimizing Coins)</h1>
+          <div class="bg-black/30 p-6 rounded-2xl text-left border-l-4 border-blue-400">
+            <h3 class="text-xl font-bold mb-2">โจทย์:</h3>
+            <p class="opacity-90">มีชุดเหรียญ \(coins = \{c_1, c_2, ..., c_k\}\) ต้องการรวมให้ได้มูลค่า \(n\) โดยใช้จำนวนเหรียญ **น้อยที่สุด** </p>
+          </div>
+          <div class="mt-8 grid grid-cols-2 gap-4 text-left">
+            <div class="bg-white/5 p-4 rounded-lg">
+              <p class="text-yellow-300 font-bold mb-2">Greedy Approach (Fail Case):</p>
+              <p class="text-sm">Coins: {1, 3, 4}, Target: 6</p>
+              <p class="text-sm text-red-300">• Greedy: 4 + 1 + 1 (3 เหรียญ)</p>
+              <p class="text-sm text-green-300">• Optimal: 3 + 3 (2 เหรียญ) </p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-lg">
+              <p class="text-green-300 font-bold mb-2">DP Approach:</p>
+              <p class="text-sm">ตรวจสอบทุกทางเลือกที่เป็นไปได้ และจดจำคำตอบที่ดีที่สุดของแต่ละมูลค่าไว้ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Coin Problem - Recurrence Relation -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">สูตรความสัมพันธ์เวียนเกิด (Recurrence)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-10 shadow-2xl">
+            <p class="text-2xl font-mono mb-8">\(solve(x) = \min_{c \in coins}(solve(x-c) + 1)\) </p>
+            <div class="text-left space-y-4 text-sm opacity-90 leading-relaxed">
+              <p>• **\(solve(x)\)**: จำนวนเหรียญที่น้อยที่สุดที่รวมกันได้ \(x\)</p>
+              <p>• **Base Case**: \(solve(0) = 0\) (มูลค่า 0 ใช้ 0 เหรียญ) </p>
+              <p>• **Infinite Case**: \(solve(x < 0) = \infty\) (มูลค่าติดลบเป็นไปไม่ได้) </p>
+              <p>• **Transitions**: ในแต่ละสถานะ เราลองหยิบเหรียญที่มีทุกลูก และไปเรียกปัญหาย่อยที่เหลือ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Coin Problem - Recursive Code (Naive) -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 text-red-300">Naive Recursion (Exponential Time)</h1>
+          <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-xs border border-red-500/50">
+            <p class="text-gray-500">// ไม่มีการจดจำค่า ทำให้เกิดการคำนวณซ้ำมหาศาล </p>
+            <p>int solve(int x) {</p>
+            <p class="pl-4">if (x &lt; 0) return INF;</p>
+            <p class="pl-4">if (x == 0) return 0;</p>
+            <p class="pl-4">int best = INF;</p>
+            <p class="pl-4">for (auto c : coins) {</p>
+            <p class="pl-8 text-yellow-300">best = min(best, solve(x-c) + 1);</p>
+            <p class="pl-4">}</p>
+            <p class="pl-4">return best;</p>
+            <p>}</p>
+          </div>
+          <div class="mt-6 p-4 bg-red-500/10 rounded-lg border border-red-500/30">
+            <p class="text-xs">⚠️ สำหรับ \(x\)ขนาดใหญ่ ฟังก์ชันนี้จะค้างเพราะความซับซ้อนระดับ \(O(k^n)\) </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Coin Problem - Bottom-Up Implementation -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 text-green-300">Bottom-Up DP (Linear Time)</h1>
+          <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-sm border border-green-500/50">
+            <p>value = 0;</p>
+            <p>for (int x = 1; x &lt;= n; x++) {</p>
+            <p class="pl-4">value[x] = INF;</p>
+            <p class="pl-4">for (auto c : coins) {</p>
+            <p class="pl-8 text-yellow-300">if (x-c >= 0) {</p>
+            <p class="pl-12">value[x] = min(value[x], value[x-c]+1);</p>
+            <p class="pl-8">}</p>
+            <p class="pl-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="mt-6 text-lg opacity-80">Complexity: <span class="font-bold text-yellow-300">\(O(n \cdot k)\)</span> </p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Coin Problem - Constructing a Solution -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การหาลำดับเหรียญที่ทอน (Backtracking)</h1>
+          <p class="mb-4">ใช้ตาราง <code class="bg-black px-1 font-mono">first[x]</code> เพื่อจำว่าเหรียญใดถูกเลือกเป็นตัวแรกที่ทำให้ได้ค่าเหมาะสมที่สุด </p>
+          <div class="grid grid-cols-2 gap-6 items-center">
+            <div class="bg-black/40 p-4 rounded-xl text-left font-mono text-xs">
+              <p class="text-blue-400">// ขณะเติมตาราง DP</p>
+              <p>if (value[x-c]+1 &lt; value[x]) {</p>
+              <p class="pl-4">value[x] = value[x-c]+1;</p>
+              <p class="pl-4 text-yellow-300">first[x] = c;</p>
+              <p>}</p>
+            </div>
+            <div class="bg-black/40 p-4 rounded-xl text-left font-mono text-xs">
+              <p class="text-green-400">// การดึงคำตอบกลับ</p>
+              <p>while (n > 0) {</p>
+              <p class="pl-4">cout &lt;&lt; first[n] &lt;&lt; " ";</p>
+              <p class="pl-4 text-yellow-300">n -= first[n];</p>
+              <p>}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Coin Problem Variation - Counting Ways -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การนับจำนวนวิธีทอนเหรียญ</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl text-left space-y-6">
+            <p class="text-xl">โจทย์ถาม: มีวิธีรวมเงินให้ได้ \(x\) ทั้งหมด **กี่วิธี?** </p>
+            <div class="p-4 bg-yellow-400/20 border-l-4 border-yellow-400 font-mono text-xl text-center">
+              \(solve(x) = \sum_{c \in coins} solve(x-c)\) 
+            </div>
+            <p class="text-lg leading-relaxed">
+            เปลี่ยนจากการหาค่าต่ำสุด (\(\min\) เป็นการรวมผลลัพธ์ (\(\sum\)) จากสถานะย่อยทั้งหมด 
+            <br><span class="text-sm opacity-70">**หมายเหตุ**: ระวังปัญหาเรื่องลำดับ (Order) หากต้องการนับ Combinations แทนที่จะเป็น Permutations</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Modulo Arithmetic in Counting -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">การใช้ Modulo เพื่อป้องกันค่าล้น</h1>
+          <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4">
+            <p class="text-lg leading-relaxed">
+            ในโจทย์การนับ (Counting) จำนวนวิธีมักจะมีค่ามหาศาลเกินกว่าจะเก็บใน <code class="font-mono">long long</code> ได้ โจทย์จึงมักให้ตอบแบบ **Modulo \(10^9+7\)** 
+            </p>
+            <div class="bg-slate-900 p-6 rounded font-mono text-sm border border-white/10">
+              <p>count[x] += count[x-c];</p>
+              <p class="text-yellow-300">count[x] %= 1000000007;</p>
+            </div>
+            <p class="text-sm opacity-80 italic">"จงจำไว้ว่าต้องทำ Modulo ในทุกขั้นตอนการบวกเพื่อความถูกต้อง" </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Introduction to Knapsack Problem -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight">Knapsack Problems</h1>
+          <p class="text-2xl text-yellow-300 mb-8 italic">"การบรรจุของลงย่ามเพื่อให้ได้มูลค่าสูงสุด"</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+            <p class="text-lg font-bold">• 0/1 Knapsack: ของแต่ละชิ้นเลือกได้เพียงครั้งเดียว (หยิบหรือไม่หยิบ) </p>
+            <p class="text-lg">• **Unbounded Knapsack**: ของแต่ละชิ้นเลือกกี่ครั้งก็ได้ </p>
+            <p class="text-lg">• **Bounded Knapsack**: มีจำนวนจำกัดสำหรับของแต่ละชนิด</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: 0/1 Knapsack - State and Recurrence -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">0/1 Knapsack: การนิยามสถานะ</h1>
+          <div class="bg-black/20 p-8 rounded-3xl border-2 border-white/10 text-left">
+            <p class="text-xl mb-4 text-green-300 font-bold">\(K(c, i)\) = มูลค่าสูงสุดเมื่อใช้ความจุ \(c\) และพิจารณาของ \(i\) ชิ้นแรก </p>
+            <p class="mb-4 font-bold">ความสัมพันธ์เวียนเกิด:</p>
+            <div class="font-mono text-lg bg-slate-900 p-4 rounded border-l-4 border-yellow-400">
+              \(K(c, i) = \max(\)
+              <br>&nbsp;&nbsp;\(K(c, i-1),\) <span class="text-gray-500">// ไม่เลือกของชิ้นที่ i</span>
+              <br>&nbsp;&nbsp;\(K(c-w_i, i-1) + v_i\) <span class="text-gray-500">// เลือกชิ้นที่ i (ถ้าจุพอ)</span>
+              <br>\))\) 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: 0/1 Knapsack - Visualizing the DP Table -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">การสร้างตาราง DP (2D Table)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-sm text-left">
+            <p class="mb-4 leading-relaxed">สำหรับการเติมตาราง \(best[n+1][C+1]\) เรามักวนลูปตามจำนวนชิ้นงาน (ของ) ในแถวนอก และวนลูปตามความจุ (Weight) ในแถวใน </p>
+            <table class="w-full text-center border-collapse border border-white/30 mb-4">
+              <thead>
+                <tr class="bg-white/20">
+                  <th class="p-2 border border-white/30">i \ C</th>
+                  <th class="p-2 border border-white/30">0</th>
+                  <th class="p-2 border border-white/30">1</th>
+                  <th class="p-2 border border-white/30">2</th>
+                  <th class="p-2 border border-white/30">...</th>
+                  <th class="p-2 border border-white/30">W</th>
+                </tr>
+              </thead>
+              <tbody class="opacity-80">
+                <tr>
+                  <td class="p-2 border border-white/30 bg-white/10">ชิ้นที่ 0</td>
+                  <td class="p-2 border border-white/30">0</td>
+                  <td class="p-2 border border-white/30">0</td>
+                  <td class="p-2 border border-white/30">0</td>
+                  <td class="p-2 border border-white/30">0</td>
+                  <td class="p-2 border border-white/30">0</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border border-white/30 bg-white/10">ชิ้นที่ 1</td>
+                  <td class="p-2 border border-white/30">0</td>
+                  <td colspan="4" class="p-2 border border-white/30 text-yellow-300">คำนวณตามสูตร max(skip, pick)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="text-xs opacity-60 text-center">* แถวแรกเป็น 0 เสมอ เพราะไม่มีของให้เลือก </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: 0/1 Knapsack - Code Walkthrough -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">0/1 Knapsack Implementation (C++)</h1>
+          <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-sm leading-relaxed">
+            <p>for (int i = 1; i &lt;= n; i++) {</p>
+            <p class="pl-4">for (int j = 0; j &lt;= W; j++) {</p>
+            <p class="pl-8">dp[i][j] = dp[i-1][j]; <span class="text-gray-500">// ไม่เลือก</span></p>
+            <p class="pl-8 text-yellow-300">if (j >= weight[i]) {</p>
+            <p class="pl-12">dp[i][j] = max(dp[i][j], dp[i-1][j-weight[i]] + value[i]);</p>
+            <p class="pl-8">}</p>
+            <p class="pl-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="mt-4 text-lg">Complexity: <span class="text-yellow-300 font-bold">\(O(n \cdot W)\)</span> ทั้งเวลาและพื้นที่ </p>
+        </div>
+      </div>
+
+      <!-- Slide 14: Knapsack - Space Optimization (1D Array) -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การประหยัดพื้นที่ (Space Optimization)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4 shadow-xl">
+            <p class="text-xl text-yellow-300 font-medium italic">"เราใช้ข้อมูลจากแถวก่อนหน้า (\(i-1\)) เท่านั้น"</p>
+            <p class="text-lg leading-relaxed">
+            เราสามารถลดการใช้พื้นที่จาก \(O(n \cdot W)\) เหลือเพียง **\(O(W)\)** ได้โดยใช้อาเรย์ 1 มิติ 
+            </p>
+            <div class="bg-red-500/20 p-4 border-l-4 border-red-500 rounded text-sm">
+              <p class="font-bold">⚠️ ข้อสำคัญ:</p>
+              <p>ในการวนลูปความจุ (\(j\)) ต้องวนจาก **ขวาไปซ้าย (W ลดลงไป 0)** เพื่อป้องกันไม่ให้เราใช้ของชิ้นเดิมซ้ำในแถวเดียวกัน </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Knapsack - Space Optimized Code -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 text-green-300">Knapsack Space-Optimized Code</h1>
+          <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-sm leading-relaxed border border-green-500/30">
+            <p>int dp[W + 1] = {0};</p>
+            <p>for (int i = 1; i &lt;= n; i++) {</p>
+            <p class="pl-4 text-red-400">for (int j = W; j >= weight[i]; j--) {</p>
+            <p class="pl-8 text-yellow-300">dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);</p>
+            <p class="pl-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="mt-6 italic opacity-80 leading-relaxed">
+          การวนลูปจากขวาไปซ้ายช่วยให้สถานะ <code class="font-mono">dp[j - weight[i]]</code> ยังเป็นค่าจาก "แถวก่อนหน้า" จริงๆ ไม่ใช่ค่าที่ถูกปรับปรุงใหม่ในแถวเดียวกัน 
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 16: Subset Sum Problem -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">ปัญหาผลรวมย่อย (Subset Sum)</h1>
+          <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-t-4 border-yellow-300">
+            <p class="text-lg">โจทย์: กำหนดน้ำหนัก \([w_1, w_2, ..., w_n]\) สามารถรวมเป็นค่า \(x\) ได้หรือไม่? </p>
+            <p class="text-sm opacity-90 leading-relaxed italic bg-white/5 p-4 rounded">
+            เป็น Knapsack รูปแบบหนึ่งที่ Value มีค่าเป็น 0 หรือบูลีน (True/False) 
+            </p>
+            <p class="font-bold underline text-yellow-200 text-center mt-4 italic">
+            "Possible(x, k) = Possible(x - w_k, k-1) OR Possible(x, k-1)" 
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Subset Sum - Example Walkthrough -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">ตัวอย่าง Subset Sum</h1>
+          <p class="mb-4">Weights: [29-31], Target: 7 </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden p-4">
+            <p class="text-left text-sm mb-2 opacity-80 italic">ลำดับการสร้าง:</p>
+            <div class="grid grid-cols-2 gap-4 text-xs">
+              <div class="p-2 border border-white/20">หยิบ 1: {0, 1}</div>
+              <div class="p-2 border border-white/20">หยิบ 3: {0, 1, 3, 4}</div>
+              <div class="p-2 border border-white/20 text-yellow-300">หยิบ 3 ต่อ: {0, 1, 3, 4, 6, 7}</div>
+              <div class="p-2 border border-white/20 text-green-300 font-bold">7 เป็นไปได้! (1+3+3)</div>
+            </div>
+            <p class="mt-4 text-sm font-bold opacity-90">เทคนิค: ใช้ <code class="font-mono">std::bitset</code> ใน C++ เพื่อให้การทำ Subset Sum เร็วขึ้นมหาศาล (\(O(NW/64)\)) </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Path Reconstruction in Knapsack -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">การเลือกสิ่งของกลับ (Knapsack Reconstruction)</h1>
+          <div class="bg-black/30 p-8 rounded-2xl text-left border-l-8 border-green-500">
+            <p class="text-lg mb-6 leading-relaxed">
+            เริ่มจากคำตอบที่ได้ใน <code class="bg-gray-800 px-1 font-mono">dp[n][W]</code> แล้วตรวจสอบถอยหลังว่าในโหนดแม่นั้นๆ เรา "หยิบ" หรือ "ไม่หยิบ" ของชิ้นนั้น 
+            </p>
+            <p class="text-sm font-bold text-yellow-300 mb-2 underline">เงื่อนไขตรวจสอบ:</p>
+            <div class="p-4 bg-slate-900 rounded font-mono text-xs">
+              if (dp[i][cap] == dp[i-1][cap - weight[i]] + value[i]) {
+              <br>&nbsp;&nbsp;picked.add(i);
+              <br>&nbsp;&nbsp;cap -= weight[i];
+              <br>}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Longest Increasing Subsequence (LIS) -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight">Longest Increasing Subsequence (LIS)</h1>
+          <div class="text-2xl text-yellow-300 mb-8 italic italic italic italic">
+            "ลำดับย่อยที่ยาวที่สุดซึ่งสมาชิกเรียงจากน้อยไปมาก"
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+            <p class="text-lg leading-relaxed italic bg-black/20 p-4 rounded border-l-4 border-red-400 font-bold underline italic">
+            อาเรย์: [29-31, 35-39]
+            <br>LIS: [31, 36, 37, 39] (ความยาว 4) 
+            </p>
+            <p class="text-lg italic text-white/70 italic italic">
+            * หมายเหตุ: ลำดับย่อย (Subsequence) ไม่จำเป็นต้องอยู่ติดกันในอาเรย์ตั้งต้น 
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: LIS - Defining the State -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">LIS: การนิยามสถานะ DP</h1>
+          <div class="bg-black/20 p-10 rounded-3xl border-2 border-dashed border-white/20 text-left">
+            <p class="text-xl mb-6 font-bold text-yellow-300 underline">\(length(k)\) = ความยาว LIS ที่ **จบลงที่ตำแหน่ง \(k\)** </p>
+            <p class="text-lg leading-relaxed underline font-bold italic italic underline italic underline italic italic">
+            Recurrence:
+            <br>1 + max( { length(i) | i &lt; k และ A[i] &lt; A[k] } ∪ {0} ) 
+            </p>
+            <p class="mt-6 text-sm opacity-80 leading-relaxed italic italic">
+            "เพื่อคำนวณ \(length(k)\) เราย้อนกลับไปมองตำแหน่ง \(i\) ก่อนหน้าทั้งหมดที่ตัวเลขน้อยกว่าตำแหน่งปัจจุบัน แล้วเลือกตัวที่ให้ LIS ยาวที่สุดมาบวกเพิ่ม 1" 
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: LIS - O(N^2) Implementation -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">LIS Implementation (O(N^2))</h1>
+          <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-sm border border-red-500/30">
+            <p>for (int k = 0; k &lt; n; k++) {</p>
+            <p class="pl-4">length[k] = 1; <span class="text-gray-500">// ค่าตั้งต้น</span></p>
+            <p class="pl-4">for (int i = 0; i &lt; k; i++) {</p>
+            <p class="pl-8 text-yellow-300">if (array[i] &lt; array[k]) {</p>
+            <p class="pl-12">length[k] = max(length[k], length[i] + 1);</p>
+            <p class="pl-8">}</p>
+            <p class="pl-4">}</p>
+            <p>}</p>
+          </div>
+          <p class="mt-6 text-lg italic italic italic italic">คำตอบสุดท้ายคือค่าสูงสุดในอาเรย์ <code class="font-mono">length</code> </p>
+        </div>
+      </div>
+
+      <!-- Slide 22: LIS - Path Reconstruction -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline italic underline italic underline italic underline italic">การหาลำดับสมาชิกของ LIS</h1>
+          <div class="grid grid-cols-2 gap-8 items-center mt-6">
+            <div class="bg-black/20 p-6 rounded-xl text-left">
+              <p class="font-bold text-yellow-300 mb-4 underline">ขั้นตอน:</p>
+              <ol class="list-decimal pl-6 space-y-3 text-sm italic">
+                <li>เก็บ <code class="font-mono">parent[k] = i</code> เมื่อมีการเลือกค่าที่เหมาะสมที่สุด</li>
+                <li>หาตำแหน่งที่มีค่า <code class="font-mono">length</code> มากที่สุด</li>
+                <li>ย้อนกลับตาม <code class="font-mono">parent</code> เพื่อดึงลำดับออกมา</li>
+                <li>**Reverse** ผลลัพธ์ที่ได้เพื่อให้เรียงจากน้อยไปมาก</li>
+              </ol>
+            </div>
+            <div class="p-8 border-2 border-white/10 rounded-2xl bg-white/5 italic italic italic underline italic">
+              <p class="italic opacity-80 leading-relaxed italic italic">"การจดจำทางเลือกช่วยให้เราขยายโจทย์จากการหาความยาว ไปสู่การหาผลลัพธ์ที่เป็นรูปธรรมได้" </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: From O(N^2) to O(N log N) -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic">ยกระดับประสิทธิภาพ: O(N log N)</h1>
+          <div class="bg-blue-900/40 p-8 rounded-2xl border border-blue-400 text-left space-y-4">
+            <p class="text-lg font-bold">ทำไม O(N^2) ถึงไม่พอ?</p>
+            <p class="text-sm opacity-80 leading-relaxed italic italic">
+            สำหรับการแข่งขันโอลิมปิกที่ \(N = 10^5\) อัลกอริทึม \(O(N^2)\) จะได้ TLE (Time Limit Exceeded) ทันที 
+            </p>
+            <p class="text-lg font-bold text-yellow-300 mt-6 underline italic">แนวคิด O(N log N):</p>
+            <p class="text-sm opacity-90 leading-relaxed italic italic">
+            ใช้อาเรย์เสริมเพื่อเก็บ "ค่าตัวเลขที่น้อยที่สุดที่เป็นไปได้สำหรับการสร้าง LIS ความยาว \(L\)" ร่วมกับการใช้ **Binary Search** เพื่อหาตำแหน่งแทรกที่เหมาะสม 
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Standard Problems Summary Table -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-8 italic underline italic underline italic underline italic underline italic underline italic underline italic underline">สรุปความซับซ้อนของโจทย์มาตรฐาน</h1>
+          <div class="overflow-hidden rounded-xl border border-white/20">
+            <table class="w-full text-sm text-left italic italic italic italic italic">
+              <thead class="bg-white/20">
+                <tr>
+                  <th class="p-4 border-b border-white/20 italic italic italic italic italic">Problem</th>
+                  <th class="p-4 border-b border-white/20 italic italic italic italic italic italic italic">Time Complexity</th>
+                  <th class="p-4 border-b border-white/20 italic italic italic italic italic italic italic">Space Complexity</th>
+                </tr>
+              </thead>
+              <tbody class="opacity-90">
+                <tr>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic font-bold">Coin Change</td>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic italic">\(O(n \cdot k)\)</td>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic italic">\(O(n)\)</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic font-bold">Knapsack (0/1)</td>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic italic">\(O(n \cdot W)\)</td>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic italic italic italic">\(O(W)\) (Optimized)</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic font-bold">LIS</td>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic italic">\(O(n \log n)\)</td>
+                  <td class="p-4 border-b border-white/10 italic italic italic italic italic italic italic italic">\(O(n)\)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: DP Common Patterns -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic italic italic">รูปแบบที่พบบ่อย (DP Patterns)</h1>
+          <div class="grid grid-cols-2 gap-4 text-left italic italic italic italic italic italic">
+            <div class="bg-white/10 p-6 rounded-xl border-l-4 border-yellow-400">
+              <h4 class="font-bold mb-2 underline italic">Prefix/Subsequence DP</h4>
+              <p class="text-xs opacity-70 italic italic italic italic italic italic italic italic">ใช้พิจารณาข้อมูลตั้งแต่ต้นจนถึงตำแหน่งปัจจุบัน (เช่น LIS)</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border-l-4 border-green-400">
+              <h4 class="font-bold mb-2 underline italic">Resource/Capacity DP</h4>
+              <p class="text-xs opacity-70 italic italic italic italic italic italic italic italic">ใช้พิจารณาทรัพยากรที่มีจำกัด (เช่น Knapsack, Coin)</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border-l-4 border-blue-400">
+              <h4 class="font-bold mb-2 underline italic italic italic">Interval DP</h4>
+              <p class="text-xs opacity-70 italic italic italic italic italic italic italic italic">พิจารณาส่วนย่อยในช่วง [L, R] ใดๆ</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border-l-4 border-red-400">
+              <h4 class="font-bold mb-2 underline italic italic italic">Grid/Matrix DP</h4>
+              <p class="text-xs opacity-70 italic italic italic italic italic italic italic italic italic">เคลื่อนที่บนตาราง 2 มิติ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Practice Strategy for DP -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic italic italic italic">กลยุทธ์การฝึกฝนในช่วงถัดไป</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left italic italic italic italic italic italic">
+            <p class="text-xl mb-6 text-yellow-300 italic italic font-bold underline italic italic">"Don't just code, visualize the table!"</p>
+            <ul class="space-y-4 text-lg italic italic italic italic italic italic italic italic italic">
+              <li>1. วาดตาราง DP ลงในกระดาษสำหรับ Input ขนาดเล็ก </li>
+              <li>2. เขียนฟังก์ชัน Recursion ให้ได้ก่อน แล้วค่อยเปลี่ยนเป็น DP </li>
+              <li>3. ฝึกแก้โจทย์มาตรฐานให้คล่องก่อนขยับไปโจทย์ดัดแปลง</li>
+              <li>4. อ่าน Editorial ของโจทย์ที่ทำไม่ได้หลังจากพยายามไปแล้ว 30 นาที </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Where to practice? -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic italic italic italic italic italic">แหล่งฝึกฝนโจทย์ที่แนะนำ</h1>
+          <div class="grid grid-cols-2 gap-8 text-left italic italic italic italic italic italic italic italic">
+            <div class="p-6 bg-white/5 border border-blue-400 rounded-2xl italic italic italic italic italic italic">
+              <h3 class="text-xl font-bold text-blue-300 underline italic italic italic">AtCoder Educational DP</h3>
+              <p class="text-sm opacity-80 mt-2 italic italic italic italic italic italic italic italic">ชุดโจทย์มาตรฐาน 26 ข้อ (A-Z) ที่ครอบคลุมทุกเทคนิคพื้นฐานจนถึงขั้นสูง </p>
+            </div>
+            <div class="p-6 bg-white/5 border border-green-400 rounded-2xl italic italic italic italic italic italic">
+              <h3 class="text-xl font-bold text-green-300 underline italic italic italic italic italic">CSES Problem Set</h3>
+              <p class="text-sm opacity-80 mt-2 italic italic italic italic italic italic italic italic italic italic">ส่วนของ Dynamic Programming ที่เน้นโจทย์คลาสสิกที่ทุกโอลิมปิกควรรู้ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Common Misconception: Greedy vs DP -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 text-yellow-300 italic italic italic italic italic italic italic">ความเข้าใจผิดที่พบบ่อย: Greedy vs DP</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left shadow-2xl italic italic italic italic italic italic italic">
+            <p class="text-lg leading-relaxed italic italic italic italic italic italic italic italic italic italic">
+            "ทำไมเราต้องทำ DP ที่ซับซ้อน ในเมื่อ Greedy ดูง่ายกว่า?"
+            </p>
+            <div class="mt-4 p-4 bg-red-500/10 border border-red-500 rounded text-sm italic italic italic italic italic italic italic italic">
+              **ความจริง**: Greedy เหมาะกับปัญหาที่มีโครงสร้าง "Greedy Choice Property" (การเลือกที่ดีที่สุดตอนนี้ จะเป็นส่วนหนึ่งของคำตอบที่ดีที่สุดในอนาคต) แต่โจทย์ส่วนใหญ่นั้นมีการตัดสินใจที่ **พึ่งพากัน** ซึ่งต้องใช้ DP เท่านั้นถึงจะได้คำตอบที่ถูกต้อง 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Troubleshooting TLE in DP -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 text-red-400 italic italic italic italic italic italic italic italic italic">ทำไม DP ของเรายังได้ TLE?</h1>
+          <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border border-white/10 italic italic italic italic italic italic italic italic">
+            <p class="font-bold underline italic italic italic italic italic italic italic">ตรวจสอบจุดบกพร่องดังนี้:</p>
+            <ul class="list-disc pl-6 space-y-2 text-sm italic italic italic italic italic italic italic italic italic">
+              <li>**สถานะซ้ำซ้อน**: มีพารามิเตอร์ที่คำนวณได้จากตัวอื่นหรือไม่? </li>
+              <li>**จำนวนสถานะมากเกินไป**: ลองเปลี่ยนวิธีนิยามสถานะใหม่</li>
+              <li>**งานต่อสถานะสูงเกินไป**: ลองใช้ Data Structure ช่วย (เช่น Segment Tree ใน LIS) </li>
+              <li>**Overhead ของ Recursion**: เปลี่ยนจาก Top-down เป็น Iterative </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Conclusion & Transition to Practice -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 italic italic italic italic italic italic italic italic italic underline italic">พร้อมสำหรับภาคปฏิบัติแล้ว!</h1>
+          <div class="bg-white/10 p-10 rounded-2xl mb-8 shadow-2xl italic italic italic italic italic italic italic italic italic">
+            <p class="text-2xl mb-4 italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic">"Dynamic Programming is not hard. It just requires practice."</p>
+            <p class="text-lg opacity-80 leading-relaxed italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic">
+            เราได้ครอบคลุมหัวใจสำคัญของ Coin, Knapsack และ LIS แล้ว. เวลาที่เหลือของวันนี้ (15:00 - 17:00) จะเป็นช่วงเวลาให้คุณได้ลงมือแก้โจทย์จริง!
+            </p>
+          </div>
+          <div class="text-yellow-300 font-bold animate-bounce text-2xl italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic">
+            Let's Code! (15:00 - 17:00)
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0501.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+      <!-- Slide 1: Introduction -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+      <span>Dynamic Programming Basics</span> <br>
+      <span class="mt-8 text-yellow-300">Memoization vs Iterative (Smart Recursion)</span>
+    </h1>
+    <div class="text-xl text-white/90 mb-8 font-light">
+      Day 05 Morning: แนวคิดพื้นฐานและการเปรียบเทียบกลยุทธ์การแก้ปัญหา
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">วัตถุประสงค์การเรียนรู้</h2>
+      <div class="grid gap-4 text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+          <span>เข้าใจนิยามของ Dynamic Programming ในฐานะ "Smart Recursion" </span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+          <span>เปรียบเทียบความแตกต่างระหว่าง Memoization (Top-down) และ Iterative (Bottom-up) </span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+          <span>เรียนรู้ขั้นตอนการเปลี่ยนฟังก์ชันเวียนเกิดเป็นตารางคำนวณที่มีประสิทธิภาพ </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 2: What is DP? -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">Dynamic Programming คืออะไร?</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
+      <p class="text-2xl mb-6 text-yellow-200 font-medium">"Dynamic Programming is recursion without repetition"</p>
+      <div class="text-left space-y-4 text-lg">
+        <p>• เป็นเทคนิคที่รวม **ความถูกต้อง** ของ Complete Search เข้ากับ **ประสิทธิภาพ** ของ Greedy Algorithms </p>
+        <p>• ใช้สำหรับแก้ปัญหาที่สามารถแบ่งเป็น **ปัญหาย่อยที่ทับซ้อนกัน (Overlapping Subproblems)** </p>
+        <p>• หัวใจหลักคือการเก็บคำตอบของปัญหาย่อยไว้เพื่อไม่ให้ต้องคำนวณซ้ำ (Reuse) </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Two Key Properties -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">2 คุณสมบัติสำคัญของปัญหาที่ใช้ DP ได้</h1>
+    <div class="grid grid-cols-2 gap-6 mt-8">
+      <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <h3 class="text-xl font-bold text-yellow-300 mb-4 text-left">1. Overlapping Subproblems</h3>
+        <p class="text-left text-sm opacity-90 leading-relaxed">
+          ปัญหาใหญ่ประกอบด้วยปัญหาย่อยชุดเดิมที่ถูกเรียกซ้ำไปมาหลายครั้ง หากวาด Recursion Tree จะพบกิ่งก้านที่คำนวณค่าเดิมซ้ำๆ 
+        </p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <h3 class="text-xl font-bold text-green-300 mb-4 text-left">2. Optimal Substructure</h3>
+        <p class="text-left text-sm opacity-90 leading-relaxed">
+          คำตอบที่เหมาะสมที่สุดของปัญหาใหญ่ สามารถสร้างขึ้นได้จากคำตอบที่เหมาะสมที่สุดของปัญหาย่อย 
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Memoization (Top-down) Concept -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">Memoization: การจดจำค่า (Top-down)</h1>
+    <div class="bg-black/20 p-6 rounded-2xl text-left border-l-4 border-yellow-400">
+      <p class="text-lg mb-4">แนวคิด: เขียน Recursion ตามปกติ แต่เพิ่ม **"สมุดจด" (Table/Array)** ไว้บันทึกผลลัพธ์ </p>
+      <div class="grid gap-3 opacity-90">
+        <div class="flex items-center gap-2">✓ เริ่มจากปัญหาใหญ่ แล้วเรียกปัญหาย่อยลงไปทีละชั้น (Top-down) </div>
+        <div class="flex items-center gap-2">✓ ก่อนจะคำนวณ: เช็คในตารางก่อนว่าเคยทำไปแล้วหรือยัง? </div>
+        <div class="flex items-center gap-2">✓ หลังคำนวณเสร็จ: บันทึกค่าลงตารางทันทีก่อนส่งกลับ </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: Iterative (Bottom-up) Concept -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">Iterative: การวนลูปสร้างผลลัพธ์ (Bottom-up)</h1>
+    <div class="bg-black/20 p-6 rounded-2xl text-left border-l-4 border-green-400">
+      <p class="text-lg mb-4">แนวคิด: เติมตารางคำตอบอย่างจงใจ (Fill Deliberately) เริ่มจากกรณีพื้นฐานที่สุดขึ้นไป </p>
+      <div class="grid gap-3 opacity-90">
+        <div class="flex items-center gap-2">✓ เริ่มจากกรณีที่เล็กที่สุด (Base Cases) แล้วขยายไปปัญหาที่ใหญ่ขึ้น (Bottom-up) </div>
+        <div class="flex items-center gap-2">✓ ใช้โครงสร้าง For-loops แทนการเรียกฟังก์ชันซ้อนกัน </div>
+        <div class="flex items-center gap-2">✓ ต้องกำหนดลำดับการคำนวณ (Evaluation Order) ให้ถูกต้องเพื่อให้ค่าตั้งต้นพร้อมใช้งานเสมอ </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Pros/Cons Comparison -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-8">ข้อดีและข้อเสีย: เลือกใช้อะไรดี?</h1>
+    <div class="grid grid-cols-2 gap-8">
+      <div class="text-left">
+        <h3 class="text-xl font-bold text-yellow-300 mb-2">Memoization (Top-down)</h3>
+        <ul class="text-sm space-y-2 opacity-90">
+          <li class="flex items-start gap-2"><span class="text-green-400">⊕</span> เขียนง่ายกว่าเพราะลอกตามสูตรเวียนเกิด (Recurrence) ได้ทันที </li>
+          <li class="flex items-start gap-2"><span class="text-green-400">⊕</span> คำนวณเฉพาะสถานะ (States) ที่เข้าถึงได้จริงเท่านั้น </li>
+          <li class="flex items-start gap-2"><span class="text-red-400">⊖</span> มี Overhead จากการเรียกฟังก์ชันซ้ำซ้อน </li>
+        </ul>
+      </div>
+      <div class="text-left">
+        <h3 class="text-xl font-bold text-green-300 mb-2">Iterative (Bottom-up)</h3>
+        <ul class="text-sm space-y-2 opacity-90">
+          <li class="flex items-start gap-2"><span class="text-green-400">⊕</span> มักทำงานเร็วกว่าเนื่องจากไม่มีoverhead ของ function calls </li>
+          <li class="flex items-start gap-2"><span class="text-green-400">⊕</span> สามารถทำ Space Optimization ได้ในบางปัญหา </li>
+          <li class="flex items-start gap-2"><span class="text-red-400">⊖</span> ต้องวางลำดับการวนลูปให้แม่นยำ (Topological order) </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: The Design Pattern (Steps) -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-6">ขั้นตอนการออกแบบ Dynamic Programming</h1>
+    <div class="grid gap-4 text-left">
+      <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+        <span class="font-bold text-yellow-300">1. Formulate Recursively:</span> นิยามปัญหาย่อยและเขียนสูตรความสัมพันธ์เวียนเกิด (Recurrence Relation) พร้อมระบุ Base Case ให้ชัดเจน 
+      </div>
+      <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+        <span class="font-bold text-yellow-300">2. Identify Subproblems:</span> ดูว่าพารามิเตอร์ใดที่เปลี่ยนไปในแต่ละการเรียก และมีกี่สถานะที่เป็นไปได้ 
+      </div>
+      <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+        <span class="font-bold text-yellow-300">3. Choose Data Structure:</span> เลือกอาเรย์ (1D, 2D) หรือตารางที่เหมาะสมเพื่อเก็บคำตอบ 
+      </div>
+      <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+        <span class="font-bold text-yellow-300">4. Find Evaluation Order:</span> กำหนดลำดับการเติมตารางจากปัญหาย่อยไปหาปัญหาใหญ่ 
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Case Study: Fibonacci (The Problem) -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 leading-tight">กรณีศึกษา: จำนวนฟีโบนัชชี (Fibonacci)</h1>
+    <div class="text-xl text-yellow-300 mb-8 font-light italic">
+      "ทำไมการเวียนเกิดแบบปกติถึงช้า?"
+    </div>
+    <div class="bg-black/20 p-6 rounded-2xl text-left">
+      <p class="mb-4">สูตรเวียนเกิด: \(f(n) = f(n-1) + f(n-2)\) โดยมี \(f(0)=0, f(1)=1\) </p>
+      <div class="bg-red-500/20 p-4 border-l-4 border-red-500 rounded">
+        <p class="font-bold">ปัญหาของ Naive Recursion:</p>
+        <p class="text-sm">การคำนวณ \(f(n)\) จะมีการเรียกฟังก์ชันซ้ำซ้อนมหาศาล เช่น \(f(5)\) ต้องเรียก \(f(3)\) สองครั้ง และ \(f(2)\) สามครั้ง... ทำให้ความซับซ้อนพุ่งสูงถึง \(O(2^n)\) </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Fibonacci with Memoization (Code Example) -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-6">Fibonacci with Memoization (C++)</h1>
+    <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-sm leading-relaxed border border-white/20">
+      <p class="text-blue-400">// การจดจำผลลัพธ์ลงในอาเรย์</p>
+      <p>long long memo[56];</p>
+      <p>long long f(int n) {</p>
+      <p class="pl-4 text-green-400">if (n &lt;= 1) return n; <span class="text-gray-500">// Base Case</span></p>
+      <p class="pl-4 text-yellow-300">if (memo[n] != -1) return memo[n]; <span class="text-gray-500">// คืนค่าที่จดไว้</span></p>
+      <p class="pl-4">return memo[n] = f(n-1) + f(n-2); <span class="text-gray-500">// คำนวณแล้วจด</span></p>
+      <p>}</p>
+    </div>
+    <p class="mt-6 text-xl">ความซับซ้อนลดเหลือ <span class="text-green-300 font-bold">\(O(n)\)</span> เพราะคำนวณแต่ละสถานะเพียงครั้งเดียว </p>
+  </div>
+</div>
+
+<!-- Slide 10: Fibonacci with Iterative (Code Example) -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-6">Fibonacci with Iterative (C++)</h1>
+    <div class="bg-slate-900/80 p-6 rounded-xl text-left font-mono text-sm leading-relaxed border border-white/20">
+      <p class="text-blue-400">// การเติมตารางจากล่างขึ้นบน</p>
+      <p>long long dp[56];</p>
+      <p>dp = 0; dp[59] = 1; <span class="text-gray-500">// เริ่มจากกรณีพื้นฐาน</span></p>
+      <p>for (int i = 2; i &lt;= n; i++) {</p>
+      <p class="pl-4 text-yellow-300">dp[i] = dp[i-1] + dp[i-2]; <span class="text-gray-500">// สร้างคำตอบใหม่จากคำตอบเก่า</span></p>
+      <p>}</p>
+      <p>return dp[n];</p>
+    </div>
+    <p class="mt-6 text-xl">ใช้พื้นที่ \(O(n)\) และเวลา <span class="text-green-300 font-bold">\(O(n)\)</span> โดยไม่มีความเสี่ยงเรื่อง Stack Overflow </p>
+  </div>
+</div>
+
+<!-- Slide 11: The Concept of State -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">การนิยาม "สถานะ" (State Definition)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <p class="text-xl mb-4 text-yellow-300 font-medium">หัวใจของการเปลี่ยนปัญหาใหญ่เป็นปัญหาย่อย</p>
+      <div class="space-y-4 text-lg">
+        <p>• **สถานะ (State)**: คือชุดของพารามิเตอร์ที่เพียงพอจะบอกลักษณะของปัญหาย่อยนั้นๆ </p>
+        <p>• ในปัญหาการทอนเหรียญ (Coin Problem) สถานะคือ **"มูลค่าที่เหลือที่ต้องทอน"** </p>
+        <p>• สถานะที่ออกแบบได้ดีจะช่วยลดจำนวนปัญหาย่อยที่ซ้ำซ้อนและประหยัดหน่วยความจำ </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Visualizing Overlapping Subproblems -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">การวิเคราะห์ปัญหาย่อยที่ทับซ้อนกัน</h1>
+    <div class="grid grid-cols-2 gap-8 items-center mt-6">
+      <div class="bg-black/20 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-red-300 mb-4">Recursion Tree</h3>
+        <p class="text-sm opacity-90 leading-relaxed">
+          หากพิจารณาการทอนเหรียญมูลค่า 10 ด้วยเหรียญ {1, 3, 4} เราจะพบว่ามีการเรียก <code class="text-yellow-300">solve(6)</code> หรือ <code class="text-yellow-300">solve(7)</code> ซ้ำไปมาหลายกิ่งก้าน 
+        </p>
+      </div>
+      <div class="border-2 border-dashed border-white/30 p-8 rounded-xl">
+        <p class="italic text-lg text-yellow-200">"ใน DP เราจะไม่ยอมเสียเวลาคำนวณค่าเดิมเป็นรอบที่สอง"</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: DP as a DAG -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">DP ในฐานะกราฟ (Directed Acyclic Graph)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-4">
+      <p class="text-lg leading-relaxed text-left">
+        ปัญหา DP ทุกปัญหา สามารถเขียนให้อยู่ในรูปของ **DAG** ได้: 
+      </p>
+      <ul class="text-left mt-4 space-y-2 text-sm opacity-90">
+        <li>• **Node**: แทนสถานะ (State) หรือคำตอบของปัญหาย่อย</li>
+        <li>• **Edge**: แทนการตัดสินใจหรือความสัมพันธ์ระหว่างสถานะ</li>
+        <li>• **Shortest Path**: ใน DAG นี้มักจะตรงกับคำตอบที่เหมาะสมที่สุด (Optimal Solution) </li>
+      </ul>
+    </div>
+    <div class="text-yellow-300 font-mono text-sm">Dependency: State A → State B (A ต้องรอคำตอบจาก B)</div>
+  </div>
+</div>
+
+<!-- Slide 14: Memoization Implementation Details -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-6">เจาะลึกการใช้ Memoization (Top-down)</h1>
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="p-4 bg-black/30 rounded-lg border border-yellow-400/50">
+        <h4 class="font-bold text-yellow-300 mb-2">ขั้นตอนการทำงาน </h4>
+        <p class="text-xs space-y-1">
+          1. ตรวจสอบอาเรย์ <code class="bg-gray-800 px-1 font-mono">ready[x]</code> ว่าเป็นจริงหรือไม่ <br>
+          2. ถ้าเคยคำนวณแล้ว (True) ดึงค่าจาก <code class="bg-gray-800 px-1 font-mono">value[x]</code> ส่งกลับทันที <br>
+          3. ถ้ายังไม่เคยทำ ให้คำนวณตามสูตร Recursion และเก็บผลลัพธ์ลงในตารางก่อน <code class="bg-gray-800 px-1 font-mono">return</code>
+        </p>
+      </div>
+      <div class="p-4 bg-black/30 rounded-lg border border-blue-400/50">
+        <h4 class="font-bold text-blue-300 mb-2">จุดที่มักพลาด</h4>
+        <p class="text-xs">
+          • ลืมตั้งค่าเริ่มต้นให้ตาราง (เช่น ตั้งเป็น -1 หรือ INF)  <br>
+          • ไม่เก็บค่าลงตารางก่อนจบฟังก์ชัน ทำให้ความซับซ้อนยังคงเป็น Exponential <br>
+          • ขอบเขตของอาเรย์ไม่เพียงพอสำหรับสถานะที่เป็นไปได้ทั้งหมด 
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Iterative Implementation Details -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">เจาะลึกการใช้ Iterative (Bottom-up)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+      <p class="text-xl text-green-300 font-medium italic">"Filling the table deliberately"</p>
+      <div class="grid gap-3 text-lg opacity-90">
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+          <span>เริ่มต้นด้วยการกำหนด Base Cases ในตาราง (เช่น <code class="bg-black/40 px-2 rounded">dp = 0</code>) </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+          <span>วนลูป For-loop เพื่อเติมค่าในตารางตามลำดับที่ถูกต้อง </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+          <span>ความยากอยู่ที่การหา "ลำดับการเติม" (Topological Order) </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Evaluation Order -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">ลำดับการคำนวณ (Evaluation Order)</h1>
+    <p class="mb-8 opacity-80 text-xl font-light">เราต้องเติมตารางตามลำดับที่ทำให้ "ปัญหาย่อยถูกแก้ก่อนปัญหาใหญ่เสมอ"</p>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="p-6 bg-white/5 border border-white/20 rounded-xl">
+        <h3 class="font-bold mb-2">Linear Order</h3>
+        <p class="text-xs opacity-75">เติมจาก 0 ไปถึง N (เช่น Fibonacci, Coin Problem) </p>
+      </div>
+      <div class="p-6 bg-white/5 border border-white/20 rounded-xl">
+        <h3 class="font-bold mb-2">Two-Dimensional</h3>
+        <p class="text-xs opacity-75">เติมทีละแถว (Row-major) หรือตามเส้นทแยงมุม </p>
+      </div>
+      <div class="p-6 bg-white/5 border border-white/20 rounded-xl">
+        <h3 class="font-bold mb-2">Tree Order</h3>
+        <p class="text-xs opacity-75">มักใช้ Post-order Traversal (ทำลูกก่อนทำพ่อ) </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Choosing Data Structure -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">การเลือกโครงสร้างข้อมูล (Data Structures)</h1>
+    <div class="bg-black/20 p-8 rounded-3xl border-2 border-white/10 text-left">
+      <ul class="space-y-6">
+        <li class="flex gap-4">
+          <span class="text-2xl">📊</span>
+          <div>
+            <p class="font-bold text-yellow-300">Arrays (1D/2D/3D)</p>
+            <p class="text-sm opacity-80">ได้รับความนิยมสูงสุดเนื่องจากเข้าถึงค่าได้เร็วในเวลา \(O(1)\) </p>
+          </div>
+        </li>
+        <li class="flex gap-4">
+          <span class="text-2xl">🗺️</span>
+          <div>
+            <p class="font-bold text-yellow-300">Map (BST or Hash Table)</p>
+            <p class="text-sm opacity-80">ใช้เมื่อสถานะมีความเบาบาง (Sparse States) หรือเป็นข้อมูลที่ซับซ้อน เช่น String </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Optimal Substructure -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">คุณสมบัติ Optimal Substructure</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
+      <p class="text-2xl mb-6 text-green-300 font-medium italic">"คำตอบที่ดีที่สุดของปัญหาใหญ่ มาจากคำตอบที่ดีที่สุดของปัญหาย่อย"</p>
+      <div class="text-left text-lg">
+        <p>• ในปัญหา **Coin Change**: คำตอบของ <code class="bg-gray-800 px-1 font-mono">solve(x)</code> ย่อมมาจากค่าที่น้อยที่สุดของ <code class="bg-gray-800 px-1 font-mono">solve(x-c)</code> เสมอ </p>
+        <p class="mt-4">• หากปัญหาขาดคุณสมบัตินี้ (เช่น ปัญหาที่คำตอบย่อยขัดแย้งกันเอง) เราจะไม่สามารถใช้ DP ได้อย่างตรงไปตรงมา </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Complexity Analysis -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">การวิเคราะห์ความซับซ้อน (Complexity)</h1>
+    <div class="bg-blue-900/40 p-8 rounded-2xl border border-blue-300 text-left">
+      <p class="text-2xl font-bold text-center mb-6">Time Complexity = จำนวนสถานะ × งานที่ทำในแต่ละสถานะ</p>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-4 bg-white/5 rounded">
+          <h4 class="font-bold text-blue-300 underline">Coin Problem</h4>
+          <p class="text-sm">สถานะ: \(n\) (เป้าหมาย) <br> งานต่อสถานะ: \(k\) (จำนวนเหรียญ) <br> **รวม: \(O(nk)\)** </p>
+        </div>
+        <div class="p-4 bg-white/5 rounded">
+          <h4 class="font-bold text-blue-300 underline">Paths in a Grid</h4>
+          <p class="text-sm">สถานะ: \(n \times n\) (ตาราง) <br> งานต่อสถานะ: \(O(1)\) (เลือก บน/ซ้าย) <br> **รวม: \(O(n^2)\)** </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Constructing the Solution -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">การหาลำดับคำตอบ (Constructing a Solution)</h1>
+    <div class="bg-black/30 p-8 rounded-2xl text-left border-l-8 border-yellow-500">
+      <p class="text-lg mb-4">นอกจากหา "ค่าสูงสุด/ต่ำสุด" แล้ว โจทย์มักต้องการ "เลือกอะไรบ้าง?" </p>
+      <p class="text-sm mb-4 font-mono bg-gray-900 p-4 rounded text-yellow-300">
+        first[x] = เหรียญแรกที่ทำให้ solve(x) มีค่าน้อยที่สุด
+      </p>
+      <p class="text-md opacity-90 leading-relaxed">
+        เราใช้อาเรย์เสริม (เช่น <code class="bg-gray-800 px-1">first[x]</code>) เพื่อบันทึก **"การตัดสินใจที่เหมาะสมที่สุด"** ในแต่ละสถานะ  จากนั้นใช้ลูปดึงข้อมูลย้อนกลับ (Reconstruct) เพื่อสร้างลำดับคำตอบที่สมบูรณ์ 
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Slide 31: Common Mistakes - Integer Overflow -->
+<div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">ข้อควรระวัง: Integer Overflow</h1>
+    <div class="bg-red-500/20 border-l-8 border-red-500 p-8 rounded-2xl text-left">
+      <p class="text-xl mb-4">ผลลัพธ์ของปัญหา DP มักมีค่าเพิ่มขึ้นอย่างรวดเร็ว .</p>
+      <div class="space-y-4">
+        <p>• ประเภทข้อมูล <code class="bg-black/40 px-2 font-mono text-yellow-300">int</code> เก็บค่าได้เพียงประมาณ \(2 \cdot 10^9\) เท่านั้น .</p>
+        <p>• ควรใช้ <code class="bg-black/40 px-2 font-mono text-green-300">long long</code> สำหรับเก็บสถานะ DP เพื่อป้องกันค่าเกินขอบเขต .</p>
+        <p>• **จุดที่มักพลาด**: การคูณเลข <code class="font-mono">int</code> สองตัวก่อนจะเก็บเข้าตัวแปร <code class="font-mono">long long</code> จะทำให้เกิด Overflow ก่อนเสมอ .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 32: Handling Large Results with Modulo -->
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">การจัดการค่าขนาดใหญ่ด้วย Modulo</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+      <p class="text-lg mb-4 italic text-yellow-300">"บางปัญหาไม่ได้ต้องการคำตอบที่แท้จริง แต่ต้องการเศษจากการหารด้วย \(10^9+7\)" .</p>
+      <div class="grid gap-4 opacity-90">
+        <div class="p-4 bg-black/30 rounded border border-white/20 font-mono">
+          (a + b) % m = (a % m + b % m) % m <br>
+          (a - b) % m = (a % m - b % m + m) % m <br>
+          (a * b) % m = (a % m * b % m) % m
+        </div>
+        <p>• คุณสมบัตินี้ช่วยให้นักโปรแกรมสามารถหา Modulo ในทุกขั้นตอนการคำนวณเพื่อไม่ให้ค่าตัวแปรใหญ่เกินไป .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 33: Common Pitfalls - Array Bounds -->
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">ข้อผิดพลาดที่พบบ่อย: ขอบเขตอาเรย์</h1>
+    <div class="grid grid-cols-2 gap-6 mt-8 text-left">
+      <div class="bg-black/20 p-6 rounded-xl border border-yellow-500/50">
+        <h3 class="text-xl font-bold text-yellow-300 mb-4">Array Index out of Bounds</h3>
+        <p class="text-sm opacity-90">มักเกิดขึ้นเมื่อพยายามเข้าถึง <code class="font-mono">dp[x-c]</code> โดยที่ <code class="font-mono">x-c < 0</code> นักเขียนโปรแกรมต้องตรวจสอบเงื่อนไขก่อนเรียกเสมอ .</p>
+      </div>
+      <div class="bg-black/20 p-6 rounded-xl border border-blue-500/50">
+        <h3 class="text-xl font-bold text-blue-300 mb-4">Initialization Errors</h3>
+        <p class="text-sm opacity-90">การลืมล้างค่าในตาราง <code class="font-mono">memo</code> (เช่น ลืมตั้งเป็น -1) หรือตั้งค่าเริ่มต้นในตาราง <code class="font-mono">dp</code> ผิดพลาดสำหรับกรณีพื้นฐาน (Base Cases) .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 34: Space Optimization Basics -->
+<div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 leading-tight">การประหยัดหน่วยความจำ (Space Optimization)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6">
+      <p class="text-xl text-green-300">แนวคิด: "ไม่จำเป็นต้องจำทุกอย่างที่คำนวณมาแล้ว" .</p>
+      <div class="space-y-4 text-lg">
+        <p>• ใน Iterative DP เราสามารถลดพื้นที่จาก \(O(n)\) เหลือ \(O(k)\) ได้ หากค่าปัจจุบันพึ่งพาเพียง \(k\) สถานะก่อนหน้า .</p>
+        <p>• ตัวอย่าง: Fibonacci พึ่งพาเพียง 2 ค่าก่อนหน้า ดังนั้นเราสามารถเก็บเพียง 2 ตัวแปรเพื่อคำนวณค่าถัดไปได้ในพื้นที่ \(O(1)\) .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 35: Space Optimization in 2D DP -->
+<div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">Space Optimization ในอาเรย์ 2 มิติ</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-white/30 text-left leading-relaxed">
+      <p class="text-xl mb-4">สำหรับปัญหาตาราง \(n \times m\) :</p>
+      <ul class="list-disc pl-6 space-y-3 opacity-90">
+        <li>หากสถานะแถวปัจจุบัน <code class="font-mono">dp[i]</code> พึ่งพาเพียงแถวก่อนหน้า <code class="font-mono">dp[i-1]</code>...</li>
+        <li>เราสามารถใช้เพียง **2 แถว** (Two-row optimization) ในการคำนวณทั้งหมดได้ .</li>
+        <li>หรือในบางกรณี สามารถใช้เพียง **1 แถว** หากลำดับการเติมค่าในแถวไม่ขัดแย้งกันเอง .</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 36: Correct Order of Computation -->
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">ลำดับการคำนวณที่ถูกต้อง (Evaluation Order)</h1>
+    <div class="bg-blue-900/30 p-8 rounded-2xl border border-blue-400 text-left">
+      <p class="text-xl mb-4 font-bold text-blue-300">"Topological Ordering of states" .</p>
+      <p class="mb-4">ในการเขียน Bottom-up DP คุณต้องมั่นใจว่า **ปัญหาย่อยต้องถูกคำนวณก่อนปัญหาใหญ่เสมอ** :</p>
+      <div class="grid grid-cols-2 gap-4 text-sm opacity-80 italic">
+        <div class="p-3 bg-white/5 rounded">หากพารามิเตอร์เพิ่มขึ้น → วนลูปจากน้อยไปมาก</div>
+        <div class="p-3 bg-white/5 rounded">หากพารามิเตอร์ลดลง → วนลูปจากมากไปน้อย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 37: When DP is NOT an Improvement -->
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 text-red-300">เมื่อไหร่ที่ DP อาจจะไม่ใช่คำตอบที่ดีที่สุด?</h1>
+    <div class="bg-black/20 p-8 rounded-2xl text-left border-l-4 border-red-400">
+      <p class="text-lg mb-4 leading-relaxed">
+        ในบางปัญหาที่มีสถานะจำนวนมหาศาล (เช่น Subset Sum ที่เป้าหมาย \(T\) มีค่าใหญ่มาก) การเขียนตาราง DP ทั้งหมดอาจช้ากว่าการเรียก Recursion ปกติ .
+      </p>
+      <p class="text-md opacity-80 italic">
+        "การสร้างตารางสำหรับสถานะที่ Recursion ไม่เคยเรียกใช้เลย เป็นการเสียเวลาและหน่วยความจำโดยใช่เหตุ" .
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 38: DP vs Greedy - The Golden Rule -->
+<div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">กฎเหล็ก: "Greedy Algorithms Never Work!"</h1>
+    <div class="bg-yellow-400/10 border-2 border-yellow-400 p-8 rounded-3xl text-left relative overflow-hidden">
+      <div class="absolute -right-8 -top-8 text-8xl opacity-10 font-bold italic">Greedy</div>
+      <p class="text-2xl mb-6 text-yellow-300 font-bold">ถ้าต้องเลือกความเหมาะสมที่สุด (Optimization) ให้ระวัง Greedy .</p>
+      <div class="space-y-4 opacity-90 leading-relaxed text-lg">
+        <p>• Greedy มักจะให้คำตอบที่รวดเร็วแต่ **ไม่ถูกต้อง** สำหรับปัญหาที่มีโครงสร้างซับซ้อน .</p>
+        <p>• ในการแข่งขันโอลิมปิก หากคุณคิดถึงคำว่า "Greedy" จิตใต้สำนึกของคุณกำลังบอกให้ใช้ "Dynamic Programming" .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 39: State Redundancy and Optimization -->
+<div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">การลดสถานะที่ซ้ำซ้อน (Redundant States)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+      <p class="text-xl font-medium">บางครั้งพารามิเตอร์หนึ่งสามารถคำนวณได้จากพารามิเตอร์อื่นที่เหลืออยู่ .</p>
+      <div class="p-4 bg-gray-900/50 rounded-lg border border-white/20">
+        <p class="text-sm italic">ตัวอย่าง: ปัญหาการบรรทุกรถลงเรือ 4 เลน หากเรารู้ความยาวรถที่ใช้ไปรวมทั้งหมด (\(U\)) และความยาวที่จอดไปแล้วใน 3 เลนแรก เราย่อมรู้ความยาวในเลนที่ 4 ทันทีโดยไม่ต้องส่งพารามิเตอร์เพิ่ม .</p>
+      </div>
+      <p class="text-md opacity-80">การลดสถานะที่ไม่จำเป็นช่วยลดขนาดตาราง DP ได้จากระดับ \(O(N \cdot L^4)\) ลงเหลือ \(O(L^4)\) ซึ่งประหยัดทรัพยากรอย่างมหาศาล .</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 40: Summary - Smart Recursion -->
+<div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8 italic underline">สรุปเนื้อหาพื้นฐาน DP</h1>
+    <div class="bg-green-600/20 p-10 rounded-full border-4 border-green-400 inline-block mb-8">
+      <p class="text-3xl font-bold italic">"Dynamic Programming is not about filling in tables. <br> It's about smart recursion!" </p>
+    </div>
+    <div class="grid grid-cols-2 gap-8 text-left max-w-2xl mx-auto">
+      <p>✓ เริ่มจาก Recursion ที่ถูกต้อง .</p>
+      <p>✓ เลือกการจดจำ (Memoization) ที่เหมาะสม .</p>
+      <p>✓ ตรวจสอบความถูกต้องของลำดับการคำนวณ .</p>
+      <p>✓ ปรับปรุงพื้นที่จัดเก็บเมื่อทำได้ .</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 41: DP over Intervals -->
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">DP บนช่วง (Intervals)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4">
+      <p class="text-xl text-yellow-300 font-medium">ลำดับการคำนวณที่เปลี่ยนไป</p>
+      <div class="space-y-4 text-lg leading-relaxed">
+        <p>• สำหรับปัญหาที่เกี่ยวกับช่วง ลำดับการคำนวณมักจะเริ่มจากช่วงที่มีความยาวน้อยที่สุดก่อนแล้วค่อยขยายไปยังช่วงที่ยาวขึ้น .</p>
+        <p>• การเลือกพารามิเตอร์ที่ถูกต้องและตัดข้อมูลที่ซ้ำซ้อนออกจะช่วยลดจำนวนสถานะลงได้อย่างมหาศาล .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 42: DP on Trees -->
+<div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">DP บนโครงสร้างต้นไม้ (Trees)</h1>
+    <div class="grid grid-cols-2 gap-8 items-center mt-6">
+      <div class="bg-black/20 p-6 rounded-xl text-left border-l-4 border-green-400">
+        <p class="text-sm opacity-90 leading-relaxed">
+          การทำ DP บน Trees มักต้องการการท่องไปในโหนดแบบ **Post-order traversal** . วิธีนี้ช่วยให้ปัญหาย่อยที่ระดับล่าง (Leaf nodes) ถูกแก้ไขก่อนที่คำตอบจะถูกส่งกลับไปยังโหนดพ่อ .
+        </p>
+      </div>
+      <div class="p-4 bg-white/5 border border-white/20 rounded-xl font-mono text-xs text-left">
+        void solve(int s, int e) {<br>
+        &nbsp;&nbsp;count[s] = 1;<br>
+        &nbsp;&nbsp;for (auto u : adj[s]) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;if (u == e) continue;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;solve(u, s);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;count[s] += count[u];<br>
+        &nbsp;&nbsp;}<br>
+        } 
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 43: Memoization Advantage: Reachability -->
+<div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">จุดเด่นของ Top-down: การเข้าถึงสถานะ</h1>
+    <div class="bg-blue-900/40 border-2 border-blue-300 p-8 rounded-2xl text-left">
+      <p class="text-xl mb-4 italic">"คำนวณเฉพาะสิ่งที่จำเป็นเท่านั้น"</p>
+      <div class="space-y-4 text-lg">
+        <p>• ข้อดีสำคัญของ Top-down DP คือฟังก์ชันจะเลือกคำนวณเฉพาะสถานะที่สามารถเข้าถึงได้จากจุดเริ่มต้นจริงเท่านั้น .</p>
+        <p>• ในบางปัญหาที่มีสถานะที่ "เป็นไปได้" ตามทฤษฎีจำนวนมาก แต่มีการใช้งานจริงเพียงเล็กน้อย วิธีนี้จะประหยัดเวลาได้มากกว่าการวนลูปทุกสถานะแบบ Bottom-up .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 44: Case Study: Redundant Parameters -->
+<div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">กรณีศึกษา: พารามิเตอร์ที่ซ้ำซ้อน</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-red-400 text-left">
+      <p class="text-xl mb-4 text-red-300 font-bold">ระวังการออกแบบสถานะที่ใหญ่เกินไป!</p>
+      <p class="mb-4">ในปัญหา **Ferry Loading** หากเราใช้สถานะเป็นความยาวของทั้ง 4 เลน อาเรย์จะมีขนาดใหญ่จนหน่วยความจำไม่พอ .</p>
+      <p class="text-md opacity-90 leading-relaxed italic bg-white/5 p-4 rounded-lg">
+        เทคนิค: เนื่องจากเรารู้ความยาวรถรวมทั้งหมด หากเรารู้ความยาวของ 3 เลนแรก เราย่อมคำนวณเลนที่ 4 ได้ทันที ทำให้ลดมิติของ DP ลงได้อย่างมหาศาล .
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 45: The Forgetful Property -->
+<div :class="{ 'active': currentSlide === 44 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">คุณสมบัติการ "ขี้ลืม" (Forgetful Property)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl text-left">
+      <p class="text-xl mb-6 leading-relaxed">
+        หัวใจสำคัญของสถานะ DP คือการที่เราไม่สนใจลำดับการเลือกในอดีตว่า "ทำอย่างไร" ถึงมาถึงจุดนี้ .
+      </p>
+      <p class="text-lg opacity-90">
+        ข้อมูลที่เก็บไว้ในสถานะปัจจุบันต้องมี **เพียงพอ** ที่จะใช้ตัดสินใจเลือกทางเดินต่อไปในอนาคตได้อย่างอิสระ โดยไม่ต้องย้อนกลับไปดูอดีตอีก .
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 46: DP is Smart Recursion -->
+<div :class="{ 'active': currentSlide === 45 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">DP คือ "Smart Recursion" ไม่ใช่แค่ตาราง</h1>
+    <div class="bg-yellow-500/20 p-10 rounded-full border-4 border-yellow-400 inline-block mb-8">
+      <p class="text-2xl font-bold italic">"Dynamic Programming is recursion without repetition" .</p>
+    </div>
+    <div class="text-left max-w-2xl mx-auto space-y-4 opacity-90">
+      <p>• อย่าโฟกัสที่ตัวตาราง (Table) เพราะมันเป็นแค่โครงสร้างข้อมูลสำหรับจดจำค่า .</p>
+      <p>• หากสูตรความสัมพันธ์เวียนเกิด (Recurrence) ผิดพลาด การมีตารางที่สวยงามก็ไม่สามารถให้คำตอบที่ถูกต้องได้ .</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 47: Development Strategy: Make it Fast -->
+<div :class="{ 'active': currentSlide === 46 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">กลยุทธ์: "ทำให้ทำงานได้ก่อน แล้วค่อยทำให้เร็ว"</h1>
+    <div class="grid grid-cols-2 gap-4 text-left mt-8">
+      <div class="p-6 bg-white/5 border border-white/20 rounded-xl">
+        <h3 class="font-bold text-yellow-300 mb-2">1. First make it work</h3>
+        <p class="text-sm opacity-80">เริ่มจากฟังก์ชัน Recursion แบบ Brute force หรือ Complete Search เพื่อให้เห็นโครงสร้างที่ถูกต้องของปัญหา .</p>
+      </div>
+      <div class="p-6 bg-white/5 border border-white/20 rounded-xl">
+        <h3 class="font-bold text-green-300 mb-2">2. Then make it fast</h3>
+        <p class="text-sm opacity-80">ใส่ Memoization หรือเปลี่ยนเป็น Iterative เพื่อลดความซับซ้อนจากระดับ Exponential เหลือ Polynomial .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 48: Proving Optimal Substructure -->
+<div :class="{ 'active': currentSlide === 47 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 text-green-300">การยืนยัน Optimal Substructure</h1>
+    <div class="bg-black/20 p-8 rounded-2xl text-left border-l-4 border-green-400 leading-relaxed">
+      <p class="text-lg mb-4">
+        นี่คือการยืนยันว่าคำตอบที่ดีที่สุดของปัญหาใหญ่ถูกสร้างขึ้นจากคำตอบที่ดีที่สุดของปัญหาย่อยจริงๆ .
+      </p>
+      <p class="text-md opacity-80 italic">
+        "หากเราตัดส่วนท้ายของคำตอบที่ดีที่สุดออก ส่วนที่เหลือต้องยังคงเป็นคำตอบที่ดีที่สุดสำหรับปัญหาย่อยที่สั้นลงนั้นด้วย" .
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 49: DP vs Divide & Conquer -->
+<div :class="{ 'active': currentSlide === 48 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-6">ความแตกต่าง: DP vs Divide & Conquer</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6">
+      <div>
+        <p class="font-bold text-yellow-300 underline">Divide & Conquer</p>
+        <p class="text-sm opacity-90">แบ่งปัญหาเป็นส่วนย่อยที่ **แยกจากกัน** (Disjoint) และนำผลลัพธ์มาประกอบกัน .</p>
+      </div>
+      <div>
+        <p class="font-bold text-green-300 underline">Dynamic Programming</p>
+        <p class="text-sm opacity-90">ใช้เมื่อปัญหาย่อยมีการ **ทับซ้อนกัน** (Overlapping) การจดจำค่าจึงช่วยลดงานซ้ำซ้อนได้อย่างมหาศาล .</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 50: Ready for Standard DP -->
+<div :class="{ 'active': currentSlide === 49 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-5xl font-bold mb-8 italic">จบบทเรียนพื้นฐาน DP</h1>
+    <div class="bg-white/10 p-10 rounded-2xl mb-8">
+      <p class="text-2xl mb-4">คุณพร้อมสำหรับช่วงบ่ายแล้ว!</p>
+      <p class="text-lg opacity-80 leading-relaxed">
+        เราได้เรียนรู้วิธีการเปลี่ยนจาก Recursion ไปเป็นอัลกอริทึม DP ที่มีประสิทธิภาพ . ช่วงบ่ายเราจะนำความรู้นี้ไปใช้กับปัญหาคลาสสิก: **Coin Change, Knapsack และ LIS** .
+      </p>
+    </div>
+    <div class="text-yellow-300 font-bold animate-bounce text-xl">
+      Next: DP Standard Problems (13:00 - 15:00)
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

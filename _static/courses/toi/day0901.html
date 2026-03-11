@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0901.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Advanced Data Structures</span> <br>
+            <span class="mt-8 text-yellow-300">Segment Tree & Fenwick Tree</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 09 Morning: การจัดการข้อมูลในช่วง (Range Queries) อย่างมีประสิทธิภาพ
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่จะเรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>โครงสร้างและหลักการของ Fenwick Tree (Binary Indexed Tree)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>การออกแบบและใช้งาน Segment Tree สำหรับปัญหาที่หลากหลาย</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>การเปรียบเทียบประสิทธิภาพในการทำ Range Query และ Point Update</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 2: ทำไมต้องใช้ Advanced Data Structures?
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ข้อจำกัดของวิธี Naive</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>การหาผลรวมในช่วง ( [a, b] ) ด้วย loop ปกติใช้เวลา ( O(n) ) ต่อ Query</li>
+              <li>การใช้ Prefix Sum Array ช่วยให้ Query เร็ว ( O(1) ) แต่ถ้ามีการเปลี่ยนค่า (Update) จะใช้เวลา ( O(n) )</li>
+              <li>ในโจทย์โปรแกรมเชิงแข่งขันที่มี ( q ) Query และ ( n ) ข้อมูลขนาดใหญ่ การใช้ ( O(nq) ) จะทำให้เกิด TLE</li>
+              <li><strong>เป้าหมาย:</strong> ทำให้ทั้ง Query และ Update ทำงานได้ใน ( O(\log n) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/array-range-queries/</p>
+        </div>
+      </div>
+      Slide 3: รู้จัก Fenwick Tree (Binary Indexed Tree)
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Fenwick Tree คืออะไร?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">ถูกเสนอโดย P. M. Fenwick ในปี 1994 เป็นโครงสร้างข้อมูลที่:</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>จำลองการทำงานของ Prefix Sum Array ในรูปแบบที่สามารถ Update ได้รวดเร็ว</li>
+              <li>ใช้หน่วยความจำน้อย (เท่ากับ Array เดิม) โดยใช้ Array ขนาด ( n+1 )</li>
+              <li>มีความเร็วคงที่ (Constant factor) ที่ดีมากเมื่อเทียบกับ Segment Tree ในโจทย์บางประเภท</li>
+              <li>เหมาะสำหรับงานประเภท <strong>Range Sum Query</strong> และ <strong>Point Update</strong></li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 4: หลักการ Bit Magic ใน Fenwick Tree
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">กลไกการทำงานด้วย Bitwise</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">แต่ละตำแหน่ง ( k ) ใน Fenwick Tree จะเก็บผลรวมของช่วงที่มีความยาว ( p(k) )</p>
+            <div class="bg-blue-900/50 p-4 rounded-xl font-mono text-center mb-6">
+              p(k) = k & -k
+            </div>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>( p(k) ) คือกำลังของ 2 ที่มากที่สุดที่หาร ( k ) ลงตัว</li>
+              <li>ตัวอย่าง: ( p(6) = p(110_2) = 2 ) (ตำแหน่งที่ 6 เก็บผลรวม 2 ตัวล่าสุด)</li>
+              <li>ตัวอย่าง: ( p(8) = p(1000_2) = 8 ) (ตำแหน่งที่ 8 เก็บผลรวม 8 ตัวล่าสุด)</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://dev.to/wengao_ye/fenwick-tree-vs-segment-tree-410k</p>
+        </div>
+      </div>
+      Slide 5: การ Query และ Update ใน BIT
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Query & Update ( O(\log n) )</h2>
+          <div class="grid grid-cols-2 gap-6 mb-8 text-left text-lg">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-l-4 border-blue-400">
+              <h3 class="font-bold mb-3 underline">Prefix Sum จนถึง ( k )</h3>
+              <p>ใช้การเดินย้อนกลับ:</p>
+              <code class="block bg-black/30 p-2 mt-2 rounded">while (k > 0) {<br>&nbsp;&nbsp;s += tree[k];<br>&nbsp;&nbsp;k -= k & -k;<br>}</code>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border-l-4 border-green-400">
+              <h3 class="font-bold mb-3 underline">Update ตำแหน่ง ( k )</h3>
+              <p>ใช้การเดินไปข้างหน้า:</p>
+              <code class="block bg-black/30 p-2 mt-2 rounded">while (k <= n) {<br>&nbsp;&nbsp;tree[k] += val;<br>&nbsp;&nbsp;k += k & -k;<br>}</code>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/</p>
+        </div>
+      </div>
+      Slide 6: เข้าสู่ Segment Tree
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ทำไมต้อง Segment Tree?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">ในขณะที่ BIT เด่นเรื่องความง่ายและเร็วในงานผลรวม Segment Tree ให้ความยืดหยุ่นกว่า:</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>รองรับการ Query ได้หลายรูปแบบ: <strong>Min, Max, GCD, Sum</strong></li>
+              <li>รองรับการทำ Range Update ได้ด้วยเทคนิค Lazy Propagation</li>
+              <li>โครงสร้างเป็น Binary Tree ที่สมบูรณ์ ทำให้เข้าใจขั้นตอนการแบ่งช่วงข้อมูลได้ง่าย</li>
+              <li>ใช้เวลา ( O(\log n) ) ต่อหนึ่ง Operation เช่นกัน</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 7: โครงสร้างของ Segment Tree
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Hierarchy of Ranges</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Leaf Nodes:</strong> เก็บค่าดั้งเดิมของ Array ในแต่ละตำแหน่ง</li>
+              <li><strong>Internal Nodes:</strong> เก็บผลลัพธ์ของฟังก์ชัน (เช่น ผลรวม) ของลูกซ้ายและลูกขวา</li>
+              <li>หากข้อมูลมีขนาด ( n ) ต้นไม้จะมีโหนดทั้งหมดประมาณ ( 2n ) (ในทางปฏิบัติมักจอง ( 4n ))</li>
+              <li>แต่ละชั้นของต้นไม้จะลดขนาดช่วงลงครึ่งหนึ่ง จนถึงโหนดเดี่ยว (Leaf)</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/</p>
+        </div>
+      </div>
+      Slide 8: การหาคำตอบด้วย Segment Tree Query
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Efficient Range Querying</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">การ Query ช่วง ( [a, b] ) จะแบ่งโหนดออกเป็น 3 กรณี:</p>
+            <ol class="list-decimal list-outside ml-6 space-y-3">
+              <li>ช่วงของโหนดอยู่นอกช่วงที่ Query: <strong>Return ค่าว่าง/Neutral</strong></li>
+              <li>ช่วงของโหนดอยู่ภายในช่วงที่ Query ทั้งหมด: <strong>ใช้ค่าจากโหนดนั้นทันที</strong></li>
+              <li>ช่วงของโหนดทับซ้อนบางส่วน: <strong>แบ่งไป Query ลูกซ้ายและลูกขวา แล้วนำมารวมกัน</strong></li>
+            </ol>
+            <p class="mt-4 italic">ใช้เวลาเพียง ( O(\log n) ) เนื่องจากแต่ละระดับจะเลือกโหนดไม่เกิน 2 โหนด</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 9: การ Update ข้อมูลใน Segment Tree
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Point Update Strategy</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">เมื่อต้องการเปลี่ยนค่าใน Array ที่ตำแหน่ง ( i ):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>เริ่มจาก Update ที่ <strong>Leaf Node</strong> ที่เก็บค่าตำแหน่ง ( i )</li>
+              <li>จากนั้น Update <strong>Parent</strong> ย้อนกลับขึ้นไปจนถึง <strong>Root</strong></li>
+              <li>เนื่องจากความสูงของต้นไม้คือ ( \lceil \log n \rceil ) การแก้ไขจึงใช้เวลาเพียง ( O(\log n) )</li>
+              <li>ค่าในโหนดพ่อแม่จะถูกคำนวณใหม่จากลูกที่เพิ่งเปลี่ยนค่าไป</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/</p>
+        </div>
+      </div>
+      Slide 10: สรุปและข้อเปรียบเทียบ
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">BIT vs Segment Tree</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-white/20">
+                  <th class="py-2">หัวข้อ</th>
+                  <th class="py-2">Fenwick Tree (BIT)</th>
+                  <th class="py-2">Segment Tree</th>
+                </tr>
+              </thead>
+              <tbody class="text-white/80">
+                <tr class="border-b border-white/10">
+                  <td class="py-3 font-bold">ความซับซ้อน</td>
+                  <td class="py-3">( O(\log n) )</td>
+                  <td class="py-3">( O(\log n) )</td>
+                </tr>
+                <tr class="border-b border-white/10">
+                  <td class="py-3 font-bold">หน่วยความจำ</td>
+                  <td class="py-3">( n )</td>
+                  <td class="py-3">( 2n ) ถึง ( 4n )</td>
+                </tr>
+                <tr class="border-b border-white/10">
+                  <td class="py-3 font-bold">ความง่ายในการเขียน</td>
+                  <td class="py-3">ง่ายมาก (กะทัดรัด)</td>
+                  <td class="py-3">ซับซ้อนกว่าเล็กน้อย</td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-bold">การใช้งาน</td>
+                  <td class="py-3">Range Sum เป็นหลัก</td>
+                  <td class="py-3">ยืดหยุ่นสูง (Min/Max/RMQ)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://dev.to/wengao_ye/fenwick-tree-vs-segment-tree-410k</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">การ Update ข้อมูลแบบช่วงใน BIT</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">เราสามารถใช้ Fenwick Tree จัดการการ Update แบบช่วง (Range Update) และ Query รายตัว (Point Query) ได้ด้วย <strong>Difference Array</strong>:</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>สร้าง BIT เพื่อเก็บค่าความต่างระหว่างสมาชิกที่ติดกัน ( (d[i] = a[i] - a[i-1]) )</li>
+              <li><strong>Range Update:</strong> การเพิ่มค่าในช่วง ( [a, b] ) ด้วย ( x ) ทำได้โดยการ Update BIT ที่ตำแหน่ง ( a ) ด้วย ( +x ) และตำแหน่ง ( b+1 ) ด้วย ( -x )</li>
+              <li><strong>Point Query:</strong> ค่าจริงที่ตำแหน่ง ( k ) คือผลรวม Prefix Sum ( sumq(1, k) ) ใน BIT</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 12: Sparse Table สำหรับ Static RMQ
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Sparse Table: Query ในเวลา ( O(1) )</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">หากข้อมูลไม่มีการ Update (Static) Sparse Table มีประสิทธิภาพสูงมากสำหรับการหาค่าน้อยสุดในช่วง (RMQ):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Preprocessing:</strong> ใช้เวลา ( O(n \log n) ) เพื่อคำนวณคำตอบของทุกช่วงที่มีความยาวเป็นกำลังของ 2</li>
+              <li><strong>Query:</strong> ใช้เวลา ( O(1) ) โดยอาศัยสมบัติ <strong>Idempotent</strong> ของฟังก์ชัน ( \min(a, a) = a )</li>
+              <li>สูตรการ Query: ( \min(rmq(a, a+k-1), rmq(b-k+1, b)) ) โดยที่ ( k ) คือกำลังของ 2 ที่ใหญ่ที่สุดที่ไม่เกินความยาวช่วง</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/sparse-table/</p>
+        </div>
+      </div>
+      Slide 13: Segment Tree: การ Implement แบบ Top-Down
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Top-Down Recursive Implementation</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 italic">การเขียนแบบ Recursive ช่วยให้จัดการช่วงข้อมูลที่ซับซ้อนได้ง่ายขึ้น:</p>
+            <code class="block bg-black/30 p-4 rounded text-sm leading-relaxed font-mono">
+              int sum(int a, int b, int k, int x, int y) {<br>
+              &nbsp;&nbsp;if (b < x || a > y) return 0;<br>
+              &nbsp;&nbsp;if (a <= x && y <= b) return tree[k];<br>
+              &nbsp;&nbsp;int d = (x+y)/2;<br>
+              &nbsp;&nbsp;return sum(a, b, 2*k, x, d) + sum(a, b, 2*k+1, d+1, y);<br>
+              }
+            </code>
+            <p class="mt-4 text-base">ฟังก์ชันนี้จะแบ่งช่วง ( [x, y] ) ออกเป็นครึ่งซ้ายและขวา จนกว่าจะพบโหนดที่อยู่ในช่วง ( [a, b] ) พอดี</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 14: ปัญหา Range Update ใน Segment Tree
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ความท้าทายของการ Update แบบช่วง</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-red-400">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>หากต้อง Update ทุกโหนดใบ (Leaf) ในช่วง ( [a, b] ) จะใช้เวลา ( O(n \log n) )</li>
+              <li>ซึ่งไม่มีประสิทธิภาพเพียงพอเมื่อมีการ Update บ่อยๆ</li>
+              <li><strong>ทางออก:</strong> เทคนิค <strong>Lazy Propagation</strong></li>
+              <li>หลักการคือ "เลื่อนการ Update ออกไปจนกว่าจะจำเป็นต้องใช้ข้อมูลในโหนดนั้นจริงๆ"</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/lazy-propagation-in-segment-tree/</p>
+        </div>
+      </div>
+      Slide 15: Lazy Propagation: กลไกการทำงาน
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Lazy Propagation ( O(\log n) )</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <ul class="list-decimal list-outside ml-6 space-y-4">
+              <li>เมื่อ Update ช่วงที่ตรงกับโหนดพอดี ให้เก็บค่า Update ไว้ใน <strong>Lazy Array</strong> และ Update ค่าสรุปของโหนดนั้นทันที</li>
+              <li>ไม่ต้องเดินลงไป Update ลูกจนกว่าจะมีการ Query หรือ Update ครั้งใหม่ผ่านโหนดนั้น</li>
+              <li>เมื่อต้องเข้าถึงโหนดที่มีค่าค้างอยู่ใน Lazy Array ให้ทำการ <strong>Push</strong> ค่าลงไปยังลูกซ้ายและขวาก่อนประมวลผล</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 16: Segment Tree สำหรับ Query หลากหลายรูปแบบ
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ความยืดหยุ่นของ Segment Tree</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">เราสามารถประยุกต์ใช้ Segment Tree กับ Operation ใดๆ ที่มีสมบัติการเปลี่ยนกลุ่ม (Associative):</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-blue-400/20 p-4 rounded-xl"><strong>Range GCD:</strong> หา ห.ร.ม. ของเลขในช่วง</div>
+              <div class="bg-green-400/20 p-4 rounded-xl"><strong>Range XOR:</strong> หาค่า XOR รวมในช่วง</div>
+              <div class="bg-yellow-400/20 p-4 rounded-xl"><strong>Range Max Subarray Sum:</strong> หาผลรวมสูงสุดของ Subarray</div>
+              <div class="bg-purple-400/20 p-4 rounded-xl"><strong>Range Bitwise AND/OR:</strong> การจัดการระดับบิต</div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://dev.to/wengao_ye/fenwick-tree-vs-segment-tree-410k</p>
+        </div>
+      </div>
+      Slide 17: Dynamic Segment Tree: ประหยัดหน่วยความจำ
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Dynamic Segment Tree</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed text-center">
+            <p class="mb-6">ใช้ในกรณีที่ช่วงข้อมูลมีขนาดใหญ่มาก (เช่น ( 0 ) ถึง ( 10^9 )) แต่มีการ Update เพียงไม่กี่ตำแหน่ง</p>
+            <ul class="list-disc list-outside ml-6 space-y-4 inline-block text-left">
+              <li>สร้างโหนดเฉพาะเมื่อมีการเข้าถึง (On-demand allocation)</li>
+              <li>ใช้ <strong>Pointers</strong> (หรือ Dynamic Array) แทนการใช้ Array ขนาดคงที่ ( 4n )</li>
+              <li>ประหยัดพื้นที่จาก ( O(n) ) เหลือเพียง ( O(k \log n) ) เมื่อ ( k ) คือจำนวนการ Update</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 18: Persistent Segment Tree
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">การเก็บประวัติด้วย Persistence</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">เทคนิคการสร้างโครงสร้างข้อมูลที่สามารถ Query ข้อมูลในอดีตได้ (Version Control):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>เมื่อมีการ Update ตำแหน่งหนึ่ง เราจะไม่ทับข้อมูลเดิม แต่จะสร้าง <strong>เส้นทางใหม่ (New Path)</strong> จากโหนดใบขึ้นไปถึง Root ใหม่</li>
+              <li>โหนดที่ไม่เกี่ยวข้องกับการ Update จะใช้ลูกร่วมกับเวอร์ชันเดิม (Path Copying)</li>
+              <li>แต่ละการ Update เพิ่มโหนดใหม่เพียง ( O(\log n) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/adv/persistent-seg-tree</p>
+        </div>
+      </div>
+      Slide 19: Two-Dimensional Segment Tree
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">2D Segment Tree: ตาราง 2 มิติ</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-blue-400">
+            <p class="mb-4">ใช้จัดการปัญหา Query บนพื้นที่สี่เหลี่ยม (Rectangular Subarray Sum/Min):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>เป็นโครงสร้างแบบ <strong>Segment Tree ซ้อน Segment Tree</strong></li>
+              <li>ต้นไม้หลักจัดการช่วงของแถว (Rows) และในแต่ละโหนดของแถวจะเก็บ Segment Tree ของคอลัมน์ (Columns)</li>
+              <li>ความซับซ้อนในการ Query และ Update คือ ( O(\log n \cdot \log m) )</li>
+              <li>การ Implement ค่อนข้างซับซ้อนและใช้หน่วยความจำสูง ( (O(nm)) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+      Slide 20: การประยุกต์ใช้กับโจทย์บนต้นไม้ (Tree Queries)
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Subtree Queries & Path Queries</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-semibold">การเปลี่ยนโครงสร้างต้นไม้ให้เป็นช่วงของ Array:</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li><strong>Euler Tour / Tree Traversal Array:</strong> ใช้ DFS เพื่อบันทึกลำดับการเข้าถึงโหนด</li>
+              <li>แต่ละ <strong>Subtree</strong> จะกลายเป็น <strong>ช่วง (Range)</strong> ที่ต่อเนื่องกันใน Array ใหม่</li>
+              <li>หลังจากแปลงแล้ว เราสามารถใช้ BIT หรือ Segment Tree ปกติจัดการโจทย์บนต้นไม้ได้ในเวลา ( O(\log n) )</li>
+            </ul>
+            <div class="mt-6 bg-blue-900/30 p-4 rounded-xl border border-white/20 italic">
+              "เกือบทุกปัญหาบนต้นไม้ที่เกี่ยวกับช่วง สามารถแก้ได้ด้วยการ Flatten ต้นไม้ลงมาเป็น Array"
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/graphs/subtree-queries</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Bottom-Up Implementation</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 italic">การเขียนแบบ Iterative มักจะเร็วกว่าและใช้หน่วยความจำน้อยกว่าแบบ Recursive:</p>
+            <code class="block bg-black/30 p-4 rounded text-sm leading-relaxed font-mono">
+              int sum(int a, int b) {<br>
+              &nbsp;&nbsp;a += n; b += n;<br>
+              &nbsp;&nbsp;int s = 0;<br>
+              &nbsp;&nbsp;while (a <= b) {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;if (a % 2 == 1) s += tree[a++];<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;if (b % 2 == 0) s += tree[b--];<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;a /= 2; b /= 2;<br>
+              &nbsp;&nbsp;}<br>
+              &nbsp;&nbsp;return s;<br>
+              }
+            </code>
+            <p class="mt-4 text-base font-light">เทคนิคนี้ใช้การเลื่อนตำแหน่ง (a) และ (b) ขึ้นไปยังโหนดพ่อแม่ใน Array ขนาด ( 2n ) จนกว่าช่วงจะบรรจบกัน</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Square Root Decomposition</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-blue-400">
+            <p class="mb-4 italic">หากไม่อยากใช้ Tree เราสามารถแบ่ง Array ออกเป็นบล็อก (Blocks):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>แบ่ง Array ขนาด ( n ) ออกเป็นบล็อก บล็อกละ ( \sqrt{n} ) ตัว</li>
+              <li>แต่ละบล็อกจะเก็บค่าสรุป (เช่น ผลรวม) ของสมาชิกในบล็อกนั้น</li>
+              <li><strong>การ Update:</strong> แก้ไขสมาชิกตัวเดียวและ Update ค่าบล็อก ใช้เวลา ( O(1) )</li>
+              <li><strong>การ Query:</strong> คำนวณจากบล็อกที่อยู่ระหว่างช่วง และบวกเพิ่มสมาชิกที่เหลือที่ขอบ ใช้เวลา ( O(\sqrt{n}) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/sqrt-decomposition-set-1-introduction/</p>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Mo's Algorithm</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">ใช้สำหรับปัญหา Range Query ที่ข้อมูล <strong>ไม่มีการ Update</strong> และสามารถเรียงลำดับการประมวลผล Query ได้ (Offline):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>จัดกลุ่ม Query ตามบล็อกของจุดเริ่มต้น (Left endpoint) และเรียงตามจุดจบ (Right endpoint)</li>
+              <li>เคลื่อนย้ายช่วง (Active Range) ทีละขั้นเพื่อหาคำตอบของ Query ถัดไป</li>
+              <li>ความซับซ้อนรวมคือ ( O((n+q)\sqrt{n}) )</li>
+              <li>มีประโยชน์มากในปัญหาที่ Segment Tree แก้ได้ยาก เช่น การนับจำนวนตัวเลขที่แตกต่างกันในช่วง</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Index Compression</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-yellow-300">
+            <p class="mb-4 italic">แก้ปัญหาเมื่อพิกัดข้อมูลมีค่ามากเกินกว่าที่จะจอง Array (เช่น ( 10^9 )):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>รวบรวมค่าพิกัด (Coordinates) ทั้งหมดที่ปรากฏในโจทย์</li>
+              <li>นำมาเรียงลำดับและกำจัดตัวซ้ำ</li>
+              <li>แทนที่ค่าจริงด้วย "ลำดับที่ (Rank)" จากการเรียงลำดับ (0, 1, 2, ...)</li>
+              <li>ทำให้เราสามารถใช้พิกัดเหล่านี้ใน BIT หรือ Segment Tree ขนาด ( O(n) ) ได้</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/general/coords-comp</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Example: Range XOR Queries</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-semibold">โจทย์: ต้องการหาค่า ( a_L \oplus a_{L+1} \oplus \dots \oplus a_R ) และมีการ Update ค่า</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li>เนื่องจาก XOR มีสมบัติการเปลี่ยนกลุ่ม: ( (x \oplus y) \oplus z = x \oplus (y \oplus z) )</li>
+              <li>เราสามารถเก็บค่า XOR รวมไว้ในโหนดของ Segment Tree ได้</li>
+              <li>การรวมผลลัพธ์จากลูกซ้ายและขวา: `tree[k] = tree[2*k] ^ tree[2*k+1]`</li>
+              <li>ฟังก์ชัน Query และ Update ใช้โครงสร้างเดียวกับ Range Sum ทุกประการ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">RMQ with Updates</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Internal Node:</strong> เก็บค่าที่น้อยที่สุดในกลุ่มลูก `min(left_child, right_child)`</li>
+              <li><strong>Update:</strong> เมื่อเปลี่ยนค่าที่ใบ ต้องไล่ Update ค่า ( \min ) ขึ้นไปใหม่</li>
+              <li><strong>Neutral Value:</strong> ในการ Query ให้ใช้ค่า ( \infty ) (Infinity) เป็นค่าเริ่มต้นเพื่อให้ ( \min(x, \infty) = x )</li>
+              <li>ประสิทธิภาพ: ( O(\log n) ) เหมาะสำหรับโจทย์ที่ BIT ทำได้ลำบาก</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Binary Search on Segment Tree</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-green-400">
+            <p class="mb-4 italic">เราสามารถใช้โครงสร้างของต้นไม้ช่วยทำ Binary Search ได้ในเวลา ( O(\log n) ):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>หาก Segment Tree เก็บจำนวนสมาชิกในแต่ละช่วง (Frequency)</li>
+              <li>เมื่อต้องการหาตัวที่ ( k ): ดูที่ลูกซ้าย ถ้าลูกซ้ายมีสมาชิก ( \ge k ) ตัว ให้เดินลงไปทางซ้าย</li>
+              <li>ถ้าสมาชิกน้อยกว่า ให้หักจำนวนนั้นออกจาก ( k ) แล้วเดินลงไปทางขวา</li>
+              <li>เทคนิคนี้นิยมใช้หา Order Statistics ในแบบ Dynamic</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Persistence Concepts</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">โจทย์บางประเภทต้องการ "ย้อนเวลา" หรือ Query ข้อมูลในอดีต:</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Path Copying:</strong> แทนที่จะแก้ไขโหนดเดิม เราสร้างโหนดใหม่เฉพาะในเส้นทางจาก Root ถึงใบที่เปลี่ยนไป</li>
+              <li>โหนดใหม่จะเชื่อมต่อกับลูกของโหนดเดิมในส่วนที่ไม่มีการเปลี่ยนแปลง</li>
+              <li>ทำให้เราได้ Root ใหม่ที่เป็นตัวแทนของ Version ใหม่ โดยใช้พื้นที่เพิ่มเพียง ( O(\log n) ) ต่อการ Update</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/adv/persistent-seg-tree</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Implementation Tips</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-red-400">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Array Size:</strong> สำหรับ Segment Tree จอง ( 4n ) เพื่อป้องกัน Index Out of Bounds ในกรณีทั่วไป</li>
+              <li><strong>Base Case:</strong> ตรวจสอบเงื่อนไขช่วงทับซ้อน (Overlap) ให้แม่นยำเพื่อเลี่ยง Infinite Loop</li>
+              <li><strong>BIT Index:</strong> Fenwick Tree มักใช้ 1-based indexing ดังนั้นต้องระวังการใช้ `index 0`</li>
+              <li><strong>Data Type:</strong> ผลรวมช่วงอาจเกินค่าของ `int` ควรพิจารณาใช้ `long long` ใน C++</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://dev.to/wengao_ye/fenwick-tree-vs-segment-tree-410k</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 text-yellow-300">Morning Session Wrap-up</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">เราได้เรียนรู้เครื่องมือที่ทรงพลังที่สุดในการจัดการช่วงข้อมูล:</p>
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div class="bg-blue-400/20 p-4 rounded-xl">Fenwick Tree (BIT)</div>
+              <div class="bg-green-400/20 p-4 rounded-xl">Segment Tree</div>
+              <div class="bg-yellow-400/20 p-4 rounded-xl">Lazy Propagation</div>
+              <div class="bg-purple-400/20 p-4 rounded-xl">Offline Algorithms</div>
+            </div>
+            <p class="mt-6 text-center italic">"ช่วงบ่ายเราจะนำโครงสร้างเหล่านี้ไปใช้ร่วมกับ Greedy และ Divide & Conquer เพื่อหาคำตอบที่ดีที่สุด!"</p>
+          </div>
+          <div class="flex justify-center gap-4">
+            <div class="px-6 py-2 bg-yellow-300 text-blue-900 font-bold rounded-full">พักกลางวัน: 12.00 - 13.00 น.</div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

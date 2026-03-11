@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0602.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Afternoon Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Tree Traversal Applications</span> <br>
+            <span class="mt-8 text-yellow-300">การประยุกต์ใช้ BFS และ DFS ในปัญหาต้นไม้</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 06 Afternoon: จากการท่องโหนดพื้นฐานสู่การคำนวณคุณสมบัติเชิงลึก
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อการบรรยายช่วงบ่าย</h2>
+            <div class="grid grid-cols-2 gap-4 text-left">
+              <div class="bg-blue-500/20 p-4 rounded-xl border border-blue-400">
+                <p class="font-bold underline">DFS Applications</p>
+                <p class="text-xs opacity-80">การหาขนาด Subtree, ความสูง และ Dynamic Programming บนต้นไม้</p>
+              </div>
+              <div class="bg-green-500/20 p-4 rounded-xl border border-green-400">
+                <p class="font-bold underline">BFS & Distance</p>
+                <p class="text-xs opacity-80">การหาระยะทางที่สั้นที่สุดและลำดับเลเยอร์ (Level-order)</p>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <!-- Slide 2: Why Traversal is Easier in Trees? -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">ทำไมการท่องไปใน Tree ถึงง่ายกว่า Graph ทั่วไป?</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6 shadow-xl">
+            <div class="flex items-start gap-4">
+              <div class="bg-yellow-400 text-black rounded-full p-1 px-3 font-bold">1</div>
+              <p class="text-lg">**ไม่มีวงจร (No Cycles)**: เราไม่จำเป็นต้องกังวลว่าจะวนกลับมาที่เดิมผ่านเส้นทางอื่น ทำให้การจัดการสถานะ `visited` ง่ายขึ้น</p>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-yellow-400 text-black rounded-full p-1 px-3 font-bold">2</div>
+              <p class="text-lg">**เส้นทางเดียว (Unique Path)**: มีเพียงเส้นทางเดียวที่เชื่อมระหว่าง 2 โหนดใดๆ เสมอ</p>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-yellow-400 text-black rounded-full p-1 px-3 font-bold">3</div>
+              <p class="text-lg">**โครงสร้างเรียกซ้ำ (Recursive)**: ต้นไม้มีคุณสมบัติ Self-similarity ซึ่งเหมาะมากกับการใช้ DFS ร่วมกับสมการเวียนเกิด</p>
+            </div>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ่านเพิ่มเติม: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <!-- Slide 3: DFS Application: Subtree Size -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การหาขนาดของต้นไม้ย่อย (Subtree Size)</h1>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-green-400 text-left">
+            <p class="text-xl mb-4 text-green-300 font-bold">โจทย์: ในโหนด \( s \) ใดๆ มีโหนดอยู่ภายใต้มันทั้งหมดกี่โหนด?</p>
+            <p class="text-lg leading-relaxed mb-6">
+            เราใช้ DFS ในการคำนวณโดยอาศัยแนวคิด **Post-order**:
+            <br> \( count(s) = 1 + \sum_{u \in children(s)} count(u) \)
+            </p>
+            <div class="bg-slate-900 p-4 rounded font-mono text-sm border border-white/10">
+              void dfs(int s, int e) {<br>
+              &nbsp;&nbsp;count[s] = 1;<br>
+              &nbsp;&nbsp;for (auto u : adj[s]) {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;if (u == e) continue;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;dfs(u, s);<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;count[s] += count[u];<br>
+              &nbsp;&nbsp;}<br>
+              }
+            </div>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ้างอิงอัลกอริทึม: https://cses.fi/book/book.pdf (Chapter 14)</p>
+        </div>
+      </div>
+
+      <!-- Slide 4: DFS Application: Node Height and Depth -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">การหาระยะทางและความลึก</h1>
+          <div class="grid grid-cols-2 gap-6 mt-4">
+            <div class="bg-white/10 p-6 rounded-xl text-left border-l-4 border-yellow-400">
+              <h3 class="text-yellow-300 font-bold mb-2">Depth (จากบนลงล่าง)</h3>
+              <p class="text-sm opacity-90">ส่งค่า \( depth + 1 \) ลงไปพร้อมกับการเรียกฟังก์ชันลูก เพื่อระบุระดับของโหนด</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl text-left border-l-4 border-blue-400">
+              <h3 class="text-blue-300 font-bold mb-2">Height (จากล่างขึ้นบน)</h3>
+              <p class="text-sm opacity-90 leading-relaxed italic">\( height(s) = \max(height(u)) + 1 \)<br>เมื่อลูกๆ ส่งคำตอบที่สูงที่สุดกลับขึ้นมาหาพ่อ</p>
+            </div>
+          </div>
+          <div class="mt-8 p-4 bg-black/20 rounded-lg text-sm font-mono">
+            dist(root, v) = depth[v]
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Concept: Dynamic Programming on Trees -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 italic">พื้นฐาน Dynamic Programming บนต้นไม้</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4 shadow-xl">
+            <p class="text-xl text-yellow-300 font-medium italic underline">"Tree DP คือการทำ DFS ที่มีการจดจำผลลัพธ์"</p>
+            <p class="opacity-90 leading-relaxed">
+            เรามักจะคำนวณค่าสถานะ (State) ของโหนดพ่อ โดยอิงจากค่าสถานะของโหนดลูก (Children states) 
+            ซึ่งทำได้โดยการใช้ DFS ท่องโหนดไปจนถึงใบ (Leaf) แล้วนำผลลัพธ์สะสมขึ้นมาเรื่อยๆ
+            </p>
+            <p class="text-sm font-bold text-green-300 mt-4 underline">ตัวอย่างปัญหา:</p>
+            <ul class="text-xs space-y-2 opacity-80 italic">
+              <li>• การหาค่ารวมสูงสุดใน Subtree</li>
+              <li>• การหาเส้นทางที่ยาวที่สุดที่ผ่านโหนดนั้นๆ</li>
+              <li>• การเลือกเซตของโหนดที่ไม่ติดกันให้ได้มูลค่าสูงสุด (Independent Set)</li>
+            </ul>
+          </div>
+          <p class="mt-4 text-xs opacity-60">รายละเอียดเพิ่มเติม: https://atcoder.jp/contests/dp</p>
+        </div>
+      </div>
+
+      <!-- Slide 6: BFS Application: Shortest Distance & Leveling -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">BFS: ระยะทางสั้นที่สุดและเลเยอร์</h1>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-blue-400 text-left relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 text-8xl opacity-10 font-bold italic">BFS</div>
+            <p class="text-lg leading-relaxed">
+            Breadth-First Search เหมาะมากสำหรับการหา **ระยะทางที่สั้นที่สุด (Shortest Path)** จาก Root ไปยังโหนดอื่นๆ 
+            ในต้นไม้ที่ไม่มีน้ำหนักเส้นเชื่อม (Unweighted Tree)
+            </p>
+            <ul class="list-disc pl-6 mt-4 space-y-2 text-sm opacity-90">
+              <li>เยี่ยมชมโหนดทีละชั้น (Level-order)</li>
+              <li>โหนดที่ถูกพบก่อนในเลเยอร์ที่ต่ำกว่าจะมีระยะทางใกล้ Root กว่าเสมอ</li>
+              <li>ใช้ Queue ในการควบคุมลำดับการเยี่ยมชม</li>
+            </ul>
+          </div>
+          <p class="mt-4 text-xs opacity-60">แหล่งเรียนรู้: https://www.geeksforgeeks.org/tree-traversals-bfs-and-dfs/</p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Finding the Diameter of a Tree -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">ปัญหาเส้นผ่านศูนย์กลาง (Tree Diameter)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-2xl text-left">
+            <p class="text-xl mb-4 text-yellow-300 font-bold">นิยาม: ระยะทางที่ยาวที่สุดระหว่างโหนด 2 โหนดใดๆ ในต้นไม้</p>
+            <p class="mb-6 opacity-90 leading-relaxed italic">
+            หนึ่งในวิธีการหา Diameter ที่มีประสิทธิภาพและนิยมใช้ที่สุดคือการทำ **DFS/BFS 2 ครั้ง** 
+            ซึ่งจะให้ความซับซ้อนของเวลาเพียง \( O(n) \)
+            </p>
+            <div class="p-4 bg-yellow-900/30 border-l-4 border-yellow-500 rounded text-sm italic">
+              "Diameter มักเป็นองค์ประกอบสำคัญในโจทย์กราฟระดับโอลิมปิก"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: The 2-DFS Algorithm for Diameter -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">อัลกอริทึม 2-DFS เพื่อหา Diameter</h1>
+          <div class="grid grid-cols-2 gap-8 items-center">
+            <div class="text-left space-y-4">
+              <div class="p-4 bg-white/5 border border-white/20 rounded-lg">
+                <p class="font-bold text-green-300">Step 1:</p>
+                <p class="text-xs italic">เริ่มจากโหนดใดก็ได้ (โหนด \( x \)) แล้วใช้ DFS หาโหนดที่อยู่ไกลที่สุดจากมัน (สมมติว่าเป็นโหนด \( a \))</p>
+              </div>
+              <div class="p-4 bg-white/5 border border-white/20 rounded-lg">
+                <p class="font-bold text-green-300">Step 2:</p>
+                <p class="text-xs italic">เริ่มจากโหนด \( a \) แล้วใช้ DFS หาโหนดที่ไกลที่สุดจาก \( a \) อีกครั้ง (สมมติว่าเป็นโหนด \( b \))</p>
+              </div>
+              <p class="text-sm font-bold text-yellow-300 underline italic">ระยะทางระหว่าง \( a \) และ \( b \) คือ Diameter!</p>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl">
+              <p class="text-xs leading-relaxed opacity-75 italic italic underline italic">
+              ทำไมถึงใช้ได้? <br> เพราะจุดปลายของ Diameter จะเป็นจุดที่อยู่ไกลที่สุดจากโหนดใดๆ ในต้นไม้เสมอ การทำ DFS ครั้งแรกจึงรับประกันว่าเราจะเจอ "จุดปลาย" ด้านหนึ่งแน่นอน
+              </p>
+            </div>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <!-- Slide 9: Tree Queries: Finding Ancestors -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การสืบค้นบรรพบุรุษ (Ancestors)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6">
+            <p class="text-lg">การใช้ DFS ช่วยให้เราประมวลผลความสัมพันธ์ระหว่างโหนดได้:</p>
+            <ul class="space-y-4 opacity-90 text-sm">
+              <li class="flex gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-black font-bold">K</div>
+                <span>**K-th Ancestor**: โหนดที่อยู่สูงขึ้นไป \( k \) ระดับจากโหนดปัจจุบัน (แก้ด้วย Binary Lifting)</span>
+              </li>
+              <li class="flex gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-black font-bold">L</div>
+                <span>**Lowest Common Ancestor (LCA)**: บรรพบุรุษร่วมที่ต่ำที่สุดของโหนด \( u \) และ \( v \)</span>
+              </li>
+            </ul>
+            <div class="p-4 bg-blue-900/30 border-l-4 border-blue-500 text-xs italic">
+              "การคำนวณเหล่านี้ต้องอาศัยการเก็บข้อมูลระหว่างการทำ DFS (Preprocessing)"
+            </div>
+          </div>
+          <p class="mt-4 text-xs opacity-60">เพิ่มเติมเรื่อง LCA: https://usaco.guide/gold/LCA</p>
+        </div>
+      </div>
+
+      <!-- Slide 10: Afternoon Summary: Power of Traversal -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8 italic underline">สรุปพลังของการ Traversal</h1>
+          <div class="grid grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
+            <div class="p-6 bg-white/5 border border-white/20 rounded-2xl">
+              <h4 class="text-yellow-300 font-bold mb-2">DFS คือพระเอก</h4>
+              <p class="text-xs opacity-80 leading-relaxed italic italic">ใช้เก็บข้อมูลโครงสร้างทั้งหมดของต้นไม้ ไม่ว่าจะเป็นขนาด Subtree, ความสูง หรือความสัมพันธ์บรรพบุรุษ</p>
+            </div>
+            <div class="p-6 bg-white/5 border border-white/20 rounded-2xl">
+              <h4 class="text-green-300 font-bold mb-2">BFS คือเครื่องมือวัด</h4>
+              <p class="text-xs opacity-80 leading-relaxed italic italic">ใช้จัดการกับข้อมูลตามระยะทางที่เท่ากัน และหาระยะทางที่สั้นที่สุดอย่างแม่นยำ</p>
+            </div>
+          </div>
+          <div class="mt-10 bg-yellow-500/10 p-6 rounded-2xl border-2 border-yellow-500/30">
+            <p class="text-lg font-bold">"Traversal ไม่ใช่แค่การเยี่ยมชมทุกโหนด แต่คือการเก็บข้อมูลที่มีค่าระหว่างทาง"</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 11: Deep Dive: Lowest Common Ancestor (LCA) -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">บรรพบุรุษร่วมที่ต่ำที่สุด (Naive LCA)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4 shadow-xl">
+            <p class="text-lg">แนวคิดการหา LCA แบบพื้นฐานด้วย Traversal:</p>
+            <ul class="list-disc pl-6 space-y-3 text-sm opacity-90">
+              <li>ใช้อาเรย์ <strong>parent[v]</strong> และ <strong>depth[v]</strong> ที่ได้จาก DFS</li>
+              <li>ปรับโหนดทั้งสองให้อยู่ในระดับความลึก (Depth) เดียวกันโดยการเดินขึ้น</li>
+              <li>จากนั้นขยับโหนดทั้งสองขึ้นไปพร้อมๆ กันทีละระดับจนกว่าจะเจอกัน</li>
+            </ul>
+            <div class="p-4 bg-red-500/20 border border-red-500 rounded text-xs italic">
+              "วิธีนี้ใช้เวลา ( O(n) ) ในกรณีเลวร้ายที่สุด (เช่น Tree ที่เป็นเส้นตรง) ซึ่งอาจไม่เพียงพอในบางโจทย์"
+            </div>
+          </div>
+          <p class="mt-4 text-xs opacity-60">ศึกษาเพิ่มเติม: https://cses.fi/book/book.pdf (Chapter 15.3)</p>
+        </div>
+      </div>
+
+      <!-- Slide 12: Binary Lifting for LCA Optimization -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">Binary Lifting: ยกระดับความเร็วในการหา Ancestor</h1>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-yellow-500/50 text-left">
+            <p class="text-sm mb-4">แทนที่จะเดินขึ้นทีละ 1 ขั้น เราจะเดินขึ้นทีละ ( 2^k ) ขั้น:</p>
+            <div class="bg-slate-900 p-4 rounded font-mono text-sm text-yellow-300 mb-4">
+              up[v][k] // คือบรรพบุรุษลำดับที่ ( 2^k ) ของโหนด v
+            </div>
+            <p class="text-xs opacity-80 leading-relaxed italic">
+            การเตรียมข้อมูล (Preprocessing) ใช้เวลา ( O(n \log n) ) ผ่าน DFS ครั้งเดียว 
+            แต่ช่วยให้เราหา LCA ได้ในเวลาเพียง <strong>( O(\log n) )</strong> ต่อหนึ่งคำถาม (Query)
+            </p>
+          </div>
+          <p class="mt-4 text-xs opacity-60">รายละเอียดอัลกอริทึม: https://usaco.guide/gold/LCA</p>
+        </div>
+      </div>
+
+      <!-- Slide 13: Using LCA for Path Distance -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">การหาระยะทางระหว่างโหนดใดๆ</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-10 shadow-2xl text-center">
+            <p class="text-xl mb-6 font-bold text-green-300">สูตรการคํานวณระยะทางระหว่างโหนด u และ v:</p>
+            <div class="p-6 bg-slate-900/80 rounded-xl font-mono text-3xl text-yellow-400 inline-block mb-6 border border-white/20">
+              dist(u, v) = depth[u] + depth[v] - 2 \cdot depth[LCA(u, v)]
+            </div>
+            <p class="text-sm opacity-90 leading-relaxed text-left italic">
+            หลักการ: เราบวกระยะทางจากโหนดทั้งสองไปยัง Root แล้วลบส่วนของเส้นทางที่ซ้ำกันออก (เส้นทางจาก Root ไปยัง LCA) 
+            ซึ่งช่วยให้เราหาระยะทางได้ใน ( O(\log n) ) ทันทีหลังจากทำ Preprocessing
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Dynamic Programming on Trees: Subtree Sum -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">Tree DP: การหาผลรวมในต้นไม้ย่อย</h1>
+          <div class="grid grid-cols-2 gap-8 items-center">
+            <div class="text-left space-y-4">
+              <p class="text-sm leading-relaxed opacity-90">
+              หากแต่ละโหนดมีค่า ( value[s] ) เราต้องการหา ( sum[s] ) ซึ่งคือผลรวมของโหนดทั้งหมดใน Subtree ของ s
+              </p>
+              <div class="p-4 bg-blue-500/20 border-l-4 border-blue-400 rounded font-mono text-xs">
+                void dfs(int s, int e) {<br>
+                &nbsp;&nbsp;sum[s] = value[s];<br>
+                &nbsp;&nbsp;for (auto u : adj[s]) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;if (u == e) continue;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;dfs(u, s);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;sum[s] += sum[u];<br>
+                &nbsp;&nbsp;}<br>
+                }
+              </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl border border-white/10 text-xs italic italic">
+              <h4 class="text-yellow-300 font-bold mb-2">จุดประสงค์:</h4>
+              <p>ใช้ในการแก้โจทย์ที่ต้องพิจารณาทรัพยากรภายใน Subtree หรือการแบ่งงานในโครงสร้างองค์กร</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Tree Diameter via Dynamic Programming -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การหา Diameter ด้วยแนวคิด DP</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6">
+            <p class="text-lg">นอกจากวิธี 2-DFS เรายังสามารถใช้ DP เพื่อหา Diameter ในโจทย์ที่ซับซ้อนกว่าได้:</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 bg-black/20 rounded border border-white/10">
+                <p class="text-xs font-bold text-yellow-300">f(v):</p>
+                <p class="text-xs">ระยะทางที่ยาวที่สุดจากโหนด v ลงไปหา Leaf ใน Subtree ของมัน</p>
+              </div>
+              <div class="p-4 bg-black/20 rounded border border-white/10">
+                <p class="text-xs font-bold text-yellow-300">g(v):</p>
+                <p class="text-xs">Diameter ของเส้นทางที่ยาวที่สุดที่ <strong>ผ่าน</strong> โหนด v</p>
+              </div>
+            </div>
+            <p class="text-sm italic underline text-center">g(v) = (ค่า f ที่ใหญ่ที่สุด 2 อันดับแรกของลูกๆ) + 2</p>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ้างอิงอัลกอริทึม: https://cses.fi/book/book.pdf (Chapter 14.3)</p>
+        </div>
+      </div>
+
+      <!-- Slide 16: Tree Flattening: Euler Tour Technique -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic underline">เทคนิคการทำให้ต้นไม้แบน (Euler Tour)</h1>
+          <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-l-8 border-green-500">
+            <p class="text-xl font-bold">"เปลี่ยนต้นไม้ให้กลายเป็นอาเรย์ (Linearizing a Tree)"</p>
+            <p class="text-md opacity-90 leading-relaxed italic">
+            เราใช้ DFS เพื่อบันทึกเวลาที่ <strong>เข้า (Entry)</strong> และ <strong>ออก (Exit)</strong> จากแต่ละโหนด 
+            ซึ่งทำให้โหนดทุกลูกใน Subtree จะมีเวลาอยู่ในช่วงเดียวกันเสมอในรูปแบบอาเรย์
+            </p>
+            <div class="p-4 bg-slate-900 rounded font-mono text-sm text-green-300">
+              [tin[v], tout[v]] // ครอบคลุมโหนด v และทายาททั้งหมด
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Euler Tour: Mapping Subtree to Range Queries -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">Euler Tour และการทํา Range Queries</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6 shadow-xl">
+            <p class="text-lg">ทำไมเทคนิคนี้ถึงทรงพลัง?</p>
+            <ul class="space-y-4 text-sm opacity-90">
+              <li class="flex gap-3">
+                <div class="w-2 h-2 bg-yellow-400 rounded-full mt-1.5"></div>
+                <span><strong>การสืบค้น Subtree:</strong> เปลี่ยนจากการท่องกราฟเป็นการหาค่าในอาเรย์ช่วง [tin[v], tout[v]]</span>
+              </li>
+              <li class="flex gap-3">
+                <div class="w-2 h-2 bg-yellow-400 rounded-full mt-1.5"></div>
+                <span><strong>การอัปเดตค่า:</strong> สามารถใช้ Segment Tree หรือ Fenwick Tree ร่วมกับอาเรย์นี้ได้</span>
+              </li>
+            </ul>
+            <div class="p-4 bg-blue-900/30 border-l-4 border-blue-500 rounded text-xs italic">
+              "นี่คือพื้นฐานของปัญหาเชิงโครงสร้างขั้นสูงที่ออกสอบบ่อยในรอบลึกๆ"
+            </div>
+          </div>
+          <p class="mt-4 text-xs opacity-60">ศึกษาเพิ่มเติม: https://usaco.guide/gold/tree-euler</p>
+        </div>
+      </div>
+
+      <!-- Slide 18: Implementation: Entry and Exit Times -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">การบันทึกเวลา Entry/Exit ใน DFS</h1>
+          <div class="bg-slate-900/90 p-6 rounded-xl text-left font-mono text-xs leading-relaxed border border-white/20">
+            <p>int timer = 0;</p>
+            <p>void dfs(int s, int e) {</p>
+            <p class="pl-4 text-yellow-300">tin[s] = ++timer; <span class="text-gray-500">// เวลาเข้า</span></p>
+            <p class="pl-4">for (auto u : adj[s]) {</p>
+            <p class="pl-8">if (u == e) continue;</p>
+            <p class="pl-8">dfs(u, s);</p>
+            <p class="pl-4">}</p>
+            <p class="pl-4 text-yellow-300">tout[s] = timer; <span class="text-gray-500">// เวลาออก</span></p>
+            <p>}</p>
+          </div>
+          <p class="mt-6 text-sm italic opacity-80 leading-relaxed text-center underline italic">
+          "ถ้า ( tin[u] \le tin[v] ) และ ( tout[u] \ge tout[v] ) แปลว่า u เป็นบรรพบุรุษของ v"
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 19: Handling Information on Edges -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 italic">ข้อมูลบนเส้นเชื่อม (Values on Edges)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 text-8xl opacity-10 font-bold italic">Edge</div>
+            <p class="text-lg font-bold text-yellow-300 underline">เทคนิคการแปลง Edge เป็น Node:</p>
+            <p class="text-sm opacity-90 leading-relaxed italic">
+            ในต้นไม้ เรามักจะเก็บค่าของเส้นเชื่อมไว้ที่ <strong>โหนดลูก (Child Node)</strong> 
+            เนื่องจากทุกลูกจะมีพ่อ (Parent) เพียงคนเดียวเสมอ 
+            ยกเว้น Root ซึ่งจะไม่มีค่าเส้นเชื่อมอยู่เหนือมัน
+            </p>
+            <ul class="list-disc pl-6 text-xs space-y-2 opacity-80 italic">
+              <li>ช่วยให้เราสามารถใช้เทคนิค Euler Tour หรือ Tree DP กับค่าบนเส้นเชื่อมได้</li>
+              <li>เวลาทำ Path Query ต้องระวังไม่นับค่าของ LCA เข้ามา (เพราะมันแทนเส้นเชื่อมเหนือ LCA)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Tree Traversal Best Practices -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8 italic underline">ข้อควรระวังในการเขียน Traversal</h1>
+          <div class="grid grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
+            <div class="p-6 bg-red-500/10 border border-red-500 rounded-2xl italic">
+              <h4 class="font-bold mb-2">Stack Overflow</h4>
+              <p class="text-xs opacity-85 leading-relaxed italic">ต้นไม้ที่ลึกมาก (เช่น ( 10^5 ) โหนด) อาจทำให้ Recursion ค้างได้ ลองเพิ่มขนาด Stack หรือใช้ Iterative DFS</p>
+            </div>
+            <div class="p-6 bg-yellow-500/10 border border-yellow-500 rounded-2xl italic">
+              <h4 class="font-bold mb-2">Parent Checking</h4>
+              <p class="text-xs opacity-85 leading-relaxed italic italic">อย่าลืมส่งพารามิเตอร์พ่อ (Parent) เสมอเพื่อกันไม่ให้เดินย้อนกลับไปจุดเดิมจนติดลูปไม่รู้จบ</p>
+            </div>
+          </div>
+          <div class="mt-10 p-6 bg-green-500/20 rounded-full border-2 border-green-400 inline-block">
+            <p class="font-bold text-xl">"Traversal is the bridge between Structure and Algorithm."</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 21: Binary Lifting Preprocessing (Code) -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6">การเตรียมข้อมูล Binary Lifting (Preprocessing)</h1>
+          <div class="bg-slate-900/90 p-6 rounded-xl text-left font-mono text-xs leading-relaxed border border-blue-400/50">
+            <p class="text-blue-400">// ให้ up[v] = parent[v] จากการทำ DFS</p>
+            <p>for (int k = 1; k &lt; LOG; k++) {</p>
+            <p class="pl-4">for (int v = 1; v &lt;= n; v++) {</p>
+            <p class="pl-8 text-yellow-300">up[v][k] = up[up[v][k-1]][k-1];</p>
+            <p class="pl-4">}</p>
+            <p>}</p>
+          </div>
+          <div class="mt-6 p-4 bg-white/10 rounded-lg text-left">
+            <p class="text-sm opacity-90 leading-relaxed">
+            <strong>แนวคิด:</strong> บรรพบุรุษลำดับที่ ( 2^k ) ของ ( v ) คือบรรพบุรุษลำดับที่ ( 2^{k-1} ) ของบรรพบุรุษลำดับที่ ( 2^{k-1} ) ของ ( v ) 
+            เราใช้เวลา ( O(n \log n) ) ในการเติมตารางนี้ให้ครบ
+            </p>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ้างอิงเทคนิค: https://usaco.guide/gold/LCA</p>
+        </div>
+      </div>
+
+      <!-- Slide 22: Binary Lifting LCA Query Logic -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 italic">ขั้นตอนการสืบค้น LCA (Query)</h1>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-black/30 p-6 rounded-xl border border-white/20">
+              <h4 class="text-yellow-300 font-bold mb-2">1. ปรับระดับ (Lift)</h4>
+              <p class="text-xs opacity-80 leading-relaxed">ถ้า ( depth[u] < depth[v] ) ให้สลับตัวแปร แล้วกระโดด ( u ) ขึ้นไปให้สูงเท่ากับ ( v ) โดยใช้เลขฐานสองของผลต่างระดับ</p>
+            </div>
+            <div class="bg-black/30 p-6 rounded-xl border border-white/20">
+              <h4 class="text-yellow-300 font-bold mb-2">2. กระโดดร่วม (Binary Jump)</h4>
+              <p class="text-xs opacity-80 leading-relaxed">ถ้ายังไม่เจอกัน ให้ลองกระโดดขึ้นไป ( 2^k ) ขั้นพร้อมกันจาก ( k ) ใหญ่ไปหาเล็ก โดยมีเงื่อนไขว่าต้อง "ไม่กระโดดจนเลยจุดที่เจอกัน"</p>
+            </div>
+          </div>
+          <p class="mt-8 text-lg font-bold text-green-300">"ผลลัพธ์สุดท้ายคือ parent ของโหนดที่ u และ v กระโดดไปหยุด"</p>
+        </div>
+      </div>
+
+      <!-- Slide 23: Application: Finding k-th Ancestor -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การหาบรรพบุรุษลำดับที่ k</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6 shadow-xl">
+            <p class="text-lg italic">"กระโดดขึ้นไปตาม Bit ของ k ในเวลา ( O(\log k) )"</p>
+            <div class="bg-slate-900 p-6 rounded font-mono text-sm text-yellow-300 border border-white/10">
+              for (int i = 0; i < LOG; i++) {<br>
+              &nbsp;&nbsp;if ((k >> i) & 1) v = up[v][i];<br>
+              }
+            </div>
+            <p class="text-sm opacity-90 leading-relaxed">
+            เทคนิคนี้ช่วยให้เราสามารถตอบคำถาม "ใครคือหัวหน้าลำดับที่ 100 ของพนักงานคนนี้" ได้อย่างรวดเร็วมาก 
+            แม้ต้นไม้จะมีความสูงถึงระดับแสนโหนดก็ตาม
+            </p>
+          </div>
+          <p class="mt-4 text-xs opacity-60">โจทย์ฝึกหัด: https://cses.fi/problemset/task/1687</p>
+        </div>
+      </div>
+
+      <!-- Slide 24: Tree DP: Maximum Weight Independent Set -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">Tree DP: เซตอิสระที่มีน้ำหนักสูงสุด</h1>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-green-400 text-left">
+            <p class="text-lg font-bold text-green-300 mb-4">โจทย์: เลือกโหนดให้มีค่าน้ำหนักรวมมากที่สุด โดยห้ามเลือกโหนดที่ติดกัน</p>
+            <p class="text-sm italic underline mb-2">นิยามสถานะ:</p>
+            <ul class="text-xs space-y-3 opacity-90 leading-relaxed">
+              <li>• ( dp[v] ): ค่าสูงสุดใน Subtree ของ ( v ) โดย <strong>ไม่เลือก</strong> ( v )</li>
+              <li>• ( dp[v][1] ): ค่าสูงสุดใน Subtree ของ ( v ) โดย <strong>เลือก</strong> ( v )</li>
+            </ul>
+            <p class="mt-4 text-sm font-mono bg-slate-900 p-3 rounded">
+            dp[v] = Σ max(dp[u], dp[u][1])<br>
+            dp[v][1] = weight[v] + Σ dp[u]
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Euler Tour Application: Subtree Sum Update -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 italic underline">Euler Tour: การอัปเดตและหาค่า Subtree</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl text-left space-y-4">
+            <p class="text-lg">เมื่อเราแปลง Tree เป็น Array ผ่านช่วง ( [tin[v], tout[v]] ):</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 bg-blue-500/20 rounded border border-blue-400">
+                <h4 class="font-bold text-xs underline">Node Update</h4>
+                <p class="text-xs italic">อัปเดตค่าที่ตำแหน่ง ( tin[v] ) ใน Fenwick Tree</p>
+              </div>
+              <div class="p-4 bg-green-500/20 rounded border border-green-400">
+                <h4 class="font-bold text-xs underline">Subtree Query</h4>
+                <p class="text-xs italic">หาผลรวมช่วง ( [tin[v], tout[v]] ) ในเวลา ( O(\log n) )</p>
+              </div>
+            </div>
+            <p class="text-sm opacity-80 leading-relaxed italic">
+            "นี่คือกุญแจสำคัญในการแก้โจทย์ Dynamic Tree Connectivity เบื้องต้น"
+            </p>
+          </div>
+          <p class="mt-4 text-xs opacity-60">ศึกษาเพิ่มเติม: https://cses.fi/book/book.pdf (Chapter 18)</p>
+        </div>
+      </div>
+
+      <!-- Slide 26: Tree Center: Finding the Middle -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">จุดศูนย์กลางของต้นไม้ (Tree Center)</h1>
+          <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-l-8 border-yellow-500 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 text-8xl opacity-10 font-bold italic">Center</div>
+            <p class="text-lg font-bold">"โหนดที่ทำให้ระยะทางไปยัง Leaf ที่ไกลที่สุดสั้นที่สุด"</p>
+            <p class="text-sm opacity-90 leading-relaxed italic">
+            วิธีการหา: <br>
+            1. หาเส้น Diameter <br>
+            2. จุดศูนย์กลางจะอยู่กึ่งกลางของเส้นทาง Diameter นั้นเสมอ <br>
+            (ต้นไม้อาจมีจุดศูนย์กลางได้ 1 หรือ 2 จุด)
+            </p>
+            <p class="text-xs text-yellow-300">ใช้ในการเลือกจุดกระจายสัญญาณหรือจุดพักที่มีประสิทธิภาพที่สุดบนโครงข่าย</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Tip: Rooting an Unrooted Tree -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-6 italic underline">เทคนิคการ "ติดราก" (Rooting)</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left shadow-2xl">
+            <p class="text-lg leading-relaxed mb-4">
+            โจทย์มักให้ข้อมูลเป็นเส้นเชื่อมลอยๆ (Unrooted Tree) การเลือก Root ที่เหมาะสมจะช่วยให้ใช้ Tree DP ได้ง่ายขึ้น:
+            </p>
+            <ul class="list-disc pl-6 space-y-3 text-sm opacity-90 italic">
+              <li>เลือกโหนด 1 เป็น Root เสมอถ้าไม่มีเหตุผลอื่น (มาตรฐานสากล)</li>
+              <li>การ Root ต้นไม้ช่วยให้เรานิยามความสัมพันธ์ "พ่อ-ลูก" ได้ชัดเจน</li>
+              <li>ระวัง: บางอัลกอริทึมให้ผลลัพธ์เปลี่ยนไปตาม Root (ต้องตรวจสอบความถูกต้อง)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Comparison: BFS vs DFS on Trees -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-8">เลือกใช้เครื่องมือไหนดี?</h1>
+          <div class="grid grid-cols-2 gap-8 italic">
+            <div class="text-left">
+              <h3 class="text-xl font-bold text-blue-300 mb-2 underline">DFS (Depth-First)</h3>
+              <ul class="text-xs space-y-2 opacity-90 leading-relaxed">
+                <li>• เก็บข้อมูล Subtree ได้ดีเยี่ยม (Post-order)</li>
+                <li>• ใช้กับเทคนิค Euler Tour และ DP</li>
+                <li>• ตรวจสอบความเป็นบรรพบุรุษ (tin/tout)</li>
+                <li class="text-red-300">• เสี่ยงต่อ Stack Overflow ในต้นไม้ลึก</li>
+              </ul>
+            </div>
+            <div class="text-left">
+              <h3 class="text-xl font-bold text-green-300 mb-2 underline">BFS (Breadth-First)</h3>
+              <ul class="text-xs space-y-2 opacity-90 leading-relaxed">
+                <li>• หา Shortest Path บนต้นไม้ไม่มีน้ำหนัก</li>
+                <li>• เยี่ยมชมทีละระดับ (Level-order)</li>
+                <li>• เหมาะกับการหาโหนดในระยะ ( k )</li>
+                <li class="text-red-300">• ใช้หน่วยความจำ (Queue) มากในต้นไม้ที่กว้าง</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Problem Pointer: Tree Matching (CSES) -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-4">โจทย์แนะนำ: Tree Matching</h1>
+          <div class="bg-black/30 p-6 rounded-xl text-left border-l-4 border-yellow-400 mb-6">
+            <p class="text-sm font-bold">URL: https://cses.fi/problemset/task/1130</p>
+            <p class="text-sm leading-relaxed">หาจำนวนเส้นเชื่อมที่มากที่สุดที่ห้ามมีจุดปลายร่วมกัน (Matching)</p>
+          </div>
+          <div class="bg-white/10 p-6 rounded-xl text-left">
+            <h4 class="text-green-300 font-bold mb-2">คีย์เวิร์ด:</h4>
+            <p class="text-xs opacity-90 italic">เป็นโจทย์ที่ฝึกใช้ Tree DP (เลือก/ไม่เลือก) และการจัดการสถานะที่ขึ้นอยู่กับการตัดสินใจของโหนดพ่อและลูกพร้อมกัน</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Problem Pointer: Distance Queries (CSES) -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-3xl font-bold mb-4">โจทย์แนะนำ: Distance Queries</h1>
+          <div class="bg-black/30 p-6 rounded-xl text-left border-l-4 border-blue-400 mb-6">
+            <p class="text-sm font-bold">URL: https://cses.fi/problemset/task/1135</p>
+            <p class="text-sm leading-relaxed">มีคำถาม ( q ) ข้อ แต่ละข้อให้หาความห่างระหว่างโหนด ( u ) และ ( v )</p>
+          </div>
+          <div class="bg-white/10 p-6 rounded-xl text-left">
+            <h4 class="text-green-300 font-bold mb-2">บททดสอบ:</h4>
+            <p class="text-xs opacity-90 italic">ฝึกฝนการเขียน LCA ด้วย Binary Lifting และการใช้ความลึก (Depth) ในการหาคำตอบอย่างรวดเร็ว (Preprocessing ( O(n \log n) ), Query ( O(\log n) ))</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Summary of Traversal Applications -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8 italic underline">บทสรุปช่วงบ่าย</h1>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="p-4 bg-white/5 border border-white/20 rounded-lg italic">
+              <span class="font-bold text-yellow-300">ความรู้ใหม่:</span> Binary Lifting สำหรับ Ancestor/LCA
+            </div>
+            <div class="p-4 bg-white/5 border border-white/20 rounded-lg italic">
+              <span class="font-bold text-yellow-300">เทคนิคพิเศษ:</span> Euler Tour สำหรับ Subtree Range Queries
+            </div>
+            <div class="p-4 bg-white/5 border border-white/20 rounded-lg italic">
+              <span class="font-bold text-yellow-300">แนวคิดหลัก:</span> Dynamic Programming on Trees
+            </div>
+            <div class="p-4 bg-white/5 border border-white/20 rounded-lg italic">
+              <span class="font-bold text-yellow-300">คุณสมบัติ:</span> Unique Path และ Tree Diameter
+            </div>
+          </div>
+          <p class="mt-8 text-xl font-light italic">"คุณพร้อมสำหรับการลงมือปฏิบัติแก้โจทย์ต้นไม้ในช่วงสุดท้ายของวันนี้แล้ว!"</p>
+        </div>
+      </div>
+
+      <!-- Slide 32: Transition to Practice -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 italic">Let's Practise!</h1>
+          <div class="bg-yellow-500/20 p-10 rounded-full border-4 border-yellow-400 inline-block mb-8">
+            <p class="text-2xl font-bold text-yellow-300 uppercase">15:00 - 17:00</p>
+          </div>
+          <div class="text-left max-w-2xl mx-auto space-y-4">
+            <p class="text-xl italic font-medium underline text-center">ภารกิจสุดท้ายของ Day 06:</p>
+            <ul class="space-y-2 text-sm opacity-90 italic">
+              <li>1. เข้าสู่ระบบ CSES และ AtCoder</li>
+              <li>2. เลือกโจทย์ในหัวข้อ Tree Algorithms</li>
+              <li>3. ประยุกต์ใช้ DFS/LCA/Diameter ที่เรียนมาวันนี้</li>
+              <li>4. ปรึกษาผู้ช่วยสอนหากติดขัดเรื่อง Implementation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

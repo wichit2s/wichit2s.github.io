@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0401.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Recursion: Thinking in Subproblems</span> <br>
+            <span class="mt-8 text-yellow-300">หัวใจสำคัญของการแบ่งปัญหาย่อย</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 04 Morning: Concepts & Recursive Mathematical Functions
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">วัตถุประสงค์การเรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">1</div>
+                <span>เข้าใจแนวคิด Base Case และ Recursive Step </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">2</div>
+                <span>การแก้ปัญหาด้วยนิยามทางคณิตศาสตร์แบบเวียนเกิด </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm mt-1">3</div>
+                <span>การวาด Recursion Trees และการวิเคราะห์ความลึกของ Stack </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 text-center">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300 italic">ความหมายของ Recursion</h2>
+          <div class="bg-black/20 p-8 rounded-3xl border-2 border-white/20 mb-8">
+            <p class="text-2xl leading-relaxed">
+            "อัลกอริทึมที่แก้ปัญหาโดยการ <b>ลดขนาดของปัญหา</b> ลงจนกลายเป็นปัญหาย่อยประเภทเดียวกันที่มีขนาดเล็กลง" 
+            </p>
+          </div>
+          <p class="text-xl font-light opacity-80">
+          ในทางโปรแกรมมิ่ง คือฟังก์ชันที่ <b>เรียกตัวเอง (Self-call)</b> เพื่อทำงานที่ง่ายขึ้น 
+          </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase tracking-widest text-center">โครงสร้างของฟังก์ชันเวียนเกิด</h2>
+          <div class="grid grid-cols-2 gap-8">
+            <div class="bg-red-500/20 p-6 rounded-2xl border border-red-400">
+              <h3 class="text-xl font-bold mb-4">1. Base Case</h3>
+              <p class="text-sm opacity-90">เงื่อนไขที่ทำให้ฟังก์ชัน <b>หยุดเรียกตัวเอง</b> เพื่อป้องกันการทำงานไม่รู้จบ (Infinite Loop) </p>
+            </div>
+            <div class="bg-green-500/20 p-6 rounded-2xl border border-green-400">
+              <h3 class="text-xl font-bold mb-4">2. Recursive Step</h3>
+              <p class="text-sm opacity-90">การลดขนาดปัญหาและ <b>เรียกฟังก์ชันเดิม</b> ด้วยพารามิเตอร์ที่เล็กลง </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300">การคำนวณ Factorial</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-lg mb-6">
+            <span class="text-blue-400">long long</span> fact(<span class="text-blue-400">int</span> n) {<br>
+            &nbsp;&nbsp;<span class="text-pink-400">if</span> (n == 0) <span class="text-pink-400">return</span> 1; <span class="text-gray-500">// Base Case</span><br>
+            &nbsp;&nbsp;<span class="text-pink-400">return</span> n * fact(n - 1); <span class="text-gray-500">// Recursive Step</span><br>
+            }
+          </div>
+          <div class="p-4 bg-white/10 rounded-lg border-l-4 border-yellow-400">
+            <b>นิยาม:</b> \(n! = n \times (n-1)!\) โดยที่ \(0! = 1\)
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">ลำดับฟีโบนัชชี (Fibonacci Numbers)</h2>
+          <div class="bg-black/30 p-6 rounded-2xl mb-6 font-mono text-2xl">
+            \(F_n = F_{n-1} + F_{n-2}\)
+          </div>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-white/5 p-4 rounded-xl">
+              <h4 class="font-bold text-green-400">Base Cases</h4>
+              <p>\(F_0 = 0\)<br>\(F_1 = 1\)</p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl">
+              <h4 class="font-bold text-green-400">ลำดับที่ได้</h4>
+              <p>0, 1, 1, 2, 3, 5, 8, 13...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase italic">Visualization of F7</h2>
+          <div class="bg-white/10 p-6 rounded-3xl border border-white/20 mb-6">
+            <p class="text-lg">แผนภูมิแสดงการเรียกฟังก์ชัน (Nodes = Function Calls) </p>
+            <p class="mt-4 italic opacity-70 italic">"แต่ละโหนดจะแตกกิ่งก้านตามจำนวนครั้งที่เรียกตัวเองภายในฟังก์ชัน" </p>
+          </div>
+          <p class="text-sm text-red-300 font-bold underline">สังเกต: จำนวนการเรียกจะเพิ่มขึ้นเป็นทวีคูณ (Exponential) </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-red-400">ทำไม Backtracking ถึงช้า? </h2>
+          <div class="bg-white text-blue-900 p-8 rounded-3xl shadow-2xl mb-8">
+            <p class="text-2xl font-black">"Overlapping Subproblems"</p>
+          </div>
+          <p class="text-xl font-light opacity-80 leading-relaxed">
+          การคำนวณ <b>ปัญหาย่อยเดิมซ้ำๆ</b> หลายครั้ง <br> 
+          เช่น การคำนวณ \(F_2\) ซ้ำกันหลายจุดในต้นไม้ของ \(F_7\) 
+          </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-10 text-yellow-300">วิเคราะห์ความซับซ้อนของ Fibonacci</h2>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-black/40 p-8 rounded-2xl border-t-4 border-red-500">
+              <h3 class="text-xl font-bold mb-4 italic">Time Complexity</h3>
+              <p class="text-5xl font-black text-red-400">\(O(2^n)\)</p>
+            </div>
+            <div class="bg-black/40 p-8 rounded-2xl border-t-4 border-blue-500">
+              <h3 class="text-xl font-bold mb-4 italic">Space Complexity</h3>
+              <p class="text-5xl font-black text-blue-400">\(O(n)\)</p>
+            </div>
+          </div>
+          <p class="mt-10 opacity-70 italic text-sm">Space ขึ้นอยู่กับความลึกของ Stack ที่เรียกใช้งาน </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">แนวคิด Memoization (Smart Recursion) </h2>
+          <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400 mb-6">
+            <p class="text-xl italic leading-relaxed">
+            "จดบันทึกผลลัพธ์ของปัญหาย่อยลงในอาร์เรย์ (Array) หลังจากคำนวณครั้งแรก เพื่อเรียกใช้ใหม่ได้ทันที" 
+            </p>
+          </div>
+          <p class="text-center text-green-300 font-bold uppercase tracking-widest">
+          เปลี่ยนจาก \(O(2^n)\) เป็น \(O(n)\) !
+          </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono text-center">Implementation with Memoization</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            <span class="text-blue-400">long long</span> memo[13];<br>
+            <span class="text-blue-400">long long</span> fib(<span class="text-blue-400">int</span> n) {<br>
+            &nbsp;&nbsp;<span class="text-pink-400">if</span> (n <= 1) <span class="text-pink-400">return</span> n;<br>
+            &nbsp;&nbsp;<span class="text-pink-400">if</span> (memo[n] != -1) <span class="text-pink-400">return</span> memo[n]; <span class="text-gray-500">// ใช้ค่าที่จดไว้</span><br>
+            &nbsp;&nbsp;<span class="text-pink-400">return</span> memo[n] = fib(n - 1) + fib(n - 2); <span class="text-gray-500">// จดบันทึก</span><br>
+            }
+          </div>
+          <p class="text-sm opacity-70 italic text-center">หลักการ "First make it work, then make it fast" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">แบบฝึกหัดพื้นฐาน Recursion & Memoization</h2>
+          <div class="grid gap-6">
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-400">
+              <h4 class="font-bold text-xl mb-1">1. Sum of Digits</h4>
+              <p class="text-sm opacity-80">ฝึกพื้นฐานการนิยามความสัมพันธ์แบบเวียนเกิด (Recurrence Relation)</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-green-400">
+              <h4 class="font-bold text-xl mb-1">2. Fibonacci Numbers (CSES)</h4>
+              <p class="text-sm opacity-80">เรียนรู้การใช้ Memoization เพื่อแก้ปัญหา TLE ในกรณีที่ปัญหาย่อยทับซ้อนกัน</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-purple-400">
+              <h4 class="font-bold text-xl mb-1">3. Recursive "Hello World" (Kattis)</h4>
+              <p class="text-sm opacity-80">ฝึกควบคุมจำนวนการเรียกฟังก์ชันแทนการใช้ Loop ปกติ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-blue-300 italic">Problem 1: Sum of Digits</h2>
+          <div class="bg-black/30 p-6 rounded-xl border border-white/20 mb-6">
+            <p class="text-lg leading-relaxed">
+            <b>โจทย์:</b> จงเขียนฟังก์ชันเวียนเกิดเพื่อหา "ผลรวมของเลขหลัก" ทั้งหมดของจำนวนเต็ม \(n\) 
+            <br><span class="text-sm italic opacity-70">ตัวอย่าง: ถ้า \(n = 126\) ผลรวมคือ \(1+2+6 = 9\)</span>
+            </p>
+          </div>
+          <div class="bg-white/10 p-4 rounded-lg">
+            <h4 class="font-bold text-yellow-300 mb-2">เงื่อนไขเพิ่มเติม:</h4>
+            <ul class="list-disc ml-6 text-sm space-y-1">
+              <li>ห้ามใช้คำสั่ง <code>for</code> หรือ <code>while</code></li>
+              <li>ห้ามแปลงเลขเป็น String</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Step-by-Step Logic</h2>
+          <div class="space-y-4 text-sm">
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4 border border-white/10">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">1</span>
+              <span><b>แยกปัญหาย่อย:</b> ผลรวมของ \(126\) คือ เลขหลักสุดท้าย (\(6\)) บวกกับผลรวมของเลขที่เหลือ (\(12\))</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4 border border-white/10">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">2</span>
+              <span><b>นิยาม:</b> <code>sumDigits(n) = (n % 10) + sumDigits(n / 10)</code></span>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs text-green-400">
+              int sumDigits(int n) {<br>
+              &nbsp;&nbsp;if (n == 0) return 0; // Base Case<br>
+              &nbsp;&nbsp;return (n % 10) + sumDigits(n / 10);<br>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-6 text-green-400 uppercase">Problem 2: Fibonacci (CSES Style)</h2>
+          <div class="bg-white text-black p-6 rounded-2xl mb-6 shadow-xl text-left">
+            <p class="text-lg">จงหาค่า \(F_n\) เมื่อกำหนด \(n \le 10^6\)</p>
+            <p class="text-red-600 font-bold mt-2 italic underline">ความท้าทาย: หากใช้ Naive Recursion จะติด TLE แน่นอน เพราะความซับซ้อนคือ \(O(2^n)\) </p>
+          </div>
+          <div class="p-4 bg-black/40 rounded-lg border border-green-500">
+            <p class="text-sm italic">"เราต้องใช้ Memoization เพื่อลดความซับซ้อนให้เหลือ \(O(n)\)"</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-yellow-300">Implementation Strategy </h2>
+          <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs leading-relaxed mb-4">
+            long long memo; // เก็บคำตอบที่เคยหาแล้ว<br><br>
+            long long fib(int n) {<br>
+            &nbsp;&nbsp;if (n <= 1) return n;<br>
+            &nbsp;&nbsp;if (memo[n] != -1) return memo[n]; // 1. ตรวจสอบว่าเคยมีคำตอบไหม<br><br>
+            &nbsp;&nbsp;// 2. ถ้าไม่มี ให้คำนวณแล้วจดบันทึกไว้<br>
+            &nbsp;&nbsp;return memo[n] = (fib(n - 1) + fib(n - 2)) % MOD;<br>
+            }
+          </div>
+          <div class="p-3 bg-blue-500/20 rounded border border-blue-500 text-xs">
+            <b>Tip:</b> อย่าลืมทำความสะอาด Array <code>memo</code> ด้วยค่า -1 ก่อนเริ่มทำงานทุกครั้ง 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-purple-300">Problem 3: Recursive Greeting</h2>
+          <div class="bg-white/10 p-6 rounded-xl border-l-8 border-purple-500 mb-6">
+            <p class="text-lg leading-relaxed">
+            จงพิมพ์คำว่า <b>"Hello World!"</b> จำนวน \(N\) บรรทัด โดยห้ามใช้คำสั่งวนซ้ำ (Loop) ใดๆ ทั้งสิ้น
+            </p>
+          </div>
+          <p class="text-sm opacity-80 italic">โจทย์นี้ใช้เพื่อทดสอบความเข้าใจเรื่องความลึกของการเรียก (Recursion Depth) และการทำงานของ Stack </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono italic">Functional Logic</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            void sayHello(int n) {<br>
+            &nbsp;&nbsp;if (n == 0) return; // Base Case: หยุดเมื่อครบจำนวน<br>
+            &nbsp;&nbsp;cout << "Hello World!\n";<br>
+            &nbsp;&nbsp;sayHello(n - 1); // Recursive Step: เรียกครั้งที่เหลือ<br>
+            }
+          </div>
+          <div class="bg-red-900/30 p-4 rounded-lg border border-red-500">
+            <h4 class="font-bold text-red-300 mb-1 text-sm">ข้อควรระวัง!</h4>
+            <p class="text-[11px] opacity-90">ในภาษา C++ ความลึกของ Recursion ที่มากเกินไป (เช่น \(N > 10^6\)) อาจทำให้เกิด <b>Stack Overflow</b> ได้ </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300">สัมประสิทธิ์ทวินาม \(\binom{n}{k}\)</h2>
+          <div class="bg-black/30 p-6 rounded-2xl mb-6 font-mono text-2xl">
+            \[\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}\]
+          </div>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-white/5 p-4 rounded-xl border border-blue-400">
+              <h4 class="font-bold text-blue-300">Base Cases</h4>
+              <p>\[\binom{n}{0} = 1\]<br>\[\binom{n}{n} = 1\]</p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-blue-400">
+              <h4 class="font-bold text-blue-300">ความหมายทางการนับ</h4>
+              <p class="text-sm">จำนวนวิธีเลือกของ \(k\) ชิ้น จากทั้งหมด \(n\) ชิ้น โดยไม่สนใจลำดับ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono text-center">Binomial Coefficient Implementation</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-4">
+            <span class="text-blue-400">int</span> C(<span class="text-blue-400">int</span> n, <span class="text-blue-400">int</span> k) {<br>
+            &nbsp;&nbsp;<span class="text-pink-400">if</span> (k == 0 || k == n) <span class="text-pink-400">return</span> 1;<br>
+            &nbsp;&nbsp;<span class="text-pink-400">return</span> C(n - 1, k - 1) + C(n - 1, k);<br>
+            }
+          </div>
+          <p class="text-sm opacity-70 italic text-center">"โครงสร้างนี้สัมพันธ์โดยตรงกับ <b>สามเหลี่ยมปาสกาล</b>" </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">การหา ห.ร.ม. (Greatest Common Divisor)</h2>
+          <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400 mb-6">
+            <p class="text-xl italic">
+            "ห.ร.ม. ของ \(a\) และ \(b\) คือ ห.ร.ม. ของ \(b\) และเศษที่เหลือจากการหาร \(a\) ด้วย \(b\)"
+            </p>
+          </div>
+          <div class="bg-black/30 p-4 rounded-xl font-mono text-center text-xl">
+            \[gcd(a, b) = gcd(b, a \pmod b)\]
+          </div>
+          <p class="mt-6 text-sm text-center opacity-70">กรณีฐาน: \(gcd(a, 0) = a\)</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono text-center">Recursive GCD</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-lg mb-6">
+            <span class="text-blue-400">int</span> gcd(<span class="text-blue-400">int</span> a, <span class="text-blue-400">int</span> b) {<br>
+            &nbsp;&nbsp;<span class="text-pink-400">if</span> (b == 0) <span class="text-pink-400">return</span> a;<br>
+            &nbsp;&nbsp;<span class="text-pink-400">return</span> gcd(b, a % b);<br>
+            }
+          </div>
+          <p class="text-sm opacity-80 text-center italic">นี่เป็นหนึ่งในอัลกอริทึมเวียนเกิดที่มีประสิทธิภาพสูงที่สุด (\(O(\log(\min(a, b)))\))</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase">Fast Exponentiation</h2>
+          <p class="mb-6 opacity-90">การหาค่า \(x^n\) ในเวลา \(O(\log n)\) แทนที่จะเป็น \(O(n)\) </p>
+          <div class="bg-black/40 p-6 rounded-2xl font-mono text-lg space-y-2">
+            <p>หาก \(n\) เป็นเลขคู่: \(x^n = (x^{n/2})^2\)</p>
+            <p>หาก \(n\) เป็นเลขคี่: \(x^n = x \times (x^{(n-1)/2})^2\)</p>
+          </div>
+          <p class="mt-6 text-sm italic text-red-300">"ใช้แนวคิด Divide and Conquer ในการลดขนาดกำลังลงครึ่งหนึ่งในทุกขั้นตอน" </p>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase italic">แบบฝึกหัด: ฟังก์ชันคณิตศาสตร์</h2>
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl border border-blue-400">
+              <h4 class="font-bold text-blue-300 mb-2">1. Binomial </h4>
+              <p class="text-xs opacity-80">คำนวณการเลือกโดยใช้ความสัมพันธ์แบบเวียนเกิดและ Memoization</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border border-green-400">
+              <h4 class="font-bold text-green-300 mb-2">2. R2 (Kattis)</h4>
+              <p class="text-xs opacity-80">ฝึกมองความสัมพันธ์ของตัวเลขในเชิงสมการเวียนเกิดเบื้องต้น</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border border-purple-400">
+              <h4 class="font-bold text-purple-300 mb-2">3. Greatest Common Divisor</h4>
+              <p class="text-xs opacity-80">เขียนฟังก์ชัน ห.ร.ม. แบบ Recursive ตามหลักของ Euclid </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-blue-300">Problem 1: Binomial Coefficients</h2>
+          <div class="bg-black/30 p-6 rounded-xl border-l-4 border-blue-400 mb-6">
+            <p class="text-lg leading-relaxed">
+            <b>โจทย์:</b> จงคำนวณค่า \(\binom{n}{k}\) โดยใช้นิยามเวียนเกิด:
+            <br><span class="font-mono text-yellow-300 ml-4">\(\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}\)</span>
+            </p>
+          </div>
+          <div class="bg-red-900/30 p-4 rounded-lg border border-red-500">
+            <h4 class="font-bold text-red-300 mb-1 text-sm">Challenge:</h4>
+            <p class="text-[11px] opacity-90">หากไม่ใช้ Memoization ฟังก์ชันจะเรียกซ้ำมหาศาลจนติด <b>Time Limit Exceeded</b> ได้ง่ายมาก </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Logic & Implementation</h2>
+          <div class="space-y-4 text-sm">
+            <div class="bg-white/10 p-3 rounded-lg border border-white/10 italic">
+              "Base Cases: \(\binom{n}{0} = 1\) และ \(\binom{n}{n} = 1\)" 
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs text-blue-300">
+              long long memo;<br>
+              long long C(int n, int k) {<br>
+              &nbsp;&nbsp;if (k == 0 || k == n) return 1;<br>
+              &nbsp;&nbsp;if (memo[n][k] != -1) return memo[n][k];<br>
+              &nbsp;&nbsp;return memo[n][k] = C(n - 1, k - 1) + C(n - 1, k);<br>
+              }
+            </div>
+            <p class="text-[10px] opacity-70">*หมายเหตุ: สำหรับค่า n ขนาดใหญ่มาก ควรระวังเรื่อง Integer Overflow </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-green-300">Problem 2: The Mean Relationship</h2>
+          <div class="bg-white/10 p-6 rounded-xl border border-white/20 mb-6">
+            <p class="text-lg">
+            <b>โจทย์:</b> เรารู้ค่า \(R1\) และค่าเฉลี่ย \(S\) จงหาค่า \(R2\) ที่ทำให้ \(S = (R1 + R2) / 2\)
+            </p>
+          </div>
+          <div class="p-4 bg-black/40 rounded-lg">
+            <h4 class="font-bold text-yellow-300 mb-2">เป้าหมายของการฝึก:</h4>
+            <p class="text-sm italic opacity-80">แม้จะแก้ด้วยสมการตรงๆ ได้ แต่ให้ลองวิเคราะห์ว่าคำตอบเปลี่ยนแปลงอย่างไรเมื่อค่าเฉลี่ยเพิ่มขึ้น (Recursive Thinking)</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Step-by-Step Logic</h2>
+          <div class="space-y-4 text-sm">
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4">
+              <span class="bg-yellow-400 text-black px-2 rounded font-bold">1</span>
+              <span><b>วิเคราะห์สมการ:</b> \(S = (R1 + R2) / 2 \implies 2S = R1 + R2\)</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4">
+              <span class="bg-yellow-400 text-black px-2 rounded font-bold">2</span>
+              <span><b>ย้ายข้างเพื่อหา R2:</b> \(R2 = 2S - R1\)</span>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-lg text-center text-green-400">
+              cout << (2 * s) - r1 << endl;
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-6 text-purple-300 uppercase">Problem 3: Euclid's Algorithm</h2>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-white/10 mb-8 shadow-2xl">
+            <p class="text-xl leading-relaxed italic">
+            "จงเขียนฟังก์ชัน ห.ร.ม. แบบเวียนเกิด (Recursive GCD) ที่รับค่า \(a\) และ \(b\) แล้วคืนค่าตัวหารร่วมที่มากที่สุด"
+            </p>
+          </div>
+          <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-400">
+            <p class="text-xs">Hint: อัลกอริทึมนี้ทำงานในเวลา \(O(\log n)\) โดย \(n = \min(a, b)\) </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono italic">Implementation of GCD</h2>
+          <div class="bg-gray-900 p-6 rounded-xl font-mono text-sm leading-relaxed mb-6">
+            int gcd(int a, int b) {<br>
+            &nbsp;&nbsp;if (b == 0) return a; // Base Case <br>
+            &nbsp;&nbsp;return gcd(b, a % b); // Recursive Step <br>
+            }
+          </div>
+          <div class="bg-yellow-500/20 p-4 rounded-lg border border-yellow-500 text-xs">
+            <b>Competitive Tip:</b> ในภาษา C++ คุณสามารถใช้ฟังก์ชันสำเร็จรูป <code>__gcd(a, b)</code> ได้ทันทีสำหรับการแข่งขันจริง 
+          </div>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6 text-yellow-300 italic text-center">Mutual Recursion</h2>
+          <div class="bg-white/10 p-6 rounded-2xl border border-white/20 mb-6 text-lg font-light leading-relaxed">
+            "สถานการณ์ที่ฟังก์ชันสองฟังก์ชันหรือมากกว่า <b>เรียกสลับกันไปมา</b> เพื่อแก้ปัญหาหนึ่งๆ" 
+          </div>
+          <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+            <div class="bg-gray-900 p-4 rounded-lg">
+              bool isEven(int n) {<br>
+              &nbsp;&nbsp;if (n == 0) return true;<br>
+              &nbsp;&nbsp;return isOdd(n - 1);<br>
+              }
+            </div>
+            <div class="bg-gray-900 p-4 rounded-lg">
+              bool isOdd(int n) {<br>
+              &nbsp;&nbsp;if (n == 0) return false;<br>
+              &nbsp;&nbsp;return isEven(n - 1);<br>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">แบบฝึกหัด: ประสิทธิภาพและการจัดการบิต</h2>
+          <div class="grid gap-6">
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-400">
+              <h4 class="font-bold text-xl mb-1">1. Fast Modular Exponentiation</h4>
+              <p class="text-sm opacity-80">คำนวณ \(x^n \pmod M\) สำหรับค่า \(n\) ขนาดมหาศาลโดยใช้เวลา \(O(\log n)\) </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-green-400">
+              <h4 class="font-bold text-xl mb-1">2. Reverse Binary Numbers (Kattis)</h4>
+              <p class="text-sm opacity-80">ฝึกการใช้ Bit Manipulation ร่วมกับการเวียนเกิดเพื่อสลับลำดับบิต </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-blue-300 italic">Problem 1: Fast Power (mod M)</h2>
+          <div class="bg-black/30 p-6 rounded-xl border border-white/20 mb-6 shadow-xl">
+            <p class="text-lg leading-relaxed">
+            <b>โจทย์:</b> รับจำนวนเต็ม \(x, n,\) และ \(M\) จงหาค่าของ \((x^n) \pmod M\)
+            <br><span class="text-red-400 font-bold italic">Constraints: \(n \le 10^{18}\) และ \(M \le 10^9\)</span>
+            </p>
+          </div>
+          <div class="bg-white/10 p-4 rounded-lg">
+            <h4 class="font-bold text-yellow-300 mb-2">ทำไมต้อง Fast Exponentiation?</h4>
+            <p class="text-sm opacity-90">การวนลูป \(10^{18}\) ครั้งจะทำให้ติด TLE ทันที  เราต้องลดจำนวนการคูณให้เหลือเพียง \(\approx 60\) ครั้งโดยการแบ่งครึ่งกำลังในทุกขั้นตอน </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Logic: Divide and Conquer</h2>
+          <div class="space-y-4 text-sm">
+            <div class="bg-white/10 p-3 rounded-lg border border-white/10">
+              <b>หลักการ:</b> \(x^n = (x^{n/2})^2\) ถ้า \(n\) เป็นเลขคู่ และ \(x \cdot x^{n-1}\) ถ้า \(n\) เป็นเลขคี่ 
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs text-blue-300">
+              long long modpow(long long x, long long n, long long m) {<br>
+              &nbsp;&nbsp;if (n == 0) return 1 % m;<br>
+              &nbsp;&nbsp;long long u = modpow(x, n / 2, m);<br>
+              &nbsp;&nbsp;u = (u * u) % m; <span class="text-gray-500">// คำนวณ u เพียงครั้งเดียว </span><br>
+              &nbsp;&nbsp;if (n % 2 == 1) u = (u * x) % m;<br>
+              &nbsp;&nbsp;return u;<br>
+              }
+            </div>
+            <p class="text-center font-bold text-yellow-400 italic">"Time Complexity: \(O(\log n)\) "</p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-green-300">Problem 2: Reverse Binary</h2>
+          <div class="bg-white/10 p-6 rounded-xl border border-white/20 mb-6">
+            <p class="text-lg">
+            <b>โจทย์:</b> รับจำนวนเต็ม \(N\) ในฐานสิบ แปลงเป็นฐานสอง แล้ว "กลับลำดับบิต" จากหลังมาหน้า จากนั้นแสดงผลลัพธ์เป็นฐานสิบ
+            </p>
+            <div class="mt-4 p-3 bg-black/40 rounded font-mono text-sm text-yellow-300">
+              ตัวอย่าง: 13 (1101) \(\rightarrow\) กลับเป็น 1011 \(\rightarrow\) ผลลัพธ์คือ 11
+            </div>
+          </div>
+          <p class="text-sm opacity-80 italic">ฝึกการใช้ Bitwise Operators: <code>&, >>, <<, |</code> </p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono italic">Implementation Strategy</h2>
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">1</span>
+              <span>ใช้ <code>(n & 1)</code> เพื่อดึงบิตขวาสุด (LSB) </span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">2</span>
+              <span>ส่งบิตที่ดึงได้ไปสะสมในผลลัพธ์ใหม่โดยการใช้ <code>(ans << 1) | bit</code> </span>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs text-green-400">
+              int reverseBits(int n, int ans = 0) {<br>
+              &nbsp;&nbsp;if (n == 0) return ans;<br>
+              &nbsp;&nbsp;return reverseBits(n >> 1, (ans << 1) | (n & 1));<br>
+              }
+            </div>
+            <p class="text-[11px] opacity-70">หมายเหตุ: <code>n >> 1</code> คือการเลื่อนบิตไปทางขวา (หารสอง) </p>
+          </div>
+        </div>
+      </div>
+
+
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-10 text-yellow-300">ข้อดีและข้อเสียของ Recursion</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-green-500/10 p-6 rounded-xl border border-green-500">
+              <h3 class="font-bold text-green-400 mb-4">ข้อดี</h3>
+              <ul class="text-sm space-y-2">
+                <li>• โค้ดสั้น อ่านง่าย (Elegant)</li>
+                <li>• ลดความซับซ้อนของปัญหาใหญ่</li>
+                <li>• เหมาะกับโครงสร้างแบบ Tree/Graph</li>
+              </ul>
+            </div>
+            <div class="bg-red-500/10 p-6 rounded-xl border border-red-500">
+              <h3 class="font-bold text-red-400 mb-4">ข้อเสีย</h3>
+              <ul class="text-sm space-y-2">
+                <li>• ใช้หน่วยความจำ (Stack) สูง</li>
+                <li>• อาจช้ากว่าลูป (Overhead)</li>
+                <li>• เสี่ยงต่อปัญหา Stack Overflow</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-3xl font-bold mb-8 text-red-400 underline uppercase italic">Stack Overflow Alert!</h2>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-red-500 shadow-2xl mb-8">
+            <p class="text-lg leading-relaxed italic">
+            "ทุกครั้งที่มีการเรียกฟังก์ชัน คอมพิวเตอร์จะเก็บข้อมูลลงใน <b>Stack Memory</b> หากเรียกซ้อนกันลึกเกินไป (เช่น \(10^6\) ชั้น) โปรแกรมจะแครชทันที"
+            </p>
+          </div>
+          <p class="mt-8 text-yellow-300 font-bold italic">ทางแก้: ตรวจสอบ Base Case ให้แม่นยำ หรือเปลี่ยนไปใช้ Iteration ในกรณีที่จำเป็น</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 uppercase italic">Space Complexity Analysis</h2>
+          <div class="flex flex-col items-center gap-6">
+            <p class="text-lg opacity-90 italic">ความซับซ้อนทางพื้นที่ (Space) ของ Recursion คือ...</p>
+            <div class="bg-gray-900 p-6 rounded-xl font-mono text-3xl tracking-widest text-green-400 shadow-lg">
+              \(O(Depth)\)
+            </div>
+            <p class="text-white/70 text-sm">
+            ไม่ได้ขึ้นอยู่กับจำนวนโหนดทั้งหมด แต่ขึ้นอยู่กับ <b>กิ่งที่ลึกที่สุด</b> ใน Recursion Tree ณ ขณะหนึ่ง
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-3xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300">สรุปแนวคิด Recursion</h2>
+          <div class="bg-white/10 backdrop-blur p-8 rounded-3xl border border-white/20 mb-8 text-left space-y-3 text-sm">
+            <p>• <b>Base Case:</b> ต้องมีและต้องไปถึงได้เสมอ</p>
+            <p>• <b>Memoization:</b> เครื่องมือสำคัญในการเปลี่ยน Exponential เป็น Linear</p>
+            <p>• <b>Math Functions:</b> \(n!\), \(F_n\), \(gcd\), และ \(\binom{n}{k}\) คือแม่แบบของการคิดแบบเวียนเกิด</p>
+            <p>• <b>Big O:</b> ต้องวิเคราะห์ทั้งเวลา (Time) และพื้นที่ (Stack Space)</p>
+          </div>
+          <p class="text-xl opacity-60">ช่วงบ่ายเตรียมพบกับ: <b>Complete Search & Backtracking</b></p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-8 text-yellow-300 text-center">แบบฝึกหัด: การตัดสินใจและโครงสร้างการค้นหา</h2>
+          <div class="grid gap-6">
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-400">
+              <h4 class="font-bold text-xl mb-1">1. Generating Subsets</h4>
+              <p class="text-sm opacity-80">ฝึกสร้างปัญหาย่อยจากการตัดสินใจ "เลือก" หรือ "ไม่เลือก" </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-green-400">
+              <h4 class="font-bold text-xl mb-1">2. Generating Permutations</h4>
+              <p class="text-sm opacity-80">ฝึกการจัดการสถานะ (State) และการคืนค่าสถานะเมื่อค้นหาเสร็จ </p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-purple-400">
+              <h4 class="font-bold text-xl mb-1">3. Kattis - 4 thought</h4>
+              <p class="text-sm opacity-80">ประยุกต์ใช้การลองทุกความเป็นไปได้ (Brute Force) กับปัญหาการคำนวณ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-blue-300 italic">Problem 1: All Subsets</h2>
+          <div class="bg-black/30 p-6 rounded-xl border border-white/20 mb-6 shadow-xl">
+            <p class="text-lg leading-relaxed">
+            <b>โจทย์:</b> จงสร้างสับเซต (Subset) ทั้งหมดของเซต \(\{0, 1, \dots, n-1\}\) โดยใช้การเรียกตัวเอง (Recursion)
+            <br><span class="text-sm italic opacity-70">ตัวอย่าง: ถ้า \(n = 3\) ต้องได้ชุดข้อมูล 8 ชุด (รวมเซตว่าง) </span>
+            </p>
+          </div>
+          <div class="bg-white/10 p-4 rounded-lg">
+            <h4 class="font-bold text-yellow-300 mb-2">แนวคิด Decision Tree:</h4>
+            <p class="text-sm opacity-90 italic">สำหรับสมาชิกแต่ละตัว เรามี 2 ทางเลือกเสมอ: ใส่ลงในสับเซตปัจจุบัน หรือ ไม่ใส่ </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400">Step-by-Step Logic</h2>
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4 border border-white/10">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">1</span>
+              <span><b>Recursive Call:</b> ที่ตำแหน่ง \(k\) ให้เรียก <code>search(k+1)</code> สองครั้ง (ครั้งแรกไม่ใส่ \(k\), ครั้งที่สองใส่ \(k\) เข้าไปในเวกเตอร์) </span>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs text-green-400">
+              void search(int k) {<br>
+              &nbsp;&nbsp;if (k == n) { /* ประมวลผลสับเซตที่ได้ */ return; }<br>
+              &nbsp;&nbsp;search(k+1); <span class="text-gray-500">// กรณีไม่เลือก k</span><br>
+              &nbsp;&nbsp;subset.push_back(k); <br>
+              &nbsp;&nbsp;search(k+1); <span class="text-gray-500">// กรณีเลือก k</span><br>
+              &nbsp;&nbsp;subset.pop_back(); <span class="text-red-400">// Backtrack เพื่อลองทางอื่น</span><br>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-green-300 uppercase">Problem 2: All Permutations</h2>
+          <div class="bg-white text-black p-6 rounded-2xl mb-6 shadow-xl text-left">
+            <p class="text-lg font-medium">จงสร้างวิธีเรียงสับเปลี่ยน (Permutation) ทั้งหมดของตัวเลข \(1\) ถึง \(n\)</p>
+            <p class="text-blue-700 font-bold mt-2 italic underline">ความต่าง: จำนวนวิธีคือ \(n!\) ซึ่งมากกว่าสับเซตมากเมื่อ \(n\) เพิ่มขึ้น </p>
+          </div>
+          <div class="p-4 bg-black/40 rounded-lg border border-green-500">
+            <p class="text-sm italic">"เราต้องใช้ Array เพื่อจำว่าเลขตัวไหนถูก <b>'เลือก'</b> ไปแล้วในลำดับปัจจุบัน" </p>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-yellow-300">Backtracking Logic</h2>
+          <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs leading-relaxed mb-4">
+            void search() {<br>
+            &nbsp;&nbsp;if (permutation.size() == n) { /* ได้ 1 วิธี */ return; }<br>
+            &nbsp;&nbsp;for (int i = 1; i <= n; i++) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if (chosen[i]) continue; <span class="text-gray-500">// ข้ามถ้าใช้ไปแล้ว</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;chosen[i] = true; permutation.push_back(i);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;search();<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;chosen[i] = false; permutation.pop_back(); <span class="text-red-400">// ล้างสถานะ</span><br>
+            &nbsp;&nbsp;}<br>
+            }
+          </div>
+          <div class="p-3 bg-blue-500/20 rounded border border-blue-500 text-[11px]">
+            <b>Note:</b> เทคนิคการวนลูปแล้วเรียกตัวเองซ้ำพร้อมล้างค่าสถานะคือหัวใจของ <b>Backtracking</b> 
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 44 }" class="slide gradient-bg flex-col justify-center items-center text-white text-center">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-3xl font-bold mb-6 text-purple-300">Problem 3: The 4 Thought Challenge</h2>
+          <div class="bg-white/10 p-6 rounded-xl border-l-8 border-purple-500 mb-6 text-left">
+            <p class="text-lg leading-relaxed">
+            มีเลข 4 อยู่สี่ตัว (\(4 \dots 4 \dots 4 \dots 4\)) จงเติมเครื่องหมาย \(\{+, -, *, /\}\) ลงในช่องว่าง 3 ช่อง 
+            เพื่อให้ได้ผลลัพธ์ตามที่โจทย์กำหนด 
+            </p>
+          </div>
+          <div class="bg-yellow-900/30 p-4 rounded-lg border border-yellow-500 text-sm">
+            <b>Brute Force Approach:</b> มีความเป็นไปได้เพียง \(4^3 = 64\) วิธี <br> 
+            "ลองทุกวิธีแล้วเก็บคำตอบไว้ล่วงหน้า"
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 45 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h2 class="text-2xl font-bold mb-4 text-green-400 font-mono italic">Implementation Strategy</h2>
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">1</span>
+              <span>สร้างลูปซ้อนกัน 3 ชั้น หรือใช้ Recursion ความลึก 3 เพื่อสุ่มเลือกเครื่องหมาย</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-lg flex items-start gap-4">
+              <span class="bg-blue-500 text-white px-2 rounded font-bold">2</span>
+              <span>คำนวณผลลัพธ์โดยระวัง <b>Operator Precedence</b> (คูณ/หาร ทำก่อน บวก/ลบ)</span>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl font-mono text-xs text-green-400">
+              char op[] = {'+', '-', '*', '/'};<br>
+              for(int i=0; i<4; i++)<br>
+              &nbsp;&nbsp;for(int j=0; j<4; j++)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;for(int k=0; k<4; k++)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* คำนวณนิพจน์ (4 op[i] 4 op[j] 4 op[k] 4) */
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

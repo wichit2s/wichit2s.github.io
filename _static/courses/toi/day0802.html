@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0802.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Shortest Paths II</span> <br>
+            <span class="mt-8 text-yellow-300">Bellman-Ford & Floyd-Warshall</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 08 Afternoon: การจัดการกราฟที่มีค่าน้ำหนักติดลบและการหาระยะทางระหว่างทุกคู่โหนด
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่จะเรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">1</div>
+                <span>Bellman-Ford: อัลกอริทึมที่รับมือกับเส้นเชื่อมติดลบได้</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">2</div>
+                <span>Negative Cycle Detection: การตรวจจับวงรอบที่ลดระยะทางไม่สิ้นสุด</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mt-1">3</div>
+                <span>Floyd-Warshall: การหาระยะทางที่สั้นที่สุดระหว่างทุกคู่โหนด (All-pairs)</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>The Limit of Dijkstra</span> <br>
+            <span class="mt-8 text-yellow-300">ทำไม Dijkstra ถึงล้มเหลวในกราฟติดลบ?</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="mb-4">Dijkstra ตั้งอยู่บนสมมติฐานแบบ <b>Greedy</b>: โหนดที่ใกล้ที่สุดที่ถูกเลือกจะไม่ถูกปรับปรุงอีก</p>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start gap-3">
+                <span class="text-red-400">✖</span>
+                <span>หากมีเส้นเชื่อมติดลบ "ทางอ้อม" ที่ดูเหมือนจะไกลในตอนแรก อาจกลายเป็นทางที่สั้นที่สุดในภายหลังได้</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-red-400">✖</span>
+                <span>Dijkstra ไม่สามารถตรวจจับ <b>Negative Cycle</b> ซึ่งทำให้ระยะทางลดลงเรื่อยๆ ได้</span>
+              </li>
+              <li class="flex items-start gap-3 text-green-300 font-bold">
+                <span>➜</span>
+                <span>เราต้องการอัลกอริทึมที่ "พิจารณาเส้นเชื่อมซ้ำ" เพื่อความถูกต้อง</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Bellman–Ford Algorithm</span> <br>
+            <span class="mt-8 text-yellow-300">อัลกอริทึมของเบลล์แมน-ฟอร์ด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="text-lg mb-4 underline">คุณสมบัติหลัก:</p>
+            <ul class="list-disc ml-6 space-y-3">
+              <li>หาระยะทางสั้นที่สุดจากจุดเริ่มต้นเดียว (Single-source)</li>
+              <li>รองรับเส้นเชื่อมน้ำหนักติดลบ (Negative weights)</li>
+              <li>สามารถตรวจจับ <b>Negative Cycle</b> ในกราฟได้</li>
+              <li>ทำงานโดยการวนซ้ำพิจารณาเส้นเชื่อมทั้งหมดทีละรอบ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Incremental Relaxation</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">การผ่อนคลายเส้นเชื่อมแบบวนซ้ำ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <p class="text-xl mb-4">ในขณะที่ Dijkstra เลือกโหนดที่ใกล้ที่สุดมาพิจารณาเพื่อนบ้าน แต่ Bellman-Ford จะพิจารณา <b>"เส้นเชื่อมทุกเส้น"</b> ในกราฟซ้ำๆ</p>
+            <div class="border-l-4 border-yellow-300 pl-6 italic">
+              "ถ้าเรามีโหนด (n) โหนด เส้นทางสั้นที่สุดที่ไม่มีวงรอบจะมีความยาวไม่เกิน (n-1) เส้นเชื่อม ดังนั้นเราจึงต้องวนรอบเพื่อผ่อนคลายเส้นเชื่อมทั้งหมดจำนวน (n-1) รอบ"
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+            <span>How it Works?</span> <br>
+            <span class="mt-8 text-yellow-300 text-2xl">ลำดับการประมวลผล</span>
+          </h1>
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm leading-relaxed">
+            <p>1. distance[source] = 0, others = INF</p>
+            <p>2. for i = 1 to n-1 rounds:</p>
+            <p class="ml-4">for each edge (u, v) with weight w:</p>
+            <p class="ml-8 text-green-300">if distance[u] + w < distance[v]:</p>
+            <p class="ml-12 text-green-300">distance[v] = distance[u] + w</p>
+            <p>3. check for negative cycles (round n)</p>
+          </div>
+          <div class="text-xs opacity-80 italic">"ความซับซ้อนของเวลา: (O(V \cdot E)) ซึ่งช้ากว่า Dijkstra มาก"</div>
+          <p class="text-xs opacity-60 mt-4">แหล่งอ้างอิง: https://usaco.guide/CPH.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Negative Cycles</span> <br>
+            <span class="mt-8 text-red-400">วงรอบติดลบ: กับดักของกราฟ</span>
+          </h1>
+          <div class="bg-red-500/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-red-500/30">
+            <p class="text-lg mb-4 italic font-bold text-center">"จะเกิดอะไรขึ้นถ้าเราวนรอบที่ (n)?"</p>
+            <p class="text-sm leading-relaxed mb-4">
+              หากหลังจากทำครบ (n-1) รอบแล้ว เรายังสามารถลดระยะทาง (Relax) ได้อีกในรอบที่ (n) แสดงว่ามีวงรอบที่ผลรวมน้ำหนักติดลบอยู่ 
+              ซึ่งหมายความว่า <b>ไม่มีทางสั้นที่สุดที่แท้จริง</b> เพราะคุณสามารถเดินวนเพื่อลดระยะทางลงได้เรื่อยๆ จนถึง (-\infty)
+            </p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>SPFA Optimization</span> <br>
+            <span class="mt-8 text-yellow-300">การเพิ่มประสิทธิภาพด้วย Queue</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left leading-relaxed">
+            <p class="mb-4 text-sm font-bold italic">"ทำไมต้องพิจารณาเส้นเชื่อมทุกเส้นในทุกรอบ?"</p>
+            <ul class="list-disc ml-6 space-y-3 text-sm">
+              <li><b>แนวคิด:</b> เราจะประมวลผลเฉพาะโหนดที่ระยะทางเพิ่งถูก "ปรับปรุง" เท่านั้น</li>
+              <li>ใช้ <b>Queue</b> เพื่อเก็บโหนดที่ต้องนำไปพิจารณาต่อ</li>
+              <li>ในกรณีทั่วไปทำงานได้รวดเร็วพอๆ กับ Dijkstra</li>
+              <li><b>คำเตือน:</b> ในกรณีเลวร้ายที่สุด (Worst-case) ความซับซ้อนยังคงเป็น (O(V \cdot E)) และมีโจทย์ที่ออกแบบมาเพื่อดักทาง SPFA โดยเฉพาะ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/shortest-path-faster-algorithm/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>All-Pairs Shortest Path</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">หาระยะทางระหว่าง "ทุกคู่โหนด"</span>
+          </h1>
+          <div class="grid grid-cols-2 gap-6 mb-8 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-blue-300 mb-2 underline text-lg">โจทย์:</h3>
+              <p class="text-sm">คำนวณหาระยะทางสั้นที่สุด d(u, v) สำหรับทุกๆ คู่ของโหนด u, v ในกราฟ</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-blue-300 mb-2 underline text-lg">ทางเลือก:</h3>
+              <p class="text-xs">• รัน Dijkstra จำนวน V ครั้ง: (O(V \cdot E \log V))</p>
+              <p class="text-xs">• ใช้ <b>Floyd-Warshall</b>: เขียนโค้ดง่ายที่สุดและรองรับน้ำหนักติดลบ</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Floyd-Warshall Intuition</span> <br>
+            <span class="mt-8 text-yellow-300">แนวคิดของฟลอยด์-วอร์แชล</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <p class="text-xl mb-4 italic text-center underline font-bold">"ผ่านโหนด k หรือไม่?"</p>
+            <p class="text-sm leading-relaxed">
+              หัวใจหลักคือการใช้ <b>Dynamic Programming</b> โดยพิจารณาว่า เส้นทางจาก i ไป j จะสั้นลงไหมถ้าเราเลือกเดิน <b>ผ่านโหนดตัวกลาง k</b>
+            </p>
+            <div class="bg-black/20 p-4 rounded-lg mt-4 font-mono text-center text-lg">
+              dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Implementation Simplicity</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">ความเรียบง่ายระดับ O(V^3)</span>
+          </h1>
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm leading-relaxed overflow-x-auto">
+            <p class="text-blue-300">// 3 Nested Loops: k ต้องเป็น loop นอกสุดเสมอ!</p>
+            <p>for (int k = 1; k <= n; k++) {</p>
+            <p class="ml-4">for (int i = 1; i <= n; i++) {</p>
+            <p class="ml-8">for (int j = 1; j <= n; j++) {</p>
+            <p class="ml-12 text-yellow-200">dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);</p>
+            <p class="ml-8">}</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+          </div>
+          <div class="italic text-xs opacity-80 text-center">"เหมาะสำหรับกราฟขนาดเล็ก (n \le 500)"</div>
+          <p class="text-xs opacity-60 mt-4 text-center">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Implementation in C++</span> <br>
+            <span class="mt-8 text-yellow-300">การเขียนโค้ดเบลล์แมน-ฟอร์ด</span>
+          </h1>
+          <div class="bg-black/40 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-xs leading-relaxed">
+            <p>struct Edge { int a, b, w; };</p>
+            <p>vector&lt;Edge&gt; edges;</p>
+            <p>for (int i = 1; i <= n-1; i++) {</p>
+            <p class="ml-4">for (auto e : edges) {</p>
+            <p class="ml-8 text-green-300">dist[e.b] = min(dist[e.b], dist[e.a] + e.w);</p>
+            <p class="ml-4">}</p>
+            <p>}</p>
+            <p class="mt-4 text-white/60 font-sans italic">// หมายเหตุ: ควรใช้ long long สำหรับระยะทางเพื่อป้องกัน Overflow</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Cycle Detection Logic</span> <br>
+            <span class="mt-8 text-red-300">การตรวจจับวงรอบติดลบ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left leading-relaxed">
+            <p class="mb-4">หลังจากทำครบ (n-1) รอบแล้ว ให้ทำการวนรอบที่ (n) อีกหนึ่งครั้ง:</p>
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3">
+                <span class="text-red-400 font-bold">➜</span>
+                <span>หากยังมีเส้นเชื่อมใดที่สามารถ <b>Relax</b> ได้ (ระยะทางยังลดลงได้อีก)</span>
+              </li>
+              <li class="flex items-start gap-3 border-l-2 border-red-400 pl-4 ml-2">
+                <span>แสดงว่ากราฟนั้นมี <b>Negative Cycle</b> ที่เข้าถึงได้จากจุดเริ่มต้น</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Path Reconstruction</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">การหาร่องรอยเส้นทาง</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 text-sm">การบันทึกเส้นทางใน Bellman-Ford ทำได้เช่นเดียวกับ Dijkstra:</p>
+            <ul class="list-disc ml-6 space-y-3 text-sm">
+              <li>สร้างอาร์เรย์ <b>parent[V]</b> เพื่อเก็บโหนดก่อนหน้า</li>
+              <li>เมื่อพบว่า (dist[u] + w < dist[v]) ให้บันทึก (parent[v] = u)</li>
+              <li>หากต้องการหาเส้นทางจริง ให้ไล่ย้อนกลับจากปลายทางไปยังต้นทาง</li>
+              <li><b>พิเศษ:</b> หากพบวงรอบติดลบ คุณสามารถไล่ย้อนกลับเพื่อระบุโหนดทั้งหมดที่อยู่ในวงรอบนั้นได้</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>The Queue-based BF (SPFA)</span> <br>
+            <span class="mt-8 text-yellow-300">เร่งความเร็วด้วย Shortest Path Faster Algorithm</span>
+          </h1>
+          <div class="bg-black/30 backdrop-blur-md rounded-2xl p-6 mb-8 text-left text-sm leading-relaxed border border-white/10">
+            <p>แทนที่จะตรวจเส้นเชื่อมทุกเส้น ให้เราตรวจเฉพาะโหนดที่ระยะทาง <b>"เพิ่งเปลี่ยน"</b> เท่านั้น:</p>
+            <div class="bg-white/5 p-4 rounded-xl mt-4 font-mono text-xs">
+              while (!q.empty()) { <br>
+              &nbsp;&nbsp;int u = q.front(); q.pop(); <br>
+              &nbsp;&nbsp;for (auto [v, w] : adj[u]) { <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;if (dist[u] + w < dist[v]) { <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist[v] = dist[u] + w; <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!in_queue[v]) q.push(v); <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;} <br>
+              &nbsp;&nbsp;} <br>
+              }
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/shortest-path-faster-algorithm/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>DP Intuition</span> <br>
+            <span class="mt-8 text-yellow-300">Floyd-Warshall ในมุมมองของ DP</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left border-l-4 border-yellow-300">
+            <p class="text-lg italic mb-4">"ระยะทางสั้นที่สุดจาก i ไป j โดยใช้โหนดตัวกลางจากเซต (1, 2, ..., k)"</p>
+            <p class="text-sm leading-relaxed font-mono">
+              dp[k][i][j] = min(dp[k-1][i][j], dp[k-1][i][k] + dp[k-1][k][j])
+            </p>
+            <p class="mt-4 text-xs italic opacity-80">เราสามารถลดมิติของอาร์เรย์เหลือเพียง 2 มิติได้ในทางปฏิบัติเพื่อประหยัดหน่วยความจำ</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Transitive Closure</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">การหาความเชื่อมโยง (Reachability)</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left text-sm leading-relaxed">
+            <p class="mb-4">เราสามารถดัดแปลง Floyd-Warshall เพื่อตรวจสอบว่าโหนด (u) สามารถไปถึงโหนด (v) ได้หรือไม่:</p>
+            <ul class="space-y-4">
+              <li class="flex gap-3">
+                <span class="text-blue-300 font-bold">1.</span>
+                <span>เปลี่ยนระยะทางเป็น <b>Boolean</b> (0/1)</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-blue-300 font-bold">2.</span>
+                <span>ใช้ตัวดำเนินการ <b>Bitwise OR</b> (|) และ <b>AND</b> (&) แทน min และ +</span>
+              </li>
+              <li class="flex gap-3 font-mono bg-black/20 p-2 rounded">
+                <span>reach[i][j] = reach[i][j] | (reach[i][k] & reach[k][j])</span>
+              </li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/transitive-closure-of-a-graph/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>All-Pairs Path Reconstruction</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">การบันทึกเส้นทางระหว่างทุกคู่โหนด</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 text-sm font-bold underline">ขั้นตอนการเก็บข้อมูล:</p>
+            <ol class="list-decimal ml-6 space-y-3 text-xs leading-relaxed">
+              <li>สร้างอาร์เรย์ <b>next[N][N]</b> เริ่มต้นด้วย (next[i][j] = j) หากมีเส้นเชื่อมตรง</li>
+              <li>ในลูปของ Floyd-Warshall: เมื่อพบทางที่ดีกว่าผ่านโหนด (k) ให้ปรับปรุง (next[i][j] = next[i][k])</li>
+              <li>การสร้างเส้นทาง: เริ่มจากโหนด (u) แล้วตาม (next[u][v]) ไปเรื่อยๆ จนถึง (v)</li>
+            </ol>
+            <div class="mt-4 p-3 bg-blue-500/20 rounded-xl border border-blue-400/30 italic text-xs">
+              "เหมาะสำหรับกราฟขนาดเล็กที่ต้องการตอบ Query เส้นทางได้ทันทีในเวลา (O(Path Length))"
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/finding-shortest-path-between-any-two-nodes-using-floyd-warshall-algorithm/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6 leading-tight mt-8">
+            <span>Shortest Path Algorithm Summary</span> <br>
+            <span class="mt-8 text-yellow-300 text-2xl">เปรียบเทียบประสิทธิภาพบทเรียนวันนี้</span>
+          </h1>
+          <div class="overflow-hidden rounded-2xl border border-white/20">
+            <table class="w-full text-xs text-left bg-white/10">
+              <thead class="bg-white/20 text-yellow-300 font-bold">
+                <tr><th class="p-3">Algorithm</th><th class="p-3">Type</th><th class="p-3">Complexity</th><th class="p-3">Negative Edges</th></tr>
+              </thead>
+              <tbody class="divide-y divide-white/10">
+                <tr><td class="p-3">Dijkstra</td><td class="p-3">SSSP</td><td class="p-3">(O(E \log V))</td><td class="p-3 text-red-400">No</td></tr>
+                <tr><td class="p-3">Bellman-Ford</td><td class="p-3">SSSP</td><td class="p-3">(O(V \cdot E))</td><td class="p-3 text-green-400">Yes</td></tr>
+                <tr><td class="p-3">SPFA</td><td class="p-3">SSSP</td><td class="p-3">(O(k \cdot E)) avg</td><td class="p-3 text-green-400">Yes</td></tr>
+                <tr><td class="p-3">Floyd-Warshall</td><td class="p-3">All-Pairs</td><td class="p-3">(O(V^3))</td><td class="p-3 text-green-400">Yes</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs opacity-60 mt-4 italic">"SSSP = Single-Source Shortest Path"</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Competition Tips</span> <br>
+            <span class="mt-8 text-yellow-300 text-3xl">เทคนิคสำหรับการสอบระดับโอลิมปิก</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left grid grid-cols-2 gap-4 text-xs">
+            <div class="p-4 bg-black/20 rounded-xl">
+              <h4 class="font-bold text-blue-300 mb-2">1. Memory Constraint</h4>
+              <p>Floyd-Warshall ใช้ (N^2) bytes หาก (N=500) จะใช้พื้นที่ (500^2 \times 8) bytes (\approx 2MB) ซึ่งปลอดภัยมาก</p>
+            </div>
+            <div class="p-4 bg-black/20 rounded-xl">
+              <h4 class="font-bold text-blue-300 mb-2">2. Infinity Constant</h4>
+              <p>อย่าใช้ 0x3f3f3f3f กับ <b>long long</b> หากค่าน้ำหนักมีโอกาสรวมกันเกิน (2 \times 10^9) ให้ใช้ 1e18 หรือ LLONG_MAX</p>
+            </div>
+            <div class="p-4 bg-black/20 rounded-xl">
+              <h4 class="font-bold text-blue-300 mb-2">3. Initial State</h4>
+              <p>ลืมตั้งค่า (dist[i][i] = 0) ใน Floyd-Warshall มักเป็นสาเหตุของบั๊กยอดนิยม</p>
+            </div>
+            <div class="p-4 bg-black/20 rounded-xl">
+              <h4 class="font-bold text-blue-300 mb-2">4. Cycle Check</h4>
+              <p>โจทย์มักถามหา "Negative Cycle" โดยตรง ให้ใช้ Bellman-Ford หรือ Floyd-Warshall (เช็ค (dist[i][i] < 0))</p>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://roadmap.sh/datastructures-and-algorithms</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Next: Practice Session</span> <br>
+            <span class="mt-8 text-yellow-300">เตรียมตัวเข้าสู่ช่วงลงมือทำ</span>
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <h3 class="text-xl font-bold mb-4 underline">โจทย์ที่แนะนำ (CSES):</h3>
+            <ul class="space-y-3 text-sm">
+              <li><b>Shortest Routes I:</b> Dijkstra พื้นฐาน</li>
+              <li><b>Shortest Routes II:</b> Floyd-Warshall สำหรับระยะทางระหว่างทุกเมือง</li>
+              <li><b>High Score:</b> Bellman-Ford สำหรับกราฟที่มีน้ำหนักติดลบ (Longest Path)</li>
+              <li><b>Cycle Finding:</b> ค้นหาและแสดงผลโหนดในวงรอบติดลบ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งฝึกฝน: https://cses.fi/problemset/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Session II Summary</span> <br>
+            <span class="mt-8 text-green-300 text-3xl">สรุปใจความสำคัญ</span>
+          </h1>
+          <div class="bg-black/30 backdrop-blur-md rounded-2xl p-10 mb-8 border border-white/10">
+            <p class="text-2xl font-light leading-relaxed">
+              วันนี้เราผ่าน <b>SSSP</b> ที่ทรงพลังอย่าง <b>Dijkstra</b> <br>
+              และก้าวข้ามขีดจำกัดด้วย <b>Bellman-Ford</b> รวมถึงความเรียบง่ายของ <b>Floyd-Warshall</b> <br>
+              <span class="text-yellow-300 font-bold mt-6 block">"เครื่องมือพร้อมแล้ว ถึงเวลาเปลี่ยนทฤษฎีเป็นผลลัพธ์ในการเขียนโปรแกรม"</span>
+            </p>
+          </div>
+          <p class="text-2xl italic text-green-300 font-bold animate-pulse">"ไปลุยต่อในช่วง Practice (15:00 - 17:00 น.) กันครับ!"</p>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

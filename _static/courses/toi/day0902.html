@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0902.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Greedy & Divide and Conquer</span> <br>
+            <span class="mt-8 text-yellow-300">Optimization Techniques</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 09 Afternoon: กลยุทธ์การเลือกสิ่งที่คุ้มค่าที่สุดและการแบ่งส่วนปัญหาเพื่อหาคำตอบที่เหมาะสม
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่จะเรียนรู้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>แนวคิด Greedy Algorithms และการพิสูจน์ความถูกต้อง</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>Divide and Conquer สำหรับการแก้ปัญหา Optimization</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>เทคนิค Binary Search on Answer สำหรับการหาค่าที่เหมาะสมที่สุด</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Greedy: การเลือกโหนดที่ "ดีที่สุด" ในขณะนั้น</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-blue-400">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Local Optimality:</strong> สร้างคำตอบโดยการเลือกสิ่งที่ดูดีที่สุดในปัจจุบันเสมอ</li>
+              <li><strong>Irrevocability:</strong> เมื่อเลือกไปแล้วจะไม่มีการย้อนกลับไปแก้ไขสิ่งที่เลือก</li>
+              <li><strong>Efficiency:</strong> มักจะเป็นอัลกอริทึมที่มีความเร็วสูงมากเมื่อเทียบกับ DP</li>
+              <li><strong>Challenge:</strong> ความยากอยู่ที่การหา "Greedy Strategy" ที่รับประกันว่าจะได้คำตอบที่ดีที่สุดระดับ Global</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/greedy-algorithms/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ปัญหาการทอนเงิน (Coin Problem)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 italic">โจทย์: ต้องการทอนเงินจำนวน ( n ) ด้วยจำนวนเหรียญที่น้อยที่สุด</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Greedy Strategy:</strong> เลือกเหรียญที่มีค่ามากที่สุดที่ไม่เกินจำนวนเงินที่เหลือ</li>
+              <li><strong>ตัวอย่าง:</strong> เงินยูโร {1, 2, 5, 10, 20, 50, 100, 200} สำหรับยอด 520:
+                ( 200 + 200 + 100 + 20 ) = 4 เหรียญ (Optimal)</li>
+              <li><strong>ข้อควรระวัง:</strong> หากค่าเหรียญเป็น {1, 3, 4} และต้องการทอน 6:
+                Greedy จะเลือก ( 4 + 1 + 1 ) = 3 เหรียญ แต่คำตอบจริงคือ ( 3 + 3 ) = 2 เหรียญ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Scheduling Strategy</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 italic">โจทย์: มีกิจกรรมที่มีเวลาเริ่มและสิ้นสุด ต้องการเลือกจำนวนกิจกรรมที่มากที่สุดโดยไม่ซ้อนทับกัน</p>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="bg-red-400/20 p-4 rounded-xl border border-red-400">เลือกกิจกรรมที่สั้นที่สุด (Incorrect)</div>
+              <div class="bg-red-400/20 p-4 rounded-xl border border-red-400">เลือกกิจกรรมที่เริ่มก่อน (Incorrect)</div>
+            </div>
+            <div class="bg-green-400/20 p-6 rounded-xl border-l-4 border-green-400">
+              <strong>Optimal Strategy:</strong> เลือกกิจกรรมที่ <strong>สิ้นสุดเร็วที่สุด (Ends Early)</strong> เสมอเพื่อให้เหลือเวลาสำหรับกิจกรรมถัดไปมากที่สุด
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/activity-selection-problem-greedy-algo-1/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ภารกิจและกำหนดส่ง (Tasks & Deadlines)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-yellow-300">
+            <p class="mb-4 italic">โจทย์: ได้คะแนน ( d - f ) โดย ( d ) คือเดดไลน์ และ ( f ) คือเวลาที่ทำเสร็จจริง</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>น่าประหลาดใจที่ <strong>Optimal Strategy</strong> ไม่ขึ้นกับเดดไลน์เลย!</li>
+              <li>กลยุทธ์ที่ถูกต้องคือ: <strong>ทำภารกิจที่ใช้เวลาน้อยที่สุดก่อน (Shortest Task First)</strong></li>
+              <li>การสลับงานที่ใช้เวลามากกว่ามาทำก่อน จะทำให้คะแนนรวมลดลงอย่างแน่นอนเสมอ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Divide and Conquer Concept</h2>
+          <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="bg-white/10 p-6 rounded-2xl">
+              <h3 class="font-bold text-blue-300 mb-2">1. Divide</h3>
+              <p>แบ่งปัญหาใหญ่เป็นปัญหาย่อยที่ <strong>เป็นอิสระต่อกัน</strong></p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl">
+              <h3 class="font-bold text-green-300 mb-2">2. Conquer</h3>
+              <p>แก้ปัญหาย่อยโดยใช้การเรียกซ้ำ (Recursion)</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl">
+              <h3 class="font-bold text-purple-300 mb-2">3. Combine</h3>
+              <p>รวมคำตอบจากปัญหาย่อยเข้าด้วยกันเป็นคำตอบเดียว</p>
+            </div>
+          </div>
+          <p class="text-lg">ตัวอย่างเช่น: Merge Sort, Quick Sort, Binary Search</p>
+          <p class="text-xs opacity-60 mt-4">แหล่งอ้างอิง: https://www.geeksforgeeks.org/divide-and-conquer/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Binary Search on Answer</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">ใช้เมื่อการคำนวณหาคำตอบโดยตรงนั้นยาก แต่การ <strong>ตรวจสอบ (Check)</strong> ว่าค่าที่กำหนดให้นั้นเป็นไปได้หรือไม่นั้นทำได้ง่าย:</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>ต้องการหาค่า ( x ) ที่เหมาะสมที่สุด</li>
+              <li>ฟังก์ชันความถูกต้อง ( ok(x) ) ต้องมีความเป็น <strong>Monotonic</strong> (เช่น ถ้า x เป็นไปได้ ค่าที่มากกว่า x ทั้งหมดก็ต้องเป็นไปได้)</li>
+              <li>ใช้เวลา ( O(f(n) \log Z) ) โดย ( f(n) ) คือเวลาที่ใช้ในการเช็ค และ ( Z ) คือช่วงของคำตอบ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/general/binary-search</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Finding the Maximum Value</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 italic">ใช้ Binary Search หาจุดสูงสุดของฟังก์ชันที่เพิ่มขึ้นแล้วลดลง:</p>
+            <code class="block bg-black/30 p-4 rounded text-sm font-mono mb-4">
+              int x = -1;<br>
+              for (int b = z; b >= 1; b /= 2) {<br>
+              &nbsp;&nbsp;while (!ok(x+b)) x += b;<br>
+              }<br>
+              int k = x+1;
+            </code>
+            <p>แนวคิดนี้ช่วยเปลี่ยนปัญหาการค้นหาเชิงเส้น ( O(n) ) ให้กลายเป็น ( O(\log n) ) โดยอาศัยสมบัติของฟังก์ชัน</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Optimization: Cutting Hot Dogs</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-green-400">
+            <p class="mb-4 italic">โจทย์: มีเส้นวัตถุดิบความยาวต่างๆ ต้องการตัดให้ได้ ( M ) ชิ้นที่ความยาวเท่ากัน ( x ) จงหา ( x ) ที่มากที่สุด</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li><strong>Check Function:</strong> ให้ความยาว ( x ) มา เราสามารถคำนวณจำนวนชิ้นที่ได้ใน ( O(n) ) ด้วยการหาร ( \lfloor L_i / x \rfloor )</li>
+              <li>จำนวนชิ้นที่ได้จะแปรผกผันกับค่า ( x ) (ยิ่งตัดยาว ชิ้นยิ่งน้อย)</li>
+              <li>ใช้ Binary Search สุ่มค่า ( x ) ในช่วง ( [0, 10^9] ) จนกว่าจะได้ความแม่นยำที่ต้องการ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Precision in Binary Search</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">เมื่อทำงานกับเลขทศนิยม (Floating point):</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>ปัญหา:</strong> การใช้ `while (hi - lo > eps)` อาจเกิด Infinite Loop จากข้อจำกัดของ Precision</li>
+              <li><strong>ทางออก:</strong> ใช้การวนลูปแบบคงที่ (Fixed Iterations) เช่น 100 รอบ</li>
+              <li>การรัน 100 รอบจะลดช่วงค้นหาลงเหลือเพียง ( 1 / 2^{100} ) ซึ่งแม่นยำเกินพอสำหรับโจทย์ส่วนใหญ่</li>
+              <li>( 2^{100} ) มีค่าประมาณ ( 10^{30} ) ซึ่งเล็กกว่าหน่วยที่เล็กที่สุดของ `double`</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">เงื่อนไขสำคัญ: Monotonicity</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">การจะใช้ Binary Search on Answer ได้ ฟังก์ชันการตรวจสอบ ( (ok(x)) ) ต้องมีสมบัติเปลี่ยนผ่านเพียงครั้งเดียว:</p>
+            <div class="bg-black/30 p-4 rounded-xl font-mono text-center mb-6">
+              x: 0, 1, 2, ..., k-1, k, k+1, ... <br>
+              ok(x): false, false, ..., false, true, true, ...
+            </div>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>เราต้องการหาค่า ( k ) ซึ่งเป็นค่าที่น้อยที่สุดที่ทำให้เงื่อนไขเป็นจริง</li>
+              <li>หากฟังก์ชันมีลักษณะขึ้นๆ ลงๆ (ไม่เป็น Monotonic) จะไม่สามารถใช้วิธีนี้ได้</li>
+              <li>ช่วงการค้นหา ( [L, R] ) ต้องครอบคลุมคำตอบที่เป็นไปได้ทั้งหมด</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">ตัวอย่าง: การตัดวัตถุดิบ (CountRods)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <p class="mb-4 font-semibold text-blue-300">ฟังก์ชันตรวจสอบความถูกต้อง:</p>
+            <code class="block bg-black/30 p-4 rounded text-sm font-mono mb-4">
+              int countRods(vector&lt;int&gt; A, double x) {<br>
+              &nbsp;&nbsp;int dogs = 0;<br>
+              &nbsp;&nbsp;for (int l : A) dogs += (int)(l / x);<br>
+              &nbsp;&nbsp;return dogs;<br>
+              }
+            </code>
+            <p class="text-base font-light leading-relaxed">
+              ในโจทย์นี้ ( countRods ) จะมีค่าลดลงเมื่อ ( x ) เพิ่มขึ้น (Monotonically Decreasing) 
+              เราจึงสามารถใช้ Binary Search เพื่อหาค่า ( x ) ที่มากที่สุดที่ยังทำให้ได้จำนวนชิ้น ( \ge M ) ตามต้องการได้
+            </p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://github.com/usaco-guide/usaco-guide</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Merge Sort และการแบ่งส่วนปัญหา</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-purple-400">
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Divide:</strong> แบ่งอาเรย์ออกเป็น 2 ส่วนเท่าๆ กันจนเหลือขนาด 1</li>
+              <li><strong>Conquer:</strong> สลับตำแหน่งเพื่อเรียงลำดับในส่วนย่อย</li>
+              <li><strong>Combine:</strong> รวม 2 ส่วนที่เรียงแล้วเข้าด้วยกันโดยใช้เวลา ( O(n) )</li>
+              <li>ความซับซ้อนรวม ( O(n \log n) ) เป็นมาตรฐานที่ใช้เปรียบเทียบกับวิธี Optimization อื่นๆ</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/merge-sort/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Meet in the Middle Optimization</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">ใช้ลดความซับซ้อนของปัญหาประเภท Exponential เช่น ( O(2^n) ) ให้เหลือ ( O(2^{n/2}) ):</p>
+            <ul class="list-decimal list-outside ml-6 space-y-4">
+              <li>แบ่งข้อมูลออกเป็น 2 ส่วนขนาดเท่ากัน ( (n/2) )</li>
+              <li>ทำ Brute Force แยกกันทั้ง 2 ส่วนเพื่อหาผลลัพธ์ที่เป็นไปได้ทั้งหมด</li>
+              <li>ใช้การค้นหา (เช่น Binary Search หรือ Hash Map) เพื่อรวมผลลัพธ์จากทั้งสองฝั่ง</li>
+              <li>ถูกนำเสนอครั้งแรกในปี 1974 โดย E. Horowitz และ S. Sahni</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Optimization: Subset Sum ( (n=40) )</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-green-400">
+            <p class="mb-4 italic">โจทย์: หาเซตย่อยที่บวกกันได้ ( T ) จากเลข 40 ตัว</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li>( 2^{40} ) มีค่าประมาณ ( 10^{12} ) ซึ่งใช้เวลานานเกินไป</li>
+              <li>แบ่งเป็น 2 ฝั่ง ฝั่งละ 20 ตัว: ( 2^{20} ) มีค่าเพียง ( 10^6 )</li>
+              <li>สร้างรายการผลรวม ( SA ) และ ( SB ) จากทั้ง 2 ฝั่ง</li>
+              <li>หา ( x \in SA ) และ ( y \in SB ) ที่ ( x + y = T ) โดยใช้ Binary Search ในเวลา ( O(2^{n/2} \cdot n) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/meet-in-the-middle/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Activity Selection Problem</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">ต้องการเลือกกิจกรรมที่ไม่ซ้อนทับกันให้ได้จำนวนมากที่สุด:</p>
+            <div class="grid grid-cols-1 gap-4 mb-4">
+              <div class="bg-blue-900/50 p-4 rounded-xl border border-blue-400">
+                <strong>Algorithm:</strong> เรียงกิจกรรมตามเวลา <strong>สิ้นสุด (Finish Time)</strong> และเลือกกิจกรรมถัดไปที่เริ่มหลังงานก่อนหน้าจบ
+              </div>
+            </div>
+            <p>ความซับซ้อนคือ ( O(n \log n) ) จากการเรียงลำดับข้อมูล ซึ่งเร็วกว่าการใช้ DP ในโจทย์ประเภทนี้มาก</p>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Proving Greedy: Exchange Argument</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-red-400">
+            <p class="mb-4 italic">เราจะมั่นใจได้อย่างไรว่า Greedy ของเราให้คำตอบที่ดีที่สุด (Optimal)?</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li><strong>Exchange Argument:</strong> สมมติว่ามีคำตอบอื่นที่ Optimal กว่า Greedy ของเรา</li>
+              <li>ลองทำการ "สลับสมาชิก" ในคำตอบนั้นด้วยสมาชิกจาก Greedy Strategy ของเรา</li>
+              <li>พิสูจน์ว่าหลังการสลับ คำตอบนั้นยังคง Optimal อยู่ หรือดีขึ้นกว่าเดิม</li>
+              <li>หากสลับได้เรื่อยๆ จนกลายเป็น Greedy Solution แสดงว่า Greedy ของเราคือ Optimal</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://en.wikipedia.org/wiki/Greedy_algorithm</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Greedy vs. DP</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <table class="w-full text-left border-collapse text-lg">
+              <thead>
+                <tr class="border-b border-white/20 text-yellow-200">
+                  <th class="py-2">หัวข้อ</th>
+                  <th class="py-2">Greedy</th>
+                  <th class="py-2">Dynamic Programming</th>
+                </tr>
+              </thead>
+              <tbody class="text-white/80">
+                <tr class="border-b border-white/10">
+                  <td class="py-4 font-bold">การเลือก</td>
+                  <td>เลือกสิ่งที่ดีที่สุด ณ ตอนนี้ทันที</td>
+                  <td>ลองทุกทางเลือกที่เป็นไปได้</td>
+                </tr>
+                <tr class="border-b border-white/10">
+                  <td class="py-4 font-bold">ความซับซ้อน</td>
+                  <td>มักจะต่ำมาก ( (O(n)) หรือ (O(n \log n)) )</td>
+                  <td>สูงกว่า (ขึ้นกับจำนวน State)</td>
+                </tr>
+                <tr>
+                  <td class="py-4 font-bold">ความถูกต้อง</td>
+                  <td>ต้องพิสูจน์ด้วยความยากลำบาก</td>
+                  <td>รับประกันโดยธรรมชาติของการลองทุก State</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/greedy-approach-vs-dynamic-programming/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">เตรียมตัวเข้าสู่ช่วงปฏิบัติ</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 font-semibold">15:00 - 17:00 น. ตะลุยโจทย์ Range Queries และ Optimization:</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li>การ Implement Segment Tree สำหรับโจทย์ Range Minimum Query (RMQ)</li>
+              <li>การใช้ Fenwick Tree แก้ปัญหาเลขลำดับที่หายไป</li>
+              <li>การทำ Binary Search on Answer ร่วมกับ Greedy เช็คความเป็นไปได้</li>
+              <li>ฝึกแก้โจทย์จากระบบ Grader (IOI Style)</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60 italic">"ความรู้ทางทฤษฎีจะไร้ผล หากไม่ผ่านการเขียนโค้ดจริง"</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 text-yellow-300">Optimization Session Wrap-up</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">หัวใจสำคัญที่เราได้รับในวันนี้:</p>
+            <div class="grid grid-cols-2 gap-4 text-center text-blue-900 font-bold">
+              <div class="bg-yellow-300 p-4 rounded-xl">Greedy Choice Property</div>
+              <div class="bg-blue-400 p-4 rounded-xl">Monotonic Searching</div>
+              <div class="bg-green-400 p-4 rounded-xl">Search Space Reduction</div>
+              <div class="bg-purple-400 p-4 rounded-xl">D&C Strategy</div>
+            </div>
+            <p class="mt-6 text-center italic">"ถึงเวลาพักสมองสั้นๆ ก่อนเข้าสู่ช่วงลงมือทำจริงในลำดับถัดไป!"</p>
+          </div>
+          <div class="flex justify-center gap-4">
+            <div class="px-8 py-3 bg-white text-blue-900 font-bold rounded-full shadow-lg">15:00 น. เริ่มช่วง Practice</div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
