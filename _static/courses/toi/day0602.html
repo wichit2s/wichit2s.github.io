@@ -108,7 +108,7 @@
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">การหาขนาดของต้นไม้ย่อย (Subtree Size)</h1>
           <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-green-400 text-left">
-            <p class="text-xl mb-4 text-green-300 font-bold">โจทย์: ในโหนด \( s \) ใดๆ มีโหนดอยู่ภายใต้มันทั้งหมดกี่โหนด?</p>
+            <p class="text-xl mb-4 text-green-300 font-bold">โจทย์: ในโหนด \( s \) ใดๆ มีโหนดอยู่ภายใต้โหนดนี้ทั้งหมดกี่โหนด?</p>
             <p class="text-lg leading-relaxed mb-6">
             เราใช้ DFS ในการคำนวณโดยอาศัยแนวคิด **Post-order**:
             <br> \( count(s) = 1 + \sum_{u \in children(s)} count(u) \)
@@ -128,8 +128,88 @@
         </div>
       </div>
 
-      <!-- Slide 4: DFS Application: Node Height and Depth -->
+
       <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">ตัวอย่างโจทย์และการรับข้อมูล</h1>
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-black/30 p-6 rounded-3xl border border-white/20">
+              <p class="text-lg font-bold text-blue-300 mb-2">โครงสร้างต้นไม้ (ตัวอย่าง):</p>
+              <p class="text-sm">ให้ 1 เป็น Root โดยมีเส้นเชื่อมดังนี้<br>
+              1-2, 1-3, 1-4, 1-5, 2-6, 4-7, 4-8, 4-9 </p>
+              <div class="mt-4 bg-white/10 p-4 rounded text-sm font-mono">
+                Sample Input:<br>
+                8<br>
+                1 2<br/>
+                1 3<br/>
+                1 4<br/>
+                1 5<br/>
+                2 6<br/>
+                4 7<br/>
+                4 8<br/>
+                4 9
+              </div>
+            </div>
+            <div class="bg-black/30 p-6 rounded-3xl border border-white/20">
+              <p class="text-lg font-bold text-yellow-300 mb-2">ผลลัพธ์ที่ต้องการ:</p>
+              <p class="text-sm">ขนาด subtree ของโหนดต่างๆ (count[s])</p>
+              <div class="mt-4 bg-white/10 p-4 rounded text-sm font-mono">
+                Sample Output:<br>
+                โหนด 4: ขนาด = 4 (มี 4,7,8,9)<br>
+                โหนด 2: ขนาด = 2 (มี 2,6)<br>
+                โหนด 1: ขนาด = 9 (โหนดทั้งหมด) 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">ขั้นตอนการคำนวณ (Step-by-Step)</h1>
+          <div class="bg-black/30 p-8 rounded-3xl text-left space-y-4">
+            <div class="flex items-start gap-4">
+              <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">1</div>
+              <p class="text-lg"><strong>เริ่มต้นที่โหนดใบ (Leaf Nodes)</strong> อัลกอริทึมจะลงไปลึกที่สุดจนเจอโหนดที่ไม่มีลูก (เช่น 6, 3, 7, 8, 9) และกำหนดให้ <code>count[leaf] = 1</code> </p>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">2</div>
+              <p class="text-lg">**Recursive Step:** เมื่อกลับขึ้นมาจากโหนดลูก (Post-order) โหนดพ่อจะบวกขนาดของโหนดลูกเข้าไปในตัวเอง<br>
+              เช่น โหนด 4 มีลูกคือ 7, 8, 9 ซึ่งแต่ละโหนดมีขนาด 1 ดังนี้<br>
+              <code>count[6] = 1 (ตัวเอง) + count[7] + count[8] + count[9]</code><br>
+              <code>count[6] = 1 + 1 + 1 + 1 = 4</code></p>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">3</div>
+              <p class="text-lg">**การหา Root:** ทำซ้ำจนถึงโหนด 1<br>
+              <code>count[10] = 1 + count[11] + count[12] + count[6] + count[13]</code><br>
+              <code>count[10] = 1 + 2 + 1 + 4 + 1 = 9</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">โจทย์ประยุกต์: การนับค่าใน Subtree</h1>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-blue-400 text-left">
+            <p class="text-xl mb-4 text-blue-300 font-bold">โจทย์: จงนับจำนวนโหนดที่มีค่าเท่ากับ \( x \) ภายใน Subtree ของ \( s \)</p>
+            <p class="text-lg leading-relaxed mb-4">
+            <strong>แนวทางแก้ปัญหา (Offline Algorithm)</strong>
+            </p>
+            <ul class="list-disc ml-6 space-y-2 text-lg">
+              <li>ใช้ DFS ท่องไปในต้นไม้และใช้ <strong>Map Data Structure</strong> เก็บความถี่ของค่าในแต่ละโหนด </li>
+              <li>เมื่ออยู่ที่โหนด \( s \) ให้รวม Map จากโหนดลูกทุกตัวเข้าด้วยกัน (Merging Data Structures) </li>
+              <li>เราสามารถตอบคำถามของโหนด \( s \) ได้ทันทีหลังจากที่รวม Map ของลูกๆ เสร็จแล้ว </li>
+              <li>**Optimization:** หากต้องการความเร็วสูงขึ้น สามารถใช้เทคนิค "Small to Large Merging" เพื่อให้ได้ Time Complexity \( O(n \log^2 n) \) หรือ \( O(n \log n) \)</li>
+            </ul>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ้างอิงเทคนิค: Chapter 18.4 (Offline Algorithms) </p>
+        </div>
+      </div>
+
+      <!-- Slide 4: DFS Application: Node Height and Depth -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6 italic underline">การหาระยะทางและความลึก</h1>
           <div class="grid grid-cols-2 gap-6 mt-4">
@@ -148,8 +228,71 @@
         </div>
       </div>
 
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">โจทย์: การหาเส้นผ่านศูนย์กลาง (Tree Diameter)</h1>
+          <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-yellow-400 text-left">
+            <p class="text-xl mb-4 text-yellow-300 font-bold">นิยาม: ระยะทางที่ไกลที่สุดระหว่างโหนดสองโหนดใดๆ ในต้นไม้ </p>
+
+            <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <p class="font-bold text-green-400 mb-1">ตัวอย่าง Input:</p>
+                <p class="font-mono">7 โหนด, เส้นเชื่อม:<br>1-2, 1-3, 1-4, 2-5, 2-6, 4-7</p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <p class="font-bold text-blue-400 mb-1">ตัวอย่าง Output:</p>
+                <p>เส้นผ่านศูนย์กลาง = 4<br>(เช่น ระยะทางจาก 5 ถึง 7)</p>
+              </div>
+            </div>
+
+            <p class="text-lg mb-2 underline">แนวทางการแก้ปัญหาด้วย Two-DFS Algorithm:</p>
+            <ol class="list-decimal ml-6 space-y-2 opacity-90">
+              <li>เลือกโหนดเริ่มต้น \( a \) ใดๆ แล้วหาโหนด \( b \) ที่อยู่ **ไกลที่สุด** จาก \( a \) </li>
+              <li>จากโหนด \( b \) ให้หาโหนด \( c \) ที่อยู่ **ไกลที่สุด** จาก \( b \) </li>
+              <li>ระยะทางระหว่าง \( b \) และ \( c \) คือคำตอบ (Diameter) </li>
+            </ol>
+          </div>
+          <p class="mt-4 text-xs opacity-60">อ้างอิง: Competitive Programmer's Handbook (Chapter 14.2)</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-6">การประยุกต์ใช้ DFS เพื่อหาระยะทางไกลสุด</h1>
+          <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+            <div class="flex justify-between items-center mb-4">
+              <p class="text-green-400 font-mono text-lg">Diameter Algorithm (C++)</p>
+              <span class="text-xs bg-white/10 px-3 py-1 rounded-full text-white/60">Time Complexity: \( O(n) \)</span>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded font-mono text-sm leading-relaxed overflow-hidden">
+              <span class="text-gray-500">// ใช้ DFS เพื่อเก็บระยะทาง (dist) ของทุกโหนดจากจุดเริ่ม s</span><br>
+              void dfs(int s, int e, int d) {<br>
+              &nbsp;&nbsp;dist[s] = d;<br>
+              &nbsp;&nbsp;for (auto u : adj[s]) {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;if (u != e) dfs(u, s, d + 1);<br>
+              &nbsp;&nbsp;}<br>
+              }<br><br>
+              <span class="text-gray-500">// ในฟังก์ชัน main:</span><br>
+              dfs(1, 0, 0); <span class="text-gray-500">// 1. หาโหนด b ที่ไกลจากโหนด 1</span><br>
+              <span class="text-gray-500">// (เลือกโหนด b ที่มี dist[b] สูงสุด)</span><br>
+              dfs(b, 0, 0); <span class="text-gray-500">// 2. หาโหนด c ที่ไกลจากโหนด b</span><br>
+              <span class="text-gray-500">// คำตอบคือค่า dist[c] ที่ได้จากการ DFS รอบสอง</span>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
+              <p class="text-sm italic">
+              **ทำไมถึงใช้ได้?** โหนดที่ไกลที่สุดจากโหนดใดๆ มักจะเป็นจุดปลายจุดหนึ่งของเส้นผ่านศูนย์กลางเสมอ 
+              ดังนั้นการหาจุดที่ไกลที่สุดสองครั้งจึงการันตีการเจอเส้นทางที่ยาวที่สุดในต้นไม้ 
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <!-- Slide 5: Concept: Dynamic Programming on Trees -->
-      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6 italic">พื้นฐาน Dynamic Programming บนต้นไม้</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4 shadow-xl">
@@ -169,8 +312,69 @@
         </div>
       </div>
 
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">โจทย์: เซตอิสระที่ใหญ่ที่สุด (Maximum Independent Set)</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-yellow-400 text-left">
+      <p class="text-xl mb-4 text-yellow-300 font-bold">โจทย์: จงเลือกโหนดจำนวนมากที่สุดในต้นไม้ โดยห้ามเลือกโหนดที่ติดกัน (มีเส้นเชื่อมถึงกัน)</p>
+      
+      <p class="text-lg mb-2 underline font-bold">แนวคิดการแบ่งสถานะ (States):</p>
+      <p class="mb-4">เรากำหนดสถานะให้แต่ละโหนด \( v \) สองแบบ :</p>
+      <ul class="list-disc ml-8 space-y-2 opacity-90">
+        <li>\( dp[v][4] \): ขนาด MIS ใน subtree ของ \( v \) เมื่อ **เลือก** โหนด \( v \)</li>
+        <li>\( dp[v] \): ขนาด MIS ใน subtree ของ \( v \) เมื่อ **ไม่เลือก** โหนด \( v \)</li>
+      </ul>
+
+      <p class="text-lg mt-6 mb-2 underline font-bold">สูตรความสัมพันธ์ (Transitions) :</p>
+      <ol class="list-decimal ml-8 space-y-2 opacity-90 italic">
+        <li>ถ้าเลือก \( v \): ลูกทุกตัว \( w \) ของมัน **ต้องไม่ถูกเลือก**
+          <br> \( dp[v][4] = 1 + \sum dp[w] \)
+        </li>
+        <li>ถ้าไม่เลือก \( v \): ลูกแต่ละตัว \( w \) จะถูก **เลือกหรือไม่ก็ได้** (เอาค่าที่มากที่สุด)
+          <br> \( dp[v] = \sum \max(dp[w][4], dp[w]) \)
+        </li>
+      </ol>
+    </div>
+    <p class="mt-4 text-xs opacity-60">อ้างอิงอัลกอริทึม: Dynamic Programming on Trees (Chapter 14 )</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">C++ Implementation for Tree DP</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <div class="flex justify-between items-center mb-4 text-sm font-mono">
+        <p class="text-green-400">Maximum Independent Set on Tree</p>
+        <span class="opacity-50">Time Complexity: \( O(n) \)</span>
+      </div>
+      
+      <div class="bg-black/50 p-6 rounded font-mono text-sm leading-relaxed">
+        <span class="text-blue-400">int</span> dp[N][5];<br>
+        <span class="text-blue-400">void</span> solve(<span class="text-blue-400">int</span> s, <span class="text-blue-400">int</span> e) {<br>
+        &nbsp;&nbsp;dp[s][4] = 1; <span class="text-gray-500">// กรณีเลือกตัวเอง</span><br>
+        &nbsp;&nbsp;dp[s] = 0; <span class="text-gray-500">// กรณีไม่เลือกตัวเอง</span><br><br>
+        &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s]) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (u == e) <span class="text-pink-400">continue</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;solve(u, s); <span class="text-gray-500">// ท่องลงไปจนถึงโหนดใบ (Post-order )</span><br><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500">// คำนวณค่าสะสมกลับขึ้นมาหาพ่อ</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;dp[s][4] += dp[u];<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;dp[s] += max(dp[u][4], dp[u]);<br>
+        &nbsp;&nbsp;}<br>
+        }
+      </div>
+
+      <div class="mt-6 p-4 bg-blue-900/20 rounded-xl border border-blue-500/30">
+        <p class="text-sm">
+          <span class="font-bold text-blue-300">💡 ผลลัพธ์สุดท้าย:</span><br>
+          หลังจากเรียก `solve(root, 0)` คำตอบที่ได้คือ `max(dp[root], dp[root][4])`
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
       <!-- Slide 6: BFS Application: Shortest Distance & Leveling -->
-      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">BFS: ระยะทางสั้นที่สุดและเลเยอร์</h1>
           <div class="bg-black/30 p-8 rounded-3xl border-2 border-blue-400 text-left relative overflow-hidden">
@@ -189,8 +393,66 @@
         </div>
       </div>
 
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">โจทย์: ระยะห่างจากโหนดเริ่ม (Tree Distance)</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-blue-400 text-left">
+      <p class="text-xl mb-4 text-blue-300 font-bold">โจทย์: จงหาระยะทางสั้นที่สุดจาก Root (โหนด 1) ไปยังทุกโหนดในต้นไม้</p>
+      
+      <p class="text-lg mb-2 underline font-bold">แนวทางแก้ปัญหาด้วย BFS:</p>
+      <ul class="list-disc ml-8 space-y-2 opacity-90">
+        <li><strong>Queue:</strong> ใช้เก็บโหนดที่กำลังจะเข้าไปเยี่ยมชมตามลำดับความใกล้-ไกล </li>
+        <li><strong>Distance Array:</strong> ใช้เก็บระยะทางจาก Root (ให้ `dist[root] = 0` และโหนดอื่นเป็นค่าว่าง) </li>
+        <li><strong>Layer Processing:</strong> เมื่อดึงโหนด \( s \) ออกจาก Queue ให้ตรวจดูโหนดเพื่อนบ้าน \( u \) ถ้ายังไม่เคยไป ให้ตั้งค่า `dist[u] = dist[s] + 1` แล้วใส่ \( u \) ลงใน Queue </li>
+        <li><strong>Efficiency:</strong> วิธีนี้การันตีว่าจะได้ระยะทางที่สั้นที่สุดเสมอในต้นไม้ที่ไม่มีน้ำหนัก (Unweighted Tree) </li>
+      </ul>
+    </div>
+    <p class="mt-4 text-xs opacity-60">อ้างอิง: Competitive Programmer's Handbook (Chapter 12.2)</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">C++ Implementation for Tree BFS</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <div class="flex justify-between items-center mb-4 text-sm font-mono">
+        <p class="text-green-400 italic">// ใช้ Queue ในการหา Shortest Path บนต้นไม้</p>
+        <span class="opacity-50 text-xs">Time: \( O(V + E) \)</span>
+      </div>
+      
+      <div class="bg-black/50 p-6 rounded font-mono text-sm leading-relaxed overflow-hidden">
+        <span class="text-pink-400">#include</span> &lt;queue&gt;<br>
+        <span class="text-blue-400">void</span> bfs(<span class="text-blue-400">int</span> x) {<br>
+        &nbsp;&nbsp;visited[x] = <span class="text-blue-400">true</span>;<br>
+        &nbsp;&nbsp;dist[x] = 0;<br>
+        &nbsp;&nbsp;queue&lt;<span class="text-blue-400">int</span>&gt; q;<br>
+        &nbsp;&nbsp;q.push(x);<br><br>
+        &nbsp;&nbsp;<span class="text-pink-400">while</span> (!q.empty()) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">int</span> s = q.front(); q.pop();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500">// เยี่ยมชมโหนดลูกทุกตัว</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s]) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (visited[u]) <span class="text-pink-400">continue</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visited[u] = <span class="text-blue-400">true</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist[u] = dist[s] + 1;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q.push(u);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;}<br>
+        }
+      </div>
+
+      <div class="mt-6 p-4 bg-green-900/20 rounded-xl border border-green-500/30 flex items-center gap-4">
+        <span class="text-2xl">💡</span>
+        <p class="text-sm">
+          การทำงานของ BFS จะกระจายออกเป็นวงกว้าง (Breadth) ทำให้เราสามารถระบุ <strong>"ความลึก" (Depth)</strong> 
+          หรือ <strong>"ระดับ" (Level)</strong> ของโหนดในต้นไม้ได้อย่างแม่นยำ 
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
       <!-- Slide 7: Finding the Diameter of a Tree -->
-      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6 italic underline">ปัญหาเส้นผ่านศูนย์กลาง (Tree Diameter)</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-2xl text-left">
@@ -206,8 +468,69 @@
         </div>
       </div>
 
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">ตัวอย่างโจทย์: ระยะทางไกลสุดในเครือข่าย</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-yellow-400 text-left">
+      <p class="text-xl mb-4 text-yellow-300 font-bold">โจทย์: กำหนดต้นไม้ที่มี \( n \) โหนด จงหาความยาวของเส้นทางที่ยาวที่สุด </p>
+      
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-green-400 mb-2">ขั้นตอนที่ 1: หาจุดปลายด้านที่หนึ่ง</p>
+          <p class="opacity-90">เลือกโหนด \( a \) ใดก็ได้ (เช่น โหนด 1) แล้วใช้ DFS เพื่อหาโหนด \( b \) ที่อยู่ <strong>ไกลที่สุด</strong> จาก \( a \) </p>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-blue-400 mb-2">ขั้นตอนที่ 2: หาจุดปลายด้านที่สอง</p>
+          <p class="opacity-90">เริ่ม DFS จากโหนด \( b \) ที่เจอ เพื่อหาโหนด \( c \) ที่อยู่ <strong>ไกลที่สุด</strong> จาก \( b \) ระยะทางนี้คือ Diameter </p>
+        </div>
+      </div>
+
+      <div class="bg-yellow-900/20 p-4 rounded-xl border border-yellow-500/30">
+        <p class="text-sm italic text-center">
+          "โหนดที่อยู่ไกลที่สุดจากโหนดใดๆ มักจะเป็นจุดปลายจุดหนึ่งของ Diameter เสมอ" 
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-6">C++ Solution: Tree Diameter (Two-DFS)</h1>
+    <div class="bg-slate-900 p-6 rounded-3xl border border-white/10 text-left">
+      <div class="bg-black/50 p-4 rounded font-mono text-xs leading-relaxed overflow-hidden shadow-inner">
+        <span class="text-blue-400">int</span> maxDist = -1, farthestNode;<br>
+        <span class="text-blue-400">void</span> dfs(<span class="text-blue-400">int</span> s, <span class="text-blue-400">int</span> e, <span class="text-blue-400">int</span> d) {<br>
+        &nbsp;&nbsp;<span class="text-pink-400">if</span> (d > maxDist) { maxDist = d; farthestNode = s; }<br>
+        &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s]) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (u != e) dfs(u, s, d + 1);<br>
+        &nbsp;&nbsp;}<br>
+        }<br><br>
+        <span class="text-gray-500">// การเรียกใช้งานใน main()</span><br>
+        maxDist = -1; dfs(1, 0, 0); <span class="text-gray-500">// รอบที่ 1: หาจุดปลาย b</span><br>
+        <span class="text-blue-400">int</span> node_b = farthestNode;<br>
+        maxDist = -1; dfs(node_b, 0, 0); <span class="text-gray-500">// รอบที่ 2: หาจุดปลาย c จาก b</span><br>
+        cout << <span class="text-yellow-300">"Diameter: "</span> << maxDist << endl;
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-4 text-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+          <p>Time Complexity: \( O(n) \) </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+          <p>Space Complexity: \( O(n) \) (Adjacency List) </p>
+        </div>
+      </div>
+    </div>
+    <p class="mt-4 text-xs opacity-60">อ้างอิง: Competitive Programmer's Handbook (Chapter 14.2)</p>
+  </div>
+</div>
+
+
       <!-- Slide 8: The 2-DFS Algorithm for Diameter -->
-      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6">อัลกอริทึม 2-DFS เพื่อหา Diameter</h1>
           <div class="grid grid-cols-2 gap-8 items-center">
@@ -232,8 +555,94 @@
         </div>
       </div>
 
-      <!-- Slide 9: Tree Queries: Finding Ancestors -->
-      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">โจทย์: เครือข่ายที่ยาวที่สุด</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-yellow-400 text-left">
+      <p class="text-xl mb-4 text-yellow-300 font-bold">ปัญหา: จงหาความยาวของเส้นทางที่ยาวที่สุดในต้นไม้ (Diameter)</p>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <p class="font-bold text-green-400 mb-2">ตัวอย่าง Input:</p>
+          <div class="font-mono text-sm">
+            n = 6 (จำนวนโหนด)<br>
+            เส้นเชื่อม: (1,2), (2,3), (2,4), (4,5), (4,6)
+          </div>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-blue-400 mb-2">อธิบายการคำนวณ:</p>
+          <ul class="list-disc ml-5 space-y-1 opacity-90">
+            <li>เส้นทาง 3-2-4-5 มีความยาว 3</li>
+            <li>เส้นทาง 3-2-4-6 มีความยาว 3</li>
+            <li><strong>Diameter = 3</strong></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mt-6 p-4 bg-blue-900/20 rounded-xl border border-blue-500/30">
+        <p class="text-sm italic">
+          หมายเหตุ: ในต้นไม้ที่ไม่มีน้ำหนัก (Unweighted) ความยาวเส้นทางคือนับตามจำนวนเส้นเชื่อม 
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">กลยุทธ์การเขียนโปรแกรม 2-DFS</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <p class="text-lg mb-4">เพื่อให้โค้ดมีประสิทธิภาพ \( O(n) \) เราจะใช้โครงสร้าง DFS แบบไม่ใช้ `visited` array:</p>
+      
+      <div class="space-y-4 text-sm leading-relaxed">
+        <div class="flex items-start gap-3">
+          <div class="bg-green-500 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">1</div>
+          <p><strong>DFS Function:</strong> รับพารามิเตอร์ `(node, parent, distance)` เพื่อท่องไปในต้นไม้โดยไม่ย้อนกลับทางเดิม </p>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="bg-green-500 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">2</div>
+          <p><strong>Tracking:</strong> ใช้ตัวแปร Global เก็บ `maxDist` และ `farthestNode` โดยจะอัปเดตค่าทุกครั้งที่เจอระยะทางที่ไกลกว่าเดิม</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="bg-green-500 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">3</div>
+          <p><strong>Main Execution:</strong> เรียก DFS ครั้งแรกเพื่อหาจุดปลายหนึ่งด้าน จากนั้นใช้จุดนั้นเป็นจุดเริ่มในการเรียก DFS ครั้งที่สองเพื่อหาค่า Diameter จริง </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Solution for Tree Diameter</h1>
+    <div class="bg-black/50 p-6 rounded-2xl font-mono text-xs text-left border border-white/10 shadow-2xl">
+      <div class="mb-2 text-gray-400">// Chapter 14.2: Diameter using 2-DFS</div>
+      <span class="text-blue-400">int</span> maxD = -1, node_a;<br>
+      <span class="text-blue-400">vector</span>&lt;<span class="text-blue-400">int</span>&gt; adj[N];<br><br>
+      <span class="text-blue-400">void</span> <span class="text-yellow-300">dfs</span>(<span class="text-blue-400">int</span> s, <span class="text-blue-400">int</span> e, <span class="text-blue-400">int</span> d) {<br>
+      &nbsp;&nbsp;<span class="text-pink-400">if</span> (d > maxD) { maxD = d; node_a = s; } <span class="text-gray-500">// จำโหนดที่ไกลที่สุด</span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s]) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (u != e) <span class="text-yellow-300">dfs</span>(u, s, d + 1); <span class="text-gray-500">// ป้องกันการวิ่งกลับไปหา Parent</span><br>
+      &nbsp;&nbsp;}<br>
+      }<br><br>
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">main</span>() {<br>
+      &nbsp;&nbsp;<span class="text-gray-500">// ... รับ Input เส้นเชื่อมใส่ adj ...</span><br>
+      &nbsp;&nbsp;maxD = -1; <span class="text-yellow-300">dfs</span>(1, 0, 0); <span class="text-gray-500">// รอบที่ 1: หาโหนด b จากจุดสุ่ม</span><br>
+      &nbsp;&nbsp;<span class="text-blue-400">int</span> b = node_a;<br>
+      &nbsp;&nbsp;maxD = -1; <span class="text-yellow-300">dfs</span>(b, 0, 0); <span class="text-gray-500">// รอบที่ 2: เริ่มจาก b หาจุด c ที่ไกลสุด</span><br>
+      &nbsp;&nbsp;cout << <span class="text-green-300">"Diameter: "</span> << maxD << endl; <span class="text-gray-500">// maxD ตอนนี้คือคำตอบ</span><br>
+      }
+    </div>
+    <div class="mt-4 flex justify-center gap-8 text-xs opacity-70">
+      <p>⏱️ Time Complexity: \( O(n) \)</p>
+      <p>💾 Space Complexity: \( O(n) \)</p>
+    </div>
+    <p class="mt-4 text-[10px] opacity-40">อ้างอิงโค้ดพื้นฐาน: Competitive Programmer's Handbook </p>
+  </div>
+</div>
+
+      <!-- Slide 22: Tree Queries: Finding Ancestors -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">การสืบค้นบรรพบุรุษ (Ancestors)</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6">
@@ -256,29 +665,88 @@
         </div>
       </div>
 
-      <!-- Slide 10: Afternoon Summary: Power of Traversal -->
-      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
-        <div class="text-center max-w-4xl mx-auto px-8">
-          <h1 class="text-4xl font-bold mb-8 italic underline">สรุปพลังของการ Traversal</h1>
-          <div class="grid grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
-            <div class="p-6 bg-white/5 border border-white/20 rounded-2xl">
-              <h4 class="text-yellow-300 font-bold mb-2">DFS คือพระเอก</h4>
-              <p class="text-xs opacity-80 leading-relaxed italic italic">ใช้เก็บข้อมูลโครงสร้างทั้งหมดของต้นไม้ ไม่ว่าจะเป็นขนาด Subtree, ความสูง หรือความสัมพันธ์บรรพบุรุษ</p>
-            </div>
-            <div class="p-6 bg-white/5 border border-white/20 rounded-2xl">
-              <h4 class="text-green-300 font-bold mb-2">BFS คือเครื่องมือวัด</h4>
-              <p class="text-xs opacity-80 leading-relaxed italic italic">ใช้จัดการกับข้อมูลตามระยะทางที่เท่ากัน และหาระยะทางที่สั้นที่สุดอย่างแม่นยำ</p>
-            </div>
-          </div>
-          <div class="mt-10 bg-yellow-500/10 p-6 rounded-2xl border-2 border-yellow-500/30">
-            <p class="text-lg font-bold">"Traversal ไม่ใช่แค่การเยี่ยมชมทุกโหนด แต่คือการเก็บข้อมูลที่มีค่าระหว่างทาง"</p>
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">โจทย์: ใครคือบรรพบุรุษของฉัน?</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-blue-400 text-left">
+      <p class="text-xl mb-4 text-blue-300 font-bold">โจทย์: กำหนดต้นไม้ที่มี \( n \) โหนด จงตอบคำถาม \( q \) ครั้ง ว่าบรรพบุรุษลำดับที่ \( k \) ของโหนด \( x \) คือใคร?</p>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <p class="font-bold text-green-400 mb-2">ตัวอย่าง Input:</p>
+          <div class="font-mono text-xs">
+            โหนด: 8, Root: 1<br>
+            เส้นเชื่อม: (1,2), (1,4), (1,5), (2,6), (4,3), (4,7), (7,8)<br>
+            <strong>Query: บรรพบุรุษลำดับที่ 2 ของโหนด 8 คือ?</strong>
           </div>
         </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-yellow-400 mb-2">ลำดับการไล่สายสัมพันธ์:</p>
+          <ul class="space-y-1 opacity-90">
+            <li>1. โหนด 8 มีพ่อ (ลำดับที่ 1) คือ 7</li>
+            <li>2. โหนด 7 มีพ่อ (ลำดับที่ 2) คือ 4</li>
+            <li><strong>คำตอบคือ โหนด 4</strong></li>
+          </ul>
+        </div>
       </div>
+      
+      <p class="mt-6 text-sm italic opacity-80">
+        *หากใช้การขยับทีละขั้น (Naive) จะใช้เวลา \( O(n) \) ต่อ Query ซึ่งจะช้าเกินไปถ้าต้นไม้เป็นเส้นตรงและมี Query จำนวนมาก 
+      </p>
+    </div>
+  </div>
+</div>
 
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">กลยุทธ์: Binary Lifting</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <p class="text-lg mb-4 text-blue-300 font-bold">แนวคิด: ขยับเป็นระยะทางกำลังของ 2 เพื่อลดเวลาเป็น \( O(\log n) \)</p>
+      
+      <div class="space-y-4 text-sm leading-relaxed">
+        <div class="p-4 bg-white/5 rounded-lg border-l-4 border-green-500">
+          <strong>1. Preprocessing:</strong> สร้างตาราง `up[x][i]` ซึ่งหมายถึงบรรพบุรุษลำดับที่ \( 2^i \) ของโหนด \( x \) 
+          <br><span class="italic text-gray-400">สูตร: \( up[x][i] = up[up[x][i-1]][i-1] \) (บรรพบุรุษที่ \( 2^i \) คือบรรพบุรุษที่ \( 2^{i-1} \) ของโหนดที่สูงขึ้นไป \( 2^{i-1} \) อีกที) </span>
+        </div>
+        <div class="p-4 bg-white/5 rounded-lg border-l-4 border-yellow-500">
+          <strong>2. Query:</strong> แตกค่า \( k \) เป็นผลรวมของกำลังเลข 2 (Binary Representation)
+          <br><span class="italic text-gray-400">เช่น ถ้าหาลำดับที่ 11 (\( 8+2+1 \)): ให้ขยับโหนดไปที่บรรพบุรุษลำดับที่ 8 -> 2 -> 1 ตามลำดับ </span>
+        </div>
+      </div>
+      <p class="mt-6 text-xs text-center opacity-60">Preprocessing ใช้เวลา \( O(n \log n) \) และตอบ Query ใน \( O(\log n) \) </p>
+    </div>
+  </div>
+</div>
 
-      <!-- Slide 11: Deep Dive: Lowest Common Ancestor (LCA) -->
-      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Solution: K-th Ancestor</h1>
+    <div class="bg-black/50 p-6 rounded-2xl font-mono text-xs text-left border border-white/10 shadow-2xl overflow-hidden">
+      <span class="text-blue-400">int</span> up[N][LOG]; <span class="text-gray-500">// up[node][power_of_2]</span><br><br>
+      <span class="text-gray-400">// 1. สร้างตารางระหว่างการทำ DFS</span><br>
+      <span class="text-blue-400">void</span> <span class="text-yellow-300">dfs</span>(<span class="text-blue-400">int</span> s, <span class="text-blue-400">int</span> e) {<br>
+      &nbsp;&nbsp;up[s] = e;<br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">int</span> i = 1; i < LOG; i++)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;up[s][i] = up[up[s][i-1]][i-1];<br><br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s])<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (u != e) <span class="text-yellow-300">dfs</span>(u, s);<br>
+      }<br><br>
+      <span class="text-gray-400">// 2. ฟังก์ชันตอบ Query</span><br>
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">get_ancestor</span>(<span class="text-blue-400">int</span> x, <span class="text-blue-400">int</span> k) {<br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">int</span> i = 0; i < LOG; i++)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> ((k >> i) & 1) x = up[x][i]; <span class="text-gray-500">// ถ้าบิตที่ i เป็น 1 ให้ยกตัวขึ้น 2^i ชั้น </span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">return</span> x == 0 ? -1 : x; <span class="text-gray-500">// คืนค่าโหนดบรรพบุรุษ</span><br>
+      }
+    </div>
+    <div class="mt-4 flex justify-center gap-8 text-xs">
+      <p class="bg-blue-500/20 px-3 py-1 rounded-full">Precompute: \( O(n \log n) \)</p>
+      <p class="bg-green-500/20 px-3 py-1 rounded-full">Query: \( O(\log k) \)</p>
+    </div>
+  </div>
+</div>
+
+      <!-- Slide 26: Deep Dive: Lowest Common Ancestor (LCA) -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">บรรพบุรุษร่วมที่ต่ำที่สุด (Naive LCA)</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-4 shadow-xl">
@@ -296,8 +764,69 @@
         </div>
       </div>
 
-      <!-- Slide 12: Binary Lifting for LCA Optimization -->
-      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">LCA: กลยุทธ์ Binary Lifting</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-green-400 text-left">
+      <p class="text-xl mb-4 text-green-300 font-bold">นิยาม: โหนดที่ต่ำที่สุดที่เป็นบรรพบุรุษของทั้งสองโหนด .</p>
+      
+      <p class="text-lg mb-2 underline font-bold">ขั้นตอนการหาคำตอบ (Method 1):</p>
+      <ol class="list-decimal ml-8 space-y-3 text-sm opacity-90">
+        <li>ใช้ข้อมูลจาก <strong>Binary Lifting</strong> (ตาราง <code>up[x][i]</code>) เพื่อช่วยในการกระโดดขึ้นไปหาบรรพบุรุษ .</li>
+        <li><strong>ปรับระดับ (Equalize Depth):</strong> หากโหนดทั้งสองลึกไม่เท่ากัน ให้ขยับโหนดที่ลึกกว่าขึ้นมาให้อยู่ระดับเดียวกับอีกโหนดหนึ่ง .</li>
+        <li><strong>ก้าวร่วมกัน (Simultaneous Jump):</strong> ขยับทั้งสองโหนดขึ้นไปพร้อมกันด้วยระยะทางที่มากที่สุดเท่าที่เป็นไปได้ แต่ต้องไม่ข้ามจุดที่พวกมันเจอกัน .</li>
+        <li><strong>สรุปผล:</strong> เมื่อขยับต่อไม่ได้แล้ว พ่อของโหนดปัจจุบันก็คือ Lowest Common Ancestor .</li>
+      </ol>
+      
+      <div class="mt-4 p-3 bg-blue-900/30 rounded text-xs italic border-l-4 border-blue-400">
+        ประสิทธิภาพ: การประมวลผลล่วงหน้าใช้ $O(n \log n)$ และตอบแต่ละ Query ได้ใน $O(\log n)$ .
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Solution: Binary Lifting LCA</h1>
+    <div class="bg-slate-900 p-6 rounded-3xl border border-white/10 text-left">
+      <div class="bg-black/50 p-4 rounded font-mono text-xs leading-relaxed overflow-hidden shadow-inner">
+        <span class="text-blue-400">int</span> <span class="text-yellow-300">get_lca</span>(<span class="text-blue-400">int</span> a, <span class="text-blue-400">int</span> b) {<br>
+        &nbsp;&nbsp;<span class="text-pink-400">if</span> (depth[a] < depth[b]) <span class="text-yellow-300">swap</span>(a, b); <span class="text-gray-500">// ให้ a ลึกกว่าเสมอ</span><br><br>
+        &nbsp;&nbsp;<span class="text-gray-500">// 1. ปรับ a ให้สูงขึ้นมาเท่ากับระดับของ b</span><br>
+        &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">int</span> i = LOG - 1; i >= 0; i--) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (depth[a] - (1 << i) >= depth[b]) a = up[a][i];<br>
+        &nbsp;&nbsp;}<br><br>
+        &nbsp;&nbsp;<span class="text-pink-400">if</span> (a == b) <span class="text-pink-400">return</span> a; <span class="text-gray-500">// ถ้า b เป็นบรรพบุรุษของ a อยู่แล้ว</span><br><br>
+        &nbsp;&nbsp;<span class="text-gray-500">// 2. กระโดดขึ้นพร้อมกันทีละระดับกำลัง 2</span><br>
+        &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">int</span> i = LOG - 1; i >= 0; i--) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (up[a][i] != up[b][i]) { a = up[a][i]; b = up[b][i]; }<br>
+        &nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;<span class="text-pink-400">return</span> up[a]; <span class="text-gray-500">// LCA คือพ่อของโหนดปัจจุบัน </span><br>
+        }
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 gap-4 text-xs">
+        <div class="bg-green-900/20 p-4 rounded-xl border border-green-500/30">
+          <p class="font-bold text-green-400 mb-1 italic underline">ตัวอย่างการใช้งาน:</p>
+          <p class="opacity-90 leading-relaxed italic">
+          โหนด 5 อยู่ระดับ 3, โหนด 8 อยู่ระดับ 4 .<br>
+          LCA ของ 5 และ 8 คือ 2 ซึ่งอยู่ระดับ 2 .
+          </p>
+        </div>
+        <div class="bg-yellow-900/20 p-4 rounded-xl border border-yellow-500/30">
+          <p class="font-bold text-yellow-400 mb-1 italic underline">การนำไปใช้ต่อ:</p>
+          <p class="opacity-90 leading-relaxed italic">
+          เราสามารถใช้ LCA เพื่อหา <strong>ระยะทาง (Distance)</strong> ระหว่างโหนด $a$ และ $b$ ได้โดยใช้สูตร:<br>
+          $depth(a) + depth(b) - 2 \cdot depth(LCA(a,b))$ .
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Slide 29: Binary Lifting for LCA Optimization -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6">Binary Lifting: ยกระดับความเร็วในการหา Ancestor</h1>
           <div class="bg-black/30 p-8 rounded-3xl border-2 border-yellow-500/50 text-left">
@@ -314,8 +843,99 @@
         </div>
       </div>
 
-      <!-- Slide 13: Using LCA for Path Distance -->
-      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">โจทย์: บรรพบุรุษร่วมที่ต่ำที่สุด (LCA)</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-blue-400 text-left">
+      <p class="text-xl mb-4 text-blue-300 font-bold">นิยาม: โหนด $c$ ที่เป็นบรรพบุรุษของทั้ง $a$ และ $b$ โดยที่ $c$ อยู่ในระดับที่ลึกที่สุด </p>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <p class="font-bold text-green-400 mb-2">ตัวอย่างโครงสร้าง:</p>
+          <div class="font-mono text-xs opacity-90">
+            โหนด 1 เป็น Root<br>
+            1 -> 2, 3, 4<br>
+            2 -> 5, 6<br>
+            4 -> 7<br>
+            6 -> 8
+          </div>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-yellow-400 mb-2">Queries:</p>
+          <ul class="space-y-1 opacity-90">
+            <li>• LCA(5, 8): คำตอบคือ <strong>โหนด 2</strong> </li>
+            <li>• LCA(5, 7): คำตอบคือ <strong>โหนด 1</strong></li>
+            <li>• LCA(2, 8): คำตอบคือ <strong>โหนด 2</strong></li>
+          </ul>
+        </div>
+      </div>
+      
+      <p class="mt-6 text-xs italic opacity-70">
+        *โจทย์ต้องการให้ตอบคำถามเหล่านี้หลายๆ ครั้ง (Queries) ในเวลาที่รวดเร็วที่สุด
+      </p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">อัลกอริทึม LCA (Method 1)</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <p class="text-lg mb-4 text-yellow-300 font-bold italic">แบ่งการทำงานเป็น 2 ส่วนหลัก :</p>
+      
+      <div class="space-y-4 text-sm leading-relaxed">
+        <div class="flex items-start gap-4">
+          <div class="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">1</div>
+          <div>
+            <p class="font-bold">ปรับระดับโหนดให้เท่ากัน (Level Alignment)</p>
+            <p class="opacity-80">หาก $depth(a) \neq depth(b)$ ให้ขยับโหนดที่ลึกกว่าขึ้นมาจนอยู่ในระดับเดียวกัน โดยใช้ตาราง <code>up[v][k]</code> </p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">2</div>
+          <div>
+            <p class="font-bold">กระโดดขึ้นพร้อมกัน (Simultaneous Binary Jump)</p>
+            <p class="opacity-80">ขยับทั้งสองโหนดขึ้นไปด้วยระยะทาง $2^k$ ที่มากที่สุด แต่ต้องทำให้โหนดทั้งสอง <strong>ยังไม่บรรจบกัน</strong> เมื่อขยับต่อไม่ได้แล้ว พ่อของพวกมันคือ LCA </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-6 p-3 bg-green-900/20 rounded border-l-4 border-green-500 text-xs italic">
+        ประสิทธิภาพ: ตอบแต่ละคำถามได้ใน $O(\log n)$ หลังจากการเตรียมข้อมูล $O(n \log n)$ 
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Implementation: get_lca</h1>
+    <div class="bg-black/50 p-6 rounded-2xl font-mono text-xs text-left border border-white/10 shadow-2xl overflow-hidden">
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">get_lca</span>(<span class="text-blue-400">int</span> a, <span class="text-blue-400">int</span> b) {<br>
+      &nbsp;&nbsp;<span class="text-pink-400">if</span> (depth[a] < depth[b]) <span class="text-yellow-300">swap</span>(a, b);<br><br>
+      &nbsp;&nbsp;<span class="text-gray-500">// 1. ยกโหนด a ขึ้นมาให้ระดับเดียวกับ b </span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">int</span> i = LOG - 1; i >= 0; i--) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (depth[a] - (1 << i) >= depth[b]) a = up[a][i];<br>
+      &nbsp;&nbsp;}<br><br>
+      &nbsp;&nbsp;<span class="text-pink-400">if</span> (a == b) <span class="text-pink-400">return</span> a;<br><br>
+      &nbsp;&nbsp;<span class="text-gray-500">// 2. กระโดดขึ้นพร้อมกันด้วยระยะทางที่มากที่สุดเท่าที่บรรพบุรุษยังไม่ซ้ำกัน </span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">int</span> i = LOG - 1; i >= 0; i--) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (up[a][i] != up[b][i]) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = up[a][i]; b = up[b][i];<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;<span class="text-pink-400">return</span> up[a]; <span class="text-gray-500">// คืนค่าพ่อของโหนดปัจจุบันซึ่งคือ LCA </span><br>
+      }
+    </div>
+    <div class="mt-4 flex justify-center gap-8 text-xs italic text-blue-200">
+      <p>💡 Tip: ใช้ <code>up[v]</code> เพื่อเก็บโหนดพ่อจากการทำ DFS </p>
+      <p>🎯 Application: ระยะทางระหว่าง $a, b = depth(a) + depth(b) - 2 \cdot depth(LCA)$ </p>
+    </div>
+  </div>
+</div>
+
+      <!-- Slide 33: Using LCA for Path Distance -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6 italic underline">การหาระยะทางระหว่างโหนดใดๆ</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-10 shadow-2xl text-center">
@@ -331,8 +951,92 @@
         </div>
       </div>
 
-      <!-- Slide 14: Dynamic Programming on Trees: Subtree Sum -->
-      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">โจทย์: ระยะทางที่สั้นที่สุดระหว่างเพื่อนบ้าน</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-green-400 text-left">
+      <p class="text-xl mb-4 text-green-300 font-bold">โจทย์: กำหนดต้นไม้ที่มี \( n \) โหนด จงหาระยะทางสั้นที่สุดระหว่างโหนด \( u \) และ \( v \)</p>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-yellow-400 mb-2">ตัวอย่างโครงสร้าง:</p>
+          <ul class="opacity-90 font-mono text-xs">
+            <li>โหนด 2 อยู่ระดับ (Depth) 2</li>
+            <li>โหนด 5 อยู่ระดับ 3</li>
+            <li>โหนด 8 อยู่ระดับ 4</li>
+            <li>LCA(5, 8) คือ โหนด 2</li>
+          </ul>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm text-center flex flex-col justify-center">
+          <p class="font-bold text-blue-400 mb-2 italic">การคำนวณ:</p>
+          <p class="text-2xl font-mono text-yellow-300">3 + 4 - 2(2) = 3</p>
+          <p class="text-xs opacity-70">ระยะทางระหว่าง 5 และ 8 คือ 3</p>
+        </div>
+      </div>
+      
+      <p class="mt-6 text-xs italic opacity-70 text-center">
+        อ้างอิงหลักการ: ระยะทางระหว่างโหนด \( a \) และ \( b \) ลดรูปได้จากการหา Lowest Common Ancestor 
+      </p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">แนวทางการเขียนโปรแกรม</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <p class="text-lg mb-6 font-bold text-yellow-300">กระบวนการประมวลผล (Algorithm Steps):</p>
+      
+      <div class="space-y-4 text-sm leading-relaxed">
+        <div class="flex items-start gap-4">
+          <div class="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">1</div>
+          <p><strong>DFS Preprocessing:</strong> ท่องต้นไม้หนึ่งรอบเพื่อเก็บค่า <code>depth[s]</code> ของทุกโหนด และสร้างตาราง Binary Lifting สำหรับหา LCA </p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">2</div>
+          <p><strong>LCA Function:</strong> สร้างฟังก์ชัน <code>get_lca(u, v)</code> ที่ใช้เวลา \( O(\log n) \) ในการหาบรรพบุรุษร่วมที่ต่ำที่สุด </p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">3</div>
+          <p><strong>Distance Calculation:</strong> ใช้ฟังก์ชันหลักคำนวณตามสูตร: <br>
+          <span class="text-green-400 font-mono">depth[u] + depth[v] - 2 * depth[get_lca(u, v)]</span> </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Solution: Path Distance</h1>
+    <div class="bg-black/50 p-6 rounded-2xl font-mono text-xs text-left border border-white/10 shadow-2xl overflow-hidden">
+      <span class="text-gray-500">// สูตรคำนวณระยะทางจาก Competitive Programmer's Handbook</span><br>
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">get_distance</span>(<span class="text-blue-400">int</span> u, <span class="text-blue-400">int</span> v) {<br>
+      &nbsp;&nbsp;<span class="text-blue-400">int</span> lca = <span class="text-yellow-300">get_lca</span>(u, v); <span class="text-gray-500">// เรียกใช้ฟังก์ชันหา LCA ที่สร้างไว้</span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">return</span> depth[u] + depth[v] - 2 * depth[lca];<br>
+      }<br><br>
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">main</span>() {<br>
+      &nbsp;&nbsp;<span class="text-gray-500">// หลังทำ DFS และ Preprocessing เสร็จแล้ว</span><br>
+      &nbsp;&nbsp;<span class="text-blue-400">int</span> u = 5, v = 8;<br>
+      &nbsp;&nbsp;cout << <span class="text-green-300">"Distance between "</span> << u << <span class="text-green-300">" and "</span> << v << <span class="text-green-300">": "</span>;<br>
+      &nbsp;&nbsp;cout << <span class="text-yellow-300">get_distance</span>(u, v) << endl;<br>
+      &nbsp;&nbsp;<span class="text-pink-400">return</span> 0;<br>
+      }
+    </div>
+    <div class="mt-6 flex justify-center gap-8 text-xs italic">
+      <p class="bg-blue-900/40 px-4 py-2 rounded-full border border-blue-500/30">
+        ⏱️ Complexity: <strong>O(log N)</strong> ต่อ Query 
+      </p>
+      <p class="bg-green-900/40 px-4 py-2 rounded-full border border-green-500/30">
+        📌 ประยุกต์ใช้ได้ในโจทย์: <strong>Tree Path Sum Queries</strong>
+      </p>
+    </div>
+    <p class="mt-4 text-[10px] opacity-40">อ้างอิงข้อมูล: Competitive Programmer's Handbook (Chapter 18.3) </p>
+  </div>
+</div>
+
+      <!-- Slide 37: Dynamic Programming on Trees: Subtree Sum -->
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6">Tree DP: การหาผลรวมในต้นไม้ย่อย</h1>
           <div class="grid grid-cols-2 gap-8 items-center">
@@ -359,8 +1063,102 @@
         </div>
       </div>
 
-      <!-- Slide 15: Tree Diameter via Dynamic Programming -->
-      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">โจทย์: งบประมาณรวมของแผนก</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-yellow-400 text-left">
+      <p class="text-xl mb-4 text-yellow-300 font-bold">โจทย์: กำหนดโครงสร้างบริษัทเป็นต้นไม้ โดยแต่ละโหนดมีค่า "งบประมาณรายบุคคล" จงหา "งบประมาณรวม" ของทุก Subtree</p>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-green-400 mb-2">ตัวอย่าง Input:</p>
+          <ul class="opacity-90 font-mono text-xs">
+            <li>โหนด: 5 (1 เป็น Root)</li>
+            <li>ค่า (Value): {1:10, 2:5, 3:2, 4:1, 5:1}</li>
+            <li>เส้นเชื่อม: (1,2), (1,3), (2,4), (2,5)</li>
+          </ul>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
+          <p class="font-bold text-blue-400 mb-2 italic">ผลลัพธ์ที่ต้องการ (Output):</p>
+          <ul class="opacity-90 font-mono text-xs">
+            <li>sum[4] = 1, sum[5] = 1</li>
+            <li>sum[6] = 5 + 1 + 1 = 7</li>
+            <li>sum[7] = 2</li>
+            <li>sum[8] = 10 + 7 + 2 = 19</li>
+          </ul>
+        </div>
+      </div>
+      
+      <p class="mt-6 text-xs italic opacity-70">
+        การคำนวณต้องทำจาก "โหนดใบ" ขึ้นไปหา "โหนดพ่อ" (Bottom-up) เพื่อให้ข้อมูลพร้อมใช้งาน 
+      </p>
+    </div>
+  </div>
+</div>
+
+--------------------------------------------------------------------------------
+สไลด์ที่ 39: ขั้นตอนการแก้ปัญหา (DP Step-by-Step)
+<div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">แนวทางการเขียนโปรแกรม</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <p class="text-lg mb-6 font-bold text-yellow-300">กลยุทธ์การประมวลผล (Strategy):</p>
+      
+      <div class="space-y-4 text-sm leading-relaxed">
+        <div class="flex items-start gap-4">
+          <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">1</div>
+          <p><strong>Recursive DFS:</strong> เริ่มต้นการทำงานจาก Root และปล่อยให้ Recursion เดินลงไปจนถึงโหนดที่ลึกที่สุด (Leaf) </p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">2</div>
+          <p><strong>Base Initialization:</strong> ที่แต่ละโหนด $s$ ให้ตั้งต้นค่า <code>sum[s]</code> เท่ากับค่าของตัวเอง <code>value[s]</code> </p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">3</div>
+          <p><strong>Post-order Accumulation:</strong> เมื่อกลับขึ้นมาจากฟังก์ชันลูก (Recursive Call) ให้นำผลรวมของลูกแต่ละตัวมาบวกสะสมเข้ากับโหนดปัจจุบัน </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+--------------------------------------------------------------------------------
+สไลด์ที่ 40: คำตอบด้วย C++ (C++ Implementation)
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Solution: Subtree Sum DP</h1>
+    <div class="bg-black/50 p-6 rounded-2xl font-mono text-xs text-left border border-white/10 shadow-2xl overflow-hidden">
+      <span class="text-blue-400">long long</span> sum[N];<br>
+      <span class="text-blue-400">int</span> value[N];<br>
+      <span class="text-blue-400">vector</span>&lt;<span class="text-blue-400">int</span>&gt; adj[N];<br><br>
+      <span class="text-blue-400">void</span> <span class="text-yellow-300">dfs_sum</span>(<span class="text-blue-400">int</span> s, <span class="text-blue-400">int</span> e) {<br>
+      &nbsp;&nbsp;sum[s] = value[s]; <span class="text-gray-500">// 1. กำหนดค่าเริ่มต้นของตัวเอง</span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s]) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (u == e) <span class="text-pink-400">continue</span>;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">dfs_sum</span>(u, s); <span class="text-gray-500">// 2. ท่องลงไปใน Subtree ของลูก</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;sum[s] += sum[u]; <span class="text-gray-500">// 3. นำคำตอบที่คำนวณเสร็จแล้วมาบวกคืนให้พ่อ</span><br>
+      &nbsp;&nbsp;}<br>
+      }<br><br>
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">main</span>() {<br>
+      &nbsp;&nbsp;<span class="text-gray-500">// Precompute all sums starting from root 1</span><br>
+      &nbsp;&nbsp;<span class="text-yellow-300">dfs_sum</span>(1, 0);<br>
+      &nbsp;&nbsp;cout << <span class="text-green-300">"Total sum of root: "</span> << sum[8] << endl;<br>
+      }
+    </div>
+    <div class="mt-6 flex justify-center gap-8 text-xs italic">
+      <p class="bg-blue-900/40 px-4 py-2 rounded-full border border-blue-500/30">
+        ⏱️ Complexity: <strong>O(n)</strong> เพราะเยี่ยมชมโหนดละ 1 ครั้ง 
+      </p>
+      <p class="bg-red-900/40 px-4 py-2 rounded-full border border-red-500/30">
+        ⚠️ ระวัง: หากจำนวนโหนดมาก ให้ระวัง <strong>Stack Overflow</strong> จาก Recursion 
+      </p>
+    </div>
+    <p class="mt-4 text-[10px] opacity-40">อ้างอิงหลักการ: Chapter 14 Dynamic Programming on Trees </p>
+  </div>
+</div>
+
+      <!-- Slide 41: Tree Diameter via Dynamic Programming -->
+      <div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">การหา Diameter ด้วยแนวคิด DP</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6">
@@ -381,8 +1179,84 @@
         </div>
       </div>
 
-      <!-- Slide 16: Tree Flattening: Euler Tour Technique -->
-      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">โจทย์: เส้นทางที่ยาวที่สุดในเครือข่าย</h1>
+    <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-yellow-400 text-left">
+      <p class="text-xl mb-4 text-yellow-300 font-bold">โจทย์: จงหาความยาวของเส้นทางที่ยาวที่สุดในต้นไม้ โดยห้ามใช้การ DFS 2 รอบ (ให้ใช้ DP)</p>
+      
+      <div class="grid grid-cols-2 gap-6 text-sm">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <p class="font-bold text-green-400 mb-2">แนวคิดการแบ่งปัญหา:</p>
+          <p class="opacity-90 leading-relaxed">
+            ในต้นไม้ที่ถูก Root ไว้แล้ว ทุกเส้นทางจะมี <strong>"จุดสูงสุด" (Highest Point)</strong> เสมอ . 
+            เราจะหาเส้นทางที่ยาวที่สุดที่ผ่านแต่ละโหนดในฐานะจุดสูงสุด แล้วหาค่ามากที่สุดจากทั้งหมดนั้น .
+          </p>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 italic">
+          <p class="font-bold text-blue-400 mb-2">ตัวอย่างสถานะที่โหนด \( v \):</p>
+          <ul class="list-disc ml-5 space-y-1 opacity-90">
+            <li>ลูกคนที่ 1 มีทางยาวสุดไปใบ = 3</li>
+            <li>ลูกคนที่ 2 มีทางยาวสุดไปใบ = 2</li>
+            <li>เส้นทางที่ยาวที่สุดผ่าน \( v \) คือ \( 3 + 2 + 2 = 7 \)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6">กลยุทธ์การประมวลผลสถานะ</h1>
+    <div class="bg-slate-900 p-8 rounded-3xl border border-white/10 text-left">
+      <p class="text-lg mb-6 font-bold text-yellow-300 italic">การคำนวณ \( f(v) \) และ \( g(v) \) ในรอบเดียว:</p>
+      
+      <div class="space-y-4 text-sm leading-relaxed">
+        <div class="flex items-start gap-4">
+          <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">1</div>
+          <p><strong>Compute \( f(v) \):</strong> ท่องลงไปหาใบ (Leaf) แล้วส่งระยะทางที่ไกลที่สุดกลับขึ้นมาหาพ่อ โดย \( f(v) = 1 + \max(f(child)) \) .</p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">2</div>
+          <p><strong>Maintain Top 2:</strong> ที่แต่ละโหนด ให้เก็บค่า \( f \) ของลูกที่มากที่สุด <strong>2 อันดับแรก</strong> เพื่อนำมาหาเส้นทางที่ยาวที่สุดที่ "หักมุม" ผ่านโหนดนั้น .</p>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">3</div>
+          <p><strong>Update Diameter:</strong> ให้ \( g(v) \) คือผลรวมของค่า \( f \) จากลูก 2 คนที่มากที่สุดบวกเพิ่มอีก 2 เส้นเชื่อม ค่า Diameter สุดท้ายคือค่าสูงสุดของ \( g(v) \) ทุกตัว .</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 44 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-5xl mx-auto px-8">
+    <h1 class="text-3xl font-bold mb-4">C++ Solution: Diameter via DP</h1>
+    <div class="bg-black/50 p-6 rounded-2xl font-mono text-xs text-left border border-white/10 shadow-2xl overflow-hidden">
+      <span class="text-blue-400">int</span> max_diameter = 0;<br>
+      <span class="text-blue-400">int</span> <span class="text-yellow-300">solve_dp</span>(<span class="text-blue-400">int</span> s, <span class="text-blue-400">int</span> e) {<br>
+      &nbsp;&nbsp;<span class="text-blue-400">int</span> max_f1 = -1, max_f2 = -1; <span class="text-gray-500">// เก็บค่า f ที่ใหญ่ที่สุด 2 อันดับ</span><br>
+      &nbsp;&nbsp;<span class="text-pink-400">for</span> (<span class="text-blue-400">auto</span> u : adj[s]) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (u == e) <span class="text-pink-400">continue</span>;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">int</span> f_child = <span class="text-yellow-300">solve_dp</span>(u, s);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">if</span> (f_child > max_f1) { max_f2 = max_f1; max_f1 = f_child; }<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-400">else if</span> (f_child > max_f2) { max_f2 = f_child; }<br>
+      &nbsp;&nbsp;}<br><br>
+      &nbsp;&nbsp;<span class="text-gray-500">// อัปเดตค่า g(s) ซึ่งเป็น Diameter ที่มี s เป็นจุดสูงสุด</span><br>
+      &nbsp;&nbsp;max_diameter = max(max_diameter, max_f1 + max_f2 + 2);<br><br>
+      &nbsp;&nbsp;<span class="text-pink-400">return</span> max_f1 + 1; <span class="text-gray-500">// คืนค่า f(s) กลับไปให้โหนดพ่อ</span><br>
+      }
+    </div>
+    <div class="mt-4 flex justify-center gap-8 text-xs italic text-blue-200">
+      <p>⏱️ Time Complexity: <strong>O(n)</strong></p>
+      <p>🎯 เหมาะสำหรับโหนดที่มีน้ำหนัก หรือโจทย์ที่ต้องการหา All Longest Paths .</p>
+    </div>
+  </div>
+</div>
+
+      <!-- Slide 45: Tree Flattening: Euler Tour Technique -->
+      <div :class="{ 'active': currentSlide === 45 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6 italic underline">เทคนิคการทำให้ต้นไม้แบน (Euler Tour)</h1>
           <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-l-8 border-green-500">
@@ -398,8 +1272,190 @@
         </div>
       </div>
 
-      <!-- Slide 17: Euler Tour: Mapping Subtree to Range Queries -->
-      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 46: Example Problem -->
+<div :class="{ 'active': currentSlide === 46 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-6 italic underline">ตัวอย่างโจทย์: Subtree Sum Query</h1>
+
+    <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-l-8 border-yellow-500">
+
+      <p class="text-lg font-bold">Problem</p>
+
+      <p class="opacity-90">
+      ให้ต้นไม้ที่มี N โหนด โดยโหนดแต่ละตัวมีค่า value[v]
+      </p>
+
+      <p class="opacity-90">
+      มี Query 2 แบบ
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+1 v x  →  เปลี่ยนค่า value[v] = x  
+2 v    →  หาผลรวมค่าของทุกโหนดใน subtree ของ v
+      </div>
+
+      <p class="opacity-90">
+      ข้อจำกัด: N, Q ≤ 200000
+      </p>
+
+      <p class="text-red-300 font-semibold">
+      ถ้าใช้ DFS ทุกครั้งจะช้าเกินไป (O(N) ต่อ query)
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- Slide 47: Solution Idea -->
+<div :class="{ 'active': currentSlide === 47 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+
+  <div class="text-center max-w-4xl mx-auto px-8">
+
+    <h1 class="text-4xl font-bold mb-6 italic underline">แนวคิดการแก้ปัญหา</h1>
+
+    <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-l-8 border-blue-500">
+
+      <p class="text-xl font-bold">
+      Step 1: Flatten Tree ด้วย Euler Tour
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+DFS Order Example
+
+1
+├── 2
+│   ├── 4
+│   └── 5
+└── 3
+
+Euler Order:
+1 2 4 5 3
+      </div>
+
+      <p class="opacity-90">
+      Subtree ของโหนด v จะกลายเป็นช่วงในอาเรย์
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+subtree(v) = [tin[v], tout[v]]
+      </div>
+
+      <p class="opacity-90">
+      จากนั้นใช้ <strong>Segment Tree / Fenwick Tree</strong>
+      เพื่อทำ Range Sum Query ได้เร็ว
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+Update  → point update  
+Query   → range sum
+      </div>
+
+      <p class="text-yellow-300 font-semibold">
+      Complexity: O((N + Q) log N)
+      </p>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Slide 48: C++ Implementation -->
+<div :class="{ 'active': currentSlide === 48 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-4xl font-bold mb-6 italic underline">C++ Implementation</h1>
+
+    <div class="bg-black/40 p-6 rounded-2xl text-left border-l-8 border-green-500">
+
+<pre class="text-sm text-green-300 font-mono overflow-x-auto">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+const int MAXN = 200005;
+
+vector&lt;int&gt; g[MAXN];
+int tin[MAXN], tout[MAXN], timer = 0;
+long long val[MAXN];
+long long fenwick[MAXN];
+int N,Q;
+
+void dfs(int v, int p){
+    tin[v] = ++timer;
+
+    for(int u : g[v]){
+        if(u == p) continue;
+        dfs(u,v);
+    }
+
+    tout[v] = timer;
+}
+
+void update(int i, long long delta){
+    for(; i <= N; i += i & -i)
+        fenwick[i] += delta;
+}
+
+long long query(int i){
+    long long s = 0;
+    for(; i > 0; i -= i & -i)
+        s += fenwick[i];
+    return s;
+}
+
+long long rangeQuery(int l, int r){
+    return query(r) - query(l-1);
+}
+
+int main(){
+
+    cin >> N >> Q;
+
+    for(int i=1;i<=N;i++)
+        cin >> val[i];
+
+    for(int i=0;i<N-1;i++){
+        int u,v;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    dfs(1,0);
+
+    for(int i=1;i<=N;i++)
+        update(tin[i], val[i]);
+
+    while(Q--){
+
+        int type;
+        cin >> type;
+
+        if(type == 1){
+            int v; long long x;
+            cin >> v >> x;
+
+            update(tin[v], x - val[v]);
+            val[v] = x;
+        }
+        else{
+            int v;
+            cin >> v;
+
+            cout << rangeQuery(tin[v], tout[v]) << "\n";
+        }
+    }
+}
+</pre>
+
+    </div>
+  </div>
+</div>
+
+
+
+      <!-- Slide 49: Euler Tour: Mapping Subtree to Range Queries -->
+      <div :class="{ 'active': currentSlide === 49 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6">Euler Tour และการทํา Range Queries</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6 shadow-xl">
@@ -422,8 +1478,185 @@
         </div>
       </div>
 
-      <!-- Slide 18: Implementation: Entry and Exit Times -->
-      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+<!-- Slide 50: Example Problem - Subtree Update -->
+<div :class="{ 'active': currentSlide === 50 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+
+    <h1 class="text-3xl font-bold mb-6">ตัวอย่างโจทย์: Subtree Add Query</h1>
+
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-5 shadow-xl">
+
+      <p class="text-lg font-semibold">Problem</p>
+
+      <p class="text-sm opacity-90">
+        ให้ต้นไม้ที่มี N โหนด (root = 1) และค่าเริ่มต้น value[v]
+      </p>
+
+      <p class="text-sm opacity-90">
+        มีคำสั่ง Q คำสั่ง
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded text-green-300 font-mono text-sm">
+1 v x  →  เพิ่มค่า x ให้ทุกโหนดใน subtree ของ v  
+2 v    →  แสดงค่า value[v]
+      </div>
+
+      <p class="text-sm opacity-90">
+        ข้อจำกัด
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded text-green-300 font-mono text-sm">
+1 ≤ N,Q ≤ 200000
+      </div>
+
+      <p class="text-red-300 text-sm font-semibold">
+        ถ้า DFS ทุกครั้งจะใช้เวลา O(NQ) ซึ่งช้าเกินไป
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- Slide 51: Solution Idea -->
+<div :class="{ 'active': currentSlide === 51 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+
+    <h1 class="text-3xl font-bold mb-6">แนวคิดการแก้ปัญหา</h1>
+
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6 shadow-xl">
+
+      <p class="font-semibold">Step 1: Flatten Tree ด้วย Euler Tour</p>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+DFS Order
+
+1
+├── 2
+│   ├── 4
+│   └── 5
+└── 3
+
+Euler Order
+1 2 4 5 3
+      </div>
+
+      <p class="text-sm opacity-90">
+        Subtree ของ v จะกลายเป็นช่วงต่อเนื่อง
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+subtree(v) = [tin[v], tout[v]]
+      </div>
+
+      <p class="font-semibold">Step 2: ใช้ Fenwick Tree</p>
+
+      <ul class="text-sm space-y-2 opacity-90">
+        <li>• เพิ่มค่า subtree → range update</li>
+        <li>• Query ค่า node → point query</li>
+      </ul>
+
+      <div class="bg-slate-900 p-4 rounded font-mono text-green-300 text-sm">
+update(tin[v], +x)  
+update(tout[v]+1, -x)
+      </div>
+
+      <p class="text-yellow-300 text-sm font-semibold">
+        Complexity: O((N + Q) log N)
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- Slide 52: C++ Solution -->
+<div :class="{ 'active': currentSlide === 52 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+
+    <h1 class="text-3xl font-bold mb-6">C++ Implementation</h1>
+
+    <div class="bg-black/40 p-6 rounded-2xl text-left shadow-xl border-l-8 border-green-500">
+
+<pre class="text-sm text-green-300 font-mono overflow-x-auto">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+const int MAXN = 200005;
+
+vector&lt;int&gt; g[MAXN];
+int tin[MAXN], tout[MAXN], timer = 0;
+long long fenwick[MAXN];
+int N,Q;
+
+void dfs(int v, int p){
+
+    tin[v] = ++timer;
+
+    for(int u : g[v]){
+        if(u == p) continue;
+        dfs(u,v);
+    }
+
+    tout[v] = timer;
+}
+
+void update(int i, long long val){
+    for(; i <= N; i += i & -i)
+        fenwick[i] += val;
+}
+
+long long query(int i){
+    long long s = 0;
+    for(; i > 0; i -= i & -i)
+        s += fenwick[i];
+    return s;
+}
+
+int main(){
+
+    cin >> N >> Q;
+
+    for(int i=0;i<N-1;i++){
+        int u,v;
+        cin >> u >> v;
+
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    dfs(1,0);
+
+    while(Q--){
+
+        int type;
+        cin >> type;
+
+        if(type == 1){
+
+            int v,x;
+            cin >> v >> x;
+
+            update(tin[v], x);
+            update(tout[v]+1, -x);
+
+        }
+        else{
+
+            int v;
+            cin >> v;
+
+            cout << query(tin[v]) << "\n";
+
+        }
+    }
+}
+</pre>
+
+    </div>
+  </div>
+</div>
+
+      <!-- Slide 53: Implementation: Entry and Exit Times -->
+      <div :class="{ 'active': currentSlide === 53 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6">การบันทึกเวลา Entry/Exit ใน DFS</h1>
           <div class="bg-slate-900/90 p-6 rounded-xl text-left font-mono text-xs leading-relaxed border border-white/20">
@@ -443,8 +1676,8 @@
         </div>
       </div>
 
-      <!-- Slide 19: Handling Information on Edges -->
-      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 54: Handling Information on Edges -->
+      <div :class="{ 'active': currentSlide === 54 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6 italic">ข้อมูลบนเส้นเชื่อม (Values on Edges)</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6 shadow-2xl relative overflow-hidden">
@@ -463,8 +1696,8 @@
         </div>
       </div>
 
-      <!-- Slide 20: Tree Traversal Best Practices -->
-      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 55: Tree Traversal Best Practices -->
+      <div :class="{ 'active': currentSlide === 55 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-8 italic underline">ข้อควรระวังในการเขียน Traversal</h1>
           <div class="grid grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
@@ -484,8 +1717,8 @@
       </div>
 
 
-      <!-- Slide 21: Binary Lifting Preprocessing (Code) -->
-      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 56: Binary Lifting Preprocessing (Code) -->
+      <div :class="{ 'active': currentSlide === 56 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6">การเตรียมข้อมูล Binary Lifting (Preprocessing)</h1>
           <div class="bg-slate-900/90 p-6 rounded-xl text-left font-mono text-xs leading-relaxed border border-blue-400/50">
@@ -506,8 +1739,8 @@
         </div>
       </div>
 
-      <!-- Slide 22: Binary Lifting LCA Query Logic -->
-      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 57: Binary Lifting LCA Query Logic -->
+      <div :class="{ 'active': currentSlide === 57 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6 italic">ขั้นตอนการสืบค้น LCA (Query)</h1>
           <div class="grid grid-cols-2 gap-6 text-left">
@@ -524,8 +1757,8 @@
         </div>
       </div>
 
-      <!-- Slide 23: Application: Finding k-th Ancestor -->
-      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 58: Application: Finding k-th Ancestor -->
+      <div :class="{ 'active': currentSlide === 58 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">การหาบรรพบุรุษลำดับที่ k</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left space-y-6 shadow-xl">
@@ -544,8 +1777,8 @@
         </div>
       </div>
 
-      <!-- Slide 24: Tree DP: Maximum Weight Independent Set -->
-      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 59: Tree DP: Maximum Weight Independent Set -->
+      <div :class="{ 'active': currentSlide === 59 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">Tree DP: เซตอิสระที่มีน้ำหนักสูงสุด</h1>
           <div class="bg-black/30 p-8 rounded-3xl border-2 border-dashed border-green-400 text-left">
@@ -563,8 +1796,8 @@
         </div>
       </div>
 
-      <!-- Slide 25: Euler Tour Application: Subtree Sum Update -->
-      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 60: Euler Tour Application: Subtree Sum Update -->
+      <div :class="{ 'active': currentSlide === 60 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6 italic underline">Euler Tour: การอัปเดตและหาค่า Subtree</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-xl text-left space-y-4">
@@ -587,8 +1820,8 @@
         </div>
       </div>
 
-      <!-- Slide 26: Tree Center: Finding the Middle -->
-      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 61: Tree Center: Finding the Middle -->
+      <div :class="{ 'active': currentSlide === 61 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-6">จุดศูนย์กลางของต้นไม้ (Tree Center)</h1>
           <div class="bg-black/30 p-8 rounded-2xl text-left space-y-4 border-l-8 border-yellow-500 relative overflow-hidden">
@@ -605,8 +1838,8 @@
         </div>
       </div>
 
-      <!-- Slide 27: Tip: Rooting an Unrooted Tree -->
-      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 62: Tip: Rooting an Unrooted Tree -->
+      <div :class="{ 'active': currentSlide === 62 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-6 italic underline">เทคนิคการ "ติดราก" (Rooting)</h1>
           <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left shadow-2xl">
@@ -622,8 +1855,8 @@
         </div>
       </div>
 
-      <!-- Slide 28: Comparison: BFS vs DFS on Trees -->
-      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 63: Comparison: BFS vs DFS on Trees -->
+      <div :class="{ 'active': currentSlide === 63 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-5xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-8">เลือกใช้เครื่องมือไหนดี?</h1>
           <div class="grid grid-cols-2 gap-8 italic">
@@ -649,8 +1882,8 @@
         </div>
       </div>
 
-      <!-- Slide 29: Problem Pointer: Tree Matching (CSES) -->
-      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 64: Problem Pointer: Tree Matching (CSES) -->
+      <div :class="{ 'active': currentSlide === 64 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-4">โจทย์แนะนำ: Tree Matching</h1>
           <div class="bg-black/30 p-6 rounded-xl text-left border-l-4 border-yellow-400 mb-6">
@@ -664,8 +1897,8 @@
         </div>
       </div>
 
-      <!-- Slide 30: Problem Pointer: Distance Queries (CSES) -->
-      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 65: Problem Pointer: Distance Queries (CSES) -->
+      <div :class="{ 'active': currentSlide === 65 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-3xl font-bold mb-4">โจทย์แนะนำ: Distance Queries</h1>
           <div class="bg-black/30 p-6 rounded-xl text-left border-l-4 border-blue-400 mb-6">
@@ -679,8 +1912,8 @@
         </div>
       </div>
 
-      <!-- Slide 31: Summary of Traversal Applications -->
-      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 66: Summary of Traversal Applications -->
+      <div :class="{ 'active': currentSlide === 66 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-4xl font-bold mb-8 italic underline">บทสรุปช่วงบ่าย</h1>
           <div class="grid grid-cols-2 gap-4 text-left">
@@ -701,8 +1934,8 @@
         </div>
       </div>
 
-      <!-- Slide 32: Transition to Practice -->
-      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+      <!-- Slide 67: Transition to Practice -->
+      <div :class="{ 'active': currentSlide === 67 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="text-center max-w-4xl mx-auto px-8">
           <h1 class="text-5xl font-bold mb-8 italic">Let's Practise!</h1>
           <div class="bg-yellow-500/20 p-10 rounded-full border-4 border-yellow-400 inline-block mb-8">
@@ -719,9 +1952,6 @@
           </div>
         </div>
       </div>
-
-
-
 
     </div>
 
