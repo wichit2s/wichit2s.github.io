@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0901b.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+    <div x-ref="slidesContainer">
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Search & Sort Algorithms</span> <br>
+            <span class="mt-8 text-yellow-300">Introduction</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 09 Morning: ทบทวนแนวคิดสำคัญก่อนเข้าสู่ Greedy และ Divide & Conquer
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่เรียนในช่วงนี้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>Time Complexity และการวิเคราะห์อัลกอริทึม</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>Recursion และ Divide and Conquer</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>Problem Solving Strategy สำหรับ Competitive Programming</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">4</div>
+                <span>เปรียบเทียบ Greedy Algorithm กับ Divide and Conquer</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">Thailand Olympiad in Informatics Workshop</p>
+        </div>
+      </div>
+
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">What is Divide and Conquer?</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">อัลกอริทึมที่แก้ปัญหาโดยการแบ่งปัญหาใหญ่ออกเป็นส่วนย่อย ๆ ที่เป็นอิสระต่อกัน </p>
+      <div class="grid gap-4">
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span class="font-semibold text-yellow-300">1. Divide</span>
+          <span>แบ่งปัญหาเดิมเป็นปัญหาเดิมที่ขนาดเล็กลง </span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span class="font-semibold text-yellow-300">2. Conquer</span>
+          <span>แก้ปัญหาที่แบ่งออกมา (มักใช้การ Recursion) </span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span class="font-semibold text-yellow-300">3. Combine</span>
+          <span>นำคำตอบย่อยมารวมกันเป็นคำตอบสุดท้าย </span>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      หัวใจสำคัญคือ <br>
+      <span class="text-yellow-300 font-semibold">การแบ่งปัญหาเป็นส่วนที่ไม่ทับซ้อนกัน (Disjoint Parts) </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">The Base Case in D&C</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">การแบ่งปัญหาจะทำไปเรื่อย ๆ จนถึงจุดที่ปัญหาเล็กที่สุดจนหาคำตอบได้ทันที </p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>หากแบ่งปัญหาจนเหลือข้อมูลเพียง 1 ตัว ปัญหานั้นมักจะถือว่า "แก้สำเร็จแล้ว" (เช่น การเรียงลำดับ) </li>
+        <li>Base case คือจุดสิ้นสุดของการ Recursion เพื่อป้องกัน Stack Overflow </li>
+        <li>ใน CP การออกแบบ Base case ที่ถูกต้องช่วยให้ Logic ของ D&C ทำงานได้อย่างแม่นยำ </li>
+      </ul>
+    </div>
+    <div class="text-lg text-white/80">
+      เมื่อถึง Base case อัลกอริทึมจะหยุดแบ่งและเริ่ม <br>
+      <span class="text-yellow-300 font-semibold">ขั้นตอนการ Conquering และ Combining </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Complexity Analysis</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">เรามักวิเคราะห์ D&C ผ่านสมการความสัมพันธ์เวียนเกิด (Recurrence Relation) </p>
+      <div class="grid gap-4">
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span>Binary Search</span>
+          <span class="text-yellow-300 font-mono">T(n) = T(n/2) + O(1)</span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span>Merge Sort</span>
+          <span class="text-yellow-300 font-mono">T(n) = 2T(n/2) + O(n)</span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span>Karatsuba</span>
+          <span class="text-yellow-300 font-mono">T(n) = 3T(n/2) + O(n)</span>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      เราสามารถใช้ <span class="text-yellow-300 font-semibold">Master Theorem</span> <br>
+      เพื่อหาค่า Big O จากสมการเหล่านี้ได้อย่างรวดเร็ว 
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Standard D&C Algorithms</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">อัลกอริทึมที่ทุกคนต้องรู้สำหรับการแข่งขัน CP </p>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white/10 p-4 rounded-xl text-center border border-white/20">
+          <h3 class="font-bold text-yellow-300 mb-2">Searching</h3>
+          <p>Binary Search </p>
+        </div>
+        <div class="bg-white/10 p-4 rounded-xl text-center border border-white/20">
+          <h3 class="font-bold text-yellow-300 mb-2">Sorting</h3>
+          <p>Merge Sort, Quick Sort </p>
+        </div>
+        <div class="bg-white/10 p-4 rounded-xl text-center border border-white/20">
+          <h3 class="font-bold text-yellow-300 mb-2">Mathematics</h3>
+          <p>Fast Exponentiation </p>
+        </div>
+        <div class="bg-white/10 p-4 rounded-xl text-center border border-white/20">
+          <h3 class="font-bold text-yellow-300 mb-2">Geometry</h3>
+          <p>Closest Pair of Points </p>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      อัลกอริทึมเหล่านี้เปลี่ยนปัญหา <br>
+      <span class="text-yellow-300 font-semibold">จากความเร็ว O(n²) ให้เป็น O(n log n) หรือ O(log n) </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Pros & Cons of D&C</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-green-400 font-bold mb-3">จุดแข็ง (Pros)</h3>
+          <ul class="list-disc ml-6 space-y-2 text-sm">
+            <li>แก้ปัญหาที่ซับซ้อนได้อย่างเป็นระบบ </li>
+            <li>ประสิทธิภาพสูง (เช่น log n) </li>
+            <li>มักจะเป็นพื้นฐานของ DS ขั้นสูง (Segment Tree) </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-red-400 font-bold mb-3">จุดอ่อน (Cons)</h3>
+          <ul class="list-disc ml-6 space-y-2 text-sm">
+            <li>Recursion อาจทำให้เกิด Overhead </li>
+            <li>ใช้หน่วยความจำเพิ่มขึ้น (Stack space) </li>
+            <li>ถ้าปัญหาทับซ้อนกัน จะช้ามาก (ควรไปใช้ DP แทน) </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      "Dynamic Programming คือ <br>
+      <span class="text-yellow-300 font-semibold">Recursion ที่ไม่มีการคำนวณซ้ำ (Recursion without repetition)" </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Binary Search Essentials</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">การหาตำแหน่งของค่า x ในข้อมูลที่ <strong>เรียงลำดับแล้ว (Sorted)</strong> </p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>ใช้วิธีแบ่งครึ่งช่วงข้อมูลที่เป็นไปได้ไปเรื่อย ๆ (Halving the interval) </li>
+        <li>หากข้อมูลมี \(n\) ตัว จะใช้เวลาเพียง \(\log_2 n\) ครั้งในการตรวจสอบ </li>
+        <li>ถือเป็นอัลกอริทึมพื้นฐานที่มีประสิทธิภาพสูงสุดตัวหนึ่งใน CP </li>
+      </ul>
+    </div>
+    <div class="text-lg text-white/80">
+      กฎเหล็กข้อเดียวของ Binary Search คือ <br>
+      <span class="text-yellow-300 font-semibold">"ข้อมูลต้องเรียงลำดับมาแล้วเท่านั้น" </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Why O(log n) matters?</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">เมื่อขนาดข้อมูล \(n\) เพิ่มขึ้น ความต่างจะชัดเจนมหาศาล </p>
+      <div class="grid gap-4 text-center">
+        <div class="grid grid-cols-3 bg-white/10 p-3 rounded-lg">
+          <span>Data Size (\(n\))</span>
+          <span class="text-red-300">Linear (\(n\))</span>
+          <span class="text-green-300">Binary (\(\log n\))</span>
+        </div>
+        <div class="grid grid-cols-3 bg-white/5 p-3 rounded-lg">
+          <span>1,000</span>
+          <span>1,000 ครั้ง</span>
+          <span>10 ครั้ง</span>
+        </div>
+        <div class="grid grid-cols-3 bg-white/5 p-3 rounded-lg">
+          <span>1,000,000</span>
+          <span>1,000,000 ครั้ง</span>
+          <span>20 ครั้ง</span>
+        </div>
+        <div class="grid grid-cols-3 bg-white/5 p-3 rounded-lg">
+          <span>1,000,000,000</span>
+          <span>1,000,000,000 ครั้ง</span>
+          <span>30 ครั้ง</span>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      สำหรับ \(n = 10^9\) Binary Search <br>
+      <span class="text-yellow-300 font-semibold">ทำงานเร็วกว่า Linear Search ประมาณ 33 ล้านเท่า! </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">The Step-by-Step Logic</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-sm">
+      <ol class="list-decimal ml-6 space-y-3">
+        <li>กำหนดช่วงค้นหาที่เริ่มต้นจาก <code>low</code> ถึง <code>high</code> </li>
+        <li>คำนวณหาจุดกึ่งกลาง <code>mid = (low + high) / 2</code> </li>
+        <li>ตรวจสอบค่าที่ตำแหน่ง <code>mid</code>
+          <ul class="list-disc ml-6 mt-1 text-white/70">
+            <li>ถ้า <code>array[mid] == x</code> จบการทำงาน (พบแล้ว) </li>
+            <li>ถ้า <code>array[mid] > x</code> แสดงว่าค่าที่ต้องการต้องอยู่ด้านซ้าย ให้ปรับ <code>high = mid - 1</code> </li>
+            <li>ถ้า <code>array[mid] < x</code> แสดงว่าค่าที่ต้องการต้องอยู่ด้านขวา ให้ปรับ <code>low = mid + 1</code> </li>
+          </ul>
+        </li>
+        <li>ทำซ้ำจนกว่าจะพบ <code>x</code> หรือ <code>low > high</code> </li>
+      </ol>
+    </div>
+    <div class="text-lg text-white/80">
+      อัลกอริทึมนี้รักษาสิ่งที่เรียกว่า <span class="text-yellow-300 font-semibold">Invariant</span> <br>
+      คือการยืนยันว่าคำตอบต้องอยู่ในช่วงที่เลือกเสมอ 
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Implementation in C++</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left font-mono text-sm">
+      <pre class="text-blue-200">
+int low = 0, high = n - 1;
+while (low &lt;= high) {
+    int mid = low + (high - low) / 2;
+    if (array[mid] == x) return mid;
+    if (array[mid] &lt; x) low = mid + 1;
+    else high = mid - 1;
+}
+return -1; // Not found</pre>
+    </div>
+    <p class="text-sm bg-yellow-500/20 p-3 rounded-lg border border-yellow-500/50">
+      <strong>Pro Tip:</strong> ใช้ <code>low + (high-low)/2</code> แทน <code>(low+high)/2</code> <br>
+      เพื่อป้องกันปัญหา <strong>Integer Overflow</strong> เมื่อตัวเลขมีค่ามาก ๆ 
+    </p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Method 2: Binary Jumps</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4 text-lg">แทนที่จะลดช่วง เราใช้วิธี "กระโดด" ด้วยระยะทางที่ลดลงทีละครึ่ง </p>
+      <div class="bg-black/20 p-4 rounded-lg font-mono text-xs mb-4">
+        <pre class="text-blue-200">
+int k = 0;
+for (int b = n/2; b >= 1; b /= 2) {
+    while (k+b &lt; n && array[k+b] &lt;= x) k += b;
+}
+if (array[k] == x) // x found at index k</pre>
+      </div>
+      <p>วิธีนี้เขียนได้สั้นและลดความสับสนเรื่องช่วงเปิด/ปิด (Boundaries) </p>
+    </div>
+    <div class="text-lg text-white/80">
+      เทคนิคนี้ช่วยให้เราเข้าใกล้เป้าหมายด้วยความเร็วที่ลดลง <br>
+      <span class="text-yellow-300 font-semibold">คล้ายกับการเคลื่อนที่ของ Zeno's Paradox </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Built-in STL Functions</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg font-semibold">ในห้องสอบ ไม่จำเป็นต้องเขียน Binary Search เอง! </p>
+      <div class="grid gap-4">
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span class="text-yellow-300 font-mono">lower_bound</span>
+          <span>ค่าแรกที่ <strong>ไม่น้อยกว่า</strong> x (\(\ge x\)) </span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span class="text-yellow-300 font-mono">upper_bound</span>
+          <span>ค่าแรกที่ <strong>มากกว่า</strong> x (\(> x\)) </span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span class="text-yellow-300 font-mono">binary_search</span>
+          <span>เช็คแค่ว่ามี x อยู่หรือไม่ (คืนค่า true/false) </span>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      STL เหล่านี้ทำงานในเวลา <span class="text-yellow-300 font-semibold">O(log n)</span> <br>
+      และมีความแม่นยำสูงกว่าการเขียนเอง (Home-made) 
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Searching on Answer</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4 text-lg font-semibold">ใช้หาค่า "ที่มากที่สุด" หรือ "น้อยที่สุด" ที่เป็นไปได้ </p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>หากฟังก์ชันมีสมบัติ <strong>Monotone</strong> (เช่น ถ้า x ใช้ได้ x-1 ก็ต้องใช้ได้) </li>
+        <li>เราสามารถเปลี่ยนโจทย์ "จงหาค่าสูงสุด" เป็น "ค่า x นี้ใช้ได้หรือไม่?" </li>
+        <li><strong>ตัวอย่าง:</strong> โจทย์ตัดไส้กรอก (Cutting Hot Dogs) </li>
+      </ul>
+    </div>
+    <div class="text-lg text-white/80 text-center">
+      "มันมักจะง่ายกว่าในการตรวจคำตอบ <br>
+      <span class="text-yellow-300 font-semibold">แทนที่จะคำนวณหาคำตอบที่ดีที่สุดโดยตรง" </span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Beware of These Bugs!</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <div class="grid gap-4">
+        <div class="bg-red-500/10 p-3 rounded-lg border border-red-500/30">
+          <h4 class="font-bold text-red-300">1. Off-by-one Error</h4>
+          <p class="text-sm">ระวังเรื่องช่วงเปิด/ปิด (Inclusive vs Exclusive) </p>
+        </div>
+        <div class="bg-red-500/10 p-3 rounded-lg border border-red-500/30">
+          <h4 class="font-bold text-red-300">2. Floating Point Precision</h4>
+          <p class="text-sm">การหาคำตอบที่เป็นทศนิยมอาจเกิด Loop ไม่รู้จบจากข้อจำกัดของ <code>double</code> </p>
+        </div>
+        <div class="bg-red-500/10 p-3 rounded-lg border border-red-500/30">
+          <h4 class="font-bold text-red-300">3. Non-Monotonic Function</h4>
+          <p class="text-sm">ห้ามใช้ Binary Search กับข้อมูลที่ไม่เรียงลำดับ หรือฟังก์ชันที่ค่าขึ้น ๆ ลง ๆ </p>
+        </div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      การใช้ <span class="text-yellow-300 font-semibold">Fixed Iterations (เช่น for loop 100 รอบ)</span> <br>
+      เป็นวิธีที่ปลอดภัยที่สุดสำหรับคำตอบที่เป็นทศนิยม 
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Binary Search on Answer</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">เทคนิคการหาคำตอบในโจทย์ Optimization เมื่อเราไม่สามารถคำนวณหาคำตอบที่ดีที่สุดได้โดยตรง แต่สามารถตรวจสอบได้ว่าค่าใดค่าหนึ่ง "ใช้ได้" หรือไม่</p>
+      <div class="bg-yellow-400/20 border-l-4 border-yellow-400 p-4">
+        <p class="text-yellow-300 font-semibold">"เปลี่ยนจากการหาคำตอบ (Search) เป็นการตรวจสอบคำตอบ (Check)"</p>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      ใช้เมื่อปัญหาอยู่ในรูป <br>
+      <span class="text-yellow-300 font-semibold">"จงหาค่า x ที่น้อยที่สุด/มากที่สุด ที่ยังทำให้เงื่อนไขเป็นจริง"</span>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">เงื่อนไขสำคัญ: Monotonicity</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4">ฟังก์ชันการตรวจสอบคำตอบ (Decision Function) ต้องมีสมบัติ <strong>ทางเดียว</strong></p>
+      <ul class="space-y-4">
+        <li class="flex items-start">
+          <span class="text-green-400 mr-2">✔</span>
+          <span>ถ้าคำตอบ x ใช้ได้ คำตอบที่ "ง่ายกว่า" x (เช่น x+1 หรือ x-1) ต้องใช้ได้เสมอ</span>
+        </li>
+        <li class="flex items-start text-white/70">
+          <span>ตัวอย่าง: [No, No, No, Yes, Yes, Yes, Yes]</span>
+        </li>
+      </ul>
+      <p class="mt-6">เป้าหมายของเราคือการหา <strong>จุดเปลี่ยน (Boundary)</strong> ระหว่าง No และ Yes</p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">การแปลงโจทย์ Optimization</h1>
+    <div class="grid grid-cols-2 gap-6">
+      <div class="bg-red-500/20 p-6 rounded-xl border border-red-500/30">
+        <h3 class="font-bold text-red-300 mb-2">Optimization</h3>
+        <p class="text-sm">"จงหาความยาวไส้กรอกที่ยาวที่สุดที่จะตัดให้แจกจ่ายได้ครบทุกคน"</p>
+      </div>
+      <div class="bg-green-500/20 p-6 rounded-xl border border-green-500/30">
+        <h3 class="font-bold text-green-300 mb-2">Decision (Check)</h3>
+        <p class="text-sm">"ถ้าต้องการไส้กรอกยาว L ซม. จะตัดให้ครบทุกคนได้หรือไม่?"</p>
+      </div>
+    </div>
+    <div class="mt-8 text-lg">
+      ความยากจะลดลงมาก เพราะการเขียนฟังก์ชัน <span class="text-yellow-300">check(L)</span> มักใช้เพียงแค่ Greedy หรือ Loop ธรรมดา
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">การออกแบบฟังก์ชัน check(x)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <ul class="list-disc ml-6 space-y-4">
+        <li>รับค่าพารามิเตอร์ x (ค่าที่เราสุ่มมาตรวจสอบ)</li>
+        <li>ใช้วิธีการที่ง่ายที่สุด (มักเป็น Greedy) ในการหาคำตอบที่ดีที่สุดภายใต้ค่า x นั้น</li>
+        <li>คืนค่าเป็น <span class="text-yellow-300">boolean (true/false)</span></li>
+        <li>Complexity ของ <code>check(x)</code> จะส่งผลต่อเวลาโดยรวม: \(O(\text{check} \times \log(\text{range}))\)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Binary Search on Answer Logic</h1>
+    <div class="bg-black/20 p-6 rounded-2xl text-left font-mono text-sm mb-6">
+      <pre>
+low = ค่าที่เป็นไปได้น้อยสุด, high = ค่าที่เป็นไปได้มากสุด
+while low &lt;= high:
+    mid = (low + high) / 2
+    if check(mid):
+        ans = mid
+        low = mid + 1 (กรณีหาค่าสูงสุด)
+    else:
+        high = mid - 1</pre>
+    </div>
+    <p class="text-white/80">เราจะเก็บค่า <code>ans</code> ล่าสุดที่เป็นจริงไว้ และปรับช่วงค้นหาต่อ</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Example: Cutting Hot Dogs</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-4 text-left">
+      <p class="text-sm"><strong>โจทย์:</strong> มีแท่งไส้กรอก N แท่ง ยาวต่างกัน ต้องการตัดให้ได้ M ชิ้นที่ยาวเท่ากัน ไส้กรอกที่ยาวที่สุดที่เป็นไปได้คือเท่าใด?</p>
+    </div>
+    <div class="bg-blue-500/20 p-6 rounded-xl border border-blue-500/30 text-left font-mono text-xs">
+      <pre>
+bool check(double L) {
+    long long count = 0;
+    for (double rod : rods) {
+        count += (long long)(rod / L); // หนึ่งแท่งตัดได้กี่ชิ้น
+    }
+    return count >= M;
+}</pre>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">การจัดการทศนิยม (Precision)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4">เมื่อคำตอบเป็นทศนิยม (double) การใช้ <code>while(low <= high)</code> จะมีปัญหา</p>
+      <div class="grid gap-4">
+        <div class="bg-white/10 p-3 rounded-lg">
+          <span class="text-yellow-300 font-bold">วิธีที่ 1:</span> ใช้ค่า Error ต่ำๆ เช่น <code>while(high - low > 1e-9)</code>
+        </div>
+        <div class="bg-white/10 p-3 rounded-lg">
+          <span class="text-yellow-300 font-bold">วิธีที่ 2:</span> วนลูปจำนวนรอบที่แน่นอน (Fixed Iterations)
+        </div>
+      </div>
+    </div>
+    <p class="text-sm">ใน CP แนะนำการวนลูป <strong>100 รอบ</strong> เพื่อความแม่นยำสูงสุดและป้องกันการเกิด Infinite Loop</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Fixed Iterations Code</h1>
+    <div class="bg-black/20 p-6 rounded-2xl text-left font-mono text-sm">
+      <pre class="text-blue-200">
+double low = 0, high = 1e9;
+for (int i = 0; i &lt; 100; i++) {
+    double mid = (low + high) / 2.0;
+    if (check(mid)) low = mid;
+    else high = mid;
+}
+cout &lt;&lt; fixed &lt;&lt; setprecision(6) &lt;&lt; low;</pre>
+    </div>
+    <p class="mt-6 text-white/70">การวน 100 รอบให้ความละเอียดถึง \(2^{-100}\) ซึ่งเพียงพอสำหรับทุกโจทย์</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">สัญญาณว่าควรใช้เทคนิคนี้</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <ul class="space-y-4">
+        <li>1. โจทย์ถามหาค่า <strong>Min/Max</strong> ของผลลัพธ์บางอย่าง</li>
+        <li>2. คำตอบมีช่วงที่ชัดเจน (เช่น 1 ถึง \(10^{18}\))</li>
+        <li>3. ยิ่งค่าคำตอบมากขึ้น เงื่อนไขยิ่งมีโอกาสเป็นจริง (หรือเท็จ) มากขึ้น</li>
+        <li>4. หาทางคำนวณย้อนกลับได้ยาก แต่เขียนฟังก์ชัน "ตรวจสอบ" ได้ง่าย</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Sample Input & Output</h1>
+    <div class="grid grid-cols-2 gap-6 text-left">
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+        <h3 class="text-yellow-300 font-bold mb-2">Sample 1</h3>
+        <div class="bg-black/30 p-3 rounded-lg font-mono text-xs mb-3">
+          <p class="text-white/50">// Input (N=3, M=4)</p>
+          <p>3 4</p>
+          <p>10.0 10.0 10.0</p>
+        </div>
+        <div class="bg-green-500/20 p-3 rounded-lg font-mono text-xs">
+          <p class="text-white/50">// Output</p>
+          <p>5.000000</p>
+        </div>
+        <p class="text-[10px] mt-2 text-white/70">*แต่ละแท่งยาว 10 ตัดได้แท่งละ 2 ชิ้น (รวม 6 ชิ้นซึ่งเพียงพอสำหรับ 4 คน)</p>
+      </div>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+        <h3 class="text-yellow-300 font-bold mb-2">Sample 2</h3>
+        <div class="bg-black/30 p-3 rounded-lg font-mono text-xs mb-3">
+          <p class="text-white/50">// Input (N=1, M=3)</p>
+          <p>1 3</p>
+          <p>10.0</p>
+        </div>
+        <div class="bg-green-500/20 p-3 rounded-lg font-mono text-xs">
+          <p class="text-white/50">// Output</p>
+          <p>3.333333</p>
+        </div>
+        <p class="text-[10px] mt-2 text-white/70">*หนึ่งแท่งยาว 10 แบ่งเป็น 3 ส่วนเท่าๆ กันได้ยาวส่วนละ 3.33</p>
+      </div>
+    </div>
+    <div class="mt-8 text-sm italic text-white/60">
+      "เป้าหมายคือหาค่า L ที่มากที่สุดที่ทำให้ \(sum \lfloor a_i / L \rfloor \ge M\)"
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ข้อควรระวัง</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <div class="space-y-4 text-sm">
+        <p><strong class="text-red-400">Integer Overflow:</strong> การบวก <code>(low + high)</code> อาจเกินค่าที่ <code>int</code> รับได้ ให้ใช้ <code>long long</code> หรือ <code>low + (high-low)/2</code></p>
+        <p><strong class="text-red-400">Bounds:</strong> ตั้งค่า <code>high</code> ให้สูงพอครอบคลุมคำตอบที่เป็นไปได้ แต่ไม่สูงเกินไปจนคำนวณในฟังก์ชัน <code>check</code> ผิดพลาด</p>
+        <p><strong class="text-red-400">Non-Monotone:</strong> ตรวจสอบให้มั่นใจว่าฟังก์ชันเป็นทางเดียวจริงๆ หากค่าผลลัพธ์มีลักษณะขึ้นๆ ลงๆ จะใช้เทคนิคนี้ไม่ได้</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merge Sort</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg">อัลกอริทึมการเรียงลำดับที่มีประสิทธิภาพสูง โดยใช้แนวคิด <strong>Divide and Conquer</strong></p>
+      <ul class="list-disc ml-6 space-y-2">
+        <li>คิดค้นโดย John von Neumann ในปี 1945</li>
+        <li>ใช้การแตกปัญหาออกเป็นส่วนย่อยๆ แล้วนำกลับมารวมกัน</li>
+        <li>การันตีความเร็วที่ \(O(n \log n)\) เสมอ ไม่ว่าข้อมูลจะมาในรูปแบบใด</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">3 ขั้นตอนของ Merge Sort</h1>
+    <div class="grid gap-4">
+      <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+        <span class="font-bold text-yellow-300">1. Divide</span>
+        <span>แบ่งอาเรย์ออกเป็น 2 ส่วนที่จุดกึ่งกลาง</span>
+      </div>
+      <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+        <span class="font-bold text-yellow-300">2. Conquer</span>
+        <span>เรียงลำดับอาเรย์ย่อยทั้ง 2 ส่วน (ทำซ้ำด้วย Recursion)</span>
+      </div>
+      <div class="bg-white/10 p-4 rounded-lg flex justify-between items-center">
+        <span class="font-bold text-yellow-300">3. Combine</span>
+        <span>นำอาเรย์ย่อยที่เรียงแล้ว 2 ส่วนมา "Merge" กัน</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">กระบวนการแบ่งแยก (Divide)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+      <p class="mb-4">[1-7]</p>
+      <div class="flex justify-around mb-4">
+        <span>[1-4]</span>
+        <span>[5-7]</span>
+      </div>
+      <div class="flex justify-around text-sm text-white/60">
+        <span>[1, 2] [3, 4]</span>
+        <span>[5, 6] [7]</span>
+      </div>
+      <div class="mt-6 text-yellow-300 font-bold">แบ่งไปเรื่อยๆ จนเหลือตัวเดียว!</div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Base Case: เมื่อไหร่จะหยุด?</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="text-lg mb-4">เมื่อแบ่งจนอาเรย์มีสมาชิกเพียง <strong>1 ตัว</strong></p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>อาเรย์ที่มีสมาชิก 1 ตัว ถือว่า "เรียงลำดับแล้ว" โดยปริยาย</li>
+        <li>นี่คือจุดที่การ Recursion จะหยุดและเริ่มส่งค่ากลับขึ้นไปเพื่อรวมกัน</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ขั้นตอนการ Merge</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4 font-semibold text-yellow-300">หลักการ:</p>
+      <p>เมื่อมีอาเรย์ 2 ส่วนที่เรียงลำดับแล้ว (P1 และ P2) ค่าที่น้อยที่สุดของอาเรย์รวม <strong>ต้อง</strong> อยู่ที่จุดเริ่มต้นของ P1 หรือ P2 เท่านั้น</p>
+      <div class="mt-4 bg-black/20 p-4 rounded-lg">
+        <p>เปรียบเทียบค่าหน้าสุดของทั้งสองฝั่ง -> เลือกค่าที่น้อยกว่าใส่ผลลัพธ์ -> เลื่อนตำแหน่ง -> ทำซ้ำ</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ตัวอย่างการ Merge</h1>
+    <div class="flex justify-center gap-8 mb-8">
+      <div class="bg-blue-500/30 p-4 rounded-lg border border-blue-500">
+        <p class="text-xs mb-2">ฝั่งซ้าย (P1)</p>
+        <p class="text-xl">[1, 2, 8]</p>
+      </div>
+      <div class="bg-green-500/30 p-4 rounded-lg border border-green-500">
+        <p class="text-xs mb-2">ฝั่งขวา (P2)</p>
+        <p class="text-xl">[6, 7, 9]</p>
+      </div>
+    </div>
+    <div class="bg-white/10 p-6 rounded-2xl">
+      <p class="text-sm mb-2 text-white/60">ผลลัพธ์ที่ได้ทีละขั้น:</p>
+      <p class="text-2xl font-mono text-yellow-300">[1, 2, 6-9]</p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ทำไมถึงเป็น O(n log n)?</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <ul class="space-y-4">
+        <li><strong>\(\log n\) levels</strong> จำนวนครั้งที่เราแบ่งครึ่งข้อมูลได้คือ \(\log_2 n\) ครั้ง</li>
+        <li><strong>\(O(n)\) work per level</strong> ในแต่ละระดับ (Level) ของการ Recursion ขั้นตอนการ Merge ข้อมูลทั้งหมดจะใช้เวลารวมเป็นเส้นตรง (Linear Time)</li>
+        <li><strong>รวมกัน</strong> \(O(n \times \log n)\)</li>
+      </ul>
+    </div>
+    <p class="text-lg">เร็วกว่า Bubble Sort (\(O(n^2)\)) อย่างมหาศาลเมื่อ \(n\) มีค่ามาก</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">สมการความสัมพันธ์เวียนเกิด</h1>
+    <div class="bg-black/40 p-8 rounded-3xl font-mono text-2xl text-yellow-300 mb-8">
+      T(n) = 2T(n/2) + O(n)
+    </div>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left text-sm">
+      <p>- <strong>2T(n/2)</strong> การเรียกตัวเอง 2 ครั้ง โดยแต่ละครั้งขนาดข้อมูลลดลงครึ่งหนึ่ง</p>
+      <p>- <strong>O(n)</strong> เวลาที่ใช้ในการ Merge อาเรย์ย่อยเข้าด้วยกัน</p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merge Sort Structure</h1>
+    <div class="bg-black/20 p-6 rounded-2xl text-left font-mono text-xs">
+      <pre class="text-blue-200">
+void mergeSort(int a, int b) {
+    if (a == b) return; // Base Case
+    int mid = (a + b) / 2;
+    
+    mergeSort(a, mid);     // Sort left half
+    mergeSort(mid + 1, b); // Sort right half
+    
+    merge(a, mid, b);      // Combine
+}</pre>
+    </div>
+    <p class="mt-6 text-sm text-white/70">ฟังก์ชัน <code>merge</code> จะใช้อาเรย์สำรอง (Temporary Array) ในการช่วยจัดเรียง</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Inversion Counting</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4"><strong>Inversion</strong> คู่ \((i, j)\) ที่ \(i < j\) แต่ \(A[i] > A[j]\) (ค่าที่อยู่ก่อนดันมากกว่าค่าหลัง)</p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>เราสามารถดัดแปลง Merge Sort เพื่อ "นับ" จำนวน Inversion ได้ในเวลา \(O(n \log n)\)</li>
+        <li>ในขั้นตอนการ Merge หากเราเลือกค่าจากฝั่งขวามาใส่ก่อน แสดงว่าค่าฝั่งซ้ายที่เหลือทั้งหมดเป็น Inversion กับตัวนี้!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merge Sort is Stable</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="text-lg mb-4"><strong>Stable Sort</strong> คือการที่ข้อมูลที่มีค่าเท่ากัน จะรักษาลำดับเดิมก่อนการเรียงเอาไว้</p>
+      <p>Merge Sort มีคุณสมบัตินี้ เพราะในการ Merge หากค่าเท่ากัน เราจะเลือกจากฝั่งซ้าย (ซึ่งมาก่อน) มาใส่ก่อนเสมอ</p>
+      <div class="mt-4 bg-yellow-500/20 p-4 rounded-lg border border-yellow-500/50 text-sm">
+        ใน C++ STL ฟังก์ชัน <code>std::stable_sort</code> มักถูกออกแบบโดยใช้ Merge Sort เป็นพื้นฐาน
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merge Sort Summary</h1>
+    <div class="grid grid-cols-2 gap-8 text-sm">
+      <div class="bg-green-500/10 p-6 rounded-xl border border-green-500/30">
+        <h3 class="text-green-400 font-bold mb-3">จุดเด่น (Pros)</h3>
+        <ul class="list-disc ml-6 space-y-2">
+          <li>\(O(n \log n)\) แม้ในกรณีที่แย่ที่สุด</li>
+          <li>ทำงานได้ดีกับ Linked Lists</li>
+          <li>เป็น Stable Sort</li>
+        </ul>
+      </div>
+      <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/30">
+        <h3 class="text-red-400 font-bold mb-3">จุดด้อย (Cons)</h3>
+        <ul class="list-disc ml-6 space-y-2">
+          <li>ใช้หน่วยความจำเพิ่ม \(O(n)\) เพื่อเก็บอาเรย์สำรอง</li>
+          <li>ช้ากว่า Quick Sort ในงานทั่วไปเล็กน้อยเนื่องจากค่าคงที่ในการ Copy ข้อมูล</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Quick Sort</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-lg font-semibold">อัลกอริทึมการเรียงลำดับแบบ Divide and Conquer ที่เร็วที่สุดในทางปฏิบัติ</p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>ใช้วิธีการเลือกค่า <strong>Pivot</strong> (ค่าอ้างอิง) เพื่อแบ่งกลุ่มข้อมูล</li>
+        <li>จัดเรียงข้อมูลในอาเรย์โดยตรง (In-place sorting) ไม่ต้องใช้อาเรย์สำรองเหมือน Merge Sort</li>
+        <li>เป็นพื้นฐานของฟังก์ชัน <code>std::sort</code> ในภาษา C++</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">หัวใจสำคัญ: การ Partition</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4">เมื่อเลือก Pivot ขึ้นมาหนึ่งตัว เราจะจัดเรียงอาเรย์ใหม่ให้:</p>
+      <div class="grid gap-4">
+        <div class="bg-blue-500/20 p-4 rounded-lg border border-blue-400">
+          <span class="text-yellow-300 font-bold">ฝั่งซ้าย:</span> สมาชิกทุกตัวต้อง <strong>น้อยกว่าหรือเท่ากับ</strong> Pivot
+        </div>
+        <div class="bg-green-500/20 p-4 rounded-lg border border-green-400">
+          <span class="text-yellow-300 font-bold">ฝั่งขวา:</span> สมาชิกทุกตัวต้อง <strong>มากกว่าหรือเท่ากับ</strong> Pivot
+        </div>
+      </div>
+      <p class="mt-6 text-center italic text-white/80">"เมื่อทำเสร็จ Pivot จะไปอยู่ในตำแหน่งที่ถูกต้องในอาเรย์ที่เรียงแล้วทันที"</p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ขั้นตอนการทำงาน</h1>
+    <div class="bg-black/20 p-8 rounded-2xl text-left">
+      <ol class="list-decimal ml-6 space-y-4">
+        <li>เลือกสมาชิกหนึ่งตัวในอาเรย์เป็น <strong>Pivot</strong> (เช่น ตัวแรก, ตัวท้าย หรือสุ่ม)</li>
+        <li>แบ่งอาเรย์ (Partition) โดยย้ายตัวน้อยไว้ซ้าย ตัวมากไว้ขวา</li>
+        <li>ทำซ้ำ (Recursively sort) ในส่วนฝั่งซ้ายและฝั่งขวาที่แบ่งออกมา</li>
+        <li>หยุดเมื่อช่วงข้อมูลเหลือเพียง 0 หรือ 1 ตัว (Base Case)</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ประสิทธิภาพของ Quick Sort</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <div class="grid gap-4">
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span>Average Case (กรณีทั่วไป)</span>
+          <span class="text-green-300 font-mono">O(n log n)</span>
+        </div>
+        <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+          <span>Worst Case (กรณีแย่ที่สุด)</span>
+          <span class="text-red-300 font-mono">O(n²)</span>
+        </div>
+      </div>
+      <p class="mt-6 text-sm text-white/70">กรณีแย่ที่สุดเกิดจากความโชคร้ายในการเลือก Pivot (เช่น ข้อมูลเรียงมาแล้วแต่เราเลือกตัวแรกสุดเป็น Pivot เสมอ)</p>
+    </div>
+    <div class="text-lg text-yellow-300 font-bold">
+      การสุ่มเลือก Pivot (Randomized Pivot) ช่วยเลี่ยง O(n²) ได้เกือบ 100%
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Quick Select</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4 text-lg">"ถ้าต้องการหาแค่สมาชิกที่น้อยที่สุดลำดับที่ k (k-th smallest element) จำเป็นต้องเรียงข้อมูลทั้งหมดหรือไม่?"</p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li><strong>Quick Select</strong> คืออัลกอริทึมที่ดัดแปลงจาก Quick Sort เพื่อหาค่าสถิติลำดับ (Order Statistics)</li>
+        <li>แทนที่จะทำ Recursion ทั้งสองฝั่ง เราเลือกทำเพียง <strong>"ฝั่งเดียว"</strong> ที่มีคำตอบอยู่</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ทำไม Quick Select ถึงเร็วกว่า?</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4">ในการหาค่า k-th smallest:</p>
+      <ul class="space-y-4">
+        <li class="flex items-center">
+          <span class="bg-red-500 w-3 h-3 rounded-full mr-3"></span>
+          <span><strong>Sort then Find:</strong> ต้องใช้เวลา \(O(n \log n)\) เสมอ</span>
+        </li>
+        <li class="flex items-center">
+          <span class="bg-green-500 w-3 h-3 rounded-full mr-3"></span>
+          <span><strong>Quick Select:</strong> ใช้เวลาเฉลี่ยเพียง \(O(n)\)</span>
+        </li>
+      </ul>
+      <div class="mt-6 p-4 bg-black/20 rounded-lg text-sm text-center">
+        เพราะขนาดข้อมูลที่เราต้องสนใจจะลดลงแบบ Geometric Series: \(n + n/2 + n/4 + ... \approx 2n\)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ตรรกะการเลือกฝั่ง (Reduction)</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left text-sm">
+      <p class="mb-4">สมมติแบ่ง Partition แล้ว Pivot อยู่ที่ตำแหน่ง <code>pos</code>:</p>
+      <ul class="space-y-3">
+        <li>1. ถ้า <code>pos == k</code>: ยินดีด้วย! เราเจอคำตอบแล้ว</li>
+        <li>2. ถ้า <code>pos > k</code>: คำตอบต้องอยู่ฝั่งซ้ายของ Pivot เท่านั้น</li>
+        <li>3. ถ้า <code>pos < k</code>: คำตอบต้องอยู่ฝั่งขวาของ Pivot เท่านั้น</li>
+      </ul>
+      <div class="mt-6 border-t border-white/20 pt-4 font-mono text-yellow-300">
+        // เราเรียกตัวเอง (Recursion) เพียงครั้งเดียวต่อหนึ่งระดับ!
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 44 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ความสำคัญของการสุ่ม</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-4">Quick Select เป็นอัลกอริทึมประเภท <strong>Las Vegas</strong>:</p>
+      <ul class="list-disc ml-6 space-y-4">
+        <li>การันตีว่าได้คำตอบที่ถูกต้อง 100% เสมอ</li>
+        <li>แต่เวลาในการทำงานขึ้นอยู่กับการสุ่ม (Randomness)</li>
+        <li>ใน CP การสุ่ม Pivot ช่วยป้องกันการโดนโจทย์ "ดัก" กรณีแย่ที่สุด (Worst-case)</li>
+      </ul>
+    </div>
+    <div class="p-3 bg-yellow-500/20 rounded-lg border border-yellow-500/50 text-sm">
+      ในทางปฏิบัติ Quick Select เร็วกว่าการ Sort มากสำหรับข้อมูลขนาดใหญ่
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 45 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">nth_element ใน C++</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6">ใน STL มีฟังก์ชันสำเร็จรูปที่ใช้ Quick Select เป็นพื้นฐาน:</p>
+      <div class="bg-black/40 p-6 rounded-xl font-mono text-blue-200">
+        nth_element(v.begin(), v.begin() + k, v.end());
+      </div>
+      <p class="mt-6 text-sm">หลังจบฟังก์ชัน:</p>
+      <ul class="list-disc ml-6 space-y-2 text-sm text-white/80">
+        <li>ตำแหน่ง <code>v[k]</code> จะเก็บค่าที่ถูกต้องหากอาเรย์ถูกเรียงลำดับ</li>
+        <li>สมาชิกฝั่งซ้ายของ k จะมีค่าน้อยกว่าหรือเท่ากับ <code>v[k]</code></li>
+        <li>สมาชิกฝั่งขวาของ k จะมีค่ามากกว่าหรือเท่ากับ <code>v[k]</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 46 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">สรุป Quick Algorithms</h1>
+    <div class="grid gap-6">
+      <div class="bg-white/10 p-4 rounded-xl border border-white/20 flex justify-between items-center">
+        <span class="font-bold">Quick Sort</span>
+        <span class="text-yellow-300">Sort All (\(O(n \log n)\))</span>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl border border-white/20 flex justify-between items-center">
+        <span class="font-bold">Quick Select</span>
+        <span class="text-yellow-300">Find 1 Element (\(O(n)\))</span>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl border border-white/20 flex justify-between items-center">
+        <span class="font-bold">Memory</span>
+        <span class="text-yellow-300">In-place (\(O(1)\) extra space)</span>
+      </div>
+    </div>
+    <div class="mt-10 text-lg">
+      "เร็ว ทรงพลัง และไม่ต้องใช้หน่วยความจำเพิ่ม"
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 47 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Time Complexity Analysis</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg">
+      <p class="mb-4">การวัด <strong>อัตราการเติบโต</strong> ของเวลาที่ใช้เมื่อขนาดข้อมูล \(n\) เพิ่มขึ้น</p>
+      <ul class="space-y-4">
+        <li>เราสนใจพฤติกรรมในระยะยาว (Asymptotic behavior)</li>
+        <li>ใช้สัญลักษณ์ <strong>Big O Notation</strong> เพื่อบอกขอบเขตบน (Upper bound)</li>
+        <li>มองข้ามค่าคงที่ (Constant factors) และพจน์ที่มีลำดับต่ำกว่า</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 48 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ระดับความซับซ้อนที่พบบ่อย</h1>
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div class="bg-white/10 p-3 rounded-lg border border-white/20">
+        <span class="text-green-300 font-bold">\(O(1)\)</span>: Constant (สูตรคณิตศาสตร์)
+      </div>
+      <div class="bg-white/10 p-3 rounded-lg border border-white/20">
+        <span class="text-green-300 font-bold">\(O(\log n)\)</span>: Logarithmic (Binary Search)
+      </div>
+      <div class="bg-white/10 p-3 rounded-lg border border-white/20">
+        <span class="text-blue-300 font-bold">\(O(n)\)</span>: Linear (Loop รอบเดียว)
+      </div>
+      <div class="bg-white/10 p-3 rounded-lg border border-white/20">
+        <span class="text-blue-300 font-bold">\(O(n \log n)\)</span>: Efficient Sort (Merge/Quick)
+      </div>
+      <div class="bg-white/10 p-3 rounded-lg border border-white/20">
+        <span class="text-orange-300 font-bold">\(O(n^2)\)</span>: Quadratic (Nested Loops)
+      </div>
+      <div class="bg-white/10 p-3 rounded-lg border border-white/20">
+        <span class="text-red-300 font-bold">\(O(2^n)\)</span>: Exponential (Subsets)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 49 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Master Theorem เบื้องต้น</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+      <p class="mb-4">ใช้สำหรับหา Big O ของ D&C Recurrence ในรูป: \(T(n) = aT(n/b) + O(n^d)\)</p>
+      <div class="space-y-3 text-sm">
+        <p>1. <strong>Merge Sort:</strong> \(2T(n/2) + O(n)\) <br> \(\rightarrow\) ทำงาน \(n\) เท่ากับงานย่อย \(\rightarrow\) <span class="text-yellow-300">\(O(n \log n)\)</span></p>
+        <p>2. <strong>Binary Search:</strong> \(T(n/2) + O(1)\) <br> \(\rightarrow\) งานย่อยน้อยลงมาก \(\rightarrow\) <span class="text-yellow-300">\(O(\log n)\)</span></p>
+        <p>3. <strong>Quick Select:</strong> \(T(n/2) + O(n)\) <br> \(\rightarrow\) งานหลักอยู่ที่ \(n\) \(\rightarrow\) <span class="text-yellow-300">\(O(n)\)</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 50 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">กฎ 1 วินาทีในโอลิมปิก</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <p class="mb-6 text-center text-yellow-300 font-bold">ประมาณ \(10^8\) (100 ล้าน) การทำงานต่อวินาที</p>
+      <div class="grid gap-3 text-sm">
+        <div class="flex justify-between border-b border-white/10 pb-1">
+          <span>\(n \le 10^7\)</span> <span class="text-green-300">\(O(n)\)</span>
+        </div>
+        <div class="flex justify-between border-b border-white/10 pb-1">
+          <span>\(n \le 10^6\)</span> <span class="text-green-300">\(O(n \log n)\)</span>
+        </div>
+        <div class="flex justify-between border-b border-white/10 pb-1">
+          <span>\(n \le 5,000\)</span> <span class="text-blue-300">\(O(n^2)\)</span>
+        </div>
+        <div class="flex justify-between border-b border-white/10 pb-1">
+          <span>\(n \le 500\)</span> <span class="text-orange-300">\(O(n^3)\)</span>
+        </div>
+        <div class="flex justify-between border-b border-white/10 pb-1">
+          <span>\(n \le 20\)</span> <span class="text-red-300">\(O(2^n)\)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 51 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">ข้อควรระวังในการวิเคราะห์</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+      <ul class="space-y-4">
+        <li><strong>Hidden Constant:</strong> บางครั้ง \(O(n)\) ที่ตัวคูณเยอะ อาจช้ากว่า \(O(n \log n)\) ที่ตัวคูณน้อย</li>
+        <li><strong>Memory Latency:</strong> การเข้าถึงข้อมูลที่กระจัดกระจายจะช้ากว่าข้อมูลที่เรียงติดกัน</li>
+        <li><strong>Amortized Analysis:</strong> บางการทำงานอาจช้าในครั้งเดียวแต่เฉลี่ยแล้วเร็ว (เช่น <code>vector::push_back</code>)</li>
+      </ul>
+    </div>
+    <div class="text-lg text-yellow-300 font-bold">
+      "Big O บอกความสามารถในการขยายขนาด <br> ไม่ได้บอกเวลาที่ใช้จริงเสมอไป"
+    </div>
+  </div>
+</div>
+
+</div>
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

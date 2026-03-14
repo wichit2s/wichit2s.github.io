@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0901.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+    <div x-ref="slidesContainer">
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Search & Sort Algorithms</span> <br>
+            <span class="mt-8 text-yellow-300">Introduction</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 09 Morning: ทบทวนแนวคิดสำคัญก่อนเข้าสู่ Greedy และ Divide & Conquer
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">หัวข้อที่เรียนในช่วงนี้</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>Time Complexity และการวิเคราะห์อัลกอริทึม</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>Recursion และ Divide and Conquer</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>Problem Solving Strategy สำหรับ Competitive Programming</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">4</div>
+                <span>เปรียบเทียบ Greedy Algorithm กับ Divide and Conquer</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">Thailand Olympiad in Informatics Workshop</p>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">Time Complexity</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <p class="mb-6 text-lg">ใช้วัดประสิทธิภาพของ Algorithm เมื่อขนาดข้อมูลเพิ่มขึ้น</p>
+            <div class="grid gap-4">
+              <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+                <span>Linear Search</span>
+                <span class="text-yellow-300">O(n)</span>
+              </div>
+              <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+                <span>Binary Search</span>
+                <span class="text-yellow-300">O(log n)</span>
+              </div>
+              <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+                <span>Merge Sort</span>
+                <span class="text-yellow-300">O(n log n)</span>
+              </div>
+              <div class="flex justify-between bg-white/10 p-3 rounded-lg">
+                <span>Bubble Sort</span>
+                <span class="text-yellow-300">O(n²)</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">
+            เป้าหมายของ Competitive Programming คือ <br>
+            <span class="text-yellow-300 font-semibold">ออกแบบ Algorithm ที่เร็วที่สุดสำหรับโจทย์</span>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">Recursion</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left">
+            <p class="mb-6 text-lg">
+            Recursion คือการที่ฟังก์ชันเรียกตัวเองเพื่อแก้ปัญหาที่มีโครงสร้างย่อยเหมือนกัน
+            </p>
+            <div class="grid gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">1</div>
+                <span>Base Case – เงื่อนไขหยุด</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold text-sm">2</div>
+                <span>Recursive Case – การเรียกซ้ำ</span>
+              </div>
+            </div>
+            <div class="mt-6 bg-black/30 p-4 rounded-lg text-sm font-mono">
+              <pre>
+int factorial(int n){
+   if(n == 0) return 1;
+   return n * factorial(n-1);
+}
+              </pre>
+            </div>
+          </div>
+          <div class="text-lg text-yellow-300">
+            Recursion เป็นพื้นฐานสำคัญของ Divide and Conquer
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">Problem Solving Strategy</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+            <div class="grid gap-5 text-left">
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">1</div>
+                <span>เข้าใจโจทย์และข้อจำกัด (Constraints)</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">2</div>
+                <span>เลือกแนวคิด Algorithm ที่เหมาะสม</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">3</div>
+                <span>วิเคราะห์ Time Complexity</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">4</div>
+                <span>Implement และทดสอบ</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">
+            Competitive Programming คือการเลือก Algorithm ที่เหมาะสมกับโจทย์
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">Problem Solving Strategy</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8">
+            <div class="grid gap-5 text-left">
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">1</div>
+                <span>เข้าใจโจทย์และข้อจำกัด (Constraints)</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">2</div>
+                <span>เลือกแนวคิด Algorithm ที่เหมาะสม</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">3</div>
+                <span>วิเคราะห์ Time Complexity</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-2xl font-bold text-yellow-300">4</div>
+                <span>Implement และทดสอบ</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">
+            Competitive Programming คือการเลือก Algorithm ที่เหมาะสมกับโจทย์
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">Greedy vs Divide & Conquer</h1>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-white/10 p-6 rounded-xl text-left">
+              <h2 class="text-2xl font-semibold mb-4 text-yellow-300">Greedy</h2>
+              <ul class="space-y-2 text-white/90">
+                <li>เลือกคำตอบที่ดีที่สุดในแต่ละขั้น</li>
+                <li>ไม่ย้อนกลับ</li>
+                <li>ง่ายและเร็ว</li>
+                <li>ใช้ได้เฉพาะบางปัญหา</li>
+              </ul>
+              <div class="mt-4 text-sm opacity-70">
+                Example: Activity Selection
+              </div>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl text-left">
+              <h2 class="text-2xl font-semibold mb-4 text-yellow-300">Divide & Conquer</h2>
+              <ul class="space-y-2 text-white/90">
+                <li>แบ่งปัญหาเป็นส่วนย่อย</li>
+                <li>แก้แต่ละส่วนแบบ recursive</li>
+                <li>รวมผลลัพธ์</li>
+              </ul>
+              <div class="mt-4 text-sm opacity-70">
+                Example: Merge Sort, Binary Search
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Why Greedy Sometimes Fails?
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="mb-6 text-lg">
+            Greedy ใช้ได้เฉพาะปัญหาที่มีคุณสมบัติ
+            </p>
+            <div class="grid gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm">1</div>
+                <span>Greedy Choice Property</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-red-900 font-bold text-sm">2</div>
+                <span>Optimal Substructure</span>
+              </div>
+            </div>
+            <div class="mt-6 bg-black/30 p-4 rounded-lg">
+              <p class="text-yellow-300 mb-2">Example: Coin Change</p>
+              <p class="text-sm">
+              เหรียญ: 1, 3, 4 <br>
+              ต้องการ: 6
+              </p>
+              <p class="mt-3 text-sm">
+              Greedy → 4 + 1 + 1 (3 coins) ❌ <br>
+              Optimal → 3 + 3 (2 coins) ✅
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6">
+            Greedy Algorithms
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            แนวคิดการเลือกคำตอบที่ดีที่สุดในแต่ละขั้นตอน
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <div class="grid gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold">1</div>
+                <span>เลือกทางเลือกที่ดีที่สุดในปัจจุบัน</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold">2</div>
+                <span>ไม่ย้อนกลับไปแก้คำตอบก่อนหน้า</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold">3</div>
+                <span>หวังว่าการเลือกที่ดีที่สุดในแต่ละขั้นจะนำไปสู่คำตอบที่ดีที่สุดโดยรวม</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 text-lg text-yellow-300">
+            Local Optimal → Global Optimal
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Principle
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="mb-6 text-lg">
+            Greedy Algorithm ทำงานโดยการเลือกคำตอบที่ดีที่สุดในแต่ละขั้นตอน
+            </p>
+            <div class="grid gap-5">
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">Local Optimal</div>
+                <div>คำตอบที่ดีที่สุดในขั้นตอนปัจจุบัน</div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">Global Optimal</div>
+                <div>คำตอบที่ดีที่สุดของทั้งปัญหา</div>
+              </div>
+            </div>
+            <div class="mt-6 bg-black/30 rounded-lg p-4 text-center">
+              <p class="text-lg">
+              หากปัญหามีคุณสมบัติ Greedy Choice Property
+              </p>
+              <p class="text-yellow-300 mt-2">
+              Local Optimal → Global Optimal
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Choice Property
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="mb-6 text-lg">
+            ปัญหาที่ใช้ Greedy ได้ต้องมีคุณสมบัติสำคัญ 2 อย่าง
+            </p>
+            <div class="grid gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-green-400 rounded-full flex items-center justify-center text-black font-bold">1</div>
+                <span>
+                  Greedy Choice Property  
+                  สามารถเลือกทางเลือกที่ดีที่สุดในตอนนี้ได้เลย
+                </span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-green-400 rounded-full flex items-center justify-center text-black font-bold">2</div>
+                <span>
+                  Optimal Substructure  
+                  ปัญหาสามารถแบ่งเป็นปัญหาย่อยที่เหมือนกันได้
+                </span>
+              </div>
+            </div>
+            <div class="mt-6 text-yellow-300 text-lg">
+              หากไม่มีคุณสมบัตินี้ Greedy จะให้คำตอบผิด
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Example: Activity Selection
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="mb-6 text-lg">
+            เลือกกิจกรรมให้ได้มากที่สุด โดยที่กิจกรรมต้องไม่ทับเวลากัน
+            </p>
+            <div class="grid gap-3 text-sm">
+              <div class="bg-white/10 p-3 rounded">A1 : (1,4)</div>
+              <div class="bg-white/10 p-3 rounded">A2 : (3,5)</div>
+              <div class="bg-white/10 p-3 rounded">A3 : (0,6)</div>
+              <div class="bg-white/10 p-3 rounded">A4 : (5,7)</div>
+            </div>
+            <div class="mt-6">
+              <p class="text-yellow-300 font-semibold">
+              Greedy Strategy
+              </p>
+              <ul class="list-disc list-inside text-white/90 mt-2">
+                <li>Sort กิจกรรมตามเวลา finish</li>
+                <li>เลือกกิจกรรมที่จบเร็วที่สุด</li>
+                <li>เลือกกิจกรรมถัดไปที่ไม่ overlap</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Example: Minimum Coins
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="mb-6 text-lg">
+            ต้องการทอนเงินให้ใช้จำนวนเหรียญน้อยที่สุด
+            </p>
+            <div class="bg-black/30 p-4 rounded-lg mb-4">
+              <p>Coins: 1, 5, 10, 25</p>
+              <p>Amount: 63</p>
+            </div>
+            <div class="mt-4">
+              <p class="text-yellow-300 font-semibold">Greedy Strategy</p>
+              <ul class="list-disc list-inside mt-2 text-white/90">
+                <li>เลือกเหรียญที่มีค่ามากที่สุดก่อน</li>
+                <li>ลดจำนวนเงินที่เหลือ</li>
+                <li>ทำซ้ำจนเงินหมด</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Example: Interval Scheduling
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="mb-6 text-lg">
+            เลือกช่วงเวลาที่ไม่ overlap กันให้ได้มากที่สุด
+            </p>
+            <div class="grid grid-cols-3 gap-3 text-sm">
+              <div class="bg-white/10 p-3 rounded text-center">[1,3]</div>
+              <div class="bg-white/10 p-3 rounded text-center">[2,5]</div>
+              <div class="bg-white/10 p-3 rounded text-center">[4,7]</div>
+              <div class="bg-white/10 p-3 rounded text-center">[6,9]</div>
+              <div class="bg-white/10 p-3 rounded text-center">[8,10]</div>
+            </div>
+            <div class="mt-6">
+              <p class="text-yellow-300 font-semibold">Greedy Strategy</p>
+              <ul class="list-disc list-inside mt-2 text-white/90">
+                <li>Sort ตามเวลาจบ</li>
+                <li>เลือก interval ที่จบเร็วที่สุด</li>
+                <li>เลือก interval ถัดไปที่ไม่ overlap</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Algorithms Summary
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+            <div class="grid gap-5 text-left">
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">✓</div>
+                <span>เลือกคำตอบที่ดีที่สุดในแต่ละขั้น</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">✓</div>
+                <span>ไม่ย้อนกลับไปแก้คำตอบ</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">✓</div>
+                <span>ใช้ได้เฉพาะปัญหาที่มี Greedy Choice Property</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 text-xl text-yellow-300">
+            Example Problems
+            <br>
+            Activity Selection • Coin Change • Interval Scheduling
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Proof Idea
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="text-lg mb-6">
+            การพิสูจน์ว่า Greedy Algorithm ให้คำตอบที่ถูกต้อง มักใช้แนวคิด
+            </p>
+            <div class="grid gap-5">
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-2xl font-bold">1</div>
+                <span>
+                  แสดงว่า Greedy Choice สามารถเป็นส่วนหนึ่งของ Optimal Solution ได้
+                </span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-2xl font-bold">2</div>
+                <span>
+                  แสดงว่าเมื่อเลือก Greedy Choice แล้ว ปัญหาที่เหลือยังเป็นปัญหาแบบเดิม
+                </span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-2xl font-bold">3</div>
+                <span>
+                  ใช้ Exchange Argument เพื่อแสดงว่าสามารถแทนที่ solution อื่นด้วย Greedy ได้
+                </span>
+              </div>
+            </div>
+            <div class="mt-6 bg-black/30 rounded-lg p-4 text-center">
+              <p class="text-yellow-300 font-semibold">
+              Example: Activity Selection
+              </p>
+              <p class="text-sm mt-2">
+              การเลือก activity ที่จบเร็วที่สุดจะไม่ทำให้เสียโอกาสเลือก activity อื่นในอนาคต
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Proof Idea
+          </h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="text-lg mb-6">
+            การพิสูจน์ว่า Greedy Algorithm ให้คำตอบที่ถูกต้อง มักใช้แนวคิด
+            </p>
+            <div class="grid gap-5">
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-2xl font-bold">1</div>
+                <span>
+                  แสดงว่า Greedy Choice สามารถเป็นส่วนหนึ่งของ Optimal Solution ได้
+                </span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-2xl font-bold">2</div>
+                <span>
+                  แสดงว่าเมื่อเลือก Greedy Choice แล้ว ปัญหาที่เหลือยังเป็นปัญหาแบบเดิม
+                </span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-2xl font-bold">3</div>
+                <span>
+                  ใช้ Exchange Argument เพื่อแสดงว่าสามารถแทนที่ solution อื่นด้วย Greedy ได้
+                </span>
+              </div>
+            </div>
+            <div class="mt-6 bg-black/30 rounded-lg p-4 text-center">
+              <p class="text-yellow-300 font-semibold">
+              Example: Activity Selection
+              </p>
+              <p class="text-sm mt-2">
+              การเลือก activity ที่จบเร็วที่สุดจะไม่ทำให้เสียโอกาสเลือก activity อื่นในอนาคต
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Selection Steps
+          </h1>
+          <div class="bg-white/10 rounded-2xl p-8 text-left">
+            <div class="grid gap-4">
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">Step 1</div>
+                <span>Sort activities by finish time</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">Step 2</div>
+                <span>Select activity that finishes earliest</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">Step 3</div>
+                <span>Ignore overlapping activities</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 font-bold text-xl">Step 4</div>
+                <span>Repeat until all activities processed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Interactive Example
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <p class="text-lg mb-6">
+            Activities:
+            </p>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white/10 p-4 rounded text-center">A1 (1,3)</div>
+              <div class="bg-white/10 p-4 rounded text-center">A2 (2,5)</div>
+              <div class="bg-white/10 p-4 rounded text-center">A3 (4,6)</div>
+              <div class="bg-white/10 p-4 rounded text-center">A4 (6,8)</div>
+              <div class="bg-white/10 p-4 rounded text-center">A5 (5,9)</div>
+            </div>
+            <div class="mt-6 text-yellow-300 text-lg">
+              Question: Which activities will Greedy choose?
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Result
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="text-left space-y-4">
+              <p>Sorted by finish time:</p>
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-green-400 text-black p-3 rounded text-center">A1</div>
+                <div class="bg-gray-400 p-3 rounded text-center">A2</div>
+                <div class="bg-green-400 text-black p-3 rounded text-center">A3</div>
+                <div class="bg-green-400 text-black p-3 rounded text-center">A4</div>
+                <div class="bg-gray-400 p-3 rounded text-center">A5</div>
+              </div>
+              <p class="mt-4 text-yellow-300">
+              Selected: A1 → A3 → A4
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy Implementation Pattern
+          </h1>
+          <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre>
+sort(items)
+choose first item
+for each item:
+   if compatible with previous
+      choose item
+</pre>
+          </div>
+          <div class="mt-6 text-yellow-300 text-lg">
+            Many Greedy problems follow this structure
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Complexity Analysis
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="grid gap-4 text-left">
+              <div class="flex justify-between">
+                <span>Sorting</span>
+                <span class="text-yellow-300">O(n log n)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Selection Loop</span>
+                <span class="text-yellow-300">O(n)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Total Complexity</span>
+                <span class="text-yellow-300">O(n log n)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            When Greedy Works Well
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <ul class="space-y-3">
+              <li>Activity Selection</li>
+              <li>Interval Scheduling</li>
+              <li>Minimum Spanning Tree (Kruskal)</li>
+              <li>Dijkstra Shortest Path</li>
+              <li>Huffman Coding</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Greedy vs Dynamic Programming
+          </h1>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h2 class="text-2xl mb-4 text-yellow-300">Greedy</h2>
+              <ul class="space-y-2 text-left">
+                <li>Fast</li>
+                <li>Simple</li>
+                <li>No backtracking</li>
+                <li>Works only for some problems</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h2 class="text-2xl mb-4 text-yellow-300">Dynamic Programming</h2>
+              <ul class="space-y-2 text-left">
+                <li>Handles complex optimization</li>
+                <li>Uses memoization</li>
+                <li>Often slower</li>
+                <li>Works for more problems</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">
+            Next Topic
+          </h1>
+          <div class="text-3xl text-yellow-300 mb-6">
+            Divide and Conquer Algorithms
+          </div>
+          <div class="bg-white/10 p-6 rounded-xl">
+            <p class="text-lg">
+            Binary Search<br>
+            Merge Sort<br>
+            Quick Sort
+            </p>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6">
+            Divide and Conquer
+          </h1>
+          <div class="text-xl text-white/90 mb-8">
+            Strategy for Designing Efficient Algorithms
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <div class="grid gap-5">
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-xl font-bold">1</div>
+                <span>Divide – แบ่งปัญหาเป็นปัญหาย่อย</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-xl font-bold">2</div>
+                <span>Conquer – แก้ปัญหาย่อยแบบ recursion</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="text-yellow-300 text-xl font-bold">3</div>
+                <span>Combine – รวมผลลัพธ์ของปัญหาย่อย</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 text-yellow-300 text-lg">
+            Example: Merge Sort • Quick Sort • Binary Search
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Divide and Conquer Visualization
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="text-lg mb-6">
+              Example Array
+            </div>
+            <div class="flex justify-center gap-3 mb-6">
+              <div class="bg-blue-400 text-black px-4 py-2 rounded">8</div>
+              <div class="bg-blue-400 text-black px-4 py-2 rounded">3</div>
+              <div class="bg-blue-400 text-black px-4 py-2 rounded">5</div>
+              <div class="bg-blue-400 text-black px-4 py-2 rounded">2</div>
+            </div>
+            <div class="text-yellow-300">
+              Divide → Solve → Combine
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Recursion Tree
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="space-y-4">
+              <div>[8,3,5,2]</div>
+              <div class="text-yellow-300">↓</div>
+              <div class="flex justify-center gap-6">
+                <div>[8,3]</div>
+                <div>[5,2]</div>
+              </div>
+              <div class="text-yellow-300">↓</div>
+              <div class="flex justify-center gap-6">
+                <div>[8]</div>
+                <div>[3]</div>
+                <div>[5]</div>
+                <div>[2]</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 text-white/80">
+            Divide until base case (size = 1)
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Merge Sort
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <ul class="space-y-3">
+              <li>Divide array into two halves</li>
+              <li>Recursively sort each half</li>
+              <li>Merge the sorted halves</li>
+            </ul>
+          </div>
+          <div class="mt-6 text-yellow-300 text-lg">
+            Divide → Sort → Merge
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Merge Sort Visualization
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="flex justify-center gap-3 mb-4">
+              <div class="bg-blue-400 text-black px-4 py-2 rounded">8</div>
+              <div class="bg-blue-400 text-black px-4 py-2 rounded">3</div>
+            </div>
+            <div class="flex justify-center gap-3">
+              <div class="bg-green-400 text-black px-4 py-2 rounded">3</div>
+              <div class="bg-green-400 text-black px-4 py-2 rounded">8</div>
+            </div>
+          </div>
+          <div class="mt-6 text-yellow-300">
+            Merge sorted subarrays
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Merge Sort (C++)
+          </h1>
+          <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre>
+void mergeSort(vector<int>& a,int l,int r){
+   if(l>=r) return;
+   int mid=(l+r)/2;
+   mergeSort(a,l,mid);
+   mergeSort(a,mid+1,r);
+   merge(a,l,mid,r);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Merge Sort Complexity
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="text-lg mb-4">
+              T(n) = 2T(n/2) + O(n)
+            </div>
+            <div class="text-yellow-300 text-xl">
+              Time Complexity = O(n log n)
+            </div>
+            <div class="mt-4 text-white/80">
+              Depth of recursion tree = log n  
+              Work per level = n
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Quick Sort
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <ul class="space-y-3">
+              <li>Choose a pivot element</li>
+              <li>Partition array</li>
+              <li>Elements smaller → left side</li>
+              <li>Elements larger → right side</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Quick Sort Partition
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="flex justify-center gap-3 mb-4">
+              <div class="bg-blue-400 px-4 py-2 rounded">7</div>
+              <div class="bg-blue-400 px-4 py-2 rounded">2</div>
+              <div class="bg-yellow-400 px-4 py-2 rounded">5</div>
+              <div class="bg-blue-400 px-4 py-2 rounded">9</div>
+            </div>
+            <div class="text-yellow-300">
+              Pivot = 5
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Quick Sort (C++)
+          </h1>
+          <div class="bg-black/40 rounded-xl p-6 text-left font-mono text-sm">
+<pre>
+int partition(vector&lt;int&gt;& a,int l,int r){
+   int pivot=a[r];
+   int i=l-1;
+   for(int j=l;j&lt;r;j++) {
+      if(a[j]&lt;pivot){
+         i++;
+         swap(a[i],a[j]);
+      }
+   }
+   swap(a[i+1],a[r]);
+   return i+1;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Quick Sort Complexity
+          </h1>
+          <div class="bg-white/10 p-8 rounded-2xl">
+            <div class="grid gap-4 text-left">
+              <div class="flex justify-between">
+                <span>Best Case</span>
+                <span class="text-yellow-300">O(n log n)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Average Case</span>
+                <span class="text-yellow-300">O(n log n)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Worst Case</span>
+                <span class="text-red-300">O(n²)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+          <h1 class="text-4xl font-bold mb-8">
+            Merge Sort vs Quick Sort
+          </h1>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h2 class="text-yellow-300 text-xl mb-4">
+                Merge Sort
+              </h2>
+              <ul class="text-left space-y-2">
+                <li>Stable</li>
+                <li>O(n log n)</li>
+                <li>Extra memory required</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h2 class="text-yellow-300 text-xl mb-4">
+                Quick Sort
+              </h2>
+              <ul class="text-left space-y-2">
+                <li>In-place</li>
+                <li>Usually faster</li>
+                <li>Worst case O(n²)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+
+          <h1 class="text-5xl font-bold mb-6">
+            Algorithm Demonstration
+          </h1>
+
+          <div class="text-xl text-white/90 mb-8">
+            Step-by-step execution of Divide & Conquer Sorting
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+
+            <h2 class="text-2xl font-semibold mb-6">
+              เราจะดูตัวอย่างการทำงานของ
+            </h2>
+
+            <div class="grid gap-4 text-left">
+
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-blue-400 rounded-full flex items-center justify-center text-black font-bold">1</div>
+                <span>Merge Sort</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 bg-blue-400 rounded-full flex items-center justify-center text-black font-bold">2</div>
+                <span>Quick Sort</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="mt-6 text-yellow-300 text-lg">
+            Goal: Understand how the algorithm works internally
+          </div>
+
+        </div>
+      </div>
+
+
+<div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merge Sort Step-by-Step</h1>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-center">
+      <p class="mb-6 text-lg">อาเรย์เริ่มต้นที่มีสมาชิก $n=5$ ตัว</p>
+      <div class="flex justify-center gap-4">
+        <div class="bg-blue-500 w-16 h-16 flex items-center justify-center rounded-lg text-2xl font-bold">8</div>
+        <div class="bg-blue-500 w-16 h-16 flex items-center justify-center rounded-lg text-2xl font-bold">7</div>
+        <div class="bg-blue-500 w-16 h-16 flex items-center justify-center rounded-lg text-2xl font-bold">6</div>
+        <div class="bg-blue-500 w-16 h-16 flex items-center justify-center rounded-lg text-2xl font-bold">9</div>
+        <div class="bg-blue-500 w-16 h-16 flex items-center justify-center rounded-lg text-2xl font-bold">4</div>
+      </div>
+    </div>
+    <div class="text-lg text-white/80">
+      เป้าหมาย: เรียงลำดับจากน้อยไปมากโดยใช้แนวคิด <br>
+      <span class="text-yellow-300 font-semibold">Divide and Conquer</span> [1, 3]
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Phase 1: Divide</h1>
+    <p class="mb-6 text-lg text-white/80">แบ่งอาเรย์ออกเป็น 2 ส่วนที่จุดกึ่งกลาง $k = (0+4)/2 = 2$ [1, 2]</p>
+    <div class="grid grid-cols-2 gap-12">
+      <div class="flex flex-col items-center">
+        <div class="flex gap-2 mb-2">
+          <div class="bg-blue-400/50 px-4 py-2 rounded">8</div>
+          <div class="bg-blue-400/50 px-4 py-2 rounded">7</div>
+          <div class="bg-blue-400/50 px-4 py-2 rounded">6</div>
+        </div>
+        <span class="text-sm text-yellow-300">Left Subarray [0...2]</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <div class="flex gap-2 mb-2">
+          <div class="bg-green-400/50 px-4 py-2 rounded">9</div>
+          <div class="bg-green-400/50 px-4 py-2 rounded">4</div>
+        </div>
+        <span class="text-sm text-yellow-300">Right Subarray [3...4]</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Recursive Splitting</h1>
+    <div class="bg-white/5 p-6 rounded-2xl">
+      <div class="grid grid-cols-5 gap-2 text-center">
+        <div class="bg-white/20 p-3 rounded">8</div>
+        <div class="bg-white/20 p-3 rounded">7</div>
+        <div class="bg-white/20 p-3 rounded">6</div>
+        <div class="bg-white/20 p-3 rounded">9</div>
+        <div class="bg-white/20 p-3 rounded">4</div>
+      </div>
+      <div class="mt-8">
+        <p class="text-lg">เมื่อสมาชิกเหลือเพียงตัวเดียว จะถือว่าเป็น <strong>Base Case</strong> [1, 3]</p>
+        <p class="text-white/60 text-sm mt-2 italic">"An array containing a single element is already sorted." [3]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Phase 2: Conquer (Merge)</h1>
+    <p class="mb-8">เปรียบเทียบค่าที่น้อยที่สุดของแต่ละฝั่งแล้วนำมารวมกัน [4]</p>
+    <div class="flex justify-center gap-16">
+      <div class="flex flex-col items-center">
+        <div class="flex gap-2 mb-2">
+          <span class="line-through text-white/40">8</span>
+          <span class="line-through text-white/40">7</span>
+          <span class="text-xl">→</span>
+          <div class="bg-yellow-500 text-black px-3 py-1 rounded font-bold">7, 8</div>
+        </div>
+      </div>
+      <div class="flex flex-col items-center">
+        <div class="flex gap-2 mb-2">
+          <span class="line-through text-white/40">9</span>
+          <span class="line-through text-white/40">4</span>
+          <span class="text-xl">→</span>
+          <div class="bg-yellow-500 text-black px-3 py-1 rounded font-bold">4, 9</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merging Left Subarray</h1>
+    <div class="flex justify-center items-center gap-8 mb-8">
+      <div class="bg-yellow-500/20 p-4 rounded-xl border border-yellow-500/50">
+        <p class="text-xs mb-2">P1: [5, 6]</p>
+      </div>
+      <span class="text-2xl font-bold">+</span>
+      <div class="bg-yellow-500/20 p-4 rounded-xl border border-yellow-500/50">
+        <p class="text-xs mb-2">P2: [7]</p>
+      </div>
+    </div>
+    <div class="bg-white/10 p-6 rounded-2xl">
+      <p class="text-sm text-white/60 mb-2">Result of Merge [2, 4]:</p>
+      <div class="flex justify-center gap-3">
+        <div class="bg-green-500 px-4 py-2 rounded text-xl font-bold shadow-lg">6</div>
+        <div class="bg-green-500 px-4 py-2 rounded text-xl font-bold shadow-lg">7</div>
+        <div class="bg-green-500 px-4 py-2 rounded text-xl font-bold shadow-lg">8</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Final Merge: All Elements</h1>
+    <div class="bg-black/20 p-8 rounded-2xl mb-8">
+      <div class="flex justify-center gap-12 items-center text-sm">
+        <div>Left: <strong>[5-7]</strong></div>
+        <div class="text-2xl">VS</div>
+        <div>Right: <strong>[8, 9]</strong></div>
+      </div>
+      <div class="mt-8 grid grid-cols-5 gap-3">
+        <div class="bg-blue-500 p-4 rounded-lg font-bold text-2xl animate-bounce" style="animation-delay: 0.1s">4</div>
+        <div class="bg-blue-500 p-4 rounded-lg font-bold text-2xl animate-bounce" style="animation-delay: 0.2s">6</div>
+        <div class="bg-blue-500 p-4 rounded-lg font-bold text-2xl animate-bounce" style="animation-delay: 0.3s">7</div>
+        <div class="bg-blue-500 p-4 rounded-lg font-bold text-2xl animate-bounce" style="animation-delay: 0.4s">8</div>
+        <div class="bg-blue-500 p-4 rounded-lg font-bold text-2xl animate-bounce" style="animation-delay: 0.5s">9</div>
+      </div>
+    </div>
+    <p class="text-white/60 italic text-sm">"Merging sorted subarrays is possible in linear time." [2]</p>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Merge Sort Analysis</h1>
+    <div class="grid grid-cols-2 gap-8 text-left">
+      <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+        <h3 class="font-bold text-yellow-300 mb-2">Time Complexity</h3>
+        <p class="text-3xl font-mono">$O(n \log n)$</p>
+        <p class="text-xs mt-2 text-white/60">คงที่เสมอ ไม่ว่าข้อมูลจะมาในรูปแบบใด</p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+        <h3 class="font-bold text-yellow-300 mb-2">Process</h3>
+        <ul class="text-sm space-y-1">
+          <li>• $\log n$ levels of recursion </li>
+          <li>• Each level takes $O(n)$ to merge </li>
+          <li>• Guaranteed efficiency </li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-12 text-2xl font-mono text-green-300 tracking-widest">
+      FINAL: 
+    </div>
+  </div>
+</div>
+
+
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-6xl mx-auto px-8">
+
+          <h1 class="text-4xl font-bold mb-8">
+            Quick Sort Demonstration
+          </h1>
+
+          <div class="bg-white/10 p-8 rounded-2xl">
+
+            <div class="text-lg mb-6">
+              Array
+            </div>
+
+            <div class="flex justify-center gap-3 mb-6">
+
+              <div class="bg-blue-400 px-4 py-2 rounded">7</div>
+              <div class="bg-blue-400 px-4 py-2 rounded">2</div>
+              <div class="bg-yellow-400 text-black px-4 py-2 rounded">5</div>
+              <div class="bg-blue-400 px-4 py-2 rounded">9</div>
+
+            </div>
+
+            <div class="text-yellow-300 mb-4">
+              Pivot = 5
+            </div>
+
+            <div class="flex justify-center gap-6">
+
+              <div class="bg-green-400 text-black px-4 py-2 rounded">2</div>
+              <div class="bg-yellow-400 text-black px-4 py-2 rounded">5</div>
+              <div class="bg-red-400 text-black px-4 py-2 rounded">7 9</div>
+
+            </div>
+
+          </div>
+
+          <div class="mt-6 text-white/80">
+            Partition → Recursive Sort
+          </div>
+
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Quick Sort Demonstration</h1>
+    <div class="bg-white/10 p-8 rounded-2xl">
+      <div class="text-lg mb-6">อาเรย์เริ่มต้น ($n=6$)</div>
+      <div class="flex justify-center gap-3 mb-6">
+        <div class="bg-blue-400 px-4 py-2 rounded text-2xl font-bold">4</div>
+        <div class="bg-blue-400 px-4 py-2 rounded text-2xl font-bold">2</div>
+        <div class="bg-blue-400 px-4 py-2 rounded text-2xl font-bold">6</div>
+        <div class="bg-blue-400 px-4 py-2 rounded text-2xl font-bold">5</div>
+        <div class="bg-blue-400 px-4 py-2 rounded text-2xl font-bold">3</div>
+        <div class="bg-blue-400 px-4 py-2 rounded text-2xl font-bold">9</div>
+      </div>
+    </div>
+    <div class="mt-6 text-white/80">
+      เป้าหมาย: เรียงลำดับข้อมูลโดยการเลือกค่าอ้างอิง (Pivot) [5]
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Step 1: Partitioning</h1>
+    <div class="bg-white/10 p-8 rounded-2xl">
+      <div class="text-yellow-300 text-xl mb-4 font-bold">เลือก Pivot = 5</div>
+      <p class="mb-6 text-sm">ย้ายสมาชิกที่น้อยกว่า 5 ไปไว้ฝั่งซ้าย และสมาชิกที่มากกว่าไว้ฝั่งขวา [1, 2]</p>
+      
+      <div class="flex flex-col gap-6">
+        <div class="flex justify-center items-center gap-4">
+          <div class="bg-green-400 text-black px-4 py-2 rounded font-bold">4, 2, 3</div>
+          <div class="bg-yellow-400 text-black px-6 py-3 rounded-lg text-2xl font-bold shadow-lg">5</div>
+          <div class="bg-red-400 text-black px-4 py-2 rounded font-bold">6, 9</div>
+        </div>
+        <div class="grid grid-cols-3 text-xs text-white/60">
+          <span>Smaller than Pivot</span>
+          <span class="text-yellow-300 font-bold uppercase underline">Correct Position</span>
+          <span>Larger than Pivot</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 41 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Step 2: Recursive Sort (Left)</h1>
+    <div class="bg-white/10 p-8 rounded-2xl">
+      <div class="text-lg mb-4">จัดการกลุ่มฝั่งซ้าย: <span class="bg-green-400/20 px-2 rounded">{4, 2, 3}</span></div>
+      <div class="text-yellow-300 font-bold mb-6 underline">เลือก Pivot ใหม่ = 3</div>
+      
+      <div class="flex justify-center items-center gap-4 mb-8">
+        <div class="flex flex-col items-center">
+          <div class="bg-green-500 text-black px-4 py-2 rounded font-bold">2</div>
+          <span class="text-[10px] mt-1">Left (< 3)</span>
+        </div>
+        <div class="bg-yellow-400 text-black px-4 py-2 rounded font-bold">3</div>
+        <div class="flex flex-col items-center">
+          <div class="bg-red-500 text-black px-4 py-2 rounded font-bold">4</div>
+          <span class="text-[10px] mt-1">Right (> 3)</span>
+        </div>
+      </div>
+      <p class="text-xs text-white/70 italic">เนื่องจาก {2} และ {4} มีขนาดเพียง 1 จึงถือว่าเป็น Base Case และไม่ต้องเรียงต่อ [6]</p>
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 42 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Step 3: Recursive Sort (Right)</h1>
+    <div class="bg-white/10 p-8 rounded-2xl">
+      <div class="text-lg mb-4">จัดการกลุ่มฝั่งขวา: <span class="bg-red-400/20 px-2 rounded">{6, 9}</span></div>
+      <div class="text-yellow-300 font-bold mb-6 underline">เลือก Pivot ใหม่ = 9</div>
+      
+      <div class="flex justify-center items-center gap-4">
+        <div class="flex flex-col items-center">
+          <div class="bg-green-500 text-black px-4 py-2 rounded font-bold">6</div>
+          <span class="text-[10px] mt-1">Left (< 9)</span>
+        </div>
+        <div class="bg-yellow-400 text-black px-4 py-2 rounded font-bold">9</div>
+        <div class="border-2 border-dashed border-white/20 w-12 h-10 flex items-center justify-center rounded">
+          <span class="text-[10px] text-white/40">Empty</span>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 text-white/80 text-sm">
+      Quick Sort จะทำซ้ำจนกว่าปัญหาย่อยจะเหลือขนาด 0 หรือ 1 เสมอ [1, 3, 4]
+    </div>
+  </div>
+</div>
+
+<div :class="{ 'active': currentSlide === 43 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-6xl mx-auto px-8">
+    <h1 class="text-4xl font-bold mb-8">Sorted Result</h1>
+    <div class="bg-white/10 p-10 rounded-2xl border-2 border-green-400/50">
+      <p class="mb-8 text-lg text-green-300 font-bold">ข้อมูลที่เรียงลำดับเสร็จสมบูรณ์:</p>
+      <div class="flex justify-center gap-3">
+        <div class="bg-white/20 px-6 py-4 rounded-lg text-3xl font-mono">2</div>
+        <div class="bg-white/20 px-6 py-4 rounded-lg text-3xl font-mono">3</div>
+        <div class="bg-white/20 px-6 py-4 rounded-lg text-3xl font-mono">4</div>
+        <div class="bg-white/20 px-6 py-4 rounded-lg text-3xl font-mono">5</div>
+        <div class="bg-white/20 px-6 py-4 rounded-lg text-3xl font-mono">6</div>
+        <div class="bg-white/20 px-6 py-4 rounded-lg text-3xl font-mono">9</div>
+      </div>
+    </div>
+    <div class="mt-10 grid grid-cols-2 gap-4 text-left text-sm max-w-md mx-auto">
+      <div class="bg-black/20 p-3 rounded">Average Complexity: <strong>O(n log n)</strong></div>
+      <div class="bg-black/20 p-3 rounded">Worst Complexity: <strong>O(n²)</strong></div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

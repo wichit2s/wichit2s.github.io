@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Computational Science and AI workshop for Teachers">
+    <meta name="keywords" content="Computational Science, Computational Thinking, AI, Workshop, Teachers">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อบรมคอมพิวเตอร์โอลิมปิก</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/toi/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียน </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day0903.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 leading-tight mt-8">
+            <span>Practice Session</span> <br>
+            <span class="mt-8 text-yellow-300">Range Query Problems</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Day 09 Afternoon: ลงมือแก้โจทย์โครงสร้างข้อมูลขั้นสูงและเทคนิคการประมวลผลช่วง
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">เป้าหมายการปฏิบัติ</h2>
+            <div class="grid gap-4 text-left">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">1</div>
+                <span>ฝึกการ Implement Fenwick Tree และ Segment Tree ให้แม่นยำ</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">2</div>
+                <span>ประยุกต์ใช้โครงสร้างข้อมูลกับโจทย์ Range Minimum Query (RMQ)</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-blue-900 font-bold text-sm mt-1">3</div>
+                <span>แก้โจทย์ที่มีการ Update แบบช่วงด้วย Lazy Propagation</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/problemset/list/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Static Range Sum Queries</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 font-semibold text-blue-300">ภารกิจ:</p>
+            <p>มีอาเรย์ขนาด ( n ) และคำถาม ( q ) ข้อ ให้หาผลรวมในช่วง ( [a, b] ) โดยที่ข้อมูลไม่มีการเปลี่ยนแปลง</p>
+            <ul class="list-disc list-outside ml-6 mt-4 space-y-2 text-white/90">
+              <li><strong>เทคนิค:</strong> ใช้ Prefix Sum Array</li>
+              <li><strong>ความซับซ้อน:</strong> สร้าง ( O(n) ), ตอบคำถาม ( O(1) ) ต่อข้อ</li>
+              <li><strong>สูตร:</strong> ( sumq(a, b) = P[b] - P[a-1] )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Dynamic Range Sum Queries</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-green-400">
+            <p class="mb-4 font-semibold text-blue-300">ภารกิจ:</p>
+            <p>เหมือนข้อที่แล้ว แต่มีการ Update ค่าในตำแหน่ง ( i ) ระหว่างการ Query</p>
+            <ul class="list-disc list-outside ml-6 mt-4 space-y-2">
+              <li><strong>ทางเลือก:</strong> Fenwick Tree หรือ Segment Tree</li>
+              <li><strong>ประสิทธิภาพ:</strong> ( O(\log n) ) ทั้งการ Update และ Query</li>
+              <li><strong>จุดเน้น:</strong> ฝึกเขียนฟังก์ชัน `update(i, val)` และ `query(a, b)` ให้รวดเร็ว</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Range Minimum Query</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 font-semibold text-blue-300">ความท้าทาย:</p>
+            <p>หาค่าน้อยที่สุดในช่วง ( [a, b] ) พร้อมรองรับการ Update ค่า</p>
+            <div class="bg-black/30 p-4 rounded-xl mt-4 font-mono text-sm border border-white/20">
+              tree[k] = min(tree[2*k], tree[2*k+1]);
+            </div>
+            <ul class="list-disc list-outside ml-6 mt-4 space-y-2">
+              <li>ใช้ Segment Tree เท่านั้น (Fenwick Tree ไม่รองรับ Min/Max โดยตรง)</li>
+              <li>ระวังค่า Neutral Value สำหรับ Min คือ ( \infty )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cses.fi/book/book.pdf</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">เมื่อพิกัดใหญ่เกินไป (Coordinate Compression)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-yellow-300">
+            <p class="mb-4 italic">โจทย์: ตำแหน่งในอาเรย์มีค่าได้ถึง ( 10^9 ) แต่มีข้อมูลเพียง ( 10^5 ) ตัว</p>
+            <ol class="list-decimal list-outside ml-6 space-y-3">
+              <li>เก็บพิกัดทั้งหมดที่สนใจลงใน Vector</li>
+              <li>`sort` และใช้ `unique` เพื่อลดตัวซ้ำ</li>
+              <li>ใช้ `lower_bound` เพื่อเปลี่ยนพิกัดจริงเป็น "ลำดับที่ (Rank)" ในอาเรย์ใหม่</li>
+              <li>ใช้ค่า Rank นี้เป็น Index ใน Segment Tree/BIT</li>
+            </ol>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/general/coords-comp</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Counting Inversions</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 italic">Inversion คือคู่ ( (i, j) ) ที่ ( i < j ) แต่ ( A[i] > A[j] )</p>
+            <ul class="list-disc list-outside ml-6 space-y-4">
+              <li>ใช้ Fenwick Tree เพื่อนับจำนวนตัวเลขที่ "เคยเจอมาแล้ว" และมีค่ามากกว่าตัวปัจจุบัน</li>
+              <li>ขั้นตอน: วนลูปจากขวาไปซ้าย (หรือซ้ายไปขวาด้วยการประยุกต์) แล้ว Query จำนวนตัวที่น้อยกว่า/มากกว่าใน BIT</li>
+              <li>ความซับซ้อน: ( O(n \log n) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://www.geeksforgeeks.org/inversion-count-in-array-using-bit/</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Lazy Propagation Practice</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed border-l-4 border-red-400">
+            <p class="mb-4 font-semibold text-blue-300">ภารกิจ:</p>
+            <p>เพิ่มค่า ( x ) ให้กับทุกตำแหน่งในช่วง ( [a, b] ) และหาผลรวมในช่วง</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li>ฝึกการสร้าง `lazy[]` array เพื่อเก็บค่าที่รอการส่งต่อ (Propagate)</li>
+              <li>เขียนฟังก์ชัน `push()` เพื่อส่งต่อค่าจาก Parent ลงไปยัง Children</li>
+              <li>ทดสอบกับโจทย์ "Range Update Queries" ในระบบ Grader</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://cp-algorithms.com/data_structures/segment_tree.html#lazy-propagation</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Range Queries on Trees</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4 italic">ต้องการหาผลรวมของโหนดใน Subtree ของโหนด ( u )</p>
+            <ul class="list-disc list-outside ml-6 space-y-3">
+              <li>ใช้ DFS เพื่อบันทึกเวลาเข้า (entry) และเวลาออก (exit) ของแต่ละโหนด (Euler Tour)</li>
+              <li>แต่ละ Subtree จะกลายเป็นช่วงที่ต่อเนื่องกันใน Array ลำดับ DFS</li>
+              <li>ใช้ Segment Tree/BIT บน Array นี้เพื่อตอบคำถามใน ( O(\log n) )</li>
+            </ul>
+          </div>
+          <p class="text-xs opacity-60">แหล่งอ้างอิง: https://usaco.guide/graphs/subtree-queries</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300">Recommended Problems</h2>
+          <div class="grid grid-cols-1 gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <span>Static Range Sum Queries</span>
+              <span class="text-sm bg-green-500 px-2 py-1 rounded">Easy</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <span>Dynamic Range Minimum Queries</span>
+              <span class="text-sm bg-blue-500 px-2 py-1 rounded">Medium</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <span>Range Update Queries (Lazy)</span>
+              <span class="text-sm bg-red-500 px-2 py-1 rounded">Hard</span>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center">
+              <span>Distinct Values Queries (Mo's Algorithm)</span>
+              <span class="text-sm bg-purple-500 px-2 py-1 rounded">Advanced</span>
+            </div>
+          </div>
+          <p class="mt-8 text-lg font-light italic">"Choose your challenge and start coding!"</p>
+        </div>
+      </div>
+
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-6 text-yellow-300">End of Session</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 text-left text-lg leading-relaxed">
+            <p class="mb-4">สรุปหัวใจสำคัญของวันนี้:</p>
+            <ul class="list-disc list-outside ml-6 space-y-4 font-light">
+              <li>การเลือกโครงสร้างข้อมูลให้เหมาะกับ Operation (BIT vs Segment Tree)</li>
+              <li>การวิเคราะห์ความซับซ้อน \( O(n \log n) \) เป็นเกณฑ์มาตรฐานในโจทย์ระดับชาติ</li>
+              <li>ความแม่นยำในการ Implement (การคำนวณ Index และ Base Case)</li>
+            </ul>
+          </div>
+          <div class="flex justify-center gap-6 mt-4">
+            <div class="px-8 py-3 bg-white text-blue-900 font-bold rounded-full">Good luck with your code!</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
