@@ -6,3 +6,5 @@ Workshops
    :caption: Contents:
 
    programming/index
+   aiswdev/index
+   dax/index
