@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk11.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 11: Kubernetes Workload Management</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          เจาะลึกการจัดการแอปพลิเคชัน การอัปเดตแบบไม่มีดาวน์ไทม์ การสเกลอัตโนมัติ และการจัดการคอนฟิก
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>ReplicaSets:</strong> กลไกการรักษาสถานะและจำนวนของ Pods</li>
+              <li><strong>Deployments:</strong> การจัดการอัปเดต (Rollout) และย้อนกลับ (Rollback)</li>
+              <li><strong>Horizontal Pod Autoscaler (HPA):</strong> การสเกล Pod อัตโนมัติ</li>
+              <li><strong>Ingress:</strong> การจัดการ Traffic ภายนอกเข้าสู่ Cluster แบบ L7</li>
+              <li><strong>ConfigMaps & Secrets:</strong> การจัดการตั้งค่าและข้อมูลความลับ</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 11</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Recap Week 10 -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวนสัปดาห์ที่ 10 (Recap)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          ในสัปดาห์ที่แล้ว เราเรียนรู้พื้นฐานของ Kubernetes ไปแล้ว
+          </p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+            <div class="bg-blue-900/40 p-4 rounded-xl border-t-4 border-blue-500">
+              <h3 class="font-bold text-blue-300 mb-2">Cluster</h3>
+              <p class="text-xs">กลุ่มของเครื่อง Server (Master & Worker Nodes) ที่ทำงานร่วมกัน</p>
+            </div>
+            <div class="bg-green-900/40 p-4 rounded-xl border-t-4 border-green-500">
+              <h3 class="font-bold text-green-300 mb-2">Pod</h3>
+              <p class="text-xs">หน่วยเล็กที่สุดใน K8s ห่อหุ้ม Container (มักจะมี 1 Container ต่อ 1 Pod)</p>
+            </div>
+            <div class="bg-orange-900/40 p-4 rounded-xl border-t-4 border-orange-500">
+              <h3 class="font-bold text-orange-300 mb-2">Service</h3>
+              <p class="text-xs">การแจก IP และ Load Balance ภายในให้ Pods เพื่อให้ติดต่อกันได้</p>
+            </div>
+            <div class="bg-purple-900/40 p-4 rounded-xl border-t-4 border-purple-500">
+              <h3 class="font-bold text-purple-300 mb-2">YAML</h3>
+              <p class="text-xs">ภาษาที่ใช้ประกาศ Desired State ให้ Kubernetes ไปทำให้เป็นจริง</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is a Workload? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Kubernetes Workloads คืออะไร?</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-indigo-500">
+            <p class="text-xl mb-4">
+            <strong>Workload</strong> คือแอปพลิเคชันที่ทำงานอยู่บน Kubernetes
+            </p>
+            <p class="text-md text-gray-200 mb-6">
+            แม้ว่า "Pod" จะเป็นที่อยู่ของแอปพลิเคชัน แต่ในสภาพแวดล้อมจริง (Production) เราแทบจะไม่สร้าง Pod ขึ้นมาตรงๆ ด้วยตัวเองเลย เพราะถ้า Pod ตาย มันจะตายถาวร
+            </p>
+            <h3 class="text-xl font-bold text-yellow-300 mb-2">K8s มี Workload Resources เพื่อจัดการเรื่องเหล่านี้:</h3>
+            <ul class="list-disc list-inside space-y-2 text-md">
+              <li><strong>ReplicaSet / Deployment</strong> (สำหรับแอปฯ ที่ไม่มีสถานะ - Stateless)</li>
+              <li><strong>StatefulSet</strong> (สำหรับแอปฯ ที่มีสถานะ เช่น Database)</li>
+              <li><strong>DaemonSet</strong> (สำหรับรัน Agent ทุกๆ เครื่อง Node)</li>
+              <li><strong>Job / CronJob</strong> (สำหรับงานที่รันแล้วจบไป)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: ReplicaSets -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">1. ReplicaSet 🛡️</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-t-4 border-green-400 shadow-xl">
+            <p class="text-xl mb-4">
+            เป้าหมายหลักของ <strong>ReplicaSet (RS)</strong> คือการรักษาสถานะและจำนวนของ Pods ให้ตรงกับที่กำหนดไว้ (Desired State) อยู่ตลอดเวลา
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200">
+              <li>รับประกันว่าจะมีจำนวน Pod ตามที่ระบุทำงานอยู่เสมอ</li>
+              <li>ถ้า Pod ล่มหรือถูกลบ ReplicaSet จะสร้าง Pod ใหม่ขึ้นมาทดแทนทันที (Self-Healing)</li>
+              <li>ถ้ามี Pod เกินมา (เช่นเกิดจาก Network Partition) ReplicaSet จะลบ Pod ที่เกินทิ้ง</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: How ReplicaSet Works -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ReplicaSet ทำงานอย่างไร? (Labels & Selectors)</h2>
+          <p class="text-lg mb-6">ReplicaSet ไม่ได้ "ผูกติด" กับ Pod ตั้งแต่เกิด แต่มันใช้ <strong>Labels</strong> ในการค้นหาและควบคุม</p>
+
+          <div class="flex items-center justify-center gap-8 bg-white/10 p-6 rounded-xl">
+            <div class="bg-blue-800 p-4 rounded-xl border border-blue-400 text-center">
+              <h3 class="font-bold text-lg text-blue-200 mb-2">ReplicaSet</h3>
+              <p class="text-sm">Selector: <code>app=frontend</code></p>
+              <p class="text-sm font-bold text-yellow-300">Replicas: 3</p>
+            </div>
+            <div class="text-4xl">🔍</div>
+            <div class="flex flex-col gap-2">
+              <div class="bg-gray-800 p-2 rounded border border-gray-500 text-center">
+                Pod A (Label: <code>app=frontend</code>)
+              </div>
+              <div class="bg-gray-800 p-2 rounded border border-gray-500 text-center">
+                Pod B (Label: <code>app=frontend</code>)
+              </div>
+              <div class="bg-gray-800 p-2 rounded border border-gray-500 text-center">
+                Pod C (Label: <code>app=frontend</code>)
+              </div>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-yellow-300">
+          *ถ้าเปลี่ยน Label ของ Pod A เป็น app=backend, ReplicaSet จะคิดว่า Pod หายไป 1 ตัว และจะสร้าง Pod ใหม่ขึ้นมาแทนทันที!
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 5: ReplicaSet YAML Example -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ตัวอย่าง YAML ของ ReplicaSet</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-green-500">
+            <p><span class="text-blue-400">apiVersion:</span> apps/v1</p>
+            <p><span class="text-blue-400">kind:</span> ReplicaSet</p>
+            <p><span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> frontend-rs</p>
+            <p><span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">replicas:</span> 3 <span class="text-gray-500"># ระบุจำนวน Pod ที่ต้องการ (Desired State)</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">selector:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">matchLabels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> frontend <span class="text-gray-500"># เงื่อนไขการค้นหา Pod</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">template:</span> <span class="text-gray-500"># แม่พิมพ์สำหรับสร้าง Pod ใหม่</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">labels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> frontend</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">containers:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">name:</span> web</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">image:</span> nginx:1.14</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Limitation of ReplicaSet -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ข้อจำกัดของ ReplicaSet</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold text-red-300 mb-4">ปัญหาเวลาอัปเดตแอปพลิเคชัน</h3>
+              <p class="text-sm text-gray-200">
+              หากคุณต้องการเปลี่ยนเวอร์ชันของ Image (เช่น จาก <code>nginx:1.14</code> เป็น <code>nginx:1.15</code>) ใน ReplicaSet คุณต้องเข้าไปแก้ไฟล์ YAML 
+              </p>
+              <p class="text-sm mt-4 text-gray-200">
+              <strong>แต่ ReplicaSet จะไม่ทำการลบ Pod เก่าและสร้างใหม่ให้!</strong> คุณต้องไปลบ Pod เก่าด้วยมือเอง เพื่อให้มันสร้าง Pod ใหม่ด้วย Image ล่าสุด 
+              </p>
+            </div>
+            <div class="flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-7xl mb-4">❌</div>
+                <p class="text-yellow-300 font-bold">Downtime & Manual Work</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Introduction to Deployments -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">2. Deployments 🚀</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-purple-500">
+            <p class="text-xl mb-4">
+            <strong>Deployment</strong> คือ Workload Resource ระดับสูงที่สร้างมาครอบทับ ReplicaSet อีกที เพื่อแก้ปัญหาการอัปเดตแอปพลิเคชัน
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>รองรับการทำ <strong>Rolling Updates</strong> (เปลี่ยนเวอร์ชันแบบไม่มีดาวน์ไทม์)</li>
+              <li>สามารถทำ <strong>Rollback</strong> ย้อนกลับไปใช้เวอร์ชันก่อนหน้าได้ทันทีหากเกิดข้อผิดพลาด</li>
+              <li>สามารถ Pause และ Resume ระหว่างการอัปเดตได้</li>
+              <li>นี่คือ Resource ที่ถูกใช้งานมากที่สุดในการรันแอปพลิเคชันแบบ Stateless</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: The Hierarchy -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความสัมพันธ์ (The Hierarchy)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          Deployment ไม่ได้ควบคุม Pod โดยตรง แต่มันไปควบคุม ReplicaSet แทน
+          </p>
+
+          <div class="flex flex-col items-center justify-center space-y-4">
+            <div class="bg-purple-800 p-4 rounded-xl w-64 text-center border-2 border-purple-400 shadow-lg">
+              <h3 class="font-bold text-xl">Deployment</h3>
+              <p class="text-xs mt-1">ควบคุมเวอร์ชันและการอัปเดต</p>
+            </div>
+            <div class="text-3xl">⬇️</div>
+            <div class="bg-blue-800 p-4 rounded-xl w-64 text-center border-2 border-blue-400 shadow-lg">
+              <h3 class="font-bold text-xl">ReplicaSet</h3>
+              <p class="text-xs mt-1">ควบคุมจำนวน Pod ให้ครบ</p>
+            </div>
+            <div class="text-3xl">⬇️</div>
+            <div class="flex gap-4">
+              <div class="bg-green-800 p-4 rounded-xl w-32 text-center border-2 border-green-400 shadow-lg">
+                <h3 class="font-bold">Pod</h3>
+              </div>
+              <div class="bg-green-800 p-4 rounded-xl w-32 text-center border-2 border-green-400 shadow-lg">
+                <h3 class="font-bold">Pod</h3>
+              </div>
+              <div class="bg-green-800 p-4 rounded-xl w-32 text-center border-2 border-green-400 shadow-lg">
+                <h3 class="font-bold">Pod</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Deployment Strategies -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">Deployment Strategies (กลยุทธ์การอัปเดต)</h2>
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/40 p-6 rounded-xl border-t-4 border-red-500">
+              <h3 class="text-2xl font-bold mb-4 text-red-300">1. Recreate</h3>
+              <p class="text-sm mb-4 text-gray-300">
+              ทำลาย Pod เวอร์ชั่นเก่าทั้งหมดทิ้งก่อน แล้วค่อยสร้าง Pod เวอร์ชั่นใหม่ขึ้นมา
+              </p>
+              <ul class="list-disc list-inside text-xs text-gray-400">
+                <li><strong>ข้อดี:</strong> แน่ใจว่าไม่มี 2 เวอร์ชั่นรันพร้อมกัน (เหมาะกับระบบที่ใช้ Database ห้ามชนกัน)</li>
+                <li><strong>ข้อเสีย:</strong> เกิด <strong>Downtime</strong> 100% ระหว่างรอ Pod ใหม่พร้อมทำงาน</li>
+              </ul>
+            </div>
+
+            <div class="bg-green-900/40 p-6 rounded-xl border-t-4 border-green-500 transform scale-105 shadow-2xl">
+              <h3 class="text-2xl font-bold mb-4 text-green-300">2. RollingUpdate (Default)</h3>
+              <p class="text-sm mb-4 text-gray-300">
+              ทยอยสร้าง Pod ใหม่ทีละตัว และทยอยลบ Pod เก่าทีละตัว สลับกันไปจนครบ
+              </p>
+              <ul class="list-disc list-inside text-xs text-gray-400">
+                <li><strong>ข้อดี:</strong> <strong>Zero Downtime</strong> ระบบทำงานต่อเนื่อง</li>
+                <li><strong>ข้อเสีย:</strong> จะมีบางช่วงเวลาที่แอป 2 เวอร์ชั่นให้บริการพร้อมกัน (Code ต้องรองรับ Backward Compatibility)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Rolling Update Visualized -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">กลไกการทำงานของ Rolling Update</h2>
+
+          <div class="bg-white/10 p-6 rounded-xl">
+            <div class="flex justify-between items-center mb-6">
+              <div class="text-center">
+                <p class="text-sm text-blue-300">V1 ReplicaSet (เก่า)</p>
+                <div class="flex gap-2 mt-2">
+                  <span class="bg-blue-600 px-3 py-1 rounded">V1</span>
+                  <span class="bg-blue-600 px-3 py-1 rounded">V1</span>
+                  <span class="bg-blue-600 px-3 py-1 rounded">V1</span>
+                </div>
+              </div>
+              <div class="text-2xl font-bold text-gray-400">เริ่มต้น</div>
+              <div class="text-center">
+                <p class="text-sm text-green-300">V2 ReplicaSet (ใหม่)</p>
+                <div class="flex gap-2 mt-2 min-w-[100px]"></div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+              <div class="text-center">
+                <div class="flex gap-2 mt-2">
+                  <span class="bg-blue-600 px-3 py-1 rounded">V1</span>
+                  <span class="bg-blue-600 px-3 py-1 rounded">V1</span>
+                </div>
+              </div>
+              <div class="text-2xl font-bold text-yellow-400">กำลังอัปเดต...</div>
+              <div class="text-center">
+                <div class="flex gap-2 mt-2">
+                  <span class="bg-green-600 px-3 py-1 rounded">V2</span>
+                  <span class="bg-green-600 px-3 py-1 rounded">V2</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <div class="text-center">
+                <div class="flex gap-2 mt-2 min-w-[100px]"></div>
+              </div>
+              <div class="text-2xl font-bold text-green-400">เสร็จสมบูรณ์</div>
+              <div class="text-center">
+                <div class="flex gap-2 mt-2">
+                  <span class="bg-green-600 px-3 py-1 rounded">V2</span>
+                  <span class="bg-green-600 px-3 py-1 rounded">V2</span>
+                  <span class="bg-green-600 px-3 py-1 rounded">V2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Managing Rollouts -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การจัดการ Rollout</h2>
+          <p class="mb-4 text-left">Kubectl มีคำสั่งสำหรับตรวจสอบและจัดการสถานะการอัปเดต (Rollout) ของ Deployment</p>
+
+          <div class="space-y-4 text-left">
+            <div class="bg-black/50 p-4 rounded-xl border-l-4 border-blue-400">
+              <p class="text-xs text-gray-400">ดูสถานะการอัปเดตว่าเสร็จหรือยัง</p>
+              <code class="text-green-400 block mt-1">$ kubectl rollout status deployment/myapp</code>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl border-l-4 border-yellow-400">
+              <p class="text-xs text-gray-400">ดูประวัติการอัปเดต (Revision History)</p>
+              <code class="text-green-400 block mt-1">$ kubectl rollout history deployment/myapp</code>
+              <p class="text-xs text-gray-300 mt-1">REVISION  CHANGE-CAUSE</p>
+              <p class="text-xs text-gray-300">1         Initial commit</p>
+              <p class="text-xs text-gray-300">2         Update image to v2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Rollback -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-red-400">Rollback (การย้อนกลับ) ⏪</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-red-500">
+            <p class="text-lg mb-4">
+            หากอัปเดตไปแล้วแอปพลิเคชันมีปัญหา (เช่น ติด CrashLoopBackOff หรือ Error 500) เราสามารถสั่งถอยหลังกลับไปยังเวอร์ชันก่อนหน้าได้อย่างรวดเร็ว
+            </p>
+
+            <div class="bg-black/60 p-4 rounded-xl font-mono text-sm mb-4">
+              <p class="text-gray-400"># ย้อนกลับไปยังเวอร์ชันก่อนหน้าทันที (Revision ล่าสุด)</p>
+              <p class="text-green-400">$ kubectl rollout undo deployment/myapp</p>
+              <br>
+              <p class="text-gray-400"># หรือย้อนกลับไปยัง Revision ที่ระบุเจาะจง</p>
+              <p class="text-green-400">$ kubectl rollout undo deployment/myapp --to-revision=1</p>
+            </div>
+            <p class="text-sm text-yellow-300">
+            *Deployment เก็บ ReplicaSet เวอร์ชั่นเก่าไว้ (ปกติ 10 อัน) โดยตั้ง Replicas=0 ทำให้สามารถสลับกลับไปได้ทันที
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Deployment YAML Example -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ตัวอย่าง YAML ของ Deployment</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-purple-500">
+            <p><span class="text-blue-400">apiVersion:</span> apps/v1</p>
+            <p><span class="text-blue-400">kind:</span> <span class="text-white font-bold">Deployment</span></p>
+            <p><span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> myapp-deployment</p>
+            <p><span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">replicas:</span> 3</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">strategy:</span> <span class="text-gray-500"># กำหนดกลยุทธ์การ Rollout</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">type:</span> RollingUpdate</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">rollingUpdate:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">maxSurge:</span> 1 <span class="text-gray-500"># ยอมให้มี Pod เกินตอนอัปเดตได้ 1 ตัว</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">maxUnavailable:</span> 0 <span class="text-gray-500"># ห้ามมี Pod ขาดเลย (ต้องรับทราฟฟิกได้เต็ม 100%)</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">selector:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">matchLabels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> web</p>
+            <p>&nbsp;&nbsp;<span class="text-gray-500">... (template ของ Pod) ...</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Introduction to HPA -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">3. Horizontal Pod Autoscaler (HPA) 📈</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-yellow-500">
+            <p class="text-xl mb-4">
+            เมื่อมีผู้ใช้งานเพิ่มขึ้นอย่างมหาศาล จำนวน Pod (Replicas) ที่กำหนดไว้คงที่อาจจะไม่พอรับโหลด K8s จึงมี <strong>HPA</strong> มาช่วย
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>ทำหน้าที่สเกล (เพิ่ม/ลด) จำนวน Pod อัตโนมัติ (Scale Out / Scale In)</li>
+              <li>ทำงานร่วมกับ Deployment หรือ ReplicaSet</li>
+              <li>วัดผลจาก Metrics พื้นฐาน เช่น <strong>CPU utilization</strong> หรือ <strong>Memory usage</strong></li>
+              <li>สามารถประยุกต์ใช้กับ Custom Metrics (เช่น จำนวนคิวใน Kafka หรือ Request per second)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: How HPA Works -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">HPA ทำงานอย่างไร?</h2>
+
+          <div class="flex items-center justify-center gap-4 bg-black/40 p-8 rounded-xl">
+            <!-- User Traffic -->
+            <div class="text-center">
+              <div class="text-4xl mb-2">🌍</div>
+              <p class="text-xs">High Traffic</p>
+            </div>
+            <div class="text-2xl text-blue-400">➡️</div>
+            <!-- Pods -->
+            <div class="bg-gray-800 p-4 rounded text-center">
+              <p class="text-xs text-red-400 mb-1">CPU 85%</p>
+              <div class="bg-green-600 w-16 h-10 rounded flex items-center justify-center">Pod 1</div>
+            </div>
+            <div class="text-2xl text-yellow-400">⬆️</div>
+            <!-- Metrics Server -->
+            <div class="bg-blue-900 p-4 rounded border border-blue-400 text-center">
+              <p class="font-bold text-sm">Metrics Server</p>
+              <p class="text-xs text-gray-300 mt-1">(เก็บค่า CPU/Mem)</p>
+            </div>
+            <div class="text-2xl text-yellow-400">➡️</div>
+            <!-- HPA -->
+            <div class="bg-yellow-800 p-4 rounded border border-yellow-400 text-center">
+              <p class="font-bold text-sm">HPA</p>
+              <p class="text-xs text-gray-300 mt-1">Target CPU: 50%</p>
+            </div>
+          </div>
+
+          <div class="mt-6 text-left text-sm text-gray-200 max-w-3xl mx-auto">
+            <ol class="list-decimal list-inside space-y-2">
+              <li><strong>Metrics Server</strong> ตรวจจับได้ว่า CPU ของ Pod 1 พุ่งไป 85%</li>
+              <li><strong>HPA</strong> ซึ่งตั้งเป้าไว้ว่า CPU เฉลี่ยควรอยู่ที่ 50% เห็นว่าโหลดเกิน</li>
+              <li><strong>HPA</strong> สั่งเพิ่มจำนวน Replicas ใน Deployment จาก 1 ตัวเป็น 2 ตัว เพื่อหารเฉลี่ยโหลด</li>
+            </ol>
+            <p class="text-xs text-red-300 mt-4">*คำเตือน: HPA จะทำงานได้ Pod ต้องมีการกำหนด <code>resources.requests.cpu</code> ไว้ใน YAML ด้วย</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: HPA YAML & Command -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การเปิดใช้งาน HPA</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs border border-gray-600">
+              <p class="text-gray-400"># สร้างผ่าน Command Line (Imperative)</p>
+              <p class="text-green-400">$ kubectl autoscale deployment myapp \</p>
+              <p class="text-green-400">&nbsp;&nbsp;--cpu-percent=50 \</p>
+              <p class="text-green-400">&nbsp;&nbsp;--min=1 --max=10</p>
+              <br>
+              <p class="text-gray-400"># ตรวจสอบสถานะ</p>
+              <p class="text-green-400">$ kubectl get hpa</p>
+              <p class="text-white">NAME    TARGETS   MINPODS   MAXPODS   REPLICAS</p>
+              <p class="text-white">myapp   85%/50%   1         10        1</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs border-l-4 border-yellow-500">
+              <p class="text-gray-400"># สร้างผ่าน YAML (Declarative)</p>
+              <p><span class="text-blue-400">apiVersion:</span> autoscaling/v2</p>
+              <p><span class="text-blue-400">kind:</span> HorizontalPodAutoscaler</p>
+              <p><span class="text-blue-400">metadata:</span></p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> myapp-hpa</p>
+              <p><span class="text-blue-400">spec:</span></p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">scaleTargetRef:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">apiVersion:</span> apps/v1</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">kind:</span> Deployment</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">name:</span> myapp</p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">minReplicas:</span> 1</p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">maxReplicas:</span> 10</p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">metrics:</span></p>
+              <p>&nbsp;&nbsp;- <span class="text-yellow-300">type:</span> Resource</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">resource:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">name:</span> cpu</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">target:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">type:</span> Utilization</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">averageUtilization:</span> 50</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Why not just Service LoadBalancer? -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ปัญหาการรับ Traffic เข้า Cluster</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <p class="text-lg mb-4">
+            ในสัปดาห์ก่อน เราใช้ Service ชนิด <code>NodePort</code> หรือ <code>LoadBalancer</code> ในการเปิดให้ภายนอกเข้าถึงแอปได้ แต่มีข้อจำกัด:
+            </p>
+            <ul class="list-disc list-inside space-y-4 text-md text-gray-200">
+              <li><strong>NodePort:</strong> ใช้พอร์ตแปลกๆ (30000-32767) ไม่เหมาะกับ Production</li>
+              <li><strong>LoadBalancer:</strong> ผูกกับ Cloud Provider 1 Service = 1 Cloud LoadBalancer ซึ่ง<strong>แพงมาก!</strong> ถ้าเรามี 10 Microservices เราต้องเสียเงินซื้อ Load Balancer 10 ตัว</li>
+              <li>มันทำงานที่ <strong>Layer 4 (TCP/UDP)</strong> ทำให้ไม่สามารถแยกแยะ Domain Name หรือ URL Path (เช่น <code>/api</code>, <code>/web</code>) ได้</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Introduction to Ingress -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">4. Ingress 🌐</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-blue-400">
+            <p class="text-xl mb-4">
+            <strong>Ingress</strong> คือการจัดการ Traffic ภายนอกเข้าสู่ Cluster ในระดับ <strong>Layer 7 (HTTP/HTTPS)</strong>
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>เราใช้ Cloud Load Balancer หรือ IP สาธารณะเพียง <strong>1 ตัว</strong> ชี้เข้ามาที่ Ingress</li>
+              <li>จากนั้น Ingress จะเป็นด่านหน้า (Smart Router) คอยแจกจ่ายทราฟฟิกไปหา Service ย่อยๆ ภายใน</li>
+              <li>สามารถทำ Name-based virtual hosting (แยกตาม Domain Name เช่น <code>app.com</code>, <code>api.com</code>)</li>
+              <li>สามารถทำ Path-based routing (แยกตาม URL เช่น <code>/frontend</code>, <code>/backend</code>)</li>
+              <li>จัดการ SSL/TLS Termination ให้อัตโนมัติ (เช่น รวมกับ Let's Encrypt / Cert-manager)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Ingress Controller vs Ingress Resource -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Controller vs Resource</h2>
+          <p class="text-lg text-white/90 mb-6">
+          Ingress แบ่งออกเป็น 2 ส่วนที่ต้องทำงานร่วมกันเสมอ
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-blue-900/40 p-6 rounded-xl border border-blue-500">
+              <h3 class="text-2xl font-bold mb-2 text-blue-300">1. Ingress Controller</h3>
+              <p class="text-sm text-gray-300 mb-2">เป็นโปรแกรมจริงๆ (มักจะรันเป็น Pod) ที่ทำหน้าที่เป็น Reverse Proxy</p>
+              <ul class="list-disc list-inside text-xs text-gray-400">
+                <li>Kubernetes ไม่ได้มี Ingress Controller ติดตั้งมาให้โดย Default</li>
+                <li>คุณต้องเลือกติดตั้งเอง ตัวยอดนิยมเช่น: NGINX Ingress Controller, Traefik, HAProxy, Caddy หรือ AWS ALB</li>
+              </ul>
+            </div>
+
+            <div class="bg-green-900/40 p-6 rounded-xl border border-green-500">
+              <h3 class="text-2xl font-bold mb-2 text-green-300">2. Ingress Resource (YAML)</h3>
+              <p class="text-sm text-gray-300 mb-2">เป็นไฟล์ Configuration ที่เราเขียนเพื่อบอก Controller ว่าจะสร้างกฎการ Routing อย่างไร</p>
+              <ul class="list-disc list-inside text-xs text-gray-400">
+                <li>เมื่อเรา Apply ไฟล์นี้ Ingress Controller จะอ่านและอัปเดตไฟล์คอนฟิกของมันเอง (เช่น <code>nginx.conf</code>) ทันที</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Ingress YAML Example -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ตัวอย่าง YAML ของ Ingress (Path-based)</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-blue-400 shadow-2xl relative">
+            <span class="absolute top-2 right-4 text-gray-500 text-xs">ingress.yaml</span>
+            <p><span class="text-blue-400">apiVersion:</span> networking.k8s.io/v1</p>
+            <p><span class="text-blue-400">kind:</span> <span class="text-white font-bold">Ingress</span></p>
+            <p><span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> minimal-ingress</p>
+            <p><span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">ingressClassName:</span> nginx <span class="text-gray-500"># ระบุว่าใช้ Controller ตัวไหน</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">rules:</span></p>
+            <p>&nbsp;&nbsp;- <span class="text-yellow-300">host:</span> myapp.example.com <span class="text-gray-500"># Domain-based</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">http:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">paths:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-300">path:</span> /api <span class="text-gray-500"># Path-based</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">pathType:</span> Prefix</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">backend:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-300">service:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">name:</span> backend-service <span class="text-gray-500"># ส่งไปที่ Service ของ Backend</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">port:</span> { <span class="text-teal-300">number:</span> 8080 }</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Decoupling Configuration -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">หลักการแยกคอนฟิกออกจากโค้ด</h2>
+          <div class="bg-red-900/40 p-8 rounded-2xl text-left border border-red-500 mb-6">
+            <p class="text-lg font-bold text-red-300 mb-2">Anti-Pattern (สิ่งที่ห้ามทำ):</p>
+            <p class="text-sm text-gray-200">
+            การใส่รหัสผ่าน Database, URL ของ API ปลายทาง, หรือค่าคอนฟิกฝังไว้ใน Source Code (Hardcode) หรือการแพ็กใส่ไว้ใน Docker Image ตรงๆ 
+            </p>
+            <p class="text-sm mt-2 text-gray-200">
+            เพราะหากต้องการเปลี่ยนค่าสำหรับ Environment อื่น (Dev -> Prod) คุณต้องทำการ Rebuild Docker Image ใหม่ทั้งหมด!
+            </p>
+          </div>
+
+          <div class="bg-green-900/40 p-6 rounded-2xl text-left border border-green-500">
+            <p class="text-lg font-bold text-green-300 mb-2">Best Practice (สิ่งที่ควรทำ):</p>
+            <p class="text-sm text-gray-200">
+            Docker Image ตัวเดียว ควรสามารถนำไปรันได้ในทุก Environment โดยรับค่าตั้งค่าตัวแปรจากภายนอก ใน Kubernetes เราใช้ <strong>ConfigMap</strong> และ <strong>Secret</strong> ในการเก็บค่าเหล่านี้
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Introduction to ConfigMaps -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">5. ConfigMaps 📄</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-teal-400">
+            <p class="text-xl mb-4">
+            <strong>ConfigMap</strong> คือ Object ที่ใช้เก็บข้อมูลการตั้งค่าที่ไม่ใช่ความลับ (Non-confidential data) ในรูปแบบ Key-Value
+            </p>
+            <p class="text-md text-gray-200 mb-4">
+            Pod สามารถนำ ConfigMap ไปใช้งานได้ 2 รูปแบบหลักๆ:
+            </p>
+            <ul class="list-decimal list-inside space-y-3 text-lg text-gray-100">
+              <li><strong>Environment Variables:</strong> ฉีดค่าเข้าไปเป็นตัวแปรสภาพแวดล้อม (ENV) ให้กับ Container (ตัวอย่างเช่น <code>APP_ENV=production</code>)</li>
+              <li><strong>Volume Mounts:</strong> นำข้อมูลไปสร้างเป็นไฟล์และ Mount เข้าไปใน Path ของ Container (เช่น นำไฟล์ <code>nginx.conf</code> หรือ <code>settings.json</code> ไปวาง)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: ConfigMap YAML & Usage -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ตัวอย่างการสร้างและใช้งาน ConfigMap</h2>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs border border-gray-600">
+              <p class="text-gray-400"># 1. ไฟล์ cm.yaml</p>
+              <p><span class="text-blue-400">apiVersion:</span> v1</p>
+              <p><span class="text-blue-400">kind:</span> ConfigMap</p>
+              <p><span class="text-blue-400">metadata:</span></p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> app-config</p>
+              <p><span class="text-blue-400">data:</span></p>
+              <p>&nbsp;&nbsp;<span class="text-yellow-300">LOG_LEVEL:</span> "info"</p>
+              <p>&nbsp;&nbsp;<span class="text-yellow-300">DB_HOST:</span> "mysql-service.default.svc"</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs border-l-4 border-teal-500">
+              <p class="text-gray-400"># 2. การเรียกใช้ใน Deployment YAML</p>
+              <p><span class="text-gray-500">...</span></p>
+              <p><span class="text-purple-400">containers:</span></p>
+              <p>- <span class="text-orange-300">name:</span> myapp</p>
+              <p>&nbsp;&nbsp;<span class="text-orange-300">env:</span></p>
+              <p>&nbsp;&nbsp;- <span class="text-pink-300">name:</span> DATABASE_HOST <span class="text-gray-500"># ชื่อ ENV ใน Container</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-300">valueFrom:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">configMapKeyRef:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-teal-300">name:</span> app-config</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-teal-300">key:</span> DB_HOST</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Introduction to Secrets -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">6. Secrets 🤫</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-red-500">
+            <p class="text-xl mb-4">
+            <strong>Secret</strong> ทำงานคล้ายกับ ConfigMap แต่ถูกออกแบบมาเพื่อเก็บข้อมูลที่มีความอ่อนไหว (Sensitive data) เช่น รหัสผ่าน, OAuth Tokens หรือ SSH Keys
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>ข้อมูลใน Secret จะถูกจัดเก็บด้วยการเข้ารหัสแบบ <strong>Base64</strong> (ไม่ใช่ Encryption ที่แข็งแกร่ง เป็นแค่ Encoding ต้องระวังเวลาเอาขึ้น Git!)</li>
+              <li>หลีกเลี่ยงการเก็บรหัสผ่านไว้ใน Image หรือ Pod YAML ป้องกันไม่ให้คนอื่นมาเห็นง่ายๆ</li>
+              <li>ใน Production สามารถเชื่อมต่อ K8s Secret กับระบบจัดการความลับภายนอกได้ (เช่น HashiCorp Vault หรือ AWS Secrets Manager)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Secrets YAML & Usage -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ตัวอย่างการสร้างและใช้งาน Secret</h2>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs border border-gray-600">
+              <p class="text-gray-400"># การสร้าง Base64 ใน Linux/Mac</p>
+              <p class="text-green-400">$ echo -n 'myPassword123' | base64</p>
+              <p class="text-white">bXlQYXNzd29yZDEyMw==</p>
+              <br>
+              <p class="text-gray-400"># 1. ไฟล์ secret.yaml</p>
+              <p><span class="text-blue-400">apiVersion:</span> v1</p>
+              <p><span class="text-blue-400">kind:</span> Secret</p>
+              <p><span class="text-blue-400">metadata:</span></p>
+              <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> db-credentials</p>
+              <p><span class="text-blue-400">type:</span> Opaque</p>
+              <p><span class="text-blue-400">data:</span></p>
+              <p>&nbsp;&nbsp;<span class="text-yellow-300">password:</span> bXlQYXNzd29yZDEyMw==</p>
+            </div>
+
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs border-l-4 border-red-500">
+              <p class="text-gray-400"># 2. การเรียกใช้ใน Deployment YAML</p>
+              <p><span class="text-gray-500">...</span></p>
+              <p><span class="text-purple-400">containers:</span></p>
+              <p>- <span class="text-orange-300">name:</span> myapp</p>
+              <p>&nbsp;&nbsp;<span class="text-orange-300">env:</span></p>
+              <p>&nbsp;&nbsp;- <span class="text-pink-300">name:</span> DB_PASS</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-300">valueFrom:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">secretKeyRef:</span></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-teal-300">name:</span> db-credentials</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-teal-300">key:</span> password</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Summary -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สรุปบทเรียน (Recap)</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border-2 border-white/20 text-left space-y-4">
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>ReplicaSet:</strong> คอยเฝ้าดูและรักษาสถานะจำนวน Pod ให้เท่ากับค่าที่ต้องการเสมอ</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Deployment:</strong> ตัวช่วยที่ดีที่สุดในการจัดการแอปพลิเคชัน รองรับการทำ Rolling Update และ Rollback อัตโนมัติ</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>HPA:</strong> ตรวจสอบ Metrics (CPU/Memory) และเพิ่มหรือลดจำนวน Pod ให้อัตโนมัติตามโหลดที่เข้ามา</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Ingress:</strong> ด่านหน้าระดับ Layer 7 ที่ใช้รับ Traffic ภายนอกและกระจายเข้า Service ด้วยโดเมนและพาร์ท (Path)</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>ConfigMap & Secret:</strong> เครื่องมือแยก Configuration และรหัสผ่านออกจาก Source Code เพื่อทำ Immutable Image</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Lab Heads-up -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! 🛠️</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">Next: Kubernetes Workloads in Action</h3>
+            <p class="text-lg mb-4">
+            ในส่วนของปฏิบัติการ เราจะนำทฤษฎีทั้งหมดมาประยุกต์ใช้งานจริง โดยการนำ Web Application ขึ้นบน Cluster ของคุณ
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>✅ สร้าง <strong>Deployment</strong> แทนที่การรัน Pod แบบตรงๆ และทดลองสั่ง <strong>Rolling Update / Rollback</strong></li>
+              <li>✅ สร้าง <strong>ConfigMap และ Secret</strong> เพื่อเก็บค่าคอนฟิกและจำลองการเก็บรหัสผ่าน นำไปใส่เป็น ENV ให้แอป</li>
+              <li>✅ เปิดใช้งาน NGINX Ingress Controller บน Minikube/K3s</li>
+              <li>✅ สร้าง <strong>Ingress Resource</strong> เพื่อเข้าถึง Web Application จากภายนอกผ่านการตั้งชื่อ Domain เสมือน</li>
+            </ul>
+            <div class="mt-8 text-center text-gray-300 text-sm">
+              ทบทวนคำสั่ง <code>kubectl apply</code> และการเขียน YAML ให้พร้อม แล้วเจอกันในชั่วโมง Lab ครับ!
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 28: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: Advanced K8s Workloads 🚀</h2>
+          <p class="text-xl text-white/90 mb-8">
+          จัดการแอปพลิเคชันอย่างมืออาชีพด้วย Deployments, ConfigMaps และเผยแพร่สู่ภายนอกด้วย Ingress
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-purple-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ ใช้ <strong>ConfigMaps</strong> เพื่อจัดการ Environment Variables</li>
+              <li>✅ สร้าง <strong>Deployment</strong> สำหรับ Web application (Nginx หรือ Image ของคุณ)</li>
+              <li>✅ ทดลอง <strong>Scale</strong> Deployment เพื่อเพิ่ม/ลดจำนวน Pods</li>
+              <li>✅ เปิดใช้งาน Ingress Controller บน Minikube</li>
+              <li>✅ สร้าง <strong>Ingress</strong> เพื่อเชื่อมต่อ Domain เสมือนเข้าสู่ Web App</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Step 1 - Create ConfigMap -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: สร้าง ConfigMap สำหรับ Env Vars</h2>
+          <p class="mb-4 text-left">แทนที่จะ Hardcode ค่าต่างๆ ลงในโค้ด เราจะเก็บการตั้งค่าไว้ใน ConfigMap</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-teal-400 shadow-xl">
+            <p class="text-gray-400"># สร้างไฟล์ชื่อ web-configmap.yaml</p>
+            <p class="text-green-400">$ nano web-configmap.yaml</p>
+            <br>
+            <p class="text-blue-300">apiVersion: <span class="text-white">v1</span></p>
+            <p class="text-blue-300">kind: <span class="text-white font-bold">ConfigMap</span></p>
+            <p class="text-blue-300">metadata:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> <span class="text-white">webapp-config</span></p>
+            <p class="text-blue-300">data:</p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">APP_ENV:</span> <span class="text-white">"production"</span></p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">APP_VERSION:</span> <span class="text-white">"1.0.0"</span></p>
+            <p>&nbsp;&nbsp;<span class="text-yellow-300">GREETING_MSG:</span> <span class="text-white">"Hello from Kubernetes ConfigMap!"</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Step 2 - Create Deployment YAML -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 2: เขียนไฟล์ Deployment YAML</h2>
+          <p class="mb-4 text-left text-sm">เราจะสร้าง Deployment ที่ควบคุม 2 Pods และดึงค่าจาก ConfigMap มาใช้เป็น Environment Variables</p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs border-l-4 border-purple-500 overflow-auto h-72">
+            <p class="text-gray-400"># สร้างไฟล์ชื่อ web-deployment.yaml</p>
+            <p class="text-blue-300">apiVersion: <span class="text-white">apps/v1</span></p>
+            <p class="text-blue-300">kind: <span class="text-white font-bold">Deployment</span></p>
+            <p class="text-blue-300">metadata:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> <span class="text-white">my-webapp</span></p>
+            <p class="text-blue-300">spec:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">replicas:</span> <span class="text-white">2</span> <span class="text-gray-500"># ต้องการ 2 Pods เสมอ</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">selector:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">matchLabels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> <span class="text-white">web</span></p>
+            <p>&nbsp;&nbsp;<span class="text-blue-300">template:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-300">metadata:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">labels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> <span class="text-white">web</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-300">spec:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">containers:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">name:</span> <span class="text-white">web-container</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">image:</span> <span class="text-white">nginx:latest</span> <span class="text-gray-500"># หรือใส่ Docker Image ที่คุณสร้างไว้</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">containerPort:</span> <span class="text-white">80</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">envFrom:</span> <span class="text-gray-500"># ดึงข้อมูลทั้งหมดจาก ConfigMap มาเป็น ENV</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-pink-300">configMapRef:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-teal-300">name:</span> <span class="text-white">webapp-config</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 3 - Apply and Verify -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 3: Apply และตรวจสอบผลลัพธ์</h2>
+          <p class="mb-4 text-left">ใช้ kubectl นำไฟล์ YAML ทั้งสองไปรันใน Cluster</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3 border border-gray-600">
+            <p class="text-green-400">$ kubectl apply -f web-configmap.yaml</p>
+            <p class="text-white">configmap/webapp-config created</p>
+            <br>
+            <p class="text-green-400">$ kubectl apply -f web-deployment.yaml</p>
+            <p class="text-white">deployment.apps/my-webapp created</p>
+            <br>
+            <p class="text-gray-400"># ตรวจสอบ Deployment และ Pods</p>
+            <p class="text-green-400">$ kubectl get deployments</p>
+            <p class="text-white text-xs">NAME        READY   UP-TO-DATE   AVAILABLE   AGE</p>
+            <p class="text-white text-xs">my-webapp   2/2     2            2           15s</p>
+            <br>
+            <p class="text-green-400">$ kubectl get pods</p>
+            <p class="text-white text-xs">NAME                         READY   STATUS    RESTARTS   AGE</p>
+            <p class="text-white text-xs">my-webapp-65c8f9b9c4-abc12   1/1     Running   0          18s</p>
+            <p class="text-white text-xs">my-webapp-65c8f9b9c4-xyz89   1/1     Running   0          18s</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 4 - Verify Env Variables -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: พิสูจน์การทำงานของ ConfigMap</h2>
+          <p class="mb-4 text-left">เราจะมุดเข้าไปใน Pod ที่กำลังรันอยู่ เพื่อดูว่า Environment Variables ถูกส่งเข้าไปจริงหรือไม่</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4">
+            <p class="text-gray-400"># ใช้คำสั่ง exec เข้าไปรันคำสั่ง 'env' ใน pod (เลือกชื่อ Pod ของคุณมา 1 อัน)</p>
+            <p class="text-green-400">$ kubectl exec -it my-webapp-65c8f9b9c4-abc12 -- env | grep APP</p>
+            <br>
+            <p class="text-gray-400"># ผลลัพธ์ที่ควรจะเห็น:</p>
+            <p class="text-yellow-300">APP_ENV=production</p>
+            <p class="text-yellow-300">APP_VERSION=1.0.0</p>
+            <br>
+            <p class="text-green-400">$ kubectl exec -it my-webapp-65c8f9b9c4-abc12 -- env | grep GREETING</p>
+            <p class="text-yellow-300">GREETING_MSG=Hello from Kubernetes ConfigMap!</p>
+          </div>
+          <div class="mt-4 bg-green-900/40 p-3 rounded text-sm text-left">
+            💡 ความเจ๋งคือ: ถ้าคุณแก้ ConfigMap และสั่ง Restart Pod ค่าตัวแปรเหล่านี้จะเปลี่ยนไปโดยที่คุณไม่ต้อง Rebuild Docker Image ใหม่เลย!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 5 - Test Scaling -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 5: ทดลอง Scale Deployment (Scaling)</h2>
+          <p class="mb-4 text-left">หากมีผู้ใช้งานเว็บเพิ่มขึ้น เราสามารถเพิ่มจำนวน Pod ได้ง่ายๆ ภายในเสี้ยววินาที</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># สั่งเพิ่ม Replica จาก 2 เป็น 5</p>
+            <p class="text-green-400">$ kubectl scale deployment my-webapp --replicas=5</p>
+            <p class="text-white">deployment.apps/my-webapp scaled</p>
+            <br>
+            <p class="text-gray-400"># รีบพิมพ์คำสั่งนี้เพื่อดู K8s ทำงานแบบ Real-time</p>
+            <p class="text-green-400">$ kubectl get pods -w</p>
+            <p class="text-white text-xs">NAME                         READY   STATUS              AGE</p>
+            <p class="text-white text-xs">my-webapp-65c8f9b9c4-abc12   1/1     Running             5m</p>
+            <p class="text-white text-xs">my-webapp-65c8f9b9c4-xyz89   1/1     Running             5m</p>
+            <p class="text-yellow-400 text-xs">my-webapp-65c8f9b9c4-kpl22   0/1     ContainerCreating   2s</p>
+            <p class="text-yellow-400 text-xs">my-webapp-65c8f9b9c4-mnq33   0/1     ContainerCreating   2s</p>
+            <p class="text-yellow-400 text-xs">my-webapp-65c8f9b9c4-rst44   0/1     ContainerCreating   2s</p>
+          </div>
+          <p class="mt-3 text-xs text-left text-gray-300">กด Ctrl+C เพื่อออกจากโหมด Watch (-w) เมื่อทุก Pod ขึ้นสถานะ Running</p>
+        </div>
+      </div>
+
+      <!-- Slide 34: Step 6 - Create Service -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 6: สร้าง Service สำหรับรับ Traffic</h2>
+          <p class="mb-4 text-left text-sm">ก่อนจะใช้ Ingress ได้ เราต้องมี Service ชนิด <code>ClusterIP</code> (IP ภายใน) เพื่อมัดรวม Pod ทั้ง 5 ตัวเข้าด้วยกันเป็นเป้าหมายเดียว</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm border-l-4 border-blue-400">
+            <p class="text-gray-400"># ใช้คำสั่ง expose เพื่อสร้าง Service อย่างรวดเร็ว</p>
+            <p class="text-green-400">$ kubectl expose deployment my-webapp --port=80 --target-port=80 --type=ClusterIP</p>
+            <p class="text-white">service/my-webapp exposed</p>
+            <br>
+            <p class="text-gray-400"># ตรวจสอบ Service</p>
+            <p class="text-green-400">$ kubectl get svc</p>
+            <div class="text-white text-xs overflow-x-auto whitespace-pre">
+              NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+              kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP   5d
+              my-webapp    ClusterIP   10.101.55.200   <none>        80/TCP    10s
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 35: Step 7 - Enable Ingress Addon -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 7: เปิดใช้งาน Ingress Controller</h2>
+          <p class="mb-4 text-left">ใน K8s ปกติ Ingress เป็นแค่กฎ (Rules) เราต้องมีตัว Ingress Controller (เช่น Nginx) คอยรันอยู่เพื่อทำหน้าที่เป็น Reverse Proxy จริงๆ</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4">
+            <p class="text-gray-400"># สั่งให้ Minikube เปิดใช้งาน Nginx Ingress Controller</p>
+            <p class="text-green-400">$ minikube addons enable ingress</p>
+            <br>
+            <p class="text-white">💡  ingress is an addon maintained by Kubernetes.</p>
+            <p class="text-white">... (กระบวนการดาวน์โหลดและติดตั้ง Image ของ Ingress Controller)</p>
+            <p class="text-white">🌟  The 'ingress' addon is enabled</p>
+            <br>
+            <p class="text-gray-400"># ตรวจสอบว่า Ingress Controller รันขึ้นมาหรือยัง (จะอยู่ใน namespace: ingress-nginx)</p>
+            <p class="text-green-400">$ kubectl get pods -n ingress-nginx</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 36: Step 8 - Create Ingress YAML -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 8: เขียนไฟล์ Ingress YAML</h2>
+          <p class="mb-2 text-left text-sm">เราจะสร้างกฎ Routing ว่าถ้ามีคนเข้าเว็บด้วยโดเมน <code>myapp.local</code> ให้ชี้ไปที่ Service <code>my-webapp</code></p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-xs border-l-4 border-blue-500 shadow-xl overflow-auto h-72">
+            <p class="text-gray-400"># สร้างไฟล์ชื่อ web-ingress.yaml</p>
+            <p class="text-blue-300">apiVersion: <span class="text-white">networking.k8s.io/v1</span></p>
+            <p class="text-blue-300">kind: <span class="text-white font-bold">Ingress</span></p>
+            <p class="text-blue-300">metadata:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> <span class="text-white">webapp-ingress</span></p>
+            <p class="text-blue-300">spec:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">rules:</span></p>
+            <p>&nbsp;&nbsp;- <span class="text-yellow-300">host:</span> <span class="text-white font-bold">myapp.local</span> <span class="text-gray-500"># โดเมนที่เราต้องการใช้งาน</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">http:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">paths:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-purple-300">path:</span> <span class="text-white">/</span> <span class="text-gray-500"># ทุกๆ path ให้เข้าแอปนี้</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">pathType:</span> <span class="text-white">Prefix</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">backend:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-pink-300">service:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">name:</span> <span class="text-white">my-webapp</span> <span class="text-gray-500"># ชื่อ Service ที่เราสร้างใน Step 6</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-300">port:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-teal-300">number:</span> <span class="text-white">80</span> <span class="text-gray-500"># Port ของ Service</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 37: Step 9 - Apply Ingress & Configure DNS -->
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 9: Apply Ingress และตั้งค่า Local DNS</h2>
+          <p class="mb-4 text-left text-sm">เนื่องจาก <code>myapp.local</code> เป็นโดเมนสมมติ เราต้องหลอกคอมพิวเตอร์ของเราให้ชี้โดเมนนี้ไปที่ IP ของ Minikube</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs">
+              <p class="text-gray-400"># 1. Apply ไฟล์ Ingress</p>
+              <p class="text-green-400">$ kubectl apply -f web-ingress.yaml</p>
+              <p class="text-white">ingress.networking.k8s.io/webapp-ingress created</p>
+              <br>
+              <p class="text-gray-400"># 2. ดู IP ของ Ingress (รอจนกว่า ADDRESS จะมีค่า)</p>
+              <p class="text-green-400">$ kubectl get ingress</p>
+              <p class="text-white">NAME             HOSTS         ADDRESS        PORTS</p>
+              <p class="text-white">webapp-ingress   myapp.local   192.168.49.2   80</p>
+            </div>
+
+            <div class="bg-white/10 p-4 rounded-xl font-mono text-xs">
+              <p class="text-gray-300"># 3. แก้ไขไฟล์ hosts ในคอมพิวเตอร์ของคุณ</p>
+              <br>
+              <p class="text-blue-300">สำหรับ Windows (เปิด Notepad แบบ Admin):</p>
+              <p class="text-white">C:\Windows\System32\drivers\etc\hosts</p>
+              <br>
+              <p class="text-blue-300">สำหรับ Mac/Linux (ใช้ sudo nano):</p>
+              <p class="text-white">/etc/hosts</p>
+              <br>
+              <p class="text-gray-300"># เพิ่มบรรทัดนี้ลงไปท้ายไฟล์ (ใช้ IP จากข้อ 2):</p>
+              <p class="text-yellow-300 font-bold">192.168.49.2  myapp.local</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 38: Step 10 - Access via Domain -->
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 10: ทดสอบการเข้าถึงผ่าน Ingress</h2>
+          <p class="mb-6 text-left">ความพยายามอยู่ที่ไหน ความสำเร็จอยู่ที่นั่น! ทดสอบเปิดเบราว์เซอร์ของคุณ</p>
+
+          <div class="bg-white/10 p-8 rounded-xl flex items-center justify-center flex-col">
+            <div class="bg-gray-800 w-full max-w-lg rounded-t-xl p-2 flex items-center space-x-2 border-b border-gray-600">
+              <div class="w-3 h-3 rounded-full bg-red-500"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500"></div>
+              <div class="bg-gray-700 text-gray-300 text-xs px-4 py-1 rounded w-full text-center font-mono tracking-widest">
+                http://myapp.local
+              </div>
+            </div>
+            <div class="bg-white w-full max-w-lg rounded-b-xl p-8 text-black text-center border-4 border-t-0 border-gray-800">
+              <h1 class="text-4xl font-serif mb-4">Welcome to nginx!</h1>
+              <p class="text-gray-600">If you see this page, the nginx web server is successfully installed and working.</p>
+              <div class="mt-6 text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
+                (Traffic ถูกส่งผ่าน Ingress -> Service -> Pod 1 ใน 5 ตัวแบบ Load Balanced)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 39: Troubleshooting (Ingress Tunnel) -->
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">🛠️ Troubleshooting: เข้าเว็บไม่ได้ทำอย่างไร?</h2>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left text-sm">
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">ปัญหา: Mac / Windows ใช้ Docker Driver</strong>
+              <p>หากคุณรัน Minikube ด้วย Docker driver บน Mac หรือ Windows IP ของ Minikube จะไม่สามารถเข้าถึงได้โดยตรงจากเบราว์เซอร์โฮสต์</p>
+              <p class="text-yellow-300 font-bold mt-4">วิธีแก้: เปิด Terminal ใหม่แล้วรันคำสั่งนี้ทิ้งไว้</p>
+              <code class="block mt-2 bg-black/50 p-2 text-green-400 rounded">$ minikube tunnel</code>
+              <p class="text-xs text-gray-400 mt-2">มันจะขอรหัสผ่าน Admin เครื่องเพื่อเจาะอุโมงค์ให้ Traffic วิ่งเข้า Ingress ได้ (ต้องเปิดค้างไว้ตลอดตอนทดสอบ)</p>
+            </div>
+
+            <div class="bg-red-900/30 p-5 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">ปัญหา: ไม่มีสิทธิ์แก้ไขไฟล์ /etc/hosts</strong>
+              <p>คุณอาจจะ Save ไฟล์ไม่ได้เพราะติด Permission Denied</p>
+              <p class="text-yellow-300 font-bold mt-4">วิธีแก้:</p>
+              <ul class="list-disc list-inside mt-2 text-gray-300 space-y-1">
+                <li><strong>Windows:</strong> ต้องเปิดโปรแกรม Notepad โดยคลิกขวาแล้วเลือก "Run as Administrator" ก่อนเสมอ</li>
+                <li><strong>Mac/Linux:</strong> ต้องใช้คำสั่ง <code>sudo nano /etc/hosts</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 40: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 40 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🏆</div>
+          <h2 class="text-4xl font-bold mb-6">Lab Complete! การส่งงาน</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">รายละเอียดสิ่งที่ต้องส่ง (Submission):</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>ไฟล์ YAML ทั้งหมด (.zip):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li><code>web-configmap.yaml</code></li>
+                  <li><code>web-deployment.yaml</code></li>
+                  <li><code>web-ingress.yaml</code></li>
+                </ul>
+              </li>
+              <li>
+                <strong>Screenshots (รวมเป็น PDF):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ภาพ Terminal ที่แสดงการใช้คำสั่ง <code>kubectl scale</code> และผลลัพธ์ <code>kubectl get pods</code> (แสดง 5 pods)</li>
+                  <li>ภาพ Terminal ที่แสดง <code>kubectl exec</code> เข้าไปดู Environment Variables</li>
+                  <li>ภาพหน้า Web Browser ที่เข้าใช้งานผ่าน <code>http://myapp.local</code> ได้สำเร็จ</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

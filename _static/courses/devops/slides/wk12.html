@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk12.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 12: Monitoring & Logging ใน DevOps</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          การสร้าง "ตาและหู" ให้กับระบบ เพื่อการเฝ้าระวัง การวิเคราะห์ และการแก้ไขปัญหาในระดับ Production
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Day-2 Operations:</strong> ความสำคัญของการเฝ้าระวังและบันทึกข้อมูล</li>
+              <li><strong>Observability:</strong> เสาหลักทั้ง 3 (Metrics, Logs, Traces)</li>
+              <li><strong>Metrics & Visualization:</strong> เจาะลึก Prometheus และ Grafana</li>
+              <li><strong>Log Aggregation:</strong> การจัดการ Log รวมศูนย์ด้วย ELK Stack</li>
+              <li><strong>Alerting:</strong> การตั้งค่าการแจ้งเตือนและการจัดการวิกฤต</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 12</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Recap Week 11 -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวนสัปดาห์ที่ 11 (Recap)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          ในสัปดาห์ที่ผ่านมา เราเรียนรู้การจัดการ Workloads บน Kubernetes ไปแล้ว
+          </p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+            <div class="bg-blue-900/40 p-4 rounded-xl border-t-4 border-blue-500">
+              <h3 class="font-bold text-blue-300 mb-2">Deployments</h3>
+              <p class="text-xs">ใช้ควบคุมการ Rollout และ Rollback อย่างปลอดภัย</p>
+            </div>
+            <div class="bg-green-900/40 p-4 rounded-xl border-t-4 border-green-500">
+              <h3 class="font-bold text-green-300 mb-2">HPA</h3>
+              <p class="text-xs">การสเกลจำนวน Pod อัตโนมัติตามโหลดที่เข้ามา</p>
+            </div>
+            <div class="bg-orange-900/40 p-4 rounded-xl border-t-4 border-orange-500">
+              <h3 class="font-bold text-orange-300 mb-2">Ingress</h3>
+              <p class="text-xs">ด่านหน้ารับ Traffic ระดับ Layer 7 เข้าสู่ Cluster</p>
+            </div>
+            <div class="bg-purple-900/40 p-4 rounded-xl border-t-4 border-purple-500">
+              <h3 class="font-bold text-purple-300 mb-2">ConfigMaps</h3>
+              <p class="text-xs">แยกตัวแปรและตั้งค่าต่างๆ ออกจาก Code หลัก</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is Application Performance Management (APM) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Day-2 Operations คืออะไร?</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-8 border-indigo-500 shadow-xl">
+            <p class="text-xl mb-4">
+            เมื่อคุณ Deploy ระบบขึ้น Production แล้ว (Day 1) งานของ DevOps ยังไม่จบ!
+            </p>
+            <p class="text-lg text-gray-300 mb-4">
+            เราเข้าสู่ <strong>Application Performance Management (APM)</strong> ซึ่งเป็นเสาหลักที่สามของ DevOps Engineering (ถัดจาก Pull Request Automation และ Deployment Automation)
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>คอยตรวจสอบให้แน่ใจว่าระบบยังทำงานได้ดี</li>
+              <li>ตรวจจับข้อผิดพลาดก่อนที่ผู้ใช้จะบ่นบน Twitter</li>
+              <li>ช่วยให้เราสามารถ Rollback หรือปรับสเกลระบบได้ทันท่วงทีเมื่อมีปัญหา</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Importance of Monitoring & Logging -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความสำคัญของ Monitoring & Logging</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-2xl font-bold text-red-300 mb-4">การทำงานแบบ "ตาบอด"</h3>
+              <p class="text-sm text-gray-200">
+              แม้เราจะมี Code ที่ดีที่สุด แต่ Operational Errors เกิดขึ้นได้เสมอ! ตัวอย่างเช่น มีผู้ใช้พิมพ์ช่องว่าง (Whitespace) เยอะๆ ต่อท้ายโพสต์ จนทำให้ Stack Overflow ล่มมาแล้ว
+              </p>
+            </div>
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <h3 class="text-2xl font-bold text-green-300 mb-4">การมี "ตาและหู"</h3>
+              <p class="text-sm text-gray-200">
+              Monitoring & Logging จะช่วยตอบคำถามว่า: "เกิดอะไรขึ้น?", "ระบบช้าที่ตรงไหน?", "ทำไมผู้ใช้ถึงเจอ Error?" และแจ้งเตือนทีม Engineer ทันทีเพื่อแก้ไข
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Monitoring vs Observability -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Monitoring vs Observability</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-t-4 border-yellow-400">
+            <div class="flex justify-between items-start mb-6">
+              <div class="w-1/2 pr-4">
+                <h3 class="text-2xl font-bold text-yellow-300 mb-2">Monitoring (การเฝ้าระวัง)</h3>
+                <p class="text-sm">"ระบบทำงานอยู่หรือไม่? ทรัพยากรใกล้เต็มหรือยัง?"</p>
+                <p class="text-xs text-gray-400 mt-2">เน้นการดู Dashboard อาศัยการตั้งค่าล่วงหน้าเพื่อเฝ้าระวังปัญหาที่เรา *คาดว่าจะเกิด* (Known Unknowns)</p>
+              </div>
+              <div class="w-1/2 pl-4 border-l border-gray-500">
+                <h3 class="text-2xl font-bold text-blue-300 mb-2">Observability (ความสามารถในการสังเกต)</h3>
+                <p class="text-sm">"ทำไมระบบถึงทำงานผิดปกติ และต้นตอมาจากไหน?"</p>
+                <p class="text-xs text-gray-400 mt-2">เน้นการใช้ข้อมูลภายในเพื่อทำความเข้าใจและไขปัญหาที่เรา *ไม่เคยคาดคิดมาก่อน* (Unknown Unknowns)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: The 3 Pillars of Observability -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">3 Pillars of Observability</h2>
+          <p class="text-xl mb-8">เสาหลัก 3 ประการที่ทำให้เราสามารถวิเคราะห์ระบบได้อย่างสมบูรณ์</p>
+
+          <div class="grid grid-cols-3 gap-6 text-center">
+            <div class="bg-blue-800 p-6 rounded-xl border border-blue-400 shadow-lg">
+              <div class="text-4xl mb-4">📈</div>
+              <h3 class="font-bold text-xl text-white">Metrics</h3>
+              <p class="text-xs mt-2 text-gray-300">ตัวชี้วัดเชิงปริมาณ (ตัวเลข)</p>
+            </div>
+            <div class="bg-green-800 p-6 rounded-xl border border-green-400 shadow-lg">
+              <div class="text-4xl mb-4">📄</div>
+              <h3 class="font-bold text-xl text-white">Logs</h3>
+              <p class="text-xs mt-2 text-gray-300">บันทึกเหตุการณ์ (ข้อความ)</p>
+            </div>
+            <div class="bg-purple-800 p-6 rounded-xl border border-purple-400 shadow-lg">
+              <div class="text-4xl mb-4">🔗</div>
+              <h3 class="font-bold text-xl text-white">Traces</h3>
+              <p class="text-xs mt-2 text-gray-300">การตามรอยระหว่าง Services</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Pillar 1 - Metrics -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-blue-300">1. Metrics (ตัวชี้วัด) 📈</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-4 border-blue-400">
+            <p class="text-lg mb-4">
+            <strong>Metrics</strong> คือจุดข้อมูลที่เป็น <strong>"ตัวเลข"</strong> ที่วัดได้ในช่วงเวลาต่างๆ (Time Series Data) เพื่อประเมินสุขภาพของระบบ
+            </p>
+            <p class="text-sm mb-4 text-gray-300">การเก็บ Metrics ใช้พื้นที่จัดเก็บน้อยมากเมื่อเทียบกับ Logs เพราะเก็บแค่จุดเวลาและตัวเลข</p>
+            <ul class="list-disc list-inside space-y-2 text-md">
+              <li><strong>Resource Metrics:</strong> CPU, Memory, Disk I/O, Network Throughput</li>
+              <li><strong>Application Metrics:</strong> จำนวน Request/วินาที, เวลาในการตอบสนอง (Latency), อัตรา Error</li>
+              <li><strong>Business Metrics:</strong> จำนวนผู้ใช้งานที่กำลัง Login, รายได้ต่อชั่วโมง</li>
+            </ul>
+            <p class="text-xs text-yellow-300 mt-4">* เกร็ดความรู้: Netflix ต้องเก็บ Metrics แบบ Time Series ถึง 2.5 พันล้านรายการ เพื่อดูแลสุขภาพของระบบระดับโลก!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Using Quartile Analysis for Metrics -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">วิเคราะห์ Metrics อย่างไร? (Quartile Analysis)</h2>
+          <p class="text-lg mb-6">บางครั้งค่า "เฉลี่ย" (Average) ก็หลอกตาเรา</p>
+
+          <div class="bg-white/10 p-6 rounded-xl text-left text-sm space-y-4">
+            <p>สมมติว่าเว็บไซต์โหลดเสร็จเฉลี่ยที่ 1 วินาที ดูเหมือนจะดีใช่ไหม?</p>
+            <ul class="list-disc list-inside text-gray-300">
+              <li>แต่ผู้ใช้ที่ "ไม่ได้ล็อกอิน" (99%) โหลดเพจใน 0.5 วินาที</li>
+              <li>ผู้ใช้ที่ <strong>"ล็อกอินแล้ว"</strong> (1%) กลับต้องรอถึง 5 วินาที!</li>
+            </ul>
+            <p class="text-yellow-300 font-bold">วิธีแก้: ใช้ Quartile / Percentile Analysis</p>
+            <p>เรามักจะวัดค่า P95 หรือ P99 (ผู้ใช้ที่ช้าที่สุด 1% หรือ 5% ใช้เวลาเท่าไหร่) ทำให้เราเห็นปัญหาของกลุ่มผู้ใช้ส่วนน้อยได้อย่างชัดเจน</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Pillar 2 - Logs -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-green-300">2. Logs (บันทึกข้อความ) 📄</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-4 border-green-400">
+            <p class="text-lg mb-4">
+            ในขณะที่ Metrics บอกเราว่าเกิดปัญหา (เป็นตัวเลข) <strong>Logs</strong> คือสิ่งที่จะบอกเราว่า "ปัญหาเกิดจากอะไร" (เป็นข้อความ)
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li>คือการบันทึกสถานะหรือเหตุการณ์ ณ จุดเวลาหนึ่งๆ</li>
+              <li>มักจะระบุ: Timestamp (เวลา), Severity (INFO, WARN, ERROR), Message (ข้อความ)</li>
+              <li>ใช้สำหรับตอบคำถามยากๆ เช่น "ผู้ใช้คนนี้ (IP นี้) ส่งข้อมูลอะไรเข้ามา ทำให้ระบบพัง?"</li>
+            </ul>
+            <p class="text-xs mt-4 text-red-300">*ปัญหา: Logs มีปริมาณมหาศาลมาก ต้องมีระบบค้นหาที่ดี (เช่น ELK Stack)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Pillar 3 - Traces -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-purple-300">3. Traces (การตามรอย) 🔗</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-4 border-purple-400">
+            <p class="text-lg mb-4">
+            เมื่อระบบเปลี่ยนเป็น Microservices การใช้แค่ Logs อาจไม่พอ
+            </p>
+            <p class="text-sm text-gray-300 mb-4">
+            สมมติการค้นหาใน Google 1 ครั้ง อาจวิ่งผ่าน 5 Services ถ้าผลลัพธ์ช้า เราจะรู้ได้ยังไงว่า Service ไหนเป็นตัวถ่วง?
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md">
+              <li><strong>Distributed Tracing:</strong> สร้าง Unique ID สำหรับทุก Request</li>
+              <li>ID นี้จะถูกส่งต่อไปยังทุกๆ Service ที่เกี่ยวข้อง (Front-end > Auth > Backend > DB)</li>
+              <li>ทำให้เราสามารถวาด "แผนภาพเวลา" ได้ว่า 1 Request ใช้เวลาอยู่ใน Service ใดบ้าง</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Tools Landscape -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">เครื่องมือยอดนิยมในวงการ (The Tooling Landscape)</h2>
+          <div class="grid grid-cols-3 gap-6 text-center text-sm">
+            <div class="bg-blue-900/40 p-4 rounded-xl border border-blue-500">
+              <h3 class="font-bold text-lg mb-2 text-white">Metrics</h3>
+              <p class="text-blue-300 mb-2">Prometheus, DataDog, AWS CloudWatch</p>
+            </div>
+            <div class="bg-green-900/40 p-4 rounded-xl border border-green-500">
+              <h3 class="font-bold text-lg mb-2 text-white">Logs</h3>
+              <p class="text-green-300 mb-2">ELK Stack (Elasticsearch, Logstash, Kibana), Fluentd, Loki</p>
+            </div>
+            <div class="bg-yellow-900/40 p-4 rounded-xl border border-yellow-500">
+              <h3 class="font-bold text-lg mb-2 text-white">Visualization</h3>
+              <p class="text-yellow-300 mb-2">Grafana, Kibana</p>
+            </div>
+          </div>
+          <p class="mt-6 text-gray-300 text-lg">
+          ในวิชานี้ เราจะเน้นไปที่ชุด <strong>Prometheus + Grafana</strong> (สำหรับ Metrics) <br> และ <strong>ELK Stack</strong> (สำหรับ Logs)
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 11: Introduction to Prometheus -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-5xl mb-4">🔥</div>
+          <h2 class="text-4xl font-bold mb-6">Prometheus คืออะไร?</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-t-4 border-orange-500">
+            <p class="text-lg mb-4">
+            <strong>Prometheus</strong> เป็นระบบ Monitoring และ Time Series Database แบบ Open-source (ถูกพัฒนาขึ้นครั้งแรกที่ SoundCloud) ปัจจุบันเป็นมาตรฐานหลัก (De-facto) สำหรับ Kubernetes
+            </p>
+            <h3 class="font-bold text-orange-300 mb-2">จุดเด่น:</h3>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>จัดเก็บข้อมูลในรูปแบบ <strong>Time Series</strong> (ข้อมูลตัวเลขควบคู่กับ Timestamp)</li>
+              <li>สามารถสแกนค้นหา Target (Service Discovery) ได้อัตโนมัติ</li>
+              <li>รองรับการแจ้งเตือน (Alerting) ผ่าน Alertmanager</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Prometheus Architecture (Pull Model) -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สถาปัตยกรรมแบบ Pull Model</h2>
+          <p class="mb-4">จุดแตกต่างสำคัญ: Prometheus ใช้แนวคิด <strong>"Pull" (ไปดึงมา)</strong> ไม่ใช่ "Push" (รอรับข้อมูล)</p>
+
+          <div class="flex items-center justify-center gap-6 bg-black/40 p-8 rounded-xl">
+            <div class="text-center">
+              <p class="font-bold text-green-400 text-lg">Target (เช่น Node, Web App)</p>
+              <p class="text-xs text-gray-300 mt-1">Expose ข้อมูลที่ /metrics (เช่น Node Exporter)</p>
+            </div>
+            <div class="text-3xl text-yellow-400 animate-pulse">⬅️ ดึงข้อมูล (Scrape)</div>
+            <div class="bg-orange-800 p-4 rounded border border-orange-400 text-center">
+              <p class="font-bold text-lg">Prometheus Server</p>
+              <p class="text-xs text-gray-300 mt-1">ตั้งเวลาดึงข้อมูล (เช่น ทุก 15 วินาที)</p>
+            </div>
+          </div>
+
+          <div class="mt-6 text-left text-sm text-gray-200">
+            <p><strong>ข้อดีของ Pull Model:</strong></p>
+            <ul class="list-disc list-inside">
+              <li>รู้ได้ทันทีว่า Service ตาย เพราะ Prometheus จะดึงข้อมูลไม่ได้ (Connection Refused)</li>
+              <li>Application ไม่ต้องรู้เลยว่ามีใครมา Monitor ตัวมันอยู่ ทำให้โค้ดไม่รก</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Time Series Data & PromQL -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">PromQL (Prometheus Query Language)</h2>
+          <p class="mb-6 text-left">Prometheus มาพร้อมกับภาษาเฉพาะ (PromQL) สำหรับดึงและคำนวณข้อมูล</p>
+
+          <div class="bg-black/50 p-6 rounded-xl font-mono text-left text-sm border border-gray-600 shadow-2xl">
+            <p class="text-gray-400"># ดึงข้อมูล CPU Usage ของ Node ทั้งหมด</p>
+            <p class="text-green-400">node_cpu_seconds_total</p>
+            <br>
+            <p class="text-gray-400"># คำนวณหา อัตราการใช้ CPU ในช่วง 5 นาที (Rate)</p>
+            <p class="text-blue-300">rate(<span class="text-green-400">node_cpu_seconds_total</span>[5m])</p>
+            <br>
+            <p class="text-gray-400"># กรองเฉพาะ HTTP 500 Errors จาก Service ชื่อ "backend"</p>
+            <p class="text-yellow-300">http_requests_total{status="500", job="backend"}</p>
+          </div>
+          <p class="mt-4 text-sm text-gray-300 text-left">
+          คำสั่งเหล่านี้จะถูกส่งไปยัง Time Series Database (TSDB) ภายใน Prometheus เพื่อวิเคราะห์
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 14: Introduction to Grafana -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Grafana (Visualization) 📊</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-orange-500">
+            <p class="text-xl mb-4">
+            Prometheus เก่งเรื่องการเก็บและคำนวณ แต่ UI ไม่สวย <strong>Grafana</strong> จึงเข้ามาอุดช่องโหว่นี้
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li>เป็นเครื่องมือสำหรับสร้าง Dashboard ระดับโลก</li>
+              <li>รองรับ Data Sources หลากหลาย (ไม่ได้มีแค่ Prometheus แต่ต่อกับ MySQL, PostgreSQL, Elasticsearch ได้ด้วย)</li>
+              <li>มี Template Dashboard สำเร็จรูป (Community Dashboards) โหลดมาใช้งานได้ทันที</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Integrating Prometheus + Grafana -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การทำงานร่วมกัน: Prometheus + Grafana</h2>
+          <p class="mb-4 text-left">Grafana จะทำหน้าที่เป็น "หน้าต่าง" ดึงข้อมูลจาก Prometheus มาวาดกราฟ</p>
+
+          <div class="bg-black/50 p-6 rounded-xl border border-gray-600 mb-6">
+            <div class="flex justify-around items-center">
+              <div class="text-center">
+                <p class="font-bold text-blue-300">App / Node</p>
+                <p class="text-xs">Expose Metrics</p>
+              </div>
+              <div>➡️</div>
+              <div class="text-center">
+                <p class="font-bold text-orange-400">Prometheus</p>
+                <p class="text-xs">Scrape & Store TSDB</p>
+              </div>
+              <div>➡️</div>
+              <div class="text-center">
+                <p class="font-bold text-yellow-400">Grafana</p>
+                <p class="text-xs">Query PromQL & Plot Graphs</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-sm text-left text-gray-300">
+          *ในขั้นตอน Lab เราจะทำการเพิ่ม Prometheus เป็น Data Source ในหน้า UI ของ Grafana และสร้าง Dashboard สำหรับดูสถานะ Server (Node Exporter)
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 16: The Problem with Logging -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทำไมต้องทำ Log Aggregation?</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold text-red-300 mb-4">ยุค Server ตัวเดียว</h3>
+              <p class="text-sm text-gray-200">
+              เมื่อก่อนเราแค่ SSH เข้าไปใน Server พิมพ์ <code>tail -f /var/log/syslog</code> ก็แก้ปัญหาได้แล้ว
+              </p>
+            </div>
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold text-red-300 mb-4">ยุค Microservices & K8s</h3>
+              <p class="text-sm text-gray-200">
+              มี Pod 50 ตัว รันกระจายกัน ถ้ามีคนบอกว่า "ล็อกอินไม่ได้" เราจะ SSH เข้าไปหา log ใน Pod ตัวไหน? การค้นหาแบบ Manual เป็นไปไม่ได้อีกต่อไป
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Introduction to ELK Stack -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ELK Stack คืออะไร? 🌲</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-green-400">
+            <p class="text-xl mb-4">
+            <strong>ELK Stack</strong> เป็นกลุ่มโปรแกรม Open-source ยอดนิยมสำหรับทำ Centralized Logging (รวบรวม Logs ไว้ที่เดียว)
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-6">
+              <li><strong>E - Elasticsearch:</strong> ฐานข้อมูล (Search Engine)</li>
+              <li><strong>L - Logstash:</strong> ตัวรวบรวมและแปลงข้อมูล (Data Processor)</li>
+              <li><strong>K - Kibana:</strong> หน้าจอแสดงผลและค้นหาข้อมูล (Dashboard)</li>
+            </ul>
+            <p class="text-sm mt-4 text-gray-400">*ผู้ใช้จะส่ง Log จากทุกระบบมาที่ Logstash -> แปลงเสร็จส่งให้ Elasticsearch -> ดูผลผ่าน Kibana</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: L - Logstash -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">L - Logstash (The Processor)</h2>
+          <p class="mb-4 text-left">Log ที่มาจากระบบต่างๆ มักจะเป็น Text ธรรมดาที่อ่านยาก Logstash ทำหน้าที่ <strong>สกัด (Parse)</strong> ให้เป็นโครงสร้าง (Structured Data)</p>
+
+          <div class="bg-gray-800 p-4 rounded-xl text-left font-mono text-xs mb-4">
+            <p class="text-red-400"># ขาเข้า (Raw Text)</p>
+            <p>192.168.1.1 - - [10/Oct/2026:13:55:36] "GET /api/v1/users HTTP/1.1" 500 45</p>
+          </div>
+          <div class="text-2xl mb-4">⬇️ Grok Parsing</div>
+          <div class="bg-black/60 p-4 rounded-xl text-left font-mono text-xs border border-green-500">
+            <p class="text-green-400"># ขาออก (JSON) ที่จะถูกส่งต่อให้ Elasticsearch</p>
+            <p>{</p>
+            <p>&nbsp;&nbsp;"client_ip": "192.168.1.1",</p>
+            <p>&nbsp;&nbsp;"timestamp": "2026-10-10T13:55:36Z",</p>
+            <p>&nbsp;&nbsp;"path": "/api/v1/users",</p>
+            <p>&nbsp;&nbsp;"status": 500</p>
+            <p>}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: E - Elasticsearch -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">E - Elasticsearch (The Storage)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-yellow-500">
+            <p class="text-lg mb-4">
+            เมื่อข้อมูลถูกแปลงเป็น JSON แล้ว จะถูกนำมาเก็บไว้ที่ <strong>Elasticsearch</strong>
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li>เป็นฐานข้อมูล NoSQL ประเภท Search Engine (สร้างมาจาก Apache Lucene)</li>
+              <li>เก่งมากเรื่องการค้นหาข้อความ (Full-Text Search) อย่างรวดเร็วมหาศาล</li>
+              <li>เก็บข้อมูลเป็น Index (คล้ายๆ Table ใน SQL)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: K - Kibana -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">K - Kibana (The Visualization)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-pink-500">
+            <p class="text-lg mb-4">
+            หน้ากาก (UI) ที่ใช้เชื่อมต่อกับ Elasticsearch
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li>แทนที่คุณจะต้องเขียน Query โค้ดส่งไปหา Database คุณสามารถพิมพ์หาคำว่า <code>"error" AND status:500</code> บนหน้าจอ Kibana ได้เลย</li>
+              <li>สามารถสร้าง Dashboard สวยๆ เพื่อดูสถิติ (เช่น กราฟแท่งแสดงปริมาณ Error ย้อนหลัง 24 ชม.)</li>
+              <li><em>คำเตือน:</em> Kibana เก็บข้อมูลสำคัญ ควรตั้งค่า Authentication (เช่นผ่าน Nginx Reverse Proxy หรือ Elastic X-Pack) ไม่ให้ใครเข้าถึงได้อิสระ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Alerting - What when things fail? -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Alerting (การแจ้งเตือน) 🚨</h2>
+          <div class="bg-red-900/40 p-8 rounded-2xl text-left border border-red-500 mb-6">
+            <p class="text-lg mb-2">
+            มี Dashboard ที่สวยงามไปก็ไร้ประโยชน์ ถ้าไม่มีใครนั่งดูมัน!
+            </p>
+            <p class="text-sm text-gray-200">
+            หลักการของ <strong>Alerting</strong> คือการให้ระบบคอมพิวเตอร์เฝ้าดูกราฟแทนเรา เมื่อเงื่อนไขทาง Metrics แตะจุดวิกฤต (Threshold) ให้ทำการปลุก หรือแจ้งเตือน <strong>On-call Engineer</strong> ทันที
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Alertmanager -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Prometheus Alertmanager</h2>
+          <p class="mb-6 text-left">Prometheus มีเครื่องมือแยกที่ชื่อ <strong>Alertmanager</strong> เพื่อจัดการเรื่องการแจ้งเตือน</p>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-red-500">
+            <p class="text-gray-400"># ตัวอย่างการตั้งเงื่อนไข (Alerting Rule)</p>
+            <p><span class="text-blue-400">alert:</span> HighCpuUsage</p>
+            <p><span class="text-blue-400">expr:</span> <span class="text-yellow-300">rate(node_cpu_seconds_total[5m]) > 0.8</span></p>
+            <p><span class="text-blue-400">for:</span> <span class="text-green-300">5m</span> <span class="text-gray-500"># ต้องเป็นไปตามเงื่อนไขนาน 5 นาทีถึงจะแจ้ง (ป้องกันการแกว่งชั่วคราว)</span></p>
+            <p><span class="text-blue-400">labels:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">severity:</span> critical</p>
+          </div>
+
+          <p class="mt-4 text-sm text-gray-300 text-left">
+          เมื่อถูก Trigger จะมีการ Routing (ส่งต่อ) ไปยังระบบแจ้งเตือนภายนอก เช่น <strong>Slack, Microsoft Teams, Email, PagerDuty หรือ SMS (Twilio)</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 23: Avoiding Alert Fatigue -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ข้อควรระวัง: Alert Fatigue</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-yellow-500">
+            <h3 class="text-2xl font-bold text-yellow-300 mb-4">"ความเหนื่อยล้าจากการแจ้งเตือน"</h3>
+            <p class="text-md text-gray-200 mb-4">
+            หากเราตั้งค่าให้ระบบแจ้งเตือนทุกครั้งที่มี CPU พุ่งนิดหน่อย หรือมี Error เล็กๆ น้อยๆ โทรศัพท์ของ Engineer จะดังทั้งวันทั้งคืน
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li>สุดท้าย Engineer จะเพิกเฉย (Ignore) หรือ ปิดเสียง (Mute) การแจ้งเตือนนั้น</li>
+              <li>เมื่อระบบล่มจริงๆ (Critical) ก็จะไม่มีใครเข้าไปแก้ไข!</li>
+            </ul>
+            <p class="text-md font-bold text-green-300 mt-4">Best Practice:</p>
+            <p class="text-sm text-gray-300">แจ้งเตือนเฉพาะเมื่อ <strong>User Impact</strong> เกิดขึ้นแล้วเท่านั้น (เช่น ผู้ใช้เข้าเว็บไม่ได้เลย) และควรรวม Alert ที่เกิดพร้อมกันเป็นก้อนเดียว (Grouping)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Summary of Week 12 -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สรุปบทเรียน (Summary)</h2>
+          <ul class="list-disc list-inside text-left text-lg space-y-4 bg-white/10 p-8 rounded-2xl">
+            <li><strong>Monitoring & Logging</strong> คือตาและหูของ DevOps ใน Day-2 Operations เพื่อรักษาสุขภาพของระบบ</li>
+            <li>เราประเมินระบบผ่าน <strong>3 Pillars of Observability</strong>: Metrics, Logs และ Traces</li>
+            <li>ใช้ <strong>Prometheus + Grafana</strong> สำหรับดึงข้อมูลตัวเลข (Metrics) มาแสดงผลบน Dashboard</li>
+            <li>ใช้ <strong>ELK Stack (Elasticsearch, Logstash, Kibana)</strong> เพื่อรวมศูนย์การค้นหา Logs ที่กระจัดกระจาย</li>
+            <li>ตั้งค่า <strong>Alerting</strong> ที่แม่นยำ แจ้งเตือนเมื่อวิกฤต และระวังการเกิด Alert Fatigue</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 25: Lab Heads-up -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! 🔬</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">ภารกิจปฏิบัติการสัปดาห์ที่ 12:</h3>
+            <p class="text-lg mb-4">
+            ติดตั้ง "หอคอยเฝ้าระวัง" ให้กับ Kubernetes Cluster ของเรา
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>✅ ติดตั้ง <strong>Prometheus</strong> และ <strong>Grafana</strong> ลงบน Local Cluster (เช่น Minikube)</li>
+              <li>✅ ตั้งค่า Prometheus ให้เชื่อมต่อและดึงข้อมูล Metrics ของระบบ (Node Metrics / cAdvisor)</li>
+              <li>✅ สร้าง <strong>Grafana Dashboard</strong> แรกของคุณ เพื่อแสดงกราฟ CPU และ Memory ของเครื่อง</li>
+              <li>✅ ทดลองสร้าง Alert ง่ายๆ ในระบบ</li>
+            </ul>
+            <div class="mt-8 text-center text-gray-300 text-sm">
+              ทบทวนคำสั่ง kubectl และการทำ Port Forwarding มาให้พร้อม แล้วเจอกันใน Lab!
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 26: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: Monitoring & Observability 📊</h2>
+          <p class="text-xl text-white/90 mb-8">
+          สร้างระบบเฝ้าระวัง (Monitoring Stack) ของคุณเองด้วย Prometheus, Grafana และ cAdvisor
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-orange-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ ติดตั้ง Prometheus และ Grafana ด้วย <strong>Docker Compose</strong></li>
+              <li>✅ รัน <strong>cAdvisor</strong> เพื่อเป็น Exporter สำหรับดึงข้อมูล Metrics ของ Docker Containers</li>
+              <li>✅ ตั้งค่า Prometheus (<code>prometheus.yml</code>) ให้ทำการ Scrape ข้อมูลจาก Node</li>
+              <li>✅ เชื่อมต่อ Grafana กับ Prometheus และสร้าง <strong>Dashboard</strong> พื้นฐาน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Step 1 - Project Setup -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: เตรียมพื้นที่โปรเจกต์ (Workspace)</h2>
+          <p class="mb-4 text-left">สร้างโฟลเดอร์สำหรับเก็บไฟล์ Configuration ของ Monitoring Stack</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border border-gray-600">
+            <p class="text-gray-400"># 1. สร้างโฟลเดอร์ใหม่และเข้าไปข้างใน</p>
+            <p class="text-green-400">$ mkdir monitoring-stack && cd monitoring-stack</p>
+            <br>
+            <p class="text-gray-400"># 2. สร้างไฟล์เปล่าเตรียมไว้สำหรับ Docker Compose และ Prometheus</p>
+            <p class="text-green-400">$ touch docker-compose.yml prometheus.yml</p>
+            <br>
+            <p class="text-gray-400"># 3. ตรวจสอบว่าไฟล์ถูกสร้างเรียบร้อยแล้ว</p>
+            <p class="text-green-400">$ ls -l</p>
+            <p class="text-white text-xs">-rw-r--r--  1 user  group  0 Oct 24 10:00 docker-compose.yml</p>
+            <p class="text-white text-xs">-rw-r--r--  1 user  group  0 Oct 24 10:00 prometheus.yml</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Step 2 - prometheus.yml -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 2: เขียนไฟล์ prometheus.yml</h2>
+          <p class="mb-4 text-left text-sm">ตั้งค่าให้ Prometheus ไปดึง (Scrape) ข้อมูลจากตัวเอง และจาก cAdvisor</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-xs border-l-4 border-orange-500 shadow-xl">
+            <p class="text-gray-400"># แก้ไขไฟล์ prometheus.yml</p>
+            <p class="text-green-400">$ nano prometheus.yml</p>
+            <br>
+            <p><span class="text-blue-300">global:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">scrape_interval:</span> 15s <span class="text-gray-500"># ดึงข้อมูลทุกๆ 15 วินาที</span></p>
+            <br>
+            <p><span class="text-blue-300">scrape_configs:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-gray-500"># 1. ให้ Prometheus มอนิเตอร์ตัวเอง</span></p>
+            <p>&nbsp;&nbsp;- <span class="text-yellow-300">job_name:</span> <span class="text-white">'prometheus'</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">static_configs:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-cyan-300">targets:</span> [<span class="text-white">'localhost:9090'</span>]</p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-gray-500"># 2. ให้ดึงข้อมูลจาก cAdvisor ที่จะรันในพอร์ต 8080</span></p>
+            <p>&nbsp;&nbsp;- <span class="text-yellow-300">job_name:</span> <span class="text-white">'cadvisor'</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-300">static_configs:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-cyan-300">targets:</span> [<span class="text-white">'cadvisor:8080'</span>] <span class="text-gray-500"># ใช้ชื่อ Service จาก Docker Compose</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Step 3 - docker-compose.yml -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 3: เขียนไฟล์ Docker Compose</h2>
+          <p class="mb-2 text-left text-xs">ประกอบร่าง 3 บริการ (Prometheus, Grafana, cAdvisor) ให้อยู่ใน Stack เดียวกัน</p>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left font-mono text-[11px] border-l-4 border-blue-500 overflow-auto h-72">
+            <p><span class="text-blue-400">version:</span> <span class="text-white">'3.8'</span></p>
+            <p><span class="text-blue-400">services:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">prometheus:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">image:</span> prom/prometheus:latest</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">volumes:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ./prometheus.yml:/etc/prometheus/prometheus.yml <span class="text-gray-500"># Mount ไฟล์ Config เข้าไป</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-white">"9090:9090"</span></p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-green-300">grafana:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">image:</span> grafana/grafana:latest</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-white">"3000:3000"</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">depends_on:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- prometheus</p>
+            <br>
+            <p>&nbsp;&nbsp;<span class="text-green-300">cadvisor:</span> <span class="text-gray-500"># เครื่องมือดึง Metrics ของ Docker</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">image:</span> gcr.io/cadvisor/cadvisor:latest</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-white">"8080:8080"</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">volumes:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- /:/rootfs:ro</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- /var/run:/var/run:rw</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- /sys:/sys:ro</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- /var/lib/docker/:/var/lib/docker:ro</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Step 4 - Run and Check -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: รันระบบและตรวจสอบสถานะ</h2>
+          <p class="mb-4 text-left">ใช้คำสั่งเพื่อรันทั้ง Stack ขึ้นมาแบบ Background</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4">
+            <p class="text-green-400">$ docker-compose up -d</p>
+            <p class="text-gray-300 text-xs">Creating network "monitoring-stack_default" with the default driver</p>
+            <p class="text-gray-300 text-xs">Creating monitoring-stack_cadvisor_1   ... done</p>
+            <p class="text-gray-300 text-xs">Creating monitoring-stack_prometheus_1 ... done</p>
+            <p class="text-gray-300 text-xs">Creating monitoring-stack_grafana_1    ... done</p>
+            <br>
+            <p class="text-gray-400"># ตรวจสอบว่าคอนเทนเนอร์รันอยู่ครบ 3 ตัวหรือไม่</p>
+            <p class="text-green-400">$ docker-compose ps</p>
+            <div class="text-white text-xs overflow-x-auto whitespace-pre">
+              NAME                              COMMAND                  STATE   PORTS
+              monitoring-stack_cadvisor_1       /usr/bin/cadvisor -log   Up      0.0.0.0:8080->8080/tcp
+              monitoring-stack_grafana_1        /run.sh                  Up      0.0.0.0:3000->3000/tcp
+              monitoring-stack_prometheus_1     /bin/prometheus --conf   Up      0.0.0.0:9090->9090/tcp
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 5 - Check Prometheus Targets -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 5: ยืนยันการเชื่อมต่อใน Prometheus UI</h2>
+          <p class="mb-6 text-left">ต้องแน่ใจว่า Prometheus สามารถดึงข้อมูลจาก cAdvisor ได้สำเร็จ</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">เข้าถึง Prometheus:</h3>
+              <ol class="list-decimal list-inside space-y-2 text-sm text-gray-200">
+                <li>เปิดเบราว์เซอร์ไปที่ <code>http://localhost:9090</code></li>
+                <li>คลิกที่เมนู <strong>Status</strong> ด้านบน</li>
+                <li>เลือก <strong>Targets</strong></li>
+                <li>ตรวจสอบให้แน่ใจว่า Endpoint ของทั้ง <code>prometheus</code> และ <code>cadvisor</code> มีสถานะเป็น <span class="text-green-400 font-bold">UP</span></li>
+              </ol>
+            </div>
+            <div class="bg-black/80 p-4 rounded-xl border-2 border-gray-600 flex flex-col justify-center items-center">
+              <div class="w-full bg-blue-900 px-3 py-1 text-xs text-white flex justify-between">
+                <span>Targets</span>
+                <span>Status</span>
+              </div>
+              <div class="w-full bg-white px-3 py-2 text-xs text-black border-b">
+                <span class="font-bold text-blue-600">cadvisor (1/1 up)</span>
+                <br>
+                <span class="text-green-600 bg-green-100 px-1 rounded">UP</span> http://cadvisor:8080/metrics
+              </div>
+              <div class="w-full bg-white px-3 py-2 text-xs text-black">
+                <span class="font-bold text-blue-600">prometheus (1/1 up)</span>
+                <br>
+                <span class="text-green-600 bg-green-100 px-1 rounded">UP</span> http://localhost:9090/metrics
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 6 - Connect Grafana to Prometheus -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 6: เข้าสู่ระบบ Grafana และเพิ่ม Data Source</h2>
+
+          <div class="bg-black/50 p-8 rounded-2xl text-left border border-gray-600 space-y-4">
+            <h3 class="text-xl font-bold text-orange-400">1. เข้าสู่ระบบ (Login)</h3>
+            <p class="text-sm">เปิด <code>http://localhost:3000</code> แล้วล็อกอินด้วย Username: <strong>admin</strong> / Password: <strong>admin</strong> (ระบบจะบังคับให้เปลี่ยนรหัสผ่านใหม่)</p>
+
+            <h3 class="text-xl font-bold text-orange-400 mt-6">2. เชื่อมต่อฐานข้อมูล (Add Data Source)</h3>
+            <ul class="list-disc list-inside text-sm text-gray-300 space-y-2">
+              <li>ไปที่เมนู <strong>Connections > Data sources</strong> (รูปเฟืองซ้ายมือ)</li>
+              <li>คลิก <strong>Add data source</strong> และเลือก <strong>Prometheus</strong></li>
+              <li>ในช่อง <strong>Prometheus server URL</strong> ให้พิมพ์ <code>http://prometheus:9090</code> <br><em>(ต้องใช้ชื่อ Service ตาม Docker Compose ไม่ใช่ localhost นะ!)</em></li>
+              <li>เลื่อนลงไปล่างสุดแล้วคลิก <strong>Save & test</strong></li>
+            </ul>
+            <p class="text-xs text-green-400 mt-2">✅ ควรจะขึ้นกล่องสีเขียวว่า "Data source is working"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 7 - Create First Dashboard -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 7: สร้าง Dashboard ดูการใช้ CPU ของ Container</h2>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-5 rounded-xl text-sm">
+              <ol class="list-decimal list-inside space-y-3">
+                <li>คลิก <strong>+ (Create)</strong> ที่เมนูซ้ายมือ เลือก <strong>Dashboard</strong></li>
+                <li>คลิก <strong>Add visualization</strong></li>
+                <li>เลือก Data source เป็น <strong>Prometheus</strong></li>
+                <li>ในช่อง <strong>Metrics browser (PromQL)</strong> ให้ใส่ Code ทางขวามือ</li>
+                <li>คลิก <strong>Run queries</strong> (หรือกด Shift+Enter) กราฟจะแสดงขึ้นมาทันที!</li>
+                <li>ตั้งชื่อ Panel ว่า "Container CPU Usage" แล้วกด Save</li>
+              </ol>
+            </div>
+
+            <div class="bg-black/80 p-5 rounded-xl border border-blue-500 font-mono text-[10px] text-gray-300 flex flex-col justify-center">
+              <p class="text-green-400 mb-2"># คำสั่ง PromQL คำนวณ CPU Usage (%) ของแต่ละ Container</p>
+              <p class="text-white break-words">
+              sum(rate(container_cpu_usage_seconds_total{name!=""}[1m])) by (name) * 100
+              </p>
+              <div class="mt-6 border-t border-gray-600 pt-4">
+                <p class="text-yellow-300 font-bold text-xs mb-2">💡 Pro Tip (ทำ Dashboard อัตโนมัติ):</p>
+                <p>แทนที่จะสร้างเองทีละกราฟ คุณสามารถไปที่ <em>Dashboards > Import</em> แล้วใส่ ID <strong>893</strong> (หรือ 14282) เพื่อโหลด Dashboard ของ Docker Container (cAdvisor) แบบสำเร็จรูปสวยๆ จาก Grafana.com ได้เลย!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🎉</div>
+          <h2 class="text-4xl font-bold mb-6">Lab Complete! การส่งงาน</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">สิ่งที่ต้องส่ง (Submission):</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>Source Code (.zip):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ไฟล์ <code>docker-compose.yml</code></li>
+                  <li>ไฟล์ <code>prometheus.yml</code></li>
+                </ul>
+              </li>
+              <li>
+                <strong>Screenshots (รวมเป็น PDF):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ภาพหน้า <strong>Targets</strong> ใน Prometheus (แสดงสถานะ UP ของ cadvisor และ prometheus)</li>
+                  <li>ภาพหน้า <strong>Data sources</strong> ใน Grafana (แสดงกล่องเขียว Data source is working)</li>
+                  <li>ภาพ <strong>Grafana Dashboard</strong> ที่สร้างขึ้น (ที่มีกราฟแสดง CPU หรือนำเข้าจาก ID 893 สำเร็จ)</li>
+                </ul>
+              </li>
+            </ul>
+            <div class="mt-6 text-sm text-center text-yellow-300">
+              "การที่คุณเห็นกราฟข้อมูลแปลว่า คุณได้มอบ 'ดวงตา' ให้กับระบบ DevOps ของคุณเรียบร้อยแล้ว!"
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

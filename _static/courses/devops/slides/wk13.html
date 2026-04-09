@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk13.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 13: Advanced Monitoring & Troubleshooting</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          ยกระดับการเฝ้าระวังระบบด้วยตัวชี้วัดเชิงลึก และศิลปะแห่งการสืบสวนและแก้ไขปัญหาในระดับ Production
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Exporters:</strong> การเก็บ Metrics ขั้นสูง (Node Exporter, Blackbox Exporter)</li>
+              <li><strong>SRE Concepts:</strong> ทำความเข้าใจตัวชี้วัด SLI, SLO, SLA และ Error Budgets</li>
+              <li><strong>Troubleshooting Frameworks:</strong> ระเบียบวิธีวิเคราะห์ปัญหา (USE และ RED Methods)</li>
+              <li><strong>Debugging in Action:</strong> การสืบสวนปัญหาผ่าน Logs และ Metrics</li>
+              <li><strong>Post-mortem Analysis:</strong> การเรียนรู้จากความล้มเหลวแบบไร้การกล่าวโทษ (Blameless)</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 13</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Recap Week 12 -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวนสัปดาห์ที่ 12 (Recap)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          สัปดาห์ที่แล้วเราได้เรียนรู้ "3 เสาหลักของ Observability" และเครื่องมือพื้นฐาน
+          </p>
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-blue-900/40 p-5 rounded-xl border-t-4 border-blue-500 shadow-lg">
+              <h3 class="font-bold text-xl mb-2 text-white">📈 Metrics</h3>
+              <p class="text-sm text-gray-300">ตัวชี้วัดเชิงตัวเลข จัดเก็บและดึงข้อมูลด้วย <strong>Prometheus</strong> และแสดงผลด้วย <strong>Grafana</strong></p>
+            </div>
+            <div class="bg-green-900/40 p-5 rounded-xl border-t-4 border-green-500 shadow-lg">
+              <h3 class="font-bold text-xl mb-2 text-white">📄 Logs</h3>
+              <p class="text-sm text-gray-300">บันทึกเหตุการณ์เป็นข้อความ ค้นหาและวิเคราะห์แบบรวมศูนย์ด้วย <strong>ELK Stack</strong></p>
+            </div>
+            <div class="bg-red-900/40 p-5 rounded-xl border-t-4 border-red-500 shadow-lg">
+              <h3 class="font-bold text-xl mb-2 text-white">🚨 Alerting</h3>
+              <p class="text-sm text-gray-300">การแจ้งเตือนอัตโนมัติผ่าน <strong>Alertmanager</strong> เมื่อตัวชี้วัดเกินเกณฑ์ที่กำหนด</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Why Advanced Monitoring? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทำไมต้องทำ Advanced Monitoring?</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-8 border-purple-500">
+            <p class="text-xl mb-4">
+            การรู้แค่ว่า "CPU กำลังทำงาน 80%" ไม่เพียงพออีกต่อไปในยุคของ Microservices
+            </p>
+            <ul class="list-disc list-inside space-y-4 text-lg text-gray-200">
+              <li>เราต้องรู้ให้ลึกถึงระดับฮาร์ดแวร์ (OS, Disk I/O, Network Drops)</li>
+              <li>เราต้องรู้มุมมองจากภายนอก (ผู้ใช้เข้าเว็บเราได้ไหม? ติด SSL Error หรือเปล่า?)</li>
+              <li>เราต้องเชื่อมโยงความสัมพันธ์ทางธุรกิจกับความพร้อมใช้งานของระบบ</li>
+              <li>ระบบที่ซับซ้อนต้องการ <strong>"กรอบความคิด" (Framework)</strong> ในการแก้ปัญหา ไม่ใช่การเดาสุ่ม</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Introduction to Exporters -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">🔌</div>
+          <h2 class="text-5xl font-bold mb-6">Part 1: การใช้ Exporters</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left">
+            <p class="text-lg mb-4">
+            ในระบบ <strong>Prometheus</strong> การจะดึงข้อมูลมาเก็บได้ (Scrape) บริการปลายทางต้องเปิด Endpoint <code>/metrics</code> เอาไว้ 
+            </p>
+            <p class="text-lg text-yellow-300 font-bold mb-4">
+            แต่ถ้าซอฟต์แวร์นั้นไม่ได้สร้างมาเพื่อ Prometheus ล่ะ จะทำอย่างไร?
+            </p>
+            <p class="text-md text-gray-200">
+            คำตอบคือการใช้ <strong>"Exporter"</strong> ซึ่งทำหน้าที่เป็น "ตัวกลางล่ามแปลภาษา" ดึงข้อมูลดิบจากระบบเป้าหมาย แล้วแปลงให้อยู่ในรูปแบบที่ Prometheus เข้าใจ
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Node Exporter -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Node Exporter (OS & Hardware Metrics)</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-blue-900/30 p-6 rounded-xl border border-blue-500">
+              <h3 class="text-2xl font-bold text-blue-300 mb-4">หน้าที่หลัก</h3>
+              <p class="text-sm text-gray-200 mb-4">
+              ทำหน้าที่รวบรวมข้อมูลระดับฮาร์ดแวร์และระบบปฏิบัติการ (OS) ของเครื่อง Linux/UNIX
+              </p>
+              <ul class="list-disc list-inside text-xs text-gray-300 space-y-2">
+                <li><strong>CPU:</strong> การใช้งานแต่ละ Core (user, system, idle)</li>
+                <li><strong>Memory:</strong> RAM ที่เหลือ, Swap usage</li>
+                <li><strong>Disk:</strong> พื้นที่ว่าง, จำนวน Read/Write (I/O)</li>
+                <li><strong>Network:</strong> ปริมาณ Bandwidth, Packet errors</li>
+              </ul>
+            </div>
+            <div class="bg-black/50 p-6 rounded-xl flex flex-col justify-center font-mono text-sm text-green-400">
+              <p class="text-gray-400 mb-2"># ตัวอย่าง Metrics จาก Node Exporter</p>
+              <p>node_cpu_seconds_total{mode="idle"} 1234.56</p>
+              <p>node_memory_MemAvailable_bytes 2147483648</p>
+              <p>node_filesystem_free_bytes{fstype="ext4"} ...</p>
+              <p class="mt-4 text-xs text-yellow-400">
+              *มักจะถูกรันแบบ DaemonSet ใน Kubernetes เพื่อให้ทำงานอยู่บนทุกๆ Worker Node
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Blackbox Exporter -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Blackbox Exporter (Probing Metrics)</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-8 border-gray-500 shadow-xl">
+            <p class="text-xl mb-4 font-bold text-white">มองระบบแบบกล่องดำ (External View)</p>
+            <p class="text-md text-gray-300 mb-6">
+            แทนที่จะดึงข้อมูลจาก "ภายใน" เครื่อง Blackbox Exporter ทำหน้าที่ <strong>"ยิง Probe"</strong> ไปทดสอบเป้าหมายจากภายนอก จำลองพฤติกรรมเสมือนว่าผู้ใช้กำลังเข้าเว็บไซต์
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <h4 class="text-lg font-bold text-yellow-300">ความสามารถในการ Probe:</h4>
+                <ul class="list-disc list-inside text-sm text-gray-200 mt-2 space-y-1">
+                  <li><strong>HTTP/HTTPS:</strong> เว็บโหลดขึ้นไหม? (HTTP 200 OK) ใช้เวลาเท่าไหร่?</li>
+                  <li><strong>DNS:</strong> ระบุชื่อ Domain ไปหา IP ถูกต้องไหม?</li>
+                  <li><strong>TCP/ICMP:</strong> พอร์ตเปิดอยู่ไหม? ปิง (Ping) เจอหรือเปล่า?</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="text-lg font-bold text-red-300">ตัวอย่าง Use Case ที่สำคัญ:</h4>
+                <ul class="list-disc list-inside text-sm text-gray-200 mt-2 space-y-1">
+                  <li>การแจ้งเตือน <strong>"SSL Certificate กำลังจะหมดอายุ!"</strong> (probe_ssl_earliest_cert_expiry)</li>
+                  <li>ตรวจสอบเว็บไซต์คู่แข่ง หรือ 3rd Party API ว่าล่มหรือไม่</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Application-Specific Metrics -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Application-Specific Metrics (Custom)</h2>
+          <p class="text-lg mb-6">หากต้องการรู้ลึกถึงระดับ Business Logic คุณต้องฝัง Code ลงไปเอง (Instrumentation)</p>
+
+          <div class="bg-white/10 p-6 rounded-xl text-left font-mono text-sm border-2 border-dashed border-gray-400">
+            <p class="text-green-400 mb-2"># ตัวอย่างการใช้ Prometheus Client Library ใน Python (Flask)</p>
+            <p class="text-blue-300">from <span class="text-white">prometheus_client</span> import <span class="text-white">Counter</span></p>
+            <br>
+            <p class="text-gray-400"># สร้าง Metric ประเภท Counterเพื่อนับจำนวน</p>
+            <p class="text-white">checkout_requests = Counter(<span class="text-yellow-300">'checkout_total'</span>, <span class="text-yellow-300">'Total successful checkouts'</span>)</p>
+            <br>
+            <p class="text-blue-300">@app.route(<span class="text-yellow-300">'/checkout'</span>)</p>
+            <p class="text-blue-300">def <span class="text-white">checkout</span>():</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-400"># เมื่อมีผู้ใช้เข้า URL นี้ ให้เพิ่มค่าขึ้น 1</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;checkout_requests.inc()</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-300">return</span> <span class="text-yellow-300">"Payment Successful!"</span></p>
+          </div>
+          <p class="mt-4 text-xs text-gray-300 text-left">
+          *ข้อมูลเหล่านี้จะถูกเปิดให้ Prometheus มาดึงไป ซึ่งมีประโยชน์มากในการวัดยอดขาย หรือจำนวนคิวงานที่ค้างอยู่
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Enter SRE -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">⚖️</div>
+          <h2 class="text-5xl font-bold mb-6">Part 2: Site Reliability Engineering (SRE)</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-center border-t-4 border-blue-400 shadow-xl">
+            <p class="text-2xl italic text-blue-300 mb-6">
+            "SRE is what happens when you ask a software engineer to design an operations team."
+            </p>
+            <p class="text-md text-gray-300 text-right">- Benjamin Treynor Sloss, VP of Engineering, Google</p>
+
+            <p class="text-lg text-left mt-8 text-gray-200">
+            SRE นำหลักการของการเขียนโปรแกรมและวิศวกรรมซอฟต์แวร์มาใช้กับงาน Operations (ดูแลระบบ) 
+            โดยมีเป้าหมายหลักคือการรักษาสมดุลระหว่าง <strong>"ความน่าเชื่อถือของระบบ (Reliability)"</strong> และ <strong>"ความเร็วในการปล่อยฟีเจอร์ใหม่ (Feature Velocity)"</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Understanding the Acronyms -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ไขรหัสลับ: SLA vs SLO vs SLI</h2>
+          <p class="text-lg mb-8">เพื่อวัดความน่าเชื่อถือ SRE ได้กำหนดคำศัพท์สำคัญ 3 คำ</p>
+
+          <div class="flex flex-col space-y-6 text-left">
+            <div class="bg-red-900/40 p-4 rounded-lg border-l-4 border-red-500">
+              <h3 class="font-bold text-xl text-red-300">SLA (Service Level Agreement)</h3>
+              <p class="text-sm text-gray-200">"สัญญาข้อตกลงธุรกิจ" ถ้าเราทำไม่ได้ตามเป้า จะเกิดผลตามกฎหมายหรือต้องจ่ายเงินคืนลูกค้า</p>
+            </div>
+            <div class="bg-yellow-900/40 p-4 rounded-lg border-l-4 border-yellow-500">
+              <h3 class="font-bold text-xl text-yellow-300">SLO (Service Level Objective)</h3>
+              <p class="text-sm text-gray-200">"เป้าหมายภายในทีม" ตัวเลขที่เราตั้งเป้าไว้ให้ระบบทำงานได้ (ต้องเข้มงวดกว่า SLA เสมอ)</p>
+            </div>
+            <div class="bg-green-900/40 p-4 rounded-lg border-l-4 border-green-500">
+              <h3 class="font-bold text-xl text-green-300">SLI (Service Level Indicator)</h3>
+              <p class="text-sm text-gray-200">"ตัวชี้วัดความจริง" ตัวเลขที่วัดได้จริงๆ ณ ปัจจุบัน จากระบบ Monitoring (เช่น Prometheus)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: SLI Details -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">SLI (Service Level Indicator)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-xl mb-4">
+            "สัดส่วนของเหตุการณ์ที่ดี ต่อ เหตุการณ์ทั้งหมด" (แสดงเป็นเปอร์เซ็นต์)
+            </p>
+            <div class="bg-black/40 p-4 rounded font-mono text-center text-green-400 mb-6">
+              SLI = (Good Events / Valid Total Events) * 100
+            </div>
+
+            <h3 class="text-lg font-bold text-yellow-300 mb-2">ประเภทของ SLI ที่นิยมวัด:</h3>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li><strong>Availability:</strong> สัดส่วนเวลาที่ระบบไม่ล่ม (Uptime)</li>
+              <li><strong>Error Rate:</strong> จำนวน Request ที่สถานะไม่ใช่ 5xx เทียบกับ Request ทั้งหมด</li>
+              <li><strong>Latency (ความหน่วง):</strong> จำนวน Request ที่ตอบสนองเร็วกว่า 200ms เทียบกับ Request ทั้งหมด</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: SLO Details -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">SLO (Service Level Objective)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-xl mb-4">
+            เป้าหมายตัวเลขที่เราต้องการให้ <strong>SLI</strong> ไปถึง 
+            </p>
+            <div class="bg-black/40 p-4 rounded text-center text-yellow-400 font-bold mb-6 text-lg">
+              SLI ≥ SLO ➡ Users are Happy! 😊
+            </div>
+
+            <p class="text-md text-gray-200 mb-2">ตัวอย่างการตั้ง SLO:</p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li>99.9% ของ HTTP Requests ทั้งหมดในรอบ 30 วัน จะต้องสำเร็จ (ไม่ติด Error 5xx)</li>
+              <li>99% ของ API Requests ในรอบ 7 วัน จะต้องตอบสนองภายในเวลา 300ms</li>
+            </ul>
+            <p class="mt-4 text-red-300 text-xs">*คำเตือน: การตั้ง SLO ไม่ควรตั้งจากสิ่งที่ทีม IT ทำได้ แต่ควรตั้งจาก "ความคาดหวังขั้นต่ำที่ทำให้ผู้ใช้งานพึงพอใจ"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: The "Nines" of Availability -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทฤษฎีเลขเก้า (The "Nines" of Availability)</h2>
+          <p class="text-lg mb-6">การตั้งเป้าให้ระบบล่ม 0% (Uptime 100%) เป็นเป้าหมายที่แพงและเป็นไปไม่ได้ในทางปฏิบัติ</p>
+
+          <table class="w-full text-sm text-left bg-black/50 rounded-xl overflow-hidden shadow-lg border border-gray-600">
+            <thead class="bg-gray-800 text-yellow-300">
+              <tr>
+                <th class="p-3">Availability (Nines)</th>
+                <th class="p-3">เวลาที่ยอมให้ล่มได้ (ต่อปี)</th>
+                <th class="p-3">เวลาที่ยอมให้ล่มได้ (ต่อเดือน)</th>
+                <th class="p-3">เหมาะสำหรับ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-700">
+                <td class="p-3 font-bold">99% (Two 9s)</td>
+                <td class="p-3 text-red-400">3.65 วัน</td>
+                <td class="p-3 text-red-400">7.30 ชั่วโมง</td>
+                <td class="p-3 text-gray-300">เว็บไซต์ภายในองค์กร, ระบบที่ไม่วิกฤต</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="p-3 font-bold">99.9% (Three 9s)</td>
+                <td class="p-3 text-orange-400">8.76 ชั่วโมง</td>
+                <td class="p-3 text-orange-400">43.8 นาที</td>
+                <td class="p-3 text-gray-300">แอปพลิเคชันทั่วไป, E-Commerce ทั่วไป</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="p-3 font-bold">99.99% (Four 9s)</td>
+                <td class="p-3 text-yellow-400">52.5 นาที</td>
+                <td class="p-3 text-yellow-400">4.38 นาที</td>
+                <td class="p-3 text-gray-300">บริการระบบคลาวด์, Core Services</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold">99.999% (Five 9s)</td>
+                <td class="p-3 text-green-400">5.25 นาที</td>
+                <td class="p-3 text-green-400">26 วินาที</td>
+                <td class="p-3 text-gray-300">ระบบการเงิน, เครื่องมือแพทย์, โทรคมนาคม</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Slide 12: Error Budgets -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Error Budgets (งบประมาณความผิดพลาด)</h2>
+          <div class="bg-blue-900/40 p-8 rounded-xl text-left border-l-8 border-blue-400">
+            <p class="text-lg font-bold mb-4">Error Budget = 100% - SLO</p>
+            <p class="text-md text-gray-200 mb-4">
+            ถ้ายอมรับความจริงว่าระบบ 100% ไม่มีอยู่จริง พื้นที่ที่เหลือจากเป้าหมาย (เช่น ถ้าตั้ง SLO ไว้ที่ 99.9% งบประมาณที่เรายอมให้พังได้คือ 0.1%) เรียกว่า <strong>Error Budget</strong>
+            </p>
+            <p class="text-md text-yellow-300 font-bold mb-2">ทำไมต้องมี?</p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-200">
+              <li>เพื่อเป็น "ข้อตกลงสงบศึก" ระหว่างทีม Dev (อยากเข็นฟีเจอร์ใหม่) และทีม Ops/SRE (อยากให้ระบบเสถียรที่สุด)</li>
+              <li>ใช้อนุญาตให้ทำการทดลอง (Chaos Engineering), ปล่อยฟีเจอร์ใหม่, หรืออัปเดตระบบตราบใดที่ "งบประมาณยังเหลือ"</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: How to Use Error Budgets -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การตัดสินใจด้วย Error Budgets</h2>
+
+          <div class="grid grid-cols-2 gap-8 text-center mt-8">
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <div class="text-4xl mb-4">🟢</div>
+              <h3 class="text-xl font-bold text-green-300 mb-2">Error Budget เหลือเยอะ</h3>
+              <p class="text-sm text-gray-300">ระบบเสถียรมาก ผู้ใช้มีความสุข</p>
+              <hr class="my-4 border-gray-600">
+              <p class="text-sm font-bold">Action:</p>
+              <p class="text-xs text-gray-300 mt-1">ปล่อยฟีเจอร์ใหม่รัวๆ, ทดลองเทคโนโลยีใหม่, หรือเพิ่มรอบ Deploy ต่อวัน</p>
+            </div>
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <div class="text-4xl mb-4">🔴</div>
+              <h3 class="text-xl font-bold text-red-300 mb-2">Error Budget หมด (หรือติดลบ)</h3>
+              <p class="text-sm text-gray-300">ระบบเริ่มรวน ผู้ใช้เริ่มบ่น</p>
+              <hr class="my-4 border-gray-600">
+              <p class="text-sm font-bold">Action (Freeze!):</p>
+              <p class="text-xs text-gray-300 mt-1">หยุด Deploy ฟีเจอร์ใหม่ชั่วคราว, ดึงทีม Dev มาช่วยทีม Ops แก้ Bug และเขียน Test จนกว่ารอบเดือนถัดไป (Budget รีเซ็ต)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Basics of DevOps Troubleshooting -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">🕵️‍♂️</div>
+          <h2 class="text-5xl font-bold mb-6">Part 3: พื้นฐานการแก้ไขปัญหา (Troubleshooting)</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-t-4 border-white shadow-xl">
+            <p class="text-xl mb-4">
+            เมื่อเกิดเหตุฉุกเฉิน (Incident) สัญชาตญาณมนุษย์มักจะนำไปสู่ความตื่นตระหนกและเดาสุ่ม 
+            DevOps และ SRE ที่ดีต้องมี <strong>"กรอบแนวคิด (Framework)"</strong> ในการสืบสวนปัญหา
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-4">
+              <li>ปัญหาเกี่ยวกับเครื่องฮาร์ดแวร์/OS ➡ ใช้กรอบแนวคิด <strong>USE Method</strong></li>
+              <li>ปัญหาเกี่ยวกับ API/Microservices ➡ ใช้กรอบแนวคิด <strong>RED Method</strong></li>
+              <li>การประมวลผลข้อมูล ➡ ใช้ทั้ง <strong>Metrics</strong> และ <strong>Logs</strong> ควบคู่กัน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: The USE Method -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">The USE Method (สำหรับ Resource/Hardware)</h2>
+          <p class="text-lg mb-6 text-gray-300">คิดค้นโดย Brendan Gregg เป็นเช็คลิสต์สำหรับวิเคราะห์ "ทุกๆ Resource" ในระบบ (CPU, RAM, Disk, Network)</p>
+
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-blue-900/40 p-5 rounded-xl border border-blue-400">
+              <h3 class="font-bold text-2xl text-blue-300 mb-2">U</h3>
+              <p class="font-bold mb-2">Utilization (การใช้งาน)</p>
+              <p class="text-sm text-gray-300">สัดส่วนเปอร์เซ็นต์ที่ Resource ถูกใช้งานไป เช่น CPU ทำงานอยู่ที่ 90%</p>
+            </div>
+            <div class="bg-orange-900/40 p-5 rounded-xl border border-orange-400">
+              <h3 class="font-bold text-2xl text-orange-300 mb-2">S</h3>
+              <p class="font-bold mb-2">Saturation (ความอิ่มตัว)</p>
+              <p class="text-sm text-gray-300">การมีงานมา "รอคิว (Queue)" มากกว่าที่ระบบจะรับไหว เช่น คิว Disk I/O สูงปรี๊ด</p>
+            </div>
+            <div class="bg-red-900/40 p-5 rounded-xl border border-red-400">
+              <h3 class="font-bold text-2xl text-red-300 mb-2">E</h3>
+              <p class="font-bold mb-2">Errors (ข้อผิดพลาด)</p>
+              <p class="text-sm text-gray-300">จำนวนข้อผิดพลาดระดับฮาร์ดแวร์/OS เช่น Network Packet drops หรือ Bad sectors</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: The RED Method -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">The RED Method (สำหรับ Services/APIs)</h2>
+          <p class="text-lg mb-6 text-gray-300">คิดค้นโดย Tom Wilkie สำหรับเฝ้าระวัง Microservices โดยดูจากมุมมองของผู้ใช้งาน (User Experience)</p>
+
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-purple-900/40 p-5 rounded-xl border border-purple-400">
+              <h3 class="font-bold text-2xl text-purple-300 mb-2">R</h3>
+              <p class="font-bold mb-2">Rate (ปริมาณ)</p>
+              <p class="text-sm text-gray-300">จำนวน Request ที่เข้ามาต่อวินาที (Requests per second) ถ้าร่วงลงกะทันหัน อาจแปลว่าระบบหน้าบ้านพัง</p>
+            </div>
+            <div class="bg-red-900/40 p-5 rounded-xl border border-red-400">
+              <h3 class="font-bold text-2xl text-red-300 mb-2">E</h3>
+              <p class="font-bold mb-2">Errors (พัง)</p>
+              <p class="text-sm text-gray-300">จำนวน Request ที่ล้มเหลว (เช่น ขึ้น HTTP 500) ต่อวินาที</p>
+            </div>
+            <div class="bg-teal-900/40 p-5 rounded-xl border border-teal-400">
+              <h3 class="font-bold text-2xl text-teal-300 mb-2">D</h3>
+              <p class="font-bold mb-2">Duration (ความช้า)</p>
+              <p class="text-sm text-gray-300">เวลาที่ใช้ในการตอบสนอง (Latency) วัดด้วย Percentile (P95, P99) เช่น ผู้ใช้ 99% โหลดเว็บเสร็จใน 1 วิ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Troubleshooting Step 1: Metrics -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สืบสวนด้วย Metrics (ค้นหา "เกิดอะไรขึ้น?")</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-lg mb-4 text-yellow-300 font-bold">Metrics มีไว้เพื่อหาว่า "มีปัญหาอะไร และ สโคปแค่ไหน"</p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li><strong>เปิดดู Dashboards:</strong> ใน Grafana ลองส่องดูภาพกว้าง (Macro view) ว่ากราฟมีการเปลี่ยนแปลงกะทันหันในช่วงเวลาที่มี Alert ไหม</li>
+              <li><strong>กรอง (Filter) ด้วย Labels:</strong> หากมี 10 Pods ลองเช็คว่ามันพังทุก Pod หรือพังแค่เฉพาะ Pod ที่อัปเดตเวอร์ชันใหม่</li>
+              <li><strong>เทียบกับอดีต:</strong> เทียบกราฟของวันนี้กับวันเดียวกันของสัปดาห์ที่แล้ว (Week-over-week) เพื่อหาสิ่งที่ผิดปกติ</li>
+            </ul>
+            <p class="mt-4 text-xs text-gray-400">*ข้อดีของ Metrics คือดูได้อย่างรวดเร็วและใช้ทรัพยากรน้อย แต่บอกไม่ได้ลึกว่าบรรทัดไหนใน Code พัง</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Troubleshooting Step 2: Logs -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สืบสวนด้วย Logs (ค้นหา "ทำไมถึงเกิด?")</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-lg mb-4 text-green-300 font-bold">Logs มีไว้เพื่อหา "สาเหตุเบื้องลึก (Root Cause) ณ จุดเวลานั้น"</p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li><strong>ค้นหาช่วงเวลาที่แคบลง:</strong> หลังจากได้เวลาที่เกิดเหตุจาก Metrics ให้ไปค้นหา Logs (ใน ELK/Kibana) ในกรอบเวลานั้น (+/- 5 นาที)</li>
+              <li><strong>ค้นหาด้วย Keywords:</strong> กรองหาคำว่า <code>"ERROR"</code>, <code>"Exception"</code>, <code>"Timeout"</code></li>
+              <li><strong>ดูบริบท (Context):</strong> อ่าน Stack trace ว่าระบบพังที่ฟังก์ชันไหน? ฐานข้อมูลตาย หรือ API ภายนอกไม่ตอบสนอง?</li>
+            </ul>
+            <div class="bg-black/50 p-3 mt-4 rounded border-l-4 border-yellow-500 font-mono text-xs text-red-400">
+              [ERROR] 2026-04-09 09:50:11 - Database connection timeout. Unable to reach 10.x.x.x
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Debugging in Kubernetes -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">คำสั่งสืบสวนพื้นฐานใน Kubernetes</h2>
+          <p class="text-lg mb-6 text-gray-300">เมื่อคุณรู้แล้วว่ามี Pod ตัวไหนมีปัญหา เหล่านี้คือคำสั่งเอาชีวิตรอด:</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-black/60 p-5 rounded-xl border border-gray-600 font-mono text-xs space-y-2">
+              <p class="text-gray-400"># 1. เช็คเหตุการณ์ที่เกิดขึ้นกับ Pod (หาสาเหตุที่ไม่ยอมรัน)</p>
+              <p class="text-green-400">$ kubectl describe pod [pod-name]</p>
+              <p class="text-yellow-300">... Events: BackOff (ImagePullBackOff)</p>
+
+              <br>
+              <p class="text-gray-400"># 2. ดู Logs สดของแอปพลิเคชัน</p>
+              <p class="text-green-400">$ kubectl logs [pod-name] --tail=50 -f</p>
+            </div>
+
+            <div class="bg-black/60 p-5 rounded-xl border border-gray-600 font-mono text-xs space-y-2">
+              <p class="text-gray-400"># 3. มุดเข้าไปใน Container เพื่อทดสอบ Network/Files</p>
+              <p class="text-green-400">$ kubectl exec -it [pod-name] -- /bin/sh</p>
+
+              <br>
+              <p class="text-gray-400"># 4. ดูการใช้ Resources จริง (CPU/RAM) เทียบกับ Limit</p>
+              <p class="text-green-400">$ kubectl top pod [pod-name]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Mitigate First, Resolve Later -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">กฎทอง: บรรเทาผลกระทบก่อน ค่อยหาทางแก้ถาวร</h2>
+          <div class="bg-red-900/40 p-8 rounded-xl text-left border border-red-500 mb-6">
+            <p class="text-xl font-bold text-red-300 mb-4">Mitigation vs Resolution</p>
+            <p class="text-md text-gray-200 mb-4">
+            เมื่อระบบล่ม (Downtime) <strong>เวลาคือเงิน!</strong> หน้าที่แรกของ DevOps คือการทำให้ระบบกลับมาให้บริการลูกค้าได้เร็วที่สุด (Mitigate) ไม่ใช่นั่งอ่าน Code เพื่อหาบั๊ก (Resolve) กลางดึก
+            </p>
+            <h3 class="font-bold text-yellow-300 mb-2">ท่าบรรเทาผลกระทบ (Mitigation Actions):</h3>
+            <ul class="list-disc list-inside text-sm text-gray-300 space-y-2">
+              <li><strong>Rollback:</strong> ย้อนกลับไปใช้ Version ก่อนหน้าที่ทำงานได้ปกติ (K8s: <code>kubectl rollout undo deployment</code>)</li>
+              <li><strong>Scale Out:</strong> ถ้าโหลดล้น ก็ยิง Pod หรือเพิ่ม Server เพิ่มเข้าไปชั่วคราว</li>
+              <li><strong>Restart:</strong> ถ้า Memory Leak ก็สั่ง Restart Service (เป็นวิธีฉุกเฉิน แต่ได้ผลบ่อย)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Distributed Tracing (Brief) -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ต่อจิ๊กซอว์ด้วย Distributed Tracing</h2>
+          <p class="text-lg mb-6">เสาหลักที่ 3 ของ Observability (ถัดจาก Metrics และ Logs)</p>
+
+          <div class="bg-white/10 p-6 rounded-2xl text-left border-l-8 border-purple-500">
+            <p class="text-md text-gray-200 mb-4">
+            ในสถาปัตยกรรม Microservices หนึ่ง Request จากผู้ใช้ อาจวิ่งผ่านไป 5-10 Services การใช้ Logs ธรรมดาจะหาทางตามรอยได้ยากมาก
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-300">
+              <li><strong>Tracing</strong> จะแปะ "Trace ID" ที่ไม่ซ้ำกันเข้าไปใน Request ตั้งแต่ทางเข้า (Ingress/Gateway)</li>
+              <li>ID นี้จะถูกส่งต่อไปยังทุก Service ที่รับงานต่อ (เช่น Auth ➡ Backend ➡ DB)</li>
+              <li>เครื่องมืออย่าง Jaeger หรือ Tempo จะนำ ID นี้มาวาดเป็น "แผนภาพเวลา (Waterfall Chart)" ทำให้เห็นชัดเจนว่า Request ไป <strong>"คอขวด (Bottleneck)"</strong> อยู่ที่ Service ตัวไหน!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: What is a Post-mortem? -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">📝</div>
+          <h2 class="text-5xl font-bold mb-6">Part 4: Post-mortem Analysis</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-t-4 border-yellow-400 shadow-xl">
+            <p class="text-xl mb-4 text-yellow-300 font-bold">"อย่าปล่อยให้ระบบล่มฟรีๆ จงเรียนรู้จากมัน"</p>
+            <p class="text-md text-gray-200 mb-4">
+            <strong>Post-mortem</strong> หรือ Incident Report คือกระบวนการเขียนสรุปและวิเคราะห์เหตุการณ์หลังจากที่ระบบล่มและแก้ไขจนกลับมาทำงานปกติได้แล้ว 
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-300">
+              <li>จัดทำขึ้นทุกครั้งที่มี Incident กระทบผู้ใช้อย่างรุนแรง (Sev-1, Sev-2)</li>
+              <li>ไม่ใช่การหาคนผิด แต่เป็นการหาวิธีป้องกันไม่ให้เกิดซ้ำเดิม</li>
+              <li>เป็นเอกสารสำหรับแชร์ความรู้ (Knowledge Sharing) ให้คนทั้งองค์กร</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Blameless Culture -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">วัฒนธรรมไร้การกล่าวโทษ (Blameless Culture)</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-2xl font-bold text-red-300 mb-4">Toxic Culture (หาแพะรับบาป)</h3>
+              <p class="text-sm text-gray-200 mb-2">"ใครเป็นคนพิมพ์คำสั่งนี้? ทำไมถึงสะเพร่าแบบนี้? ไล่ออกเดี๋ยวนี้!"</p>
+              <p class="text-xs text-gray-400 mt-4"><strong>ผลลัพธ์:</strong> วิศวกรจะหวาดกลัว ปิดบังความผิด ไม่กล้าแก้ไขปัญหา หรือโยนความผิดให้ทีมอื่น ไม่เกิดการเรียนรู้</p>
+            </div>
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <h3 class="text-2xl font-bold text-green-300 mb-4">Blameless Culture (วิเคราะห์ระบบ)</h3>
+              <p class="text-sm text-gray-200 mb-2">"เราเชื่อว่าทุกคนตัดสินใจด้วยเจตนาดีที่สุดจากข้อมูลที่มีในตอนนั้น"</p>
+              <p class="text-xs text-gray-400 mt-4"><strong>ผลลัพธ์:</strong> เราโทษกระบวนการ ไม่ใช่คน (เช่น ทำไมระบบถึงปล่อยให้คนพิมพ์คำสั่งผิดพลาดหลุดขึ้น Production ได้โดยไม่มีคน Review หรือระบบ Test พลาด?)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Root Cause Analysis & The 5 Whys -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การวิเคราะห์ต้นตอ (Root Cause Analysis - RCA)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-md mb-4 text-gray-200">
+            [อ้างอิงจากหลักการ CI/CD RCA] การถามว่า <strong>"อะไรที่หายไปในกระบวนการของเรา ที่ปล่อยให้ปัญหานี้หลุดการตรวจสอบภายในและถูกปล่อยออกไปได้?"</strong>
+            </p>
+            <h3 class="text-lg font-bold text-yellow-300 mb-2">เทคนิค "The 5 Whys" (ถามทำไม 5 ครั้ง):</h3>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-gray-300 bg-black/40 p-4 rounded-xl">
+              <li><strong>ระบบล่ม</strong> ทำไม? ➡ เพราะ Database พัง</li>
+              <li><strong>Database พัง</strong> ทำไม? ➡ เพราะ Disk เต็ม 100%</li>
+              <li><strong>Disk เต็ม</strong> ทำไม? ➡ เพราะ Logs ระบบไม่ได้ตั้งค่าให้ลบอัตโนมัติ (Rotate logs)</li>
+              <li><strong>ไม่ได้ตั้ง Rotate Logs</strong> ทำไม? ➡ เพราะคนเซ็ตอัปครั้งแรกตั้งค่าผิดพลาดใน Ansible</li>
+              <li><strong>ตั้งค่าผิด</strong> ทำไม? ➡ เพราะไม่มีคู่มือมาตรฐาน และไม่มีระบบ Alert แจ้งเตือนเมื่อ Disk เกิน 80% (นี่คือ Root Cause จริงๆ!)</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Anatomy of a Post-mortem Doc -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">โครงสร้างของเอกสาร Post-mortem</h2>
+          <div class="grid grid-cols-2 gap-4 text-left text-sm">
+            <div class="bg-black/50 p-4 rounded-xl border border-gray-600">
+              <strong class="text-blue-300">1. ข้อมูลสรุป (Executive Summary)</strong>
+              <p class="text-gray-300 mt-1">สรุปสั้นๆ ใน 1-2 ย่อหน้า เกิดอะไรขึ้น กระทบลูกค้ากี่คน ใช้เวลาแก้เท่าไหร่</p>
+            </div>
+            <div class="bg-black/50 p-4 rounded-xl border border-gray-600">
+              <strong class="text-blue-300">2. ลำดับเหตุการณ์ (Timeline)</strong>
+              <p class="text-gray-300 mt-1">เวลาเริ่มมีปัญหา ➡ เวลาที่ Alert ดัง ➡ เวลาที่เริ่มวิเคราะห์ ➡ เวลาแก้สำเร็จ (ใช้ Log ของเวลาจริงๆ)</p>
+            </div>
+            <div class="bg-black/50 p-4 rounded-xl border border-gray-600">
+              <strong class="text-blue-300">3. สาเหตุที่แท้จริง (Root Cause)</strong>
+              <p class="text-gray-300 mt-1">คำอธิบายเชิงลึกถึงกระบวนการหรือบั๊กที่เป็นตัวการ (ใช้ The 5 Whys)</p>
+            </div>
+            <div class="bg-black/50 p-4 rounded-xl border border-gray-600">
+              <strong class="text-blue-300">4. แผนปฏิบัติการ (Action Items)</strong>
+              <p class="text-gray-300 mt-1">งานที่ต้องไปทำต่อเพื่อป้องกันไม่ให้เกิดซ้ำ (ต้องระบุผู้รับผิดชอบและ Ticket Number)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Summary -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สรุปบทเรียน (Summary)</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border-2 border-white/20 text-left space-y-4">
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Exporters:</strong> ตัวช่วยแปลงข้อมูลระบบ/แอป เป็น Metrics ให้ Prometheus (Node, Blackbox)</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>SRE Concepts:</strong> SLI (ตัววัดจริง), SLO (เป้าหมายภายใน), Error Budget (โควตาความผิดพลาดเพื่อให้ยังปล่อยของใหม่ได้)</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Troubleshooting:</strong> ใช้ USE สำหรับ Hardware และ RED สำหรับ Services (บรรเทาผลกระทบก่อน ค่อยแก้ถาวร)</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Post-mortem:</strong> การเรียนรู้แบบ Blameless โฟกัสไปที่ข้อบกพร่องของระบบและกระบวนการ ไม่ใช่ตัวบุคคล</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Q&A -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-6">💬</div>
+          <h2 class="text-5xl font-bold mb-6">Q & A</h2>
+          <p class="text-xl text-white/90 mb-8">
+          มีคำถามเกี่ยวกับ Monitoring Framework, Error Budgets หรือ Post-mortem ไหมครับ?
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 28: Preparing for Lab (Heads Up) -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-red-400">เตรียมตัวทำ Lab! 🚨</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-red-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">Next: Alerting & Troubleshooting in Action</h3>
+            <p class="text-lg mb-4">
+            ในส่วนปฏิบัติการถัดไป เราจะจำลองสถานการณ์ฉุกเฉิน (Incident) ให้ระบบล่มจริงๆ!
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200">
+              <li>สร้างกฎ <strong>Alerting Rule</strong> ใน Prometheus/Grafana</li>
+              <li>จำลองการก่อกวนระบบ (เช่น CPU usage สูง หรือ Service ล่ม)</li>
+              <li>ใช้คำสั่ง <code>kubectl logs</code> และ <code>kubectl describe</code> เพื่อวิเคราะห์หาจุดพัง (Troubleshooting)</li>
+            </ul>
+            <div class="mt-8 text-center text-yellow-300 text-sm font-bold">
+              เปิดหน้าจอ Grafana ทิ้งไว้ แล้วสวมบทบาทเป็น On-call Engineer กันในชั่วโมง Lab ครับ!
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 29: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: Alerting & Troubleshooting 🚨</h2>
+          <p class="text-xl text-white/90 mb-8">
+          สวมบทบาทเป็น Site Reliability Engineer (SRE) เฝ้าระวังระบบและสืบสวนสาเหตุเมื่อเกิดปัญหา
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-red-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab นี้</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ สร้าง <strong>Alerting Rule</strong> บน Grafana เพื่อแจ้งเตือนเมื่อ CPU ทำงานหนัก</li>
+              <li>✅ จำลองสถานการณ์ <strong>High CPU Usage</strong> ใน Kubernetes Cluster</li>
+              <li>✅ สังเกตการเปลี่ยนสถานะของการแจ้งเตือน (Pending ➡ Firing)</li>
+              <li>✅ ฝึกใช้คำสั่ง <code>kubectl describe</code> เพื่อวิเคราะห์ปัญหา Pod ที่สร้างไม่สำเร็จ</li>
+              <li>✅ ฝึกใช้คำสั่ง <code>kubectl logs</code> เพื่อดู Error Message จาก Application ที่แครช</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Step 1 - Create Alert Rule in Grafana -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: สร้าง Alerting Rule ใน Grafana</h2>
+          <p class="mb-4 text-left">เราจะตั้งค่าให้ Grafana คอยเฝ้าดู Metrics จาก Prometheus และแจ้งเตือนเมื่อมี Container ใช้ CPU เกินกำหนด</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left border border-gray-600 space-y-4 text-sm">
+            <h3 class="text-lg font-bold text-orange-400">การตั้งค่าบนหน้าเว็บ Grafana:</h3>
+            <ol class="list-decimal list-inside space-y-3 text-gray-200">
+              <li>ไปที่เมนูซ้ายมือ เลือก <strong>Alerting</strong> ➡ <strong>Alert rules</strong> ➡ คลิกปุ่ม <strong>New alert rule</strong></li>
+              <li><strong>Step 1 (Query):</strong> ตั้งชื่อ Rule เช่น <code class="text-yellow-300">High CPU Alert</code> เลือก Data source เป็น <strong>Prometheus</strong> และใส่ PromQL:
+                <div class="bg-gray-800 p-2 rounded mt-2 text-green-400 font-mono">
+                  sum(rate(container_cpu_usage_seconds_total{namespace="default"}[1m])) * 100 > 80
+                </div>
+              </li>
+              <li><strong>Step 2 (Condition):</strong> เลือก Condition เป็น <code class="text-yellow-300">A</code> (อ้างอิงจาก Query A) IS ABOVE <code class="text-yellow-300">80</code></li>
+              <li><strong>Step 3 (Details):</strong> ในช่อง Folder เลือก (หรือสร้าง) โฟลเดอร์ชื่อ <code>K8s Alerts</code> และ Evaluation group ให้ตั้งรันทุกๆ <code>1m</code> (1 นาที)</li>
+              <li>คลิกปุ่ม <strong>Save rule and exit</strong> ที่มุมขวาบน</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 2 - Simulate High CPU Load -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 2: จำลองปัญหา CPU Usage สูง</h2>
+          <p class="mb-4 text-left">เราจะสร้าง Pod วายร้ายที่กินทรัพยากร CPU 100% อย่างต่อเนื่อง เพื่อทดสอบว่า Alert ของเราทำงานหรือไม่</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border-l-4 border-red-500 shadow-xl">
+            <p class="text-gray-400"># 1. รัน Pod ด้วย Image busybox และสั่งให้ทำ Infinite Loop (วนลูปไม่รู้จบ)</p>
+            <p class="text-green-400">$ kubectl run cpu-hog --image=busybox --restart=Never -- /bin/sh -c "while true; do :; done"</p>
+            <p class="text-white">pod/cpu-hog created</p>
+            <br>
+            <p class="text-gray-400"># 2. ตรวจสอบการกินทรัพยากร (อาจต้องรอสัก 1-2 นาทีให้ Metrics Server เก็บข้อมูล)</p>
+            <p class="text-green-400">$ kubectl top pod cpu-hog</p>
+            <div class="text-white text-xs overflow-x-auto whitespace-pre">
+              NAME      CPU(cores)   MEMORY(bytes)
+              cpu-hog   999m         1Mi
+            </div>
+            <p class="text-yellow-300 mt-2 text-xs">
+            *หมายเหตุ: 999m หมายถึงกิน CPU ไปเกือบ 1 Core เต็มๆ (1000 millicores = 1 CPU)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 3 - Observe the Alert -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 3: สังเกตการทำงานของ Alert (Firing)</h2>
+          <p class="mb-4 text-left">กลับไปที่หน้าจอกราฟหรือหน้า Alerting ของ Grafana เพื่อดูพฤติกรรมของระบบ</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl flex flex-col justify-center space-y-4">
+              <h3 class="font-bold text-yellow-300">วงจรของ Alert State:</h3>
+              <ul class="list-disc list-inside text-sm text-gray-200 space-y-2">
+                <li>🟢 <strong>Normal:</strong> ค่า CPU ยังต่ำกว่า 80% (ปกติ)</li>
+                <li>🟡 <strong>Pending:</strong> ค่า CPU ทะลุ 80% แล้ว แต่กำลังรอดูให้แน่ใจตามระยะเวลาที่กำหนด (หลีกเลี่ยง False Positive)</li>
+                <li>🔴 <strong>Firing:</strong> ค่า CPU ทะลุ 80% ต่อเนื่อง Alert จะถูกยิงออกไป (ส่งเข้า Slack, Email ฯลฯ)</li>
+              </ul>
+            </div>
+            <div class="bg-black/80 p-6 rounded-xl border border-red-500 flex flex-col items-center justify-center text-center">
+              <div class="text-5xl mb-4 animate-pulse">🔥</div>
+              <div class="bg-red-600 text-white font-bold py-2 px-4 rounded w-full mb-2">
+                FIRING
+              </div>
+              <p class="text-xs text-gray-300 font-mono">High CPU Alert</p>
+              <p class="text-xs text-gray-400 mt-2">Active since: 1 minute ago</p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-left text-green-300">
+          ✅ เมื่อเห็นสถานะเป็น <strong>FIRING</strong> ถือว่าการตั้งค่า Alert สำเร็จ ให้คุณเคลียร์ Pod ทิ้งด้วยคำสั่ง <code class="bg-black/50 p-1 rounded">kubectl delete pod cpu-hog</code>
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 4 - Troubleshooting with describe -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: ฝึกสืบสวนด้วย kubectl describe</h2>
+          <p class="mb-4 text-left">สมมติว่ามีการ Deploy ระบบ แต่รันไม่ขึ้น เราจะใช้คำสั่ง <code>describe</code> เพื่อดู "เหตุการณ์ (Events)" ระดับ Cluster</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. จำลองการสร้าง Pod โดยพิมพ์ชื่อ Image ผิด</p>
+            <p class="text-green-400">$ kubectl run web-broken --image=nginx:v999</p>
+            <br>
+            <p class="text-gray-400"># 2. ลอง get pods ดู จะพบความผิดปกติ</p>
+            <p class="text-green-400">$ kubectl get pods</p>
+            <p class="text-white text-xs">NAME          READY   STATUS             RESTARTS   AGE</p>
+            <p class="text-red-400 text-xs">web-broken    0/1     ImagePullBackOff   0          45s</p>
+            <br>
+            <p class="text-gray-400"># 3. ใช้ describe เพื่อหาสาเหตุ</p>
+            <p class="text-green-400">$ kubectl describe pod web-broken</p>
+            <p class="text-white text-xs mt-2">... (เลื่อนลงไปล่างสุดที่หัวข้อ Events)</p>
+            <p class="text-white text-xs">Events:</p>
+            <p class="text-white text-xs">  Type     Reason     Age                From               Message</p>
+            <p class="text-white text-xs">  ----     ------     ----               ----               -------</p>
+            <p class="text-white text-xs">  Normal   Pulling    15s (x3 over 45s)  kubelet            Pulling image "nginx:v999"</p>
+            <p class="text-yellow-400 text-xs">  Warning  Failed     14s (x3 over 44s)  kubelet            Failed to pull image "nginx:v999": rpc error: code = NotFound...</p>
+            <p class="text-red-400 text-xs font-bold">  Warning  Failed     14s (x3 over 44s)  kubelet            Error: ErrImagePull</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Step 5 - Troubleshooting with logs -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 5: ฝึกสืบสวนด้วย kubectl logs</h2>
+          <p class="mb-4 text-left">คำสั่ง <code>describe</code> บอกปัญหาภายนอก (เช่น ดึง Image ไม่ได้) แต่ถ้าแอปพัง "จากภายใน" เราต้องดูด้วย <code>logs</code></p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. จำลองแอปพลิเคชันที่แครชทันที (รันแล้วพ่น Error ใส่ Console)</p>
+            <p class="text-green-400">$ kubectl run db-crash --image=busybox --restart=Never -- /bin/sh -c "echo 'FATAL: Connection Refused. Invalid Password' && exit 1"</p>
+            <br>
+            <p class="text-gray-400"># 2. ดูสถานะ Pod จะเห็นว่า Error (หรือ CrashLoopBackOff ถ้ารันผ่าน Deployment)</p>
+            <p class="text-green-400">$ kubectl get pods</p>
+            <p class="text-white text-xs">NAME          READY   STATUS      RESTARTS   AGE</p>
+            <p class="text-red-400 text-xs">db-crash      0/1     Error       0          10s</p>
+            <br>
+            <p class="text-gray-400"># 3. เจาะดู Log ภายใน Container</p>
+            <p class="text-green-400">$ kubectl logs db-crash</p>
+            <p class="text-red-400 text-xs font-bold bg-red-900/40 p-2 border-l-4 border-red-500 mt-2">FATAL: Connection Refused. Invalid Password</p>
+          </div>
+          <div class="mt-4 bg-blue-900/40 p-3 rounded text-sm text-left border border-blue-500">
+            💡 <strong>สรุปทริคจำง่าย:</strong> <br>
+            - พังก่อนรัน (Pending, ImagePullBackOff) ➡ ใช้ <code>kubectl describe</code><br>
+            - พังตอนรัน (Error, CrashLoopBackOff) ➡ ใช้ <code>kubectl logs</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 35: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🩺</div>
+          <h2 class="text-4xl font-bold mb-6">Lab Complete! การส่งงาน</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">รายละเอียดสิ่งที่ต้องส่ง (Submission):</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>ภาพที่ 1: Grafana Alert</strong>
+                <p class="text-base text-gray-300 mt-1 ml-6">แคปเจอร์หน้าจอ Grafana ที่แสดงสถานะ Alert Rule "High CPU Alert" ขึ้นเป็นสีแดง <span class="font-bold text-red-400">(FIRING)</span></p>
+              </li>
+              <li>
+                <strong>ภาพที่ 2: การใช้ kubectl describe</strong>
+                <p class="text-base text-gray-300 mt-1 ml-6">แคปเจอร์หน้าจอ Terminal ของคำสั่ง <code>kubectl describe pod web-broken</code> โดยให้เห็นบรรทัด Events ที่แจ้งเตือน Failed to pull image</p>
+              </li>
+              <li>
+                <strong>ภาพที่ 3: การใช้ kubectl logs</strong>
+                <p class="text-base text-gray-300 mt-1 ml-6">แคปเจอร์หน้าจอ Terminal ของคำสั่ง <code>kubectl logs db-crash</code> ที่โชว์ข้อความ Error สีแดงจากตัวแอปพลิเคชัน</p>
+              </li>
+            </ul>
+            <div class="mt-6 text-sm text-center text-yellow-300">
+              ลบ Pod ที่จำลองปัญหาทิ้งให้เรียบร้อยด้วย <code>kubectl delete pod cpu-hog web-broken db-crash</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

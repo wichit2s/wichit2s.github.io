@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk10.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 10: Introduction to Container Orchestration with Kubernetes</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          ก้าวข้ามขีดจำกัดของการรันคอนเทนเนอร์แบบเดี่ยว สู่การบริหารจัดการ Cluster ระดับ Enterprise ด้วย K8s
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>Problems:</strong> ปัญหาของการจัดการ Docker Compose ใน Production</li>
+              <li><strong>Concepts:</strong> Container Orchestration คืออะไร?</li>
+              <li><strong>Kubernetes:</strong> แนะนำ K8s และสถาปัตยกรรม (Master & Worker Nodes)</li>
+              <li><strong>Deep Dive:</strong> Kubelet และ Kube-proxy</li>
+              <li><strong>Core Components:</strong> Pods, Deployments, Services, Namespaces</li>
+              <li><strong>Configuration:</strong> โครงสร้าง YAML syntax สำหรับ Kubernetes Manifests</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 10</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Recap Docker -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวน: การทำงานของ Docker เบื้องต้น</h2>
+          <p class="text-lg text-white/90 mb-8">
+          เราได้เรียนรู้การนำแอปพลิเคชันใส่ลงในกล่อง (Container)
+          </p>
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-blue-900/40 p-5 rounded-xl border-t-4 border-blue-500">
+              <h3 class="font-bold text-xl mb-2">Image</h3>
+              <p class="text-sm">พิมพ์เขียวของแอปฯ ที่รวมโค้ดและไลบรารีทุกอย่างไว้</p>
+            </div>
+            <div class="bg-green-900/40 p-5 rounded-xl border-t-4 border-green-500">
+              <h3 class="font-bold text-xl mb-2">Container</h3>
+              <p class="text-sm">แอปฯ ที่กำลังรันอยู่ แยกขาดจากระบบหลัก</p>
+            </div>
+            <div class="bg-purple-900/40 p-5 rounded-xl border-t-4 border-purple-500">
+              <h3 class="font-bold text-xl mb-2">Docker Compose</h3>
+              <p class="text-sm">เครื่องมือรันหลายคอนเทนเนอร์พร้อมกันบนเครื่องเดียว</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: ปัญหาของ Docker Compose ใน Production (1) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ปัญหาของการใช้ Docker Compose ใน Production</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-red-500">
+            <h3 class="text-2xl font-bold mb-4 text-red-300">เหมาะกับ Dev แต่ไม่พอสำหรับ Prod</h3>
+            <p class="text-lg mb-6">
+            คำสั่ง `docker-compose up` หรือ `docker run` อาจจะเพียงพอสำหรับการทดสอบแอปพลิเคชันในสภาพแวดล้อมการพัฒนา (Development Environment) เท่านั้น
+            </p>
+            <ul class="list-disc list-inside space-y-4 text-md">
+              <li><strong>Single Host:</strong> Docker Compose รันคอนเทนเนอร์ทั้งหมดบน Server (Node) เพียงเครื่องเดียว</li>
+              <li><strong>Single Point of Failure:</strong> ถ้า Server เครื่องนั้นดับ แอปพลิเคชันทั้งหมดก็จะใช้งานไม่ได้ทันที</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: ปัญหาของ Docker Compose ใน Production (2) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความต้องการระดับ Enterprise</h2>
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-black/40 p-6 rounded-xl">
+              <div class="text-4xl mb-4">📈</div>
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">Scalability</h3>
+              <p class="text-sm">เมื่อมีผู้ใช้งานเพิ่มขึ้นอย่างมหาศาล การขยาย (Scale) คอนเทนเนอร์อยู่บนเครื่องเดียวจะทำให้ทรัพยากร (CPU/RAM) ไม่เพียงพอ</p>
+            </div>
+            <div class="bg-black/40 p-6 rounded-xl">
+              <div class="text-4xl mb-4">🛡️</div>
+              <h3 class="text-xl font-bold text-blue-300 mb-2">High Availability (HA)</h3>
+              <p class="text-sm">
+              ในสถานการณ์ Production ระดับ Enterprise ระบบต้องการความพร้อมใช้งานสูง (HA) และการบริหารจัดการที่สามารถ Load Balance ข้ามหลายเซิร์ฟเวอร์ พร้อมระบบกู้คืนอัตโนมัติ (Intelligent Failovers)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Container Orchestration คืออะไร? -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Container Orchestration คืออะไร?</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-t-4 border-green-500">
+            <p class="text-lg mb-4">
+            แพลตฟอร์ม Orchestration จะช่วยขยายขีดความสามารถในการจัดการวงจรชีวิต (Lifecycle) ให้กับแอปพลิเคชันที่ซับซ้อนและมีหลายคอนเทนเนอร์ที่ถูก Deploy ไว้บน Cluster ของเครื่องโฮสต์หลายๆ เครื่อง
+            </p>
+            <p class="text-md text-gray-300">
+            กระบวนการของ Orchestration เกี่ยวข้องกับเครื่องมือที่สามารถทำงานแบบอัตโนมัติ (Automate) ครอบคลุมตั้งแต่การวางคอนเทนเนอร์เริ่มต้น การย้ายคอนเทนเนอร์ไปยังโฮสต์อื่นตามความเหมาะสม ไปจนถึงการ Scale และทำ Failover
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: ตัวเลือกของเครื่องมือ Orchestration -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เครื่องมือ Orchestrators ในตลาด</h2>
+          <p class="mb-8 text-lg">มีซอฟต์แวร์หลายตัวที่เกิดมาเพื่อแก้ปัญหานี้</p>
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-blue-800 p-6 rounded-xl">
+              <h3 class="font-bold text-xl mb-2">Docker Swarm</h3>
+              <p class="text-xs text-gray-300">มาพร้อมกับ Docker ใช้งานง่าย แต่ฟีเจอร์อาจไม่ซับซ้อนเท่าตัวอื่น</p>
+            </div>
+            <div class="bg-purple-800 p-6 rounded-xl">
+              <h3 class="font-bold text-xl mb-2">Mesosphere DC/OS</h3>
+              <p class="text-xs text-gray-300">สร้างมาจาก Apache Mesos เหมาะสำหรับ Datacenter ขนาดใหญ่</p>
+            </div>
+            <div class="bg-indigo-600 p-6 rounded-xl transform scale-110 shadow-2xl border-2 border-white">
+              <h3 class="font-bold text-xl mb-2">Kubernetes</h3>
+              <p class="text-xs text-gray-200">ผู้นำตลาดปัจจุบันที่สร้างโดย Google กลายเป็นมาตรฐานหลักของอุตสาหกรรม</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Kubernetes คืออะไร? -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">☸️</div>
+          <h2 class="text-5xl font-bold mb-6">Kubernetes (K8s) คืออะไร?</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-8 border-blue-400">
+            <p class="text-xl mb-4 leading-relaxed">
+            Kubernetes เป็นแพลตฟอร์มแบบ Open-source สำหรับทำระบบอัตโนมัติในการ Deploy, Scale และจัดการแอปพลิเคชันที่เป็นคอนเทนเนอร์ ข้ามกลุ่มของโฮสต์ (Clusters of hosts)
+            </p>
+            <p class="text-md text-gray-300">
+            *มักถูกเรียกย่อๆ ว่า <strong>K8s</strong> (K ตามด้วยตัวอักษร 8 ตัว และจบด้วย s)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: ทำไมต้องใช้ Kubernetes? -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">หน้าที่หลักของ Kubernetes</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="font-bold text-green-300 mb-2">Service Discovery & Load Balancing</h3>
+              <p class="text-xs">กระจาย Traffic ไม่ให้คอนเทนเนอร์ตัวใดตัวหนึ่งรับโหลดหนักเกินไป</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="font-bold text-blue-300 mb-2">Storage Orchestration</h3>
+              <p class="text-xs">จัดการเชื่อมต่อ Storage (เช่น Local, AWS EBS, NFS) เข้ากับแอปฯ อัตโนมัติ</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">Automated Rollouts & Rollbacks</h3>
+              <p class="text-xs">อัปเดตแอปเวอร์ชันใหม่แบบไม่สะดุด และถอยกลับได้ทันทีถ้าพัง</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h3 class="font-bold text-red-300 mb-2">Self-healing</h3>
+              <p class="text-xs">รีสตาร์ทคอนเทนเนอร์ที่พัง หรือย้ายไปเครื่องอื่นเมื่อโฮสต์มีปัญหา</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: สถาปัตยกรรมของ K8s -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สถาปัตยกรรมของ Kubernetes</h2>
+          <p class="text-lg mb-6">ระบบถูกออกแบบเป็น Cluster ที่แบ่งเป็น 2 ส่วนหลักๆ</p>
+          <div class="flex items-center justify-center gap-8">
+            <div class="bg-indigo-900 p-6 rounded-xl border-2 border-indigo-400 w-1/3">
+              <h3 class="text-2xl font-bold mb-2">Master Node</h3>
+              <p class="text-sm text-indigo-200">(Control Plane)</p>
+              <p class="text-xs mt-2">ทำหน้าที่เป็นสมองสั่งการ จัดการและควบคุมภาพรวมของ Cluster</p>
+            </div>
+            <div class="text-3xl font-bold">↔️</div>
+            <div class="flex flex-col gap-4 w-1/3">
+              <div class="bg-teal-900 p-4 rounded-xl border border-teal-400">
+                <h3 class="font-bold">Worker Node 1</h3>
+              </div>
+              <div class="bg-teal-900 p-4 rounded-xl border border-teal-400">
+                <h3 class="font-bold">Worker Node 2</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Master Node Components -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">องค์ประกอบของ Master Node (Control Plane)</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-black/30 p-5 rounded-xl">
+              <h3 class="text-lg font-bold text-blue-300">kube-apiserver</h3>
+              <p class="text-sm mt-1">ประตูหน้าบ้านของ K8s ทุกการสื่อสาร (UI, CLI) ต้องวิ่งผ่านตัวนี้</p>
+            </div>
+            <div class="bg-black/30 p-5 rounded-xl">
+              <h3 class="text-lg font-bold text-yellow-300">etcd</h3>
+              <p class="text-sm mt-1">ฐานข้อมูล Key-Value ความเร็วสูง เก็บข้อมูลสถานะทั้งหมดของ Cluster (Source of Truth)</p>
+            </div>
+            <div class="bg-black/30 p-5 rounded-xl">
+              <h3 class="text-lg font-bold text-green-300">kube-scheduler</h3>
+              <p class="text-sm mt-1">ทำหน้าที่ตัดสินใจว่า คอนเทนเนอร์ตัวใหม่ ควรไปรันที่ Worker Node เครื่องไหน</p>
+            </div>
+            <div class="bg-black/30 p-5 rounded-xl">
+              <h3 class="text-lg font-bold text-purple-300">kube-controller-manager</h3>
+              <p class="text-sm mt-1">คอยตรวจสอบว่าระบบทำงานตรงตามสถานะที่ผู้ใช้ต้องการหรือไม่ (Desired State)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Worker Node Components -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">องค์ประกอบของ Worker Node</h2>
+          <p class="text-lg mb-6">คอมพิวเตอร์ลูกข่ายที่รับหน้าที่รันแอปพลิเคชัน (Workloads) จริงๆ</p>
+
+          <div class="bg-white/10 p-8 rounded-2xl flex flex-col items-start space-y-6">
+            <div class="flex items-center w-full bg-black/40 p-4 rounded-lg">
+              <span class="text-3xl mr-4">🤖</span>
+              <div class="text-left">
+                <strong class="text-blue-300 text-lg">Kubelet</strong>
+                <p class="text-sm text-gray-300">เอเจนต์ที่รับคำสั่งจาก Master Node</p>
+              </div>
+            </div>
+            <div class="flex items-center w-full bg-black/40 p-4 rounded-lg">
+              <span class="text-3xl mr-4">🌐</span>
+              <div class="text-left">
+                <strong class="text-green-300 text-lg">Kube-proxy</strong>
+                <p class="text-sm text-gray-300">จัดการกฎด้าน Network และการสื่อสาร</p>
+              </div>
+            </div>
+            <div class="flex items-center w-full bg-black/40 p-4 rounded-lg">
+              <span class="text-3xl mr-4">🐳</span>
+              <div class="text-left">
+                <strong class="text-orange-300 text-lg">Container Runtime</strong>
+                <p class="text-sm text-gray-300">ตัวรันคอนเทนเนอร์ (เช่น containerd, CRI-O, Docker)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Kubelet Deep Dive -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เจาะลึก: Kubelet</h2>
+          <div class="bg-blue-900/40 p-8 rounded-2xl text-left border-l-8 border-blue-500">
+            <p class="text-xl font-bold mb-4">"ผู้จัดการประจำสาขา"</p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>เป็น Agent หลักที่รันอยู่บนแต่ละ Worker Node</li>
+              <li>รับประกันว่าคอนเทนเนอร์ต่างๆ ทำงานอยู่ใน "Pod" ตามที่ได้รับคำสั่งจาก Master (kube-apiserver)</li>
+              <li>คอยตรวจสอบสถานะ (Health check) ของคอนเทนเนอร์บนเครื่องตัวเอง แล้วรายงานกลับไปยัง Master เสมอ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Kube-proxy Deep Dive -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เจาะลึก: Kube-proxy</h2>
+          <div class="bg-green-900/40 p-8 rounded-2xl text-left border-l-8 border-green-500">
+            <p class="text-xl font-bold mb-4">"เจ้าหน้าที่จราจรเครือข่าย"</p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>รันอยู่บนทุกๆ Worker Node</li>
+              <li>ทำหน้าที่รักษากฎของ Network (Network Rules) ภายในโฮสต์</li>
+              <li>เปิดให้คอนเทนเนอร์สื่อสารกันเองได้ใน Cluster หรือสื่อสารกับโลกภายนอก (Internet)</li>
+              <li>ทำงานร่วมกับ Service (องค์ประกอบที่เราจะพูดถึงต่อไป) เพื่อจัดการ Load Balancing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Core Components Intro -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Kubernetes Core Components</h2>
+          <p class="text-xl mb-8">
+          ใน Kubernetes เราไม่สั่งงานโดยตรงไปที่ Container แต่เราสั่งผ่านสิ่งที่เรียกว่า "Objects" 
+          </p>
+          <div class="grid grid-cols-2 gap-6 text-center">
+            <div class="bg-white/10 p-6 rounded-xl font-bold text-2xl">📦 Pods</div>
+            <div class="bg-white/10 p-6 rounded-xl font-bold text-2xl">🔄 Deployments</div>
+            <div class="bg-white/10 p-6 rounded-xl font-bold text-2xl">🔌 Services</div>
+            <div class="bg-white/10 p-6 rounded-xl font-bold text-2xl">🏢 Namespaces</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Pods -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">1. Pods 📦</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-t-4 border-white">
+            <p class="text-xl mb-4">
+            Kubernetes จะจัดกลุ่มคอนเทนเนอร์ที่ทำงานร่วมกันเป็นแอปพลิเคชัน ให้อยู่ในหน่วยทางตรรกะ (Logical units) เดียวกันเพื่อการจัดการที่ง่ายขึ้น
+            </p>
+            <p class="text-lg text-yellow-300 font-bold mb-2">จุดเด่นของ Pods:</p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>เป็น <strong>หน่วยที่เล็กที่สุด</strong> ใน Kubernetes ที่เราสามารถ Deploy ได้</li>
+              <li>1 Pod สามารถมี 1 Container (ปกติ) หรือ หลาย Containers (เช่น ตัวหลัก + ตัวดึง Log)</li>
+              <li>คอนเทนเนอร์ใน Pod เดียวกัน จะแชร์ IP Address, Network, และ Storage (Volumes) เหมือนอยู่ในคอมพิวเตอร์เครื่องเดียวกันเป๊ะ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Pods vs Containers Analogy -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เปรียบเทียบ: Pods กับ Containers</h2>
+
+          <div class="flex justify-center items-center gap-12 mt-8">
+            <div class="text-center">
+              <div class="bg-blue-500 w-32 h-32 rounded-full flex items-center justify-center shadow-lg border-4 border-white mx-auto">
+                <span class="text-5xl">🐳</span>
+              </div>
+              <p class="mt-4 font-bold text-lg">Container</p>
+              <p class="text-xs text-gray-300">ตัวแอปพลิเคชัน</p>
+            </div>
+
+            <div class="text-4xl">⊂</div>
+
+            <div class="text-center">
+              <div class="bg-gray-700 w-48 h-40 rounded-xl flex items-center justify-center shadow-lg border-2 border-dashed border-yellow-400 p-4 mx-auto relative">
+                <span class="absolute top-2 left-2 text-xs text-yellow-400 font-bold">Pod IP: 10.1.x.x</span>
+                <div class="bg-blue-500 w-16 h-16 rounded-full flex items-center justify-center mr-2"><span class="text-2xl">🐳</span></div>
+                <div class="bg-blue-300 w-12 h-12 rounded-full flex items-center justify-center"><span class="text-xl">🐳</span></div>
+              </div>
+              <p class="mt-4 font-bold text-lg">Pod</p>
+              <p class="text-xs text-gray-300">กล่องหุ้ม Container</p>
+            </div>
+          </div>
+          <p class="mt-8 text-sm text-yellow-300">
+          *Kubernetes ไม่สนว่าข้างในรันด้วย Docker หรือ Container Runtime อื่น แต่มันจัดการผ่าน Pod
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 16: Deployments -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">2. Deployments 🔄</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-indigo-500">
+            <p class="text-lg mb-4">
+            ในความเป็นจริง เราไม่ค่อยสั่งสร้าง Pod ขึ้นมาตรงๆ เพราะถ้า Pod ตาย มันก็ตายไปเลย ไม่ฟื้นขึ้นมาใหม่
+            </p>
+            <h3 class="text-2xl font-bold text-indigo-300 mt-6 mb-2">หน้าที่ของ Deployment:</h3>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li>ควบคุมการสร้าง Pod และ <strong>รับประกันจำนวนสำเนา (Replicas)</strong> ให้อยู่ครบตามที่สั่งเสมอ</li>
+              <li>ถ้า Pod พัง Deployment จะสั่งรัน Pod ใหม่มาแทนที่อัตโนมัติ (Self-healing)</li>
+              <li>รองรับการอัปเดตเวอร์ชันใหม่ (Rolling Updates) และสามารถ Rollback กลับได้อย่างรวดเร็ว</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Deployments & Desired State -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Deployment: "Desired State"</h2>
+          <p class="text-lg mb-6">คุณแค่บอกว่า "อยากได้อะไร" เดี๋ยว K8s จัดการให้เอง</p>
+
+          <div class="flex items-center justify-center gap-6 bg-black/40 p-6 rounded-xl">
+            <div class="text-center">
+              <p class="font-bold text-green-400 text-xl">Desired State</p>
+              <p class="text-sm">"ฉันขอ Pod ของ Nginx 3 ตัว"</p>
+            </div>
+            <div class="text-3xl">⚖️</div>
+            <div class="text-center">
+              <p class="font-bold text-red-400 text-xl">Current State</p>
+              <p class="text-sm">"ตอนนี้มี Pod รันอยู่แค่ 2 ตัว (อีกตัวพัง)"</p>
+            </div>
+          </div>
+
+          <div class="mt-6 text-center text-yellow-300 font-bold text-lg animate-pulse">
+            ➡ K8s Controller จะตรวจพบความต่าง และสั่งสร้าง Pod เพิ่มอีก 1 ตัวทันที!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Services -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">3. Services 🔌</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-orange-500">
+            <p class="text-xl font-bold mb-4">"ปัญหาของ Pod คือ IP ไม่คงที่"</p>
+            <p class="text-md mb-4 text-gray-300">
+            เวลา Deployment สร้าง Pod ใหม่ขึ้นมาแทนตัวที่พัง IP Address ของ Pod นั้นจะเปลี่ยนไปเสมอ ทำให้ส่วนอื่นของระบบ (เช่น Frontend) ไม่รู้ว่าจะต้องส่ง Request ไปที่ IP ไหน
+            </p>
+            <h3 class="text-2xl font-bold text-orange-300 mt-6 mb-2">หน้าที่ของ Service:</h3>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li>สร้าง IP Address กลางที่ <strong>คงที่ (Static)</strong> และชื่อ DNS ให้กับกลุ่มของ Pods</li>
+              <li>ทำหน้าที่เป็น Load Balancer กระจายทราฟฟิกไปยัง Pod ย่อยๆ ทุกตัว</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Types of Services -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8">ประเภทของ Service (Service Types)</h2>
+          <div class="grid grid-cols-3 gap-6 text-left">
+            <div class="bg-black/40 p-5 rounded-xl border border-gray-500">
+              <h3 class="font-bold text-lg text-blue-300 mb-2">ClusterIP (Default)</h3>
+              <p class="text-sm">ให้ IP ภายใน Cluster คุยกันเองได้เท่านั้น 외부 (Internet) เข้าถึงไม่ได้ เหมาะสำหรับ Database</p>
+            </div>
+            <div class="bg-black/40 p-5 rounded-xl border border-gray-500">
+              <h3 class="font-bold text-lg text-green-300 mb-2">NodePort</h3>
+              <p class="text-sm">เปิด Port เฉพาะ (30000-32767) บนทุกๆ Worker Node สามารถเข้าถึงผ่าน `NodeIP:NodePort`</p>
+            </div>
+            <div class="bg-black/40 p-5 rounded-xl border border-gray-500">
+              <h3 class="font-bold text-lg text-yellow-300 mb-2">LoadBalancer</h3>
+              <p class="text-sm">สั่งให้ Cloud Provider (เช่น AWS, Azure) จ่าย External IP เพื่อรับ Traffic จาก Internet โดยตรง</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Namespaces -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">4. Namespaces 🏢</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-t-4 border-purple-500">
+            <p class="text-xl mb-4">
+            เปรียบเสมือน "Cluster เสมือน (Virtual Clusters)" ที่ซ้อนอยู่ใน Cluster จริง
+            </p>
+            <p class="text-md text-gray-300 mb-4">
+            ช่วยในการแบ่งขอบเขตและแยก Resource ออกจากกัน เหมาะสำหรับ:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li><strong>แบ่ง Environment:</strong> เช่น namespace `dev`, `staging`, `production`</li>
+              <li><strong>แบ่งทีมทำงาน:</strong> ทีม A มองไม่เห็น Pod ของ ทีม B (Multi-tenant)</li>
+              <li><strong>จัดการทรัพยากร:</strong> สามารถจำกัด (Quota) CPU/RAM สูงสุดในแต่ละ Namespace ได้</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: YAML syntax สำหรับ Kubernetes Manifests -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">YAML Syntax สำหรับ Kubernetes</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left">
+            <p class="text-lg mb-4">
+            การสั่งงาน K8s เราจะไม่ค่อยใช้คำสั่ง Command line ตรงๆ (Imperative) แต่เราจะเขียนไฟล์ <strong>Manifests</strong> ด้วยภาษา YAML (Declarative) 
+            </p>
+            <div class="bg-black/40 p-4 rounded text-sm text-yellow-300 font-mono mb-4 border-l-4 border-yellow-500">
+              "บอก K8s ว่าผลลัพธ์สุดท้ายที่ต้องการคืออะไร แล้วปล่อยให้ระบบจัดการที่เหลือเอง"
+            </div>
+            <p class="text-sm text-gray-300">
+            ข้อดี: สามารถเก็บไฟล์ YAML ไว้ใน Git (Version Control) เพื่อติดตามการแก้ไข และทำ GitOps ได้
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: โครงสร้างหลักของ K8s YAML -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">โครงสร้างพื้นฐานของ Kubernetes YAML</h2>
+          <p class="mb-4 text-left">ทุกๆ Manifest file ใน K8s จะต้องประกอบด้วย 4 ส่วนสำคัญ (Root fields):</p>
+
+          <div class="grid grid-cols-2 gap-4 text-left text-sm font-mono bg-black/60 p-6 rounded-xl border border-gray-600">
+            <div>
+              <p class="text-blue-400">apiVersion:</p>
+              <p class="text-xs text-gray-400 ml-4 mb-2">ระบุเวอร์ชันของ API K8s (เช่น v1, apps/v1)</p>
+
+              <p class="text-blue-400">kind:</p>
+              <p class="text-xs text-gray-400 ml-4 mb-2">ชนิดของ Object (เช่น Pod, Deployment, Service)</p>
+            </div>
+            <div>
+              <p class="text-blue-400">metadata:</p>
+              <p class="text-xs text-gray-400 ml-4 mb-2">ข้อมูลระบุตัวตน (เช่น name, labels, namespace)</p>
+
+              <p class="text-blue-400">spec:</p>
+              <p class="text-xs text-gray-400 ml-4 mb-2">สเปคที่ต้องการให้ทำงาน (เช่น container image, จำนวน replicas, พอร์ต)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: ตัวอย่าง Deployment YAML -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">ตัวอย่าง YAML: Deployment</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-indigo-500 overflow-auto">
+            <p><span class="text-blue-400">apiVersion:</span> apps/v1</p>
+            <p><span class="text-blue-400">kind:</span> Deployment</p>
+            <p><span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> nginx-deployment</p>
+            <p><span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">replicas:</span> 3  <span class="text-gray-500"># ขอ 3 สำเนา</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">selector:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">matchLabels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> nginx</p>
+            <p>&nbsp;&nbsp;<span class="text-blue-400">template:</span> <span class="text-gray-500"># (ข้อมูลส่วนของ Pod)</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">labels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> nginx</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">containers:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">name:</span> nginx</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">image:</span> nginx:latest</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">containerPort:</span> 80</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: ตัวอย่าง Service YAML -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">ตัวอย่าง YAML: Service</h2>
+
+          <div class="bg-black/60 p-6 rounded-xl font-mono text-left text-sm border-l-4 border-orange-500 overflow-auto">
+            <p><span class="text-blue-400">apiVersion:</span> v1</p>
+            <p><span class="text-blue-400">kind:</span> Service</p>
+            <p><span class="text-blue-400">metadata:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> nginx-service</p>
+            <p><span class="text-blue-400">spec:</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">type:</span> LoadBalancer  <span class="text-gray-500"># ขอ IP ภายนอก</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">selector:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> nginx  <span class="text-gray-500"># ค้นหา Pod ที่มีป้ายชื่อ (label) นี้</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">protocol:</span> TCP</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">port:</span> 80  <span class="text-gray-500"># พอร์ตของ Service</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">targetPort:</span> 80  <span class="text-gray-500"># พอร์ตของ Container</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Applying YAML -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">นำ YAML ไปใช้งานจริงด้วย `kubectl`</h2>
+          <p class="text-lg mb-6">เมื่อเขียน YAML เสร็จ เราจะใช้เครื่องมือ `kubectl` ในการสั่งรัน K8s</p>
+
+          <div class="bg-black/50 p-6 rounded-xl font-mono text-left text-sm border border-gray-500">
+            <p class="text-gray-400"># คำสั่งเวทมนตร์ (สร้างทุกอย่างตามที่ระบุในไฟล์)</p>
+            <p class="text-green-400">$ kubectl apply -f nginx-deployment.yaml</p>
+            <p class="text-white mt-1">deployment.apps/nginx-deployment created</p>
+            <br>
+            <p class="text-gray-400"># ตรวจสอบว่า Pod รันขึ้นมาหรือยัง</p>
+            <p class="text-green-400">$ kubectl get pods</p>
+            <p class="text-white mt-1">NAME                                READY   STATUS    RESTARTS   AGE</p>
+            <p class="text-white">nginx-deployment-7fb96c846b-xyz12   1/1     Running   0          10s</p>
+            <p class="text-white">nginx-deployment-7fb96c846b-abc34   1/1     Running   0          10s</p>
+            <p class="text-white">nginx-deployment-7fb96c846b-def56   1/1     Running   0          10s</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Kubernetes Ecosystem -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Kubernetes Ecosystem ในคลาวด์</h2>
+          <div class="bg-white/10 p-6 rounded-2xl text-left">
+            <p class="text-lg mb-4">
+            การติดตั้ง K8s ด้วยตัวเองตั้งแต่ศูนย์ (The Hard Way) ค่อนข้างซับซ้อน ปัจจุบัน Cloud Providers มักจะให้บริการ <strong>Managed Kubernetes</strong> เพื่อดูแล Master Node ให้เรา:
+            </p>
+            <ul class="list-disc list-inside space-y-4 text-md">
+              <li><strong>GKE (Google Kubernetes Engine):</strong> บริการ K8s จากผู้สร้าง ถือว่าเสถียรที่สุดตัวหนึ่ง</li>
+              <li><strong>EKS (Amazon Elastic Kubernetes Service):</strong> บริการที่คนใช้เยอะที่สุดสำหรับผู้ใช้ AWS</li>
+              <li><strong>AKS (Azure Kubernetes Service):</strong> ตัวเลือกหลักบน Microsoft Azure</li>
+            </ul>
+            <p class="mt-4 text-sm text-yellow-300">
+            *ผู้พัฒนาเพียงแค่กำหนด Worker Node และสั่งงานผ่าน `kubectl` ทำให้ชีวิตง่ายขึ้นมหาศาล
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: สรุปบทเรียน -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">สรุปบทเรียน (Summary)</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border-2 border-white/20 text-left space-y-4">
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-md"><strong>ปัญหาของ Docker Compose:</strong> ไม่ตอบโจทย์ระดับ Prod ขาดความสามารถในการ Scale และทำ HA ข้ามหลายโฮสต์</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-md"><strong>Kubernetes (K8s):</strong> คือ Orchestrator ที่ช่วยจัดการคอนเทนเนอร์จำนวนมากอัตโนมัติ </span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-md"><strong>Architecture:</strong> Master สั่งการ ส่วน Worker (มี Kubelet/Kube-proxy) ทำงานรัน Container</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-md"><strong>Core Components:</strong> Pod = หน่วยย่อย, Deployment = ควบคุม Replica, Service = Network</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-md"><strong>YAML Manifests:</strong> สั่งงานแบบ Declarative ระบุ Desired State แล้วให้ K8s ทำให้เป็นจริง</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Q&A -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-6">💬</div>
+          <h2 class="text-5xl font-bold mb-6">Q & A</h2>
+          <p class="text-xl text-white/90 mb-8">
+          มีคำถามเกี่ยวกับ Kubernetes Architecture หรือ Concepts ไหมครับ?
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 29: Preparing for Lab (Heads Up) -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! ☸️</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">Next: Hands-on Kubernetes</h3>
+            <p class="text-lg mb-4">
+            ในส่วนปฏิบัติการถัดไป เราจะนำทฤษฎีมาลองปฏิบัติจริง โดยการจำลอง K8s Cluster ลงบนเครื่องคอมพิวเตอร์ของคุณ!
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>ติดตั้งโปรแกรมจำลอง Cluster (เลือกใช้ <strong>Minikube</strong> หรือ <strong>K3s</strong>)</li>
+              <li>ทดลองใช้ <strong>kubectl</strong> CLI เบื้องต้น</li>
+              <li>สร้างและ Deploy <strong>Pod</strong> แรกของคุณ (Nginx)</li>
+              <li>สร้าง <strong>Service</strong> เพื่อ Expose เว็บไซต์ให้ออกสู่ภายนอก</li>
+            </ul>
+            <div class="mt-8 text-center text-gray-300 text-sm">
+              สิ่งที่ต้องเตรียม: RAM อย่างน้อย 4GB และพื้นที่ว่างในฮาร์ดดิสก์
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: Hello Kubernetes ☸️</h2>
+          <p class="text-xl text-white/90 mb-8">
+          จำลอง K8s Cluster บนเครื่องส่วนตัว และทดลอง Deploy แอปพลิเคชันแรกของคุณ
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-blue-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ ติดตั้งและเริ่มต้นใช้งาน Minikube (หรือ K3s) เป็น Local Cluster</li>
+              <li>✅ ทำความคุ้นเคยกับคำสั่งพื้นฐานของ <code>kubectl</code> CLI</li>
+              <li>✅ เขียนไฟล์ YAML เพื่อสร้างและ Deploy Nginx <strong>Pod</strong></li>
+              <li>✅ สร้าง <strong>Service</strong> (NodePort) เพื่อ Expose เว็บไซต์ให้ออกสู่ภายนอก</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 1 - Start Minikube -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: จำลอง Cluster ด้วย Minikube</h2>
+          <p class="mb-4 text-left">Minikube เป็นเครื่องมือที่ใช้สร้าง K8s Cluster แบบ 1-Node (รวม Master/Worker ในตัว) สำหรับใช้พัฒนาและทดสอบบนเครื่องส่วนตัว (มี Docker เป็น Prerequisites)</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border border-gray-600">
+            <p class="text-gray-400"># 1. เปิด Terminal (หรือ PowerShell/WSL) แล้วพิมพ์คำสั่งเริ่มต้น Minikube</p>
+            <p class="text-green-400">$ minikube start</p>
+            <br>
+            <p class="text-gray-400"># ผลลัพธ์ที่ควรจะเห็น (อาจใช้เวลาดาวน์โหลด Image สักพักในครั้งแรก):</p>
+            <p class="text-white">😄  minikube vX.X.X on ...</p>
+            <p class="text-white">✨  Automatically selected the docker driver</p>
+            <p class="text-white">🐳  Starting control plane node minikube in cluster minikube</p>
+            <p class="text-white">🚜  Pulling base image ...</p>
+            <p class="text-white">🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default</p>
+          </div>
+          <div class="mt-4 text-xs text-yellow-300 text-left">
+            *หมายเหตุ: หากเครื่องของคุณสเปคน้อย สามารถเลือกใช้ <a href="https://k3s.io/" class="underline text-blue-300">K3s</a> หรือ <a href="https://k3d.io/" class="underline text-blue-300">K3d</a> เป็นทางเลือกที่เบากว่าได้
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 2 - Verify Cluster with Kubectl -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 2: ตรวจสอบ Cluster ด้วย kubectl</h2>
+          <p class="mb-4 text-left"><code>kubectl</code> คือไม้กายสิทธิ์ของเราในการสั่งงาน Kubernetes ลองใช้คำสั่งเพื่อเช็คสถานะ Cluster กัน</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border border-gray-600">
+            <p class="text-gray-400"># 1. ดูข้อมูลการเชื่อมต่อของ Cluster</p>
+            <p class="text-green-400">$ kubectl cluster-info</p>
+            <p class="text-white text-xs">Kubernetes control plane is running at https://127.0.0.1:XXXXX</p>
+            <p class="text-white text-xs">CoreDNS is running at https://127.0.0.1:XXXXX/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</p>
+            <br>
+            <p class="text-gray-400"># 2. ตรวจสอบโหนด (Nodes) ที่รันอยู่</p>
+            <p class="text-green-400">$ kubectl get nodes</p>
+            <p class="text-white text-xs">NAME       STATUS   ROLES           AGE   VERSION</p>
+            <p class="text-white text-xs">minikube   Ready    control-plane   2m    v1.x.x</p>
+          </div>
+          <div class="mt-4 bg-green-900/40 p-3 rounded text-sm text-left">
+            ✅ ถ้าสถานะ Node เป็น <strong>Ready</strong> แสดงว่าพร้อมสำหรับ Deploy แอปพลิเคชันแล้ว!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 3 - Create Pod YAML -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 3: เขียนไฟล์ YAML สำหรับ Pod</h2>
+          <p class="mb-4 text-left text-sm">เราจะใช้วิธีแบบ Declarative โดยการเขียนไฟล์ YAML เพื่อบอก K8s ว่าเราต้องการรัน Nginx (Web Server)</p>
+
+          <div class="bg-black/50 p-5 rounded-xl text-left font-mono text-sm border-l-4 border-blue-400 shadow-xl">
+            <p class="text-gray-400"># สร้างไฟล์ชื่อ nginx-pod.yaml</p>
+            <p class="text-green-400">$ nano nginx-pod.yaml</p>
+            <br>
+            <p class="text-blue-300">apiVersion: <span class="text-white">v1</span></p>
+            <p class="text-blue-300">kind: <span class="text-white">Pod</span></p>
+            <p class="text-blue-300">metadata:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> <span class="text-white">my-nginx-pod</span> <span class="text-gray-500"># ชื่อของ Pod</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">labels:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> <span class="text-white">web</span> <span class="text-gray-500"># ป้ายกำกับ (สำคัญมากตอนทำ Service)</span></p>
+            <p class="text-blue-300">spec:</p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">containers:</span></p>
+            <p>&nbsp;&nbsp;- <span class="text-orange-300">name:</span> <span class="text-white">nginx-container</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">image:</span> <span class="text-white">nginx:latest</span> <span class="text-gray-500"># ดึง Image Nginx จาก Docker Hub</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">containerPort:</span> <span class="text-white">80</span> <span class="text-gray-500"># พอร์ตที่คอนเทนเนอร์ทำงาน</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Step 4 - Deploy the Pod -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: สั่ง Deploy Pod และตรวจสอบสถานะ</h2>
+          <p class="mb-4 text-left">นำไฟล์ YAML ไปรันบน Kubernetes Cluster และคอยดูสถานะการสร้าง Pod</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. Apply ไฟล์ YAML</p>
+            <p class="text-green-400">$ kubectl apply -f nginx-pod.yaml</p>
+            <p class="text-white">pod/my-nginx-pod created</p>
+            <br>
+            <p class="text-gray-400"># 2. ดูสถานะของ Pods ทั้งหมด (อาจจะขึ้น ContainerCreating รอสักครู่)</p>
+            <p class="text-green-400">$ kubectl get pods</p>
+            <p class="text-white text-xs">NAME           READY   STATUS    RESTARTS   AGE</p>
+            <p class="text-white text-xs">my-nginx-pod   1/1     Running   0          15s</p>
+            <br>
+            <p class="text-gray-400"># 3. ขอดูรายละเอียดเชิงลึกของ Pod (เอาไว้ใช้เวลา Error)</p>
+            <p class="text-green-400">$ kubectl describe pod my-nginx-pod</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 35: Step 5 - Create Service YAML -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-4">Step 5: เขียนไฟล์ YAML สำหรับ Service</h2>
+          <p class="mb-4 text-left text-sm">ถึง Pod จะรันแล้ว แต่เราจะเข้าเว็บจากเบราว์เซอร์เราไม่ได้ เพราะมันอยู่ใน Private IP ของ K8s! เราต้องสร้าง Service ชนิด <code>NodePort</code> เพื่อเจาะช่องโหว่ (Expose) ออกมา</p>
+
+          <div class="bg-black/50 p-5 rounded-xl text-left font-mono text-sm border-l-4 border-yellow-500 shadow-xl">
+            <p class="text-gray-400"># สร้างไฟล์ชื่อ nginx-svc.yaml</p>
+            <p class="text-green-400">$ nano nginx-svc.yaml</p>
+            <br>
+            <p class="text-blue-300">apiVersion: <span class="text-white">v1</span></p>
+            <p class="text-blue-300">kind: <span class="text-white">Service</span></p>
+            <p class="text-blue-300">metadata:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">name:</span> <span class="text-white">nginx-service</span></p>
+            <p class="text-blue-300">spec:</p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">type:</span> <span class="text-white font-bold">NodePort</span> <span class="text-gray-500"># เปิดพอร์ตที่ระดับ Node (เครื่อง Minikube)</span></p>
+            <p>&nbsp;&nbsp;<span class="text-green-300">selector:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-300">app:</span> <span class="text-white">web</span> <span class="text-gray-500"># 🌟 ตรงนี้ต้องตรงกับ Label ของ Pod! (app: web)</span></p>
+            <p>&nbsp;&nbsp;<span class="text-purple-400">ports:</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <span class="text-orange-300">port:</span> <span class="text-white">80</span> <span class="text-gray-500"># พอร์ตของ Service</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">targetPort:</span> <span class="text-white">80</span> <span class="text-gray-500"># พอร์ตของ Container (Nginx)</span></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-300">nodePort:</span> <span class="text-white">30080</span> <span class="text-gray-500"># พอร์ตที่จะถูกเปิดให้เข้าถึงได้จากภายนอก (30000-32767)</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 36: Step 6 - Apply and Verify Service -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 6: สร้าง Service และตรวจสอบ</h2>
+          <p class="mb-4 text-left">Deploy ตัว Service ขึ้นไปบน Cluster เพื่อเชื่อมต่อกับ Pod ที่รันอยู่</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-3">
+            <p class="text-gray-400"># 1. Apply ไฟล์ Service YAML</p>
+            <p class="text-green-400">$ kubectl apply -f nginx-svc.yaml</p>
+            <p class="text-white">service/nginx-service created</p>
+            <br>
+            <p class="text-gray-400"># 2. ตรวจสอบสถานะของ Services</p>
+            <p class="text-green-400">$ kubectl get svc</p>
+            <div class="text-white text-xs overflow-x-auto whitespace-pre">
+              NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+              kubernetes      ClusterIP   10.96.0.1      <none>        443/TCP        30m
+              nginx-service   NodePort    10.105.x.x     <none>        80:30080/TCP   10s
+            </div>
+            <p class="mt-4 text-gray-300 text-xs">
+            สังเกตว่า <strong>nginx-service</strong> ถูกสร้างขึ้นมาและชี้ Port 80 ไปที่พอร์ตภายนอก 30080 แล้ว
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 37: Step 7 - Access the Application -->
+      <div :class="{ 'active': currentSlide === 37 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 7: ทดสอบเข้าถึงเว็บ (Access Nginx)</h2>
+          <p class="mb-4 text-left">Minikube มีเครื่องมืออำนวยความสะดวกในการหา IP และ Port เพื่อเปิดเว็บไซต์ผ่านเบราว์เซอร์อัตโนมัติ</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-black/50 p-6 rounded-xl font-mono text-sm border-2 border-green-500/50">
+              <p class="text-gray-400"># พิมพ์คำสั่งนี้ใน Terminal</p>
+              <p class="text-green-400">$ minikube service nginx-service</p>
+              <br>
+              <p class="text-white text-xs">|-----------|---------------|-------------|</p>
+              <p class="text-white text-xs">| NAMESPACE |     NAME      | TARGET PORT |</p>
+              <p class="text-white text-xs">|-----------|---------------|-------------|</p>
+              <p class="text-white text-xs">| default   | nginx-service | 80          |</p>
+              <p class="text-white text-xs">|-----------|---------------|-------------|</p>
+              <p class="text-white text-xs">🎉  Opening service default/nginx-service in default browser...</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl">
+              <h3 class="font-bold text-yellow-300 mb-2">🎉 ผลลัพธ์:</h3>
+              <p class="text-sm">เบราว์เซอร์ของคุณจะถูกเปิดขึ้นมาที่ URL เช่น <code>http://127.0.0.1:XXXXX</code> หรือ <code>http://192.168.49.2:30080</code></p>
+              <div class="mt-4 p-4 bg-white text-black text-center font-serif text-xl border-4 border-gray-300">
+                <strong>Welcome to nginx!</strong><br>
+                <span class="text-sm">If you see this page, the nginx web server is successfully installed and working.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 38: Troubleshooting -->
+      <div :class="{ 'active': currentSlide === 38 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">🛠️ Troubleshooting (การแก้ปัญหาเบื้องต้นใน K8s)</h2>
+          <div class="grid md:grid-cols-3 gap-4 text-left text-sm">
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">Pod ติดสถานะ ImagePullBackOff</strong>
+              <p>สาเหตุ: พิมพ์ชื่อ Image ผิด หรือระบบดึง Image จาก Docker Hub ไม่ได้</p>
+              <p class="text-gray-300 mt-2">แก้: ใช้คำสั่ง <code>kubectl describe pod [name]</code> เพื่อดู Error Log บรรทัดล่างสุด</p>
+            </div>
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">Pod ติดสถานะ CrashLoopBackOff</strong>
+              <p>สาเหตุ: แอปพลิเคชันในคอนเทนเนอร์แครชทันทีที่รัน</p>
+              <p class="text-gray-300 mt-2">แก้: ดูสาเหตุการพังได้ด้วยคำสั่ง <code>kubectl logs [name]</code></p>
+            </div>
+            <div class="bg-red-900/30 p-4 rounded-xl border border-red-500">
+              <strong class="text-red-300 block mb-2">เข้าเว็บไม่ได้ (Connection Refused)</strong>
+              <p>สาเหตุ: Service ไม่เจอ Pod หรือระบุ Port ผิด</p>
+              <p class="text-gray-300 mt-2">แก้: เช็ค <strong>selector (app: web)</strong> ใน Service ว่าสะกดตรงกับ <strong>labels</strong> ใน Pod แบบตัวอักษรต่อตัวอักษรหรือไม่</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 39: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 39 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🥳</div>
+          <h2 class="text-4xl font-bold mb-6">ภารกิจแรกสำเร็จ! การส่งงาน</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">รายละเอียดการส่งผลการทำ Lab (Submission):</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>ไฟล์ YAML:</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ส่งไฟล์ <code>nginx-pod.yaml</code></li>
+                  <li>ส่งไฟล์ <code>nginx-svc.yaml</code></li>
+                </ul>
+              </li>
+              <li>
+                <strong>Screenshots (จัดทำเป็น PDF):</strong>
+                <ul class="list-disc list-inside ml-6 text-base text-gray-300 mt-1">
+                  <li>ภาพ Terminal ที่รันคำสั่ง <code>kubectl get pods</code> และ <code>kubectl get svc</code> โชว์สถานะ Running และพอร์ต</li>
+                  <li>ภาพหน้าเบราว์เซอร์ที่แสดงผลหน้าเว็บ <strong>Welcome to nginx!</strong> โดยมี URL เป็น Local IP/Port (เช่น localhost:xxxxx หรือ 192.168.x.x:30080)</li>
+                </ul>
+              </li>
+            </ul>
+            <div class="mt-6 text-sm text-center text-red-300">
+              ⚠️ อย่าลืมพิมพ์คำสั่ง <code>minikube stop</code> เมื่อทำ Lab เสร็จเพื่อคืนทรัพยากรให้คอมพิวเตอร์ของคุณ
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

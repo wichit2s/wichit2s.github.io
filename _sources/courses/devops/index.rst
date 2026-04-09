@@ -165,6 +165,8 @@ DevOps
        * ใช้ Jinja2 Template เพื่อสร้างไฟล์ configuration ของ Nginx
        * ทดลองใช้ Ansible Vault เพื่อเก็บรหัสผ่าน (จำลอง)
    * - **สัปดาห์ที่ 10**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk10.html>`_
      - **บทนำสู่ Container Orchestration ด้วย Kubernetes (Introduction to Container Orchestration with Kubernetes)**
 
        * ปัญหาของการจัดการ Docker Compose ใน Production
@@ -178,6 +180,8 @@ DevOps
        * สร้างและ Deploy Pod อย่างง่าย (เช่น Nginx)
        * สร้าง Service เพื่อ Expose Pod
    * - **สัปดาห์ที่ 11**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk11.html>`_
      - **การจัดการ Kubernetes Workloads (Kubernetes Workload Management)**
 
        * Deployments: การจัดการ Rollout, Rollback
@@ -192,6 +196,8 @@ DevOps
        * สร้าง Ingress เพื่อเข้าถึง Web application จากภายนอก Minikube
        * ใช้ ConfigMaps เพื่อจัดการ Environment Variables
    * - **สัปดาห์ที่ 12**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk12.html>`_
      - **การเฝ้าระวังและการบันทึกข้อมูล (Monitoring & Logging)**
 
        * ความสำคัญของการเฝ้าระวัง (Monitoring) และบันทึกข้อมูล (Logging) ใน DevOps
@@ -204,6 +210,8 @@ DevOps
        * ตั้งค่า Prometheus ให้ Scrape Metrics จาก Node (เช่น cAdvisor สำหรับ Docker)
        * สร้าง Dashboard อย่างง่ายใน Grafana เพื่อแสดง Metrics
    * - **สัปดาห์ที่ 13**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk13.html>`_
      - **Advanced Monitoring & Troubleshooting (การเฝ้าระวังขั้นสูงและการแก้ไขปัญหา)**
 
        * การใช้ Exported เพื่อเก็บ Metrics จาก Application (Node Exporter, Blackbox Exporter)
@@ -216,6 +224,8 @@ DevOps
        * จำลองการเกิดปัญหา (เช่น CPU usage สูง) และดูการทำงานของ Alert
        * ทดลองใช้ :code:`kubectl logs` และ :code:`kubectl describe` สำหรับการ Troubleshooting Kubernetes Pods
    * - **สัปดาห์ที่ 14**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk14.html>`_
      - **Security ใน DevOps (DevSecOps) และ Best Practices**
 
        * แนวคิดของ DevSecOps: Shift-Left Security
@@ -229,6 +239,8 @@ DevOps
        * ทดลองสแกน Docker Image ที่สร้างไว้ และวิเคราะห์ผลลัพธ์
        * อภิปรายและสรุปแนวทางปฏิบัติที่ดีด้านความปลอดภัย
    * - **สัปดาห์ที่ 15**
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/devops/slides/wk15.html>`_
      - **สรุปและโครงงานกลุ่ม/นำเสนอ (Course Wrap-up & Project Presentation)**
 
        * สรุปภาพรวมของ DevOps ตั้งแต่ต้นจนจบ

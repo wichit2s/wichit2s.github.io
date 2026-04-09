@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk15.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 15: Course Wrap-up & Project Presentation</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          สรุปการเดินทางของ DevOps ตั้งแต่ต้นจนจบ, เจาะลึกแนวโน้มในอนาคต และคำแนะนำสู่เส้นทางสายอาชีพ
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-3xl">
+              <li><strong>The DevOps Journey:</strong> ทบทวนภาพรวมกระบวนการและเครื่องมือทั้งหมดของ DevOps</li>
+              <li><strong>The 3 Pillars of DevOps Engineering:</strong> เสาหลักของการทำงานจริง</li>
+              <li><strong>Future of DevOps (2026+):</strong> แนวโน้มเทคโนโลยีใหม่ (AI, Platform Engineering, FinOps)</li>
+              <li><strong>Career Advice:</strong> คำแนะนำในการเตรียมตัวและทักษะที่จำเป็นสำหรับ DevOps Engineer</li>
+              <li><strong>Project Presentation:</strong> การเตรียมตัวนำเสนอโครงงานกลุ่ม</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Welcome to the End of the Journey -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-6">🏁</div>
+          <h2 class="text-4xl font-bold mb-6">ยินดีด้วย! คุณเดินทางมาถึงสัปดาห์สุดท้ายแล้ว</h2>
+          <p class="text-xl text-gray-200 mb-8">
+          ตลอด 14 สัปดาห์ที่ผ่านมา เราได้เรียนรู้การเปลี่ยนผ่านจากการพัฒนาซอฟต์แวร์แบบดั้งเดิม 
+          เข้าสู่วัฒนธรรมและกระบวนการอัตโนมัติแบบ DevOps ที่ช่วยให้ธุรกิจปรับตัวได้รวดเร็ว
+          </p>
+          <div class="bg-black/50 p-6 rounded-xl border-l-4 border-green-500 text-left">
+            <p class="text-lg">
+            "DevOps ไม่ใช่แค่การใช้เครื่องมือ (Tools) แต่คือการผสานการทำงานระหว่างทีม Development และ Operations เพื่อลดระยะเวลาการส่งมอบและสร้างความร่วมมือที่ใกล้ชิดกันมากขึ้น"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: The DevOps Lifecycle Recap -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวน DevOps Lifecycle ♾️</h2>
+          <p class="text-lg mb-6">กระบวนการของ DevOps เป็นวงจรที่ไม่สิ้นสุด (Infinity Loop)</p>
+
+          <div class="grid grid-cols-4 gap-4 text-center text-sm">
+            <div class="bg-blue-900/60 p-4 rounded-xl border border-blue-400">
+              <h3 class="font-bold text-white mb-2">1. Plan</h3>
+              <p class="text-gray-300">วางแผนและจัดการ Requirements</p>
+            </div>
+            <div class="bg-indigo-900/60 p-4 rounded-xl border border-indigo-400">
+              <h3 class="font-bold text-white mb-2">2. Code & Build</h3>
+              <p class="text-gray-300">เขียนโค้ดและแพ็กเกจซอฟต์แวร์</p>
+            </div>
+            <div class="bg-purple-900/60 p-4 rounded-xl border border-purple-400">
+              <h3 class="font-bold text-white mb-2">3. Test (CI)</h3>
+              <p class="text-gray-300">ทดสอบอัตโนมัติเพื่อหาข้อผิดพลาด</p>
+            </div>
+            <div class="bg-pink-900/60 p-4 rounded-xl border border-pink-400">
+              <h3 class="font-bold text-white mb-2">4. Deploy (CD)</h3>
+              <p class="text-gray-300">นำซอฟต์แวร์ขึ้นระบบจริงอย่างปลอดภัย</p>
+            </div>
+            <div class="bg-red-900/60 p-4 rounded-xl border border-red-400 col-start-2">
+              <h3 class="font-bold text-white mb-2">5. Operate</h3>
+              <p class="text-gray-300">จัดการ Infrastructure และ Scale ระบบ</p>
+            </div>
+            <div class="bg-orange-900/60 p-4 rounded-xl border border-orange-400 col-start-3">
+              <h3 class="font-bold text-white mb-2">6. Monitor</h3>
+              <p class="text-gray-300">เฝ้าระวัง แจ้งเตือน และเก็บ Feedback</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The 3 Pillars of DevOps Engineering -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">3 เสาหลักของการทำ DevOps Engineering</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-lg text-gray-200 mb-6">
+            ในเชิงปฏิบัติการและตำแหน่งงาน (DevOps Engineer) หน้าที่หลักสามารถแบ่งออกได้เป็น 3 เสาหลักดังนี้:
+            </p>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <span class="text-3xl mr-4">🤖</span>
+                <div>
+                  <strong class="text-xl text-yellow-300">1. Pull Request Automation (CI):</strong> การสร้างระบบที่ช่วยรันเทสต์, ตรวจโค้ด และสร้าง Ephemeral Environments ให้โดยอัตโนมัติ
+                </div>
+              </li>
+              <li class="flex items-start">
+                <span class="text-3xl mr-4">🚀</span>
+                <div>
+                  <strong class="text-xl text-green-300">2. Deployment Automation (CD):</strong> การนำโค้ดขึ้นระบบโดยอัตโนมัติ โดยไม่ให้ผู้ใช้งานสังเกตเห็นถึงปัญหา (เช่น Blue-Green, Canary)
+                </div>
+              </li>
+              <li class="flex items-start">
+                <span class="text-3xl mr-4">📊</span>
+                <div>
+                  <strong class="text-xl text-blue-300">3. Application Performance Management (APM):</strong> การตรวจจับ Downtime, รวบรวม Logs/Metrics และแจ้งเตือนทีมวิศวกรอัตโนมัติ
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Recap - Version Control & Collaboration -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Recap: Version Control (Git)</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-black/50 p-6 rounded-xl border border-gray-600">
+              <h3 class="text-xl font-bold text-orange-400 mb-2">หัวใจของการทำงานร่วมกัน</h3>
+              <p class="text-sm text-gray-300">
+              Git เป็นเครื่องมือ Version Control ที่ช่วยให้นักพัฒนาหลายคนทำงานในโปรเจกต์เดียวกันได้โดยโค้ดไม่ทับกัน
+              </p>
+            </div>
+            <div class="bg-black/50 p-6 rounded-xl border border-gray-600">
+              <h3 class="text-xl font-bold text-orange-400 mb-2">Branching Strategies</h3>
+              <p class="text-sm text-gray-300">
+              เรียนรู้การจัดการโค้ดผ่าน Branching ต่างๆ เพื่อสนับสนุนทั้งการเพิ่มฟีเจอร์และการแก้ปัญหาด่วน (Hotfix) อย่างเป็นระบบ
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Recap - CI / Pull Request Automation -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Recap: Continuous Integration (CI)</h2>
+          <div class="bg-blue-900/40 p-8 rounded-xl text-left border-l-8 border-blue-500">
+            <p class="text-lg mb-4">
+            <strong>CI (Continuous Integration)</strong> คือกระบวนการที่นักพัฒนาผลักดันโค้ด (Push) ไปยัง Repository ส่วนกลางหลายๆ ครั้งต่อวัน
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-gray-200">
+              <li>ใช้เครื่องมือเช่น Jenkins, GitLab CI หรือ GitHub Actions</li>
+              <li>ทำการ Build และ Test โค้ดโดยอัตโนมัติ เพื่อรับประกันว่าซอฟต์แวร์ฟีเจอร์หลักยังทำงานได้ปกติ</li>
+              <li>ลดปัญหากลับมาแก้โค้ดย้อนหลัง ช่วยให้ปิดงานและ Merge โค้ดได้รวดเร็ว</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Recap - CD / Deployment Automation -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Recap: Continuous Deployment (CD)</h2>
+          <div class="bg-green-900/40 p-8 rounded-xl text-left border-l-8 border-green-500">
+            <p class="text-lg mb-4">
+            <strong>CD (Continuous Deployment)</strong> คือการทำให้กระบวนการ Deploy ขึ้นสู่ระบบ Production เป็นไปอย่างอัตโนมัติหลังจากผ่าน CI Pipeline แล้ว
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-gray-200">
+              <li>ไม่ต้องรอคนกดปุ่ม (Manual Intervention) หากเทสต์ผ่าน ระบบจะถูกนำไปให้บริการผู้ใช้จริงทันที</li>
+              <li><strong>กลยุทธ์การ Deploy:</strong> เช่น Rolling Deployment (ค่อยๆ ทยอยสลับเวอร์ชัน) หรือ Blue-Green Deployment (สร้างคลัสเตอร์คู่ขนานเพื่อลดความเสี่ยง)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Recap - Containerization & Orchestration -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Recap: Docker & Kubernetes</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-blue-800/50 p-6 rounded-xl border border-blue-400">
+              <h3 class="text-2xl font-bold text-blue-300 mb-2">Docker (Container)</h3>
+              <p class="text-sm text-gray-200">
+              วิธีการห่อหุ้ม (Package) โค้ดและ Dependencies ทั้งหมดรวมกันเป็นหนึ่งเดียว ทำให้แอปพลิเคชันรันได้เหมือนกันทุกที่ หมดปัญหา "มันทำงานได้บนเครื่องฉัน"
+              </p>
+            </div>
+            <div class="bg-indigo-800/50 p-6 rounded-xl border border-indigo-400">
+              <h3 class="text-2xl font-bold text-indigo-300 mb-2">Kubernetes (Orchestration)</h3>
+              <p class="text-sm text-gray-200">
+              ระบบควบคุมวงดนตรี (Orchestrator) ที่ใช้จัดการคอนเทนเนอร์จำนวนมหาศาลข้ามหลายๆ เครื่อง (Cluster) ดูแลเรื่องการ Scale, Load Balance และ Self-healing
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Recap - Infrastructure as Code (IaC) -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Recap: Infrastructure as Code (IaC)</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border border-purple-500 shadow-xl">
+            <p class="text-lg text-purple-300 font-bold mb-4">"หยุดการคลิกสร้างเซิร์ฟเวอร์ด้วยมือ (ClickOps)"</p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li><strong>IaC</strong> คือการใช้ Code เพื่อระบุ (Define) และสร้างโครงสร้างพื้นฐานบน Cloud</li>
+              <li>เครื่องมือหลักที่เราเรียนรู้คือ <strong>Terraform</strong> (สำหรับ Provisioning) และ <strong>Ansible</strong> (สำหรับ Configuration Management)</li>
+              <li>ทำให้ระบบสามารถตรวจสอบย้อนหลังได้ ทำซ้ำได้ และสร้าง Environment ใหม่ได้ในเวลาไม่กี่นาที</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Recap - Observability & DevSecOps -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Recap: Observability & DevSecOps</h2>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-gray-800 p-6 rounded-xl border-l-4 border-yellow-400">
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">Monitoring & Logging</h3>
+              <p class="text-sm text-gray-300">
+              การรวมศูนย์ Logs (เช่น ELK) และรวบรวม Metrics (เช่น Prometheus/Grafana) เพื่อการทำ Application Performance Management และวิเคราะห์ปัญหาใน Production ได้อย่างรวดเร็ว
+              </p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-xl border-l-4 border-red-400">
+              <h3 class="text-xl font-bold text-red-300 mb-2">DevSecOps</h3>
+              <p class="text-sm text-gray-300">
+              การดึงความปลอดภัยมาไว้ด้านซ้าย (Shift-Left) ทำการตรวจสอบช่องโหว่อัตโนมัติ (เช่น Trivy, OWASP) ร่วมไปใน CI/CD Pipeline ตั้งแต่เนิ่นๆ
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Transition to the Future -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-7xl mb-6">🚀</div>
+          <h2 class="text-5xl font-bold mb-6">The Future of DevOps</h2>
+          <p class="text-2xl text-yellow-300 font-bold mb-4">โลกยุค 2026 และก้าวต่อไป</p>
+          <p class="text-lg text-gray-200">
+          บทบาทของ DevOps Engineer กำลังวิวัฒนาการ เราไม่ใช่แค่ "คนทำ Jenkins" หรือ "ช่างประปาต่อท่อ Kubernetes" อีกต่อไป แต่กำลังก้าวสู่การเป็น <strong>Platform Engineers</strong> และ <strong>Efficiency Architects</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 11: Trend 1 - Platform Engineering -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Trend 1: Platform Engineering (IDP)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-t-4 border-blue-400">
+            <p class="text-xl mb-4 text-blue-300 font-bold">ยุคแห่ง Internal Developer Platforms (IDP)</p>
+            <p class="text-md text-gray-200 mb-4">
+            ปัญหาเดิมคือ Developers ต้องเรียนรู้ Tool มากมาย (Kubernetes, Terraform, AWS) ซึ่งทำให้เสียเวลา Platform Engineering เข้ามาช่วยแก้ปัญหานี้
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li>สร้าง "Platform ภายใน" ให้ Developers มีระบบ Self-service (เช่น กดปุ่มเดียวได้ Database พร้อมเชื่อมต่อ CI/CD ทันที)</li>
+              <li>เครื่องมือมาตรฐานที่กำลังมาแรงคือ <strong>Backstage</strong> (ริเริ่มโดย Spotify) ที่เป็นศูนย์กลางจัดการระบบ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Trend 2 - AI-Driven Automation (AIOps) -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Trend 2: AI-Driven Automation (AIOps)</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-l-8 border-purple-500 shadow-xl">
+            <p class="text-lg mb-4 text-gray-200">
+            การนำ AI และ Machine Learning เข้ามาช่วยในกระบวนการทำงานด้าน Operations
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-300">
+              <li><strong>Log Analysis & Incident Response:</strong> ใช้ LLMs เพื่อช่วยวิเคราะห์ Log มหาศาลและหาต้นตอ (Root Cause) เวลาระบบล่มได้อย่างรวดเร็ว</li>
+              <li><strong>Predictive Analytics:</strong> วิเคราะห์ประวัติการพังของ Pipeline (Build logs) เพื่อทำนายและป้องกันคอขวดล่วงหน้าก่อนที่ปัญหาจะเกิดจริง</li>
+              <li><strong>AI Code/IaC Generation:</strong> ใช้ AI ช่วยเขียนสคริปต์ Terraform หรือ Kubernetes Manifests</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Trend 3 - Serverless & Auto-scaling -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Trend 3: Serverless & Intelligent Auto-scaling</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-gray-800 p-6 rounded-xl border border-gray-600">
+              <h3 class="text-xl font-bold text-orange-300 mb-2">Serverless Computing</h3>
+              <p class="text-sm text-gray-300">
+              หมดยุคการเช่าเซิร์ฟเวอร์เปิดทิ้งไว้ 24 ชม. บริการอย่าง AWS Lambda อนุญาตให้เรารันโค้ดและจ่ายเงินเฉพาะหลักมิลลิวินาทีที่ทำงานจริง ลดภาระการจัดการ Infrastructure ขั้นพื้นฐานลง
+              </p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-xl border border-gray-600">
+              <h3 class="text-xl font-bold text-orange-300 mb-2">Just-in-time Scaling</h3>
+              <p class="text-sm text-gray-300">
+              เทคโนโลยีอย่าง <strong>Karpenter</strong> จะเข้ามาแทนที่ระบบ Cluster Autoscaler แบบเดิม โดยสามารถคำนวณและเพิ่ม Node ให้เหมาะสมกับความต้องการของ Pod ในเสี้ยววินาที
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Trend 4 - Multi-Cloud Integration -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Trend 4: Multi-Cloud CI/CD Environments</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-t-4 border-teal-400">
+            <p class="text-lg text-gray-200 mb-4">
+            องค์กรจะไม่พึ่งพา Cloud Provider เจ้าเดียว (Vendor Lock-in) อีกต่อไป
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li>การใช้ <strong>Terraform</strong> และ <strong>GitLab/GitHub Actions</strong> ช่วยสร้างท่อ CI/CD ที่ยืดหยุ่น โยนโหลดงานข้ามไปยัง AWS, GCP หรือ Azure ได้ตามความเหมาะสมของราคา</li>
+              <li><strong>Crossplane:</strong> คือจุดเปลี่ยนที่สำคัญ (The big shift) มันอนุญาตให้เราบริหารจัดการคลาวด์เซอร์วิสต่างๆ (เช่น S3, RDS) ผ่าน Kubernetes API โดยตรงด้วยแนวทาง GitOps</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Trend 5 - FinOps -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Trend 5: FinOps (Cloud Cost Management)</h2>
+          <div class="bg-green-900/40 p-8 rounded-xl text-left border border-green-500 shadow-xl">
+            <h3 class="text-2xl font-bold text-green-300 mb-4">หมดยุค "งบคลาวด์ไม่จำกัด"</h3>
+            <p class="text-md text-gray-200 mb-4">
+            DevOps ในยุคต่อไปต้องคำนึงถึง "ต้นทุน" ควบคู่ไปกับ "ความรวดเร็ว"
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li><strong>FinOps:</strong> เป็นวัฒนธรรมการจัดการการเงินบนคลาวด์</li>
+              <li>มีการใช้เครื่องมืออย่าง <strong>Infracost</strong> ร่วมใน Pull Request (PR) เพื่อคำนวณและแสดงให้เห็นว่า "การอนุมัติโค้ดชุดนี้ จะทำให้ค่าคลาวด์เพิ่มขึ้นกี่ดอลลาร์ต่อเดือน" ก่อนที่จะกด Merge</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Trend 6 - Supply Chain Security -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Trend 6: Supply Chain Security</h2>
+          <div class="bg-red-900/30 p-8 rounded-xl text-left border border-red-500 shadow-xl">
+            <p class="text-lg text-gray-200 mb-4">
+            นอกจากการสแกนโค้ด (SAST/SCA) มาตรฐานความปลอดภัยจะสูงขึ้นไปอีกขั้น
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-300">
+              <li><strong>SBOMs (Software Bill of Materials):</strong> การสร้างรายการแสดง "ส่วนผสม" ทุกชิ้นของซอฟต์แวร์ เพื่อให้รู้ทันทีหากมีไลบรารีใดถูกแฮก</li>
+              <li><strong>Image Signing:</strong> การเซ็นลายเซ็นดิจิทัลรับรอง Image ด้วยเทคโนโลยีอย่าง Sigstore / Cosign เพื่อป้องกันการสับเปลี่ยน Container Image ระหว่างทาง (Supply Chain Attacks)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Transition to Career Advice -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-7xl mb-6">💼</div>
+          <h2 class="text-5xl font-bold mb-6">Career Advice</h2>
+          <p class="text-2xl text-blue-300 font-bold mb-4">คำแนะนำสำหรับการทำงานในสายอาชีพ DevOps</p>
+          <p class="text-lg text-gray-200">
+          สายอาชีพที่เกี่ยวข้องมีหลากหลาย เช่น DevOps Engineer, Cloud Engineer, Site Reliability Engineer (SRE) และ DevSecOps เรามาดูวิธีเตรียมตัวกัน
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 18: Advice 1 - The Core Fundamentals -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">1. ทักษะพื้นฐานต้องแน่น (The Core Fundamentals)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-md text-gray-200 mb-4">
+            ก่อนที่จะไปจับเทคโนโลยีสุดล้ำอย่าง AI หรือ Orchestrators ที่ซับซ้อน คุณต้องเชี่ยวชาญพื้นฐานเหล่านี้เสียก่อน:
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-300 bg-black/40 p-6 rounded-xl">
+              <li><strong>Linux:</strong> เพราะ Containers ก็คือ Linux Process ชนิดหนึ่ง พื้นฐาน Linux (Bash, File system, Process) คือแกนกลางของทุกสิ่ง</li>
+              <li><strong>Networking & Security:</strong> ทำความเข้าใจการเชื่อมต่อเครือข่าย, eBPF, และพื้นฐานความปลอดภัย</li>
+              <li><strong>CI/CD Patterns:</strong> ยึดหลัก "Pipeline as Code" โดยใช้ GitHub Actions หรือ GitLab CI เป็นมาตรฐาน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Advice 2 - The "One Language" Rule -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">2. กฎของการเชี่ยวชาญ "หนึ่งภาษา" (The One Language Rule)</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-gray-800 p-6 rounded-xl border-l-4 border-yellow-400">
+              <h3 class="text-xl font-bold text-yellow-300 mb-2">DevOps ต้องเขียนโค้ดได้!</h3>
+              <p class="text-sm text-gray-300">
+              คุณไม่จำเป็นต้องรู้ 5 ภาษาเขียนโปรแกรม แต่ให้เลือกเรียนรู้ภาษาหลัก <strong>เพียงหนึ่งภาษา</strong> ให้ลึกซึ้ง เพื่อใช้สำหรับทำ Automation, เขียน Script หรือต่อเชื่อม AI
+              </p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-xl border-l-4 border-blue-400">
+              <h3 class="text-xl font-bold text-blue-300 mb-2">ภาษาที่แนะนำ</h3>
+              <p class="text-sm text-gray-300">
+              <strong>Go (Golang):</strong> ยอดเยี่ยมสำหรับสร้าง Infrastructure Tools (Kubernetes, Terraform ล้วนเขียนด้วย Go)<br>
+              <strong>Python:</strong> เป็นราชาของงาน Automation, Data, และ AI Integration
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Advice 3 - Focus on What Matters -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">3. เลือกลงทุนเวลาเรียนรู้ให้ถูกจุด (What to Skip)</h2>
+          <div class="bg-red-900/30 p-8 rounded-xl text-left border border-red-500 shadow-xl">
+            <p class="text-lg text-gray-200 mb-4">
+            เทคโนโลยีไอทีมีการเปลี่ยนแปลงตลอดเวลา เพื่อให้ไปได้เร็ว คุณต้องหยุดเรียนรู้เทคโนโลยีที่เริ่มเสื่อมความนิยม:
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-300">
+              <li><strong>ลดความสำคัญของ:</strong> Legacy Configuration Management เช่น Chef หรือ Puppet (เว้นแต่คุณจะทำบริษัท Enterprise เก่ามากๆ) ให้ขยับมาเน้นที่ <strong>Terraform</strong> เป็นหลัก</li>
+              <li><strong>ลดความสำคัญของ:</strong> การสร้างและดูแล CI/CD Server เองทั้งหมด (เช่น ตั้ง Jenkins server เอง) หันไปใช้ <strong>Managed Services</strong> เช่น GitHub Actions แทน</li>
+              <li><strong>เลิกทำ:</strong> การอัปเดตแพตช์เซิร์ฟเวอร์ด้วยมือ (Manual Patching) เปลี่ยนไปใช้แนวคิด <strong>Immutable Infrastructure</strong> แทน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Advice 4 - Contribute to Open Source -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">4. มีส่วนร่วมกับ Open Source Projects</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-md text-gray-200 mb-4">
+            เครื่องมือ DevOps ส่วนใหญ่เป็น Open Source การเข้าไปมีส่วนร่วม (Contribute) เป็นวิธีที่เร็วที่สุดในการสร้างประสบการณ์จริง อัปเกรด Resume และสร้าง Connection ในวงการระดับโลก
+            </p>
+            <h3 class="text-lg font-bold text-yellow-300 mb-2">โปรเจกต์ที่น่าสนใจสำหรับผู้เริ่มต้น:</h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li><strong>Kubernetes:</strong> คุณสามารถใช้ Minikube หรือ Kind รันในเครื่อง เพื่อทดสอบแก้ Issue ระดับเริ่มต้น หรือปรับปรุง Documentation ได้</li>
+              <li><strong>Terraform / Ansible:</strong> เขียน Module แจกจ่าย หรือเพิ่มตัวอย่างการใช้งานลงใน GitHub ของโปรเจกต์</li>
+              <li><strong>Prometheus & Grafana:</strong> ช่วยทำ Dashboard ที่เป็นประโยชน์เผยแพร่สู่ชุมชน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Advice 5 - Soft Skills & Culture -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">5. Soft Skills และวัฒนธรรมไร้การกล่าวโทษ</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-center border-t-4 border-green-400 shadow-xl">
+            <p class="text-xl mb-4 text-green-300 font-bold">"เทคโนโลยีซื้อได้ แต่วัฒนธรรมต้องสร้างเอาเอง"</p>
+            <p class="text-md text-gray-300 mb-6 text-left">
+            ปัญหาของ DevOps ไม่ใช่ปัญหาทางเทคนิค แต่เป็นปัญหาเรื่องคน! ทักษะที่สำคัญพอๆ กับการเขียนโค้ดคือ:
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 text-left">
+              <li><strong>การสื่อสาร (Communication):</strong> เป็นตัวเชื่อมประสานรอยร้าว (Silo) ระหว่างทีม Dev (ที่เน้นความเร็ว) และทีม Ops (ที่เน้นความเสถียร)</li>
+              <li><strong>Blameless Culture:</strong> ส่งเสริมวัฒนธรรมที่เมื่อระบบพัง เราจะวิเคราะห์หาช่องโหว่ของกระบวนการ (Post-mortem) แทนการไล่หาว่าใครเป็นคนทำพัง</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Advice 6 - Continuous Learning -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">6. การเรียนรู้อย่างต่อเนื่อง (Continuous Learning)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <p class="text-md text-gray-200 mb-4">
+            เทคโนโลยี DevOps มีการเปลี่ยนแปลงอย่างรวดเร็ว (Rapid evolution) การมี Growth Mindset และความมุ่งมั่นที่จะเรียนรู้ตลอดเวลาจึงเป็นหัวใจสำคัญ
+            </p>
+            <h3 class="text-lg font-bold text-yellow-300 mb-2">การยกระดับโปรไฟล์ด้วย Certifications:</h3>
+            <p class="text-sm text-gray-300 mb-4">ใบรับรองเป็นใบเบิกทางที่ช่วยยืนยันความสามารถในอุตสาหกรรม</p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li><strong>พื้นฐาน:</strong> CompTIA Linux+, AWS Certified Cloud Practitioner</li>
+              <li><strong>ระดับกลาง-สูง:</strong> CKA (Certified Kubernetes Administrator), AWS Certified DevOps Engineer</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Course Conclusion -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-6">🎓</div>
+          <h2 class="text-5xl font-bold mb-6">บทสรุปรายวิชา (Course Conclusion)</h2>
+          <div class="bg-black/60 p-8 rounded-3xl border-2 border-yellow-500/50 text-left">
+            <p class="text-lg text-gray-200 mb-4">
+            ในรายวิชานี้ คุณได้เปลี่ยนแนวคิดจาก <strong>"การพิมพ์คำสั่งรันเซิร์ฟเวอร์ด้วยมือ"</strong> มาเป็น <strong>"การใช้โค้ดควบคุมทุกอย่าง (Everything as Code)"</strong>
+            </p>
+            <p class="text-lg text-gray-200">
+            ไม่ว่าในอนาคตเครื่องมือหรือ Tools จะเปลี่ยนไปใช้เทคโนโลยีอะไรก็ตาม (Docker อาจเปลี่ยนชื่อ, Kubernetes อาจล้าสมัย) แต่ <strong>"หลักการ"</strong> ของ CI/CD, Immutable Infrastructure, และ Automation จะยังคงอยู่ติดตัวคุณตลอดไปในฐานะ <strong>วิศวกรซอฟต์แวร์ยุคใหม่</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: It's Project Time! -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-7xl mb-6">💡</div>
+          <h2 class="text-5xl font-bold mb-6 text-green-300">ถึงเวลาโชว์ของ! (It's Project Time)</h2>
+          <p class="text-xl text-white/90 mb-8">
+          เตรียมตัวให้พร้อมสำหรับช่วงถัดไป ซึ่งเป็นเวลาของ <strong>"การนำเสนอโครงงานและอภิปราย (Project Presentation)"</strong> 
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 26: Project Presentation Heads-up -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-green-300">เตรียมตัวนำเสนอโครงงานกลุ่ม 💻</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-green-500/50 text-left">
+            <h3 class="text-2xl font-bold mb-4">สิ่งที่ต้องเตรียมสำหรับการนำเสนอ:</h3>
+            <ul class="list-disc list-inside space-y-4 text-lg text-gray-200">
+              <li>
+                <strong>Demonstration (Demo):</strong> แสดงการทำงานของ CI/CD Pipeline ของกลุ่มคุณจริงแบบสดๆ (Push code -> Build -> Test -> Deploy)
+              </li>
+              <li>
+                <strong>Architecture Diagram:</strong> แผนภาพโครงสร้างระบบของคุณ ใช้เทคโนโลยีอะไรบ้าง (Docker, GitHub Actions, Cloud Provider, Database)
+              </li>
+              <li>
+                <strong>Challenges & Solutions:</strong> อภิปรายปัญหาที่พบเจอระหว่างทำโปรเจกต์ (เช่น ไฟล์ Docker พัง, เชื่อมต่อ DB ไม่ได้) และวิธีที่กลุ่มคุณใช้แก้ปัญหานั้น (Troubleshooting)
+              </li>
+              <li>
+                <strong>Q&A Session:</strong> เตรียมตอบคำถามจากเพื่อนๆ ในคลาสและอาจารย์ผู้สอน
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Final Thank You -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-6xl font-bold mb-8">ขอบคุณทุกท่านที่ตั้งใจเรียน! 🙏</h2>
+          <p class="text-2xl text-yellow-300 font-bold mb-8">
+          "ขอให้สนุกกับการนำเสนอโปรเจกต์ และโชคดีกับเส้นทางสายอาชีพ DevOps Engineer ครับ"
+          </p>
+          <div class="bg-white/10 p-4 rounded-full inline-block animate-pulse">
+            <p class="text-lg">Please switch to presentation mode to begin the Project Showcase.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

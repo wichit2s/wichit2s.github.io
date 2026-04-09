@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../../courses/devops/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk14.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 0: Title Slide -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สัปดาห์ที่ 14: Security ใน DevOps (DevSecOps) และ Best Practices</h2>
+          <p class="text-xl text-white/90 mb-8 leading-relaxed">
+          ยกระดับความปลอดภัยให้เป็นส่วนหนึ่งของดีเอ็นเอในการพัฒนาซอฟต์แวร์ และเรียนรู้วิธีปฏิบัติที่เป็นเลิศ
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <h3 class="text-2xl font-semibold mb-4 text-yellow-300">Agenda วันนี้</h3>
+            <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+              <li><strong>DevSecOps & Shift-Left:</strong> แนวคิดการขยับความปลอดภัยไปข้างหน้า</li>
+              <li><strong>Pipeline Security:</strong> การทดสอบความปลอดภัยอัตโนมัติ (SAST, DAST, SCA)</li>
+              <li><strong>Container Security:</strong> การสแกน Image และความปลอดภัยขณะรันไทม์</li>
+              <li><strong>Configuration & Secrets:</strong> การจัดการข้อมูลความลับอย่างปลอดภัย</li>
+              <li><strong>Best Practices & Anti-patterns:</strong> สิ่งที่ควรทำและสิ่งที่ควรหลีกเลี่ยงใน DevOps</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/70 mt-8">DevOps Course: Week 14</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Recap Week 13 -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทบทวนสัปดาห์ที่ 13 (Recap)</h2>
+          <p class="text-lg text-white/90 mb-8">
+          สัปดาห์ที่แล้วเราเรียนรู้เกี่ยวกับการเฝ้าระวังขั้นสูง และการจัดการกับปัญหา (Incident)
+          </p>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-blue-900/40 p-5 rounded-xl border-l-4 border-blue-500">
+              <h3 class="font-bold text-xl mb-2 text-white">Exporters</h3>
+              <p class="text-sm text-gray-300">การใช้ Node Exporter และ Blackbox Exporter เพื่อดึง Metrics จากระบบที่ไม่ได้ออกแบบมาเพื่อ Prometheus โดยตรง</p>
+            </div>
+            <div class="bg-green-900/40 p-5 rounded-xl border-l-4 border-green-500">
+              <h3 class="font-bold text-xl mb-2 text-white">SRE Concepts</h3>
+              <p class="text-sm text-gray-300">การทำความเข้าใจ SLI (ตัวชี้วัด), SLO (เป้าหมาย), และ Error Budgets (โควตาความผิดพลาด)</p>
+            </div>
+            <div class="bg-orange-900/40 p-5 rounded-xl border-l-4 border-orange-500">
+              <h3 class="font-bold text-xl mb-2 text-white">Troubleshooting Frameworks</h3>
+              <p class="text-sm text-gray-300">การใช้ USE Method สำหรับทรัพยากรฮาร์ดแวร์ และ RED Method สำหรับ Microservices</p>
+            </div>
+            <div class="bg-purple-900/40 p-5 rounded-xl border-l-4 border-purple-500">
+              <h3 class="font-bold text-xl mb-2 text-white">Blameless Post-mortem</h3>
+              <p class="text-sm text-gray-300">การวิเคราะห์สาเหตุของปัญหา (Root Cause) โดยไม่กล่าวโทษบุคคล แต่เน้นปรับปรุงกระบวนการ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is DevSecOps? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">🛡️</div>
+          <h2 class="text-5xl font-bold mb-6">DevSecOps คืออะไร?</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-t-4 border-blue-400 shadow-xl">
+            <p class="text-xl mb-4">
+            <strong>DevSecOps</strong> (Development, Security, and Operations) คือการบูรณาการความปลอดภัย (Security) เข้าไปในทุกขั้นตอนของกระบวนการพัฒนาซอฟต์แวร์ (SDLC)
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200">
+              <li>ความปลอดภัยไม่ใช่ขั้นตอนสุดท้าย หรือหน้าที่ของทีม Security ทีมเดียวอีกต่อไป</li>
+              <li>เปลี่ยนจากการตรวจสอบความปลอดภัย "หลังการพัฒนา" มาเป็น "ระหว่างการพัฒนา" อย่างต่อเนื่อง</li>
+              <li>เน้นการใช้เครื่องมืออัตโนมัติ (Automation) เพื่อไม่ให้ความปลอดภัยไปลดความเร็วในการส่งมอบซอฟต์แวร์</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Traditional Security Bottleneck -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ปัญหาของการทำ Security แบบดั้งเดิม</h2>
+          <div class="flex flex-col items-center justify-center space-y-4 mb-6">
+            <div class="flex items-center space-x-2 text-sm">
+              <div class="bg-blue-600 px-4 py-2 rounded">Plan</div>
+              <span>➡</span>
+              <div class="bg-blue-600 px-4 py-2 rounded">Code</div>
+              <span>➡</span>
+              <div class="bg-blue-600 px-4 py-2 rounded">Build</div>
+              <span>➡</span>
+              <div class="bg-blue-600 px-4 py-2 rounded">Test</div>
+              <span>➡</span>
+              <div class="bg-red-600 px-4 py-2 rounded font-bold">Security Audit ⛔</div>
+              <span>➡</span>
+              <div class="bg-green-600 px-4 py-2 rounded">Deploy</div>
+            </div>
+          </div>
+          <div class="bg-red-900/30 p-6 rounded-xl border border-red-500 text-left">
+            <h3 class="text-2xl font-bold text-red-300 mb-3">คอขวด (Bottleneck)</h3>
+            <p class="text-sm text-gray-200 mb-2">
+            ในอดีต ทีม Security จะทำการตรวจสอบ (Audit หรือ Penetration Test) ในช่วงท้ายของโปรเจกต์ก่อนขึ้น Production
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+              <li>หากพบช่องโหว่ร้ายแรง ทีม Dev ต้องรื้อโค้ดแก้ใหม่ ทำให้โปรเจกต์ล่าช้า (Delay)</li>
+              <li>เกิดความขัดแย้งระหว่างทีม Dev (อยากรีบปล่อยของ) และทีม Sec (ห้ามปล่อยถ้าไม่ปลอดภัย)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Shift-Left Security Concept -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">แนวคิด Shift-Left Security ⏪</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-yellow-500">
+            <p class="text-xl mb-4">
+            <strong>Shift-Left</strong> คือการ "เลื่อน" กระบวนการตรวจสอบและคิดเรื่องความปลอดภัยไปทาง "ซ้าย" (ช่วงเริ่มต้น) ของ Pipeline ให้เร็วที่สุดเท่าที่จะทำได้
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-4">
+              <li>เริ่มตั้งแต่การออกแบบ (Threat Modeling) และวิเคราะห์ความเสี่ยงตั้งแต่เนิ่นๆ</li>
+              <li>ฝังเครื่องมือสแกนความปลอดภัยไว้ใน IDE ของนักพัฒนา และใน CI/CD Pipeline ทันทีที่มีการ Commit โค้ด</li>
+              <li><strong>ผลลัพธ์:</strong> พบปัญหาเร็วขึ้น แก้ไขง่ายขึ้น และส่งมอบงานได้เร็วเหมือนเดิม</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: The Cost of Fixing Defects -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ทำไม Shift-Left ถึงสำคัญ? (Cost of Change)</h2>
+          <p class="text-lg mb-6">ต้นทุนและเวลาในการแก้ไขช่องโหว่จะเพิ่มขึ้นทวีคูณ หากเราพบมันช้าลง</p>
+
+          <div class="flex items-end justify-center space-x-4 h-48 mb-6">
+            <div class="flex flex-col items-center">
+              <div class="bg-green-500 w-16 h-8 flex items-center justify-center font-bold">1x</div>
+              <span class="mt-2 text-sm">Coding</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="bg-yellow-500 w-16 h-16 flex items-center justify-center font-bold">10x</div>
+              <span class="mt-2 text-sm">Testing/CI</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="bg-orange-500 w-16 h-24 flex items-center justify-center font-bold">30x</div>
+              <span class="mt-2 text-sm">Staging</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="bg-red-500 w-16 h-40 flex items-center justify-center font-bold">100x</div>
+              <span class="mt-2 text-sm">Production</span>
+            </div>
+          </div>
+
+          <div class="bg-black/50 p-4 rounded-xl text-left text-sm text-gray-300">
+            หากพบช่องโหว่ขณะกำลังเขียนโค้ด นักพัฒนาสามารถแก้ได้ทันทีใน 5 นาที แต่ถ้าช่องโหว่นั้นหลุดไปถึง Production การแก้ไขจะต้องผ่านกระบวนการประชุม, การสร้าง Patch, การหยุดระบบชั่วคราว, และอาจสร้างความเสียหายทางธุรกิจมหาศาล
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Security in the CI/CD Pipeline -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความปลอดภัยใน CI/CD Pipeline</h2>
+          <p class="text-lg mb-6">การสร้าง DevSecOps Pipeline คือการเพิ่ม Gate การตรวจสอบความปลอดภัยในทุกจุด</p>
+
+          <div class="grid grid-cols-4 gap-2 text-center text-xs">
+            <div class="bg-blue-900 p-3 rounded">
+              <h4 class="font-bold text-white mb-2">1. Code / Commit</h4>
+              <p class="text-gray-300">Pre-commit Hooks</p>
+              <p class="text-gray-300">IDE Security Plugins</p>
+              <p class="text-yellow-300 font-bold">Secret Scanning</p>
+            </div>
+            <div class="bg-blue-800 p-3 rounded">
+              <h4 class="font-bold text-white mb-2">2. Build (CI)</h4>
+              <p class="text-yellow-300 font-bold">SAST</p>
+              <p class="text-yellow-300 font-bold">SCA</p>
+              <p class="text-gray-300">Unit Tests</p>
+            </div>
+            <div class="bg-blue-700 p-3 rounded">
+              <h4 class="font-bold text-white mb-2">3. Test & Deploy (CD)</h4>
+              <p class="text-yellow-300 font-bold">DAST</p>
+              <p class="text-yellow-300 font-bold">Container Scan</p>
+              <p class="text-yellow-300 font-bold">IaC Scan</p>
+            </div>
+            <div class="bg-blue-600 p-3 rounded">
+              <h4 class="font-bold text-white mb-2">4. Operate</h4>
+              <p class="text-gray-300">Runtime Protection</p>
+              <p class="text-gray-300">Monitoring & Alerts</p>
+              <p class="text-gray-300">Penetration Test</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: SAST (Static Application Security Testing) -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300">SAST (Static Application Security Testing)</h2>
+          <div class="bg-black/50 p-6 rounded-xl text-left border-l-8 border-blue-500 shadow-xl">
+            <p class="text-lg mb-4">
+            <strong>SAST</strong> คือการสแกน Source Code หรือ Bytecode เพื่อหาจุดบกพร่องด้านความปลอดภัย <strong>"โดยไม่ต้องรันโปรแกรม"</strong> (White-box testing)
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>ค้นหา Pattern ของโค้ดที่ไม่ปลอดภัย เช่น SQL Injection, XSS, การจัดการ Buffer ผิดพลาด</li>
+              <li>ทำงานได้เร็วมากและมักจะรวมอยู่ใน CI Pipeline ทันทีที่มีการเปิด Pull Request</li>
+              <li>ช่วยระบุบรรทัดของโค้ดที่มีปัญหาได้อย่างแม่นยำ ทำให้นักพัฒนาแก้ไขได้ทันที</li>
+              <li><strong>เครื่องมือยอดนิยม:</strong> SonarQube, Semgrep, Checkmarx, Bandit</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: DAST (Dynamic Application Security Testing) -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-orange-300">DAST (Dynamic Application Security Testing)</h2>
+          <div class="bg-black/50 p-6 rounded-xl text-left border-l-8 border-orange-500 shadow-xl">
+            <p class="text-lg mb-4">
+            <strong>DAST</strong> คือการสแกนความปลอดภัย <strong>"ขณะที่แอปพลิเคชันกำลังทำงานอยู่ (Runtime)"</strong> โดยการจำลองการโจมตีจากภายนอก (Black-box testing)
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-md text-gray-200">
+              <li>ค้นหาช่องโหว่ที่เกิดขึ้นเมื่อระบบประกอบร่างกันแล้ว เช่น ปัญหาเรื่อง Authentication, API endpoints หรือการตั้งค่า Server ผิดพลาด</li>
+              <li>มักจะทำงานในสเตจ Staging ก่อนขึ้น Production</li>
+              <li>ไม่สามารถบอกได้ว่าโค้ดบรรทัดไหนผิด แต่บอกได้ว่า URL หรือ Request ไหนมีช่องโหว่</li>
+              <li><strong>เครื่องมือยอดนิยม:</strong> OWASP ZAP, Burp Suite</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: SAST vs DAST -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">SAST vs DAST ต่างกันอย่างไร?</h2>
+
+          <table class="w-full text-sm text-left bg-black/50 rounded-xl overflow-hidden shadow-lg border border-gray-600">
+            <thead class="bg-gray-800 text-white">
+              <tr>
+                <th class="p-4 w-1/4">คุณสมบัติ</th>
+                <th class="p-4 w-3/8 text-blue-300">SAST (Static)</th>
+                <th class="p-4 w-3/8 text-orange-300">DAST (Dynamic)</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-300">
+              <tr class="border-b border-gray-700">
+                <td class="p-4 font-bold text-white">วิธีการสแกน</td>
+                <td class="p-4">วิเคราะห์ Source Code (White-box)</td>
+                <td class="p-4">ยิง Request โจมตีระบบที่รันอยู่ (Black-box)</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="p-4 font-bold text-white">ช่วงเวลา (Pipeline)</td>
+                <td class="p-4">ทำได้ทันทีในขั้นตอน Build หรือ PR</td>
+                <td class="p-4">ต้องรอแอป Deploy ลง Staging ก่อน</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="p-4 font-bold text-white">สิ่งที่ค้นพบ</td>
+                <td class="p-4">บอกได้ถึงระดับบรรทัดโค้ด</td>
+                <td class="p-4">บอกช่องโหว่ของ HTTP/API, รหัสผ่านหลุดรอด</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">จุดอ่อน</td>
+                <td class="p-4">อาจเจอ False Positives เยอะ และไม่เห็นคอนฟิกตอนรัน</td>
+                <td class="p-4">ใช้เวลาสแกนนาน หาต้นตอในโค้ดยาก</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Slide 10: SCA (Software Composition Analysis) -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-green-300">SCA (Software Composition Analysis)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-green-500">
+            <p class="text-xl mb-4">
+            แอปพลิเคชันยุคใหม่มักมีโค้ดที่เราเขียนเองเพียง 10-20% ที่เหลือคือ <strong>3rd Party Libraries (Open Source)</strong>
+            </p>
+            <p class="text-md text-gray-200 mb-4">
+            <strong>SCA</strong> คือเครื่องมือวิเคราะห์และสแกน Dependency เหล่านี้ (เช่น ไฟล์  package.json ,  requirements.txt ) เพื่อตรวจสอบว่า:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
+              <li>มี Library ตัวไหนที่มีช่องโหว่ (CVEs - Common Vulnerabilities and Exposures) ที่ถูกเปิดเผยแล้วหรือไม่?</li>
+              <li>มีปัญหาเรื่องลิขสิทธิ์ (License Risks) หรือไม่?</li>
+              <li><strong>เครื่องมือยอดนิยม:</strong> Snyk, Dependabot, npm-audit</li>
+            </ul>
+            <p class="mt-4 text-xs text-green-300 font-bold">*SCA เป็นปราการด่านสำคัญในการป้องกัน Supply Chain Attacks</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Securing the CI/CD Infrastructure -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การรักษาความปลอดภัยให้ระบบ CI/CD</h2>
+          <div class="bg-red-900/30 p-6 rounded-xl border border-red-500 text-left mb-6">
+            <h3 class="text-xl font-bold text-red-300 mb-2">เป้าหมายชั้นดีของแฮกเกอร์</h3>
+            <p class="text-sm text-gray-200">
+            CI/CD Server (เช่น Jenkins) มีสิทธิ์ในการดึง Source Code และมีรหัสผ่านในการเข้าถึง Production Server หาก CI/CD โดนแฮก ระบบทั้งหมดก็จะโดนยึด!
+            </p>
+          </div>
+          <ul class="list-disc list-inside space-y-3 text-md text-gray-100 text-left">
+            <li><strong>การแยก Network (Isolation):</strong> ควรแยกเครื่อง Development และ CI Server ออกจากเครือข่ายหลักขององค์กร</li>
+            <li><strong>Least Privilege:</strong> บัญชีที่ใช้เชื่อมต่อ (Service Accounts) ต้องมีสิทธิ์เท่าที่จำเป็น (Read-only access กับ Repo)</li>
+            <li><strong>Review Third-party Plugins:</strong> ปลั๊กอินภายนอกที่ติดตั้งใน CI ต้องได้รับการประเมินความเสี่ยงและอัปเดตเสมอ</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 12: Introduction to Container Security -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ความปลอดภัยของ Container 🐳</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-teal-400">
+            <p class="text-xl mb-4">
+            ถึงแม้ Container จะให้ความสามารถในการแยกส่วน (Isolation) แต่มันไม่ได้ปลอดภัย 100% โดยธรรมชาติ เพราะมันยังใช้ Kernel เดียวกับเครื่องโฮสต์ (Host OS)
+            </p>
+            <p class="text-md text-gray-200 mb-4">
+            ความปลอดภัยของ Container (Container Security) แบ่งออกเป็น 2 ส่วนหลักๆ คือ:
+            </p>
+            <ul class="list-decimal list-inside space-y-3 text-lg text-gray-100">
+              <li><strong>Image Security:</strong> การทำให้แน่ใจว่าของที่แพ็กมาใน Container (Image) นั้นสะอาดและปราศจากช่องโหว่</li>
+              <li><strong>Runtime Security:</strong> การควบคุมพฤติกรรมของ Container ขณะที่มันกำลังทำงานอยู่ เพื่อป้องกันการถูกเจาะระบบ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Image Scanning -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Container Image Scanning</h2>
+          <p class="mb-6 text-left">ก่อนที่จะนำ Image ขึ้นไปรันบน K8s เราต้องสแกนหาช่องโหว่ใน OS packages และไลบรารีที่ฝังอยู่ข้างในเสียก่อน</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-gray-800 p-5 rounded-xl border border-gray-600">
+              <h3 class="text-lg font-bold text-teal-300 mb-2">แนวปฏิบัติที่ดี (Best Practices)</h3>
+              <ul class="list-disc list-inside text-sm text-gray-300 space-y-2">
+                <li>สแกนอัตโนมัติใน CI Pipeline ก่อน Push ขึ้น Container Registry</li>
+                <li>สแกน Registry อย่างต่อเนื่อง (เพราะช่องโหว่ใหม่ๆ ถูกค้นพบทุกวัน)</li>
+                <li>เลือกใช้ <strong>Minimal Base Images</strong> (เช่น Alpine Linux หรือ Distroless) เพื่อลดขนาดพื้นที่เสี่ยง</li>
+              </ul>
+            </div>
+
+            <div class="bg-black/60 p-5 rounded-xl font-mono text-xs border-l-4 border-teal-500 flex flex-col justify-center">
+              <p class="text-gray-400 mb-1"># ตัวอย่างการใช้ Trivy สแกน image</p>
+              <p class="text-green-400">$ trivy image nginx:latest</p>
+              <p class="text-red-400 mt-2">Total: 45 (UNKNOWN: 0, LOW: 10, MEDIUM: 25, HIGH: 8, CRITICAL: 2)</p>
+              <p class="text-gray-300 mt-4">*เครื่องมือยอดนิยม: Trivy, Clair, Anchore</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Image Signing (Supply Chain Security) -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การรับรองความถูกต้องของ Image (Image Signing)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <h3 class="text-2xl font-bold text-yellow-300 mb-4">การป้องกัน Supply Chain Attacks</h3>
+            <p class="text-md text-gray-200 mb-4">
+            เมื่อ Build และ Scan Image เสร็จแล้ว เราจะรู้ได้อย่างไรว่า Image ตัวนี้ไม่ได้ถูกแฮกเกอร์แอบสับเปลี่ยนระหว่างทางก่อนนำไป Deploy?
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-sm text-gray-300">
+              <li>การทำ <strong>Digital Signature</strong> ให้กับ Binary หรือ Image</li>
+              <li>เมื่อ Kubernetes จะดึง Image ไปรัน Admission Controller จะทำการตรวจสอบ Signature (Verify) ก่อน ถ้าไม่ใช่ของแท้ จะบล็อกไม่ให้รัน</li>
+              <li>เครื่องมือมาตรฐานใหม่ที่ได้รับความนิยมคือ <strong>Sigstore (Cosign)</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Container Runtime Security -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความปลอดภัยขณะทำงาน (Runtime Security)</h2>
+          <div class="bg-purple-900/30 p-8 rounded-xl text-left border-l-8 border-purple-500 shadow-xl">
+            <p class="text-lg mb-4">
+            เมื่อ Container กำลังทำงานอยู่ เราต้องเฝ้าระวังพฤติกรรมที่ผิดปกติ (Anomalies)
+            </p>
+            <h3 class="text-md font-bold text-purple-300 mb-2">สิ่งที่ต้องจับตาดู:</h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-200">
+              <li>มีการพยายามยกระดับสิทธิ์ (Privilege Escalations) ภายใน Container หรือไม่?</li>
+              <li>มีการรันโปรเซสที่แปลกประหลาด เช่น โปรแกรมขุดเหรียญคริปโต หรือ Reverse Shell หรือไม่?</li>
+              <li>มีการเชื่อมต่อเครือข่ายไปยัง IP ปลายทางที่ไม่รู้จักหรือไม่?</li>
+            </ul>
+            <p class="text-xs text-gray-400 mt-4">*เครื่องมืออย่าง Falco (eBPF-based) สามารถตรวจจับและบล็อกพฤติกรรมเหล่านี้ได้แบบ Real-time</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Immutability and Least Privilege -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">หลักการ Immutability & Least Privilege</h2>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-black/50 p-6 rounded-xl border border-gray-500">
+              <h3 class="text-xl font-bold text-yellow-300 mb-3">Immutable Containers</h3>
+              <p class="text-sm text-gray-300 mb-2">
+              Container ไม่ควรถูกแก้ไขขณะรันไทม์ ห้ามใช้คำสั่ง <code>apt-get</code> ติดตั้งของเพิ่ม ห้ามแก้ไขไฟล์โค้ดข้างใน
+              </p>
+              <p class="text-sm text-gray-300">
+              <strong>Best Practice:</strong> กำหนดให้ Filesystem เป็นแบบ Read-only (Read-only root filesystem) เพื่อป้องกันแฮกเกอร์ฝังมัลแวร์
+              </p>
+            </div>
+            <div class="bg-black/50 p-6 rounded-xl border border-gray-500">
+              <h3 class="text-xl font-bold text-green-300 mb-3">Least Privilege</h3>
+              <p class="text-sm text-gray-300 mb-2">
+              อย่ารัน Container ด้วยสิทธิ์ <code>root</code> เด็ดขาด! เพราะถ้าหลุดออกจาก Container ได้ (Container Breakout) จะกลายเป็น root ของเครื่องโฮสต์ทันที
+              </p>
+              <p class="text-sm text-gray-300">
+              <strong>Best Practice:</strong> สร้าง non-root user ใน Dockerfile เสมอ (เช่น <code>USER 1000</code>)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Configuration Security & IaC -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">ความปลอดภัยของ Configuration & IaC ⚙️</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-left border-l-8 border-gray-400">
+            <p class="text-xl mb-4">
+            ช่องโหว่จำนวนมากเกิดจากการ "ตั้งค่าผิด (Misconfigurations)" ไม่ใช่เพราะเขียนโค้ดแย่
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200 mt-4">
+              <li><strong>Infrastructure as Code (IaC) Security:</strong> การสแกนไฟล์ Terraform, K8s YAML หรือ CloudFormation ก่อนนำไปสร้างจริง</li>
+              <li>ค้นหาจุดผิดพลาด เช่น การเปิด S3 Bucket ให้เป็น Public หรือการให้สิทธิ์ IAM Roles มากเกินไป (Overly permissive)</li>
+              <li><strong>เครื่องมือยอดนิยม:</strong> KICS, Checkov, OPA (Open Policy Agent)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: The Secrets Management Problem -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Secrets Management: ปัญหาการหลุดของรหัสผ่าน</h2>
+          <div class="bg-red-900/40 p-6 rounded-xl border border-red-500 text-left mb-6">
+            <p class="text-lg font-bold text-red-300 mb-2">กฎเหล็ก: "ห้าม Hardcode ข้อมูลความลับ (Secrets) ลงใน Source Code เด็ดขาด!"</p>
+            <p class="text-sm text-gray-200">
+            Secrets ได้แก่ รหัสผ่าน Database, API Keys, SSH Keys, SSL Certificates หากหลุดเข้าไปใน Git Repository ต่อให้เป็น Private Repo ก็มีความเสี่ยงสูงที่จะโดนขโมย และจะอยู่ใน History ตลอดไป
+            </p>
+          </div>
+
+          <div class="bg-black/60 p-4 rounded-xl font-mono text-sm text-left border-l-4 border-red-500">
+            <p class="text-gray-400"># ตัวอย่างสิ่งที่ห้ามทำ (Anti-Pattern)</p>
+            <p class="text-red-400">DB_PASSWORD = "mySuperSecretPassword123!"</p>
+            <p class="text-red-400">AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Secrets Management Best Practices -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">เครื่องมือและแนวทางจัดเก็บ Secrets</h2>
+          <p class="text-lg mb-6">แล้วเราควรเก็บ Secrets ไว้ที่ไหน?</p>
+
+          <div class="space-y-4 text-left">
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-yellow-500">
+              <h3 class="font-bold text-lg text-yellow-300">1. การใช้ Secrets Vault</h3>
+              <p class="text-sm text-gray-300 mt-1">ใช้ระบบจัดเก็บความลับโดยเฉพาะ เช่น HashiCorp Vault, AWS Secrets Manager, หรือ Azure Key Vault ระบบเหล่านี้จะทำการเข้ารหัส และสามารถหมุนเวียนรหัส (Rotate) ได้อัตโนมัติ</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-green-500">
+              <h3 class="font-bold text-lg text-green-300">2. การใช้ Environment Variables</h3>
+              <p class="text-sm text-gray-300 mt-1">แอปพลิเคชันควรอ่าน Secrets จาก Environment Variables ณ ตอนรันไทม์ โดยดึงค่ามาจาก Vault อีกที</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-xl border-l-4 border-blue-500">
+              <h3 class="font-bold text-lg text-blue-300">3. Secret Scanning (ป้องกันหลุด)</h3>
+              <p class="text-sm text-gray-300 mt-1">ตั้งค่า CI/CD ให้มีเครื่องมือดักจับ Secrets (เช่น git-secrets, TruffleHog, Gitleaks) เพื่อตรวจหา API Key ก่อนที่จะถูก Commit</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: DevOps Best Practices -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-6xl mb-4">⭐</div>
+          <h2 class="text-5xl font-bold mb-6">DevOps Best Practices</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-left border-t-4 border-yellow-400 shadow-xl">
+            <p class="text-xl mb-4 text-yellow-300 font-bold">"ทำ DevOps อย่างไรให้ประสบความสำเร็จและยั่งยืน"</p>
+            <ul class="list-disc list-inside space-y-3 text-lg text-gray-200">
+              <li><strong>Everything as Code:</strong> ทำทุกอย่างให้เป็นโค้ด (Infrastructure, Pipeline, Configuration) เพื่อให้ตรวจสอบย้อนหลังและทำซ้ำได้เสมอ</li>
+              <li><strong>Continuous Feedback:</strong> รับ Feedback อย่างรวดเร็วผ่าน Monitoring และ Alerting ที่มีประสิทธิภาพ</li>
+              <li><strong>Incremental Threat Modeling:</strong> แบ่งการวิเคราะห์ความเสี่ยงด้านความปลอดภัยออกเป็นส่วนย่อยๆ และทำไปพร้อมกับการวางแผนฟีเจอร์ใน Agile (ไม่ทำทีเดียวตอนจบ)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: DevOps Anti-Patterns -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">DevOps Anti-Patterns คืออะไร?</h2>
+          <div class="bg-red-900/40 p-8 rounded-2xl text-left border border-red-500 mb-6">
+            <p class="text-lg mb-2">
+            <strong>Anti-Patterns</strong> คือรูปแบบการปฏิบัติหรือวิธีแก้ปัญหาที่ "ดูเหมือนจะเป็นความคิดที่ดีในตอนแรก" แต่สุดท้ายกลับสร้างปัญหาหรือทำให้ระบบแย่ลงในระยะยาว
+            </p>
+            <p class="text-sm text-gray-200 mt-4">
+            การนำ DevOps หรือ เครื่องมือ CI/CD มาใช้ ไม่ได้หมายความว่าคุณกำลังทำ DevOps ที่ถูกต้อง หากคุณยังมีพฤติกรรมแบบ Anti-patterns เหล่านี้
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Anti-Pattern 1: The Wall of Confusion -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Anti-Pattern 1: Silos & The Wall of Confusion</h2>
+
+          <div class="flex items-center justify-center space-x-8 mb-6">
+            <div class="bg-blue-800 p-4 rounded-lg w-32 text-center">Dev Team<br><span class="text-xs">เน้นความเร็ว</span></div>
+            <div class="text-3xl text-red-500 font-bold border-r-4 border-red-500 h-16">กำแพง</div>
+            <div class="bg-gray-800 p-4 rounded-lg w-32 text-center">Ops Team<br><span class="text-xs">เน้นความเสถียร</span></div>
+          </div>
+
+          <div class="bg-white/10 p-6 rounded-xl text-left text-sm text-gray-200">
+            <p class="mb-2"><strong class="text-red-300">ปัญหา:</strong> ถึงแม้จะมีเครื่องมือ CI/CD แต่ทีมพัฒนากับทีมดูแลระบบยังทำงานแยกกัน โยนโค้ดข้ามกำแพงให้กัน หากระบบพัง ก็ชี้นิ้วโทษกัน (Blame game)</p>
+            <p><strong class="text-green-300">วิธีแก้:</strong> สร้างวัฒนธรรมการทำงานร่วมกัน (Collaboration) ให้ Dev รับผิดชอบสิ่งที่ตัวเองรัน (You build it, you run it) และ Ops ช่วยสร้าง Platform ให้ Dev ทำงานง่ายขึ้น</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Anti-Pattern 2: Shared Accounts -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Anti-Pattern 2: การใช้บัญชีแชร์ร่วมกัน (Shared Accounts)</h2>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-red-900/30 p-6 rounded-xl border border-red-500">
+              <h3 class="text-xl font-bold text-red-300 mb-2">ปัญหา (The Problem)</h3>
+              <p class="text-sm text-gray-200">
+              การใช้อีเมลส่วนกลางหรือ User เดียว (เช่น admin/admin) ล็อกอินเข้าระบบ CI Server (เช่น Jenkins) หรือ Version Control ร่วมกันทั้งทีม
+              </p>
+              <p class="text-sm text-gray-300 mt-2">
+              ทำให้ไม่สามารถตรวจสอบได้เลยว่าใครเป็นคนกดยกเลิก Build หรือใครเป็นคนแอบเปลี่ยนค่า Configuration (สูญเสียความสามารถในการ Audit)
+              </p>
+            </div>
+            <div class="bg-green-900/30 p-6 rounded-xl border border-green-500">
+              <h3 class="text-xl font-bold text-green-300 mb-2">วิธีแก้ (The Solution)</h3>
+              <p class="text-sm text-gray-200">
+              บัญชีผู้ใช้ต้องเป็นรายบุคคลเสมอ! เพื่อให้ระบบสามารถบันทึก Log และ Audit ได้อย่างชัดเจน
+              </p>
+              <p class="text-sm text-gray-300 mt-2">
+              และใช้ระบบ Role-Based Access Control (RBAC) ให้อำนาจเฉพาะสิทธิ์ที่จำเป็นตามตำแหน่งหน้าที่ (Least Privilege)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Anti-Pattern 3: Security as a Gatekeeper -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">Anti-Pattern 3: Security เป็นตัวขัดขวาง (Gatekeeper)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border-l-8 border-orange-500">
+            <p class="text-lg text-red-300 mb-2 font-bold">
+            ปัญหา: ทีม Security สร้างกฎที่เข้มงวดและต้องมารออนุมัติแบบ Manual (Manual Approval)
+            </p>
+            <p class="text-md text-gray-200 mb-4">
+            เมื่อมีเครื่องมือสแกน (เช่น SAST/DAST) แต่ไม่มีคนคอยปรับจูน ปล่อยให้มันแจ้งเตือนผิดพลาด (False Positives) เยอะๆ ทำให้นักพัฒนาเกิดอาการ "Alert Fatigue" หรือความเหนื่อยล้าจากการแจ้งเตือน สุดท้ายก็จะเพิกเฉยต่อการแจ้งเตือนนั้นไปเลย
+            </p>
+            <p class="text-md text-green-300 font-bold mb-2">วิธีแก้:</p>
+            <p class="text-sm text-gray-300">
+            บูรณาการเครื่องมืออัตโนมัติเข้ากับ Pipeline (DevSecOps) คัดกรอง Alert เฉพาะที่สำคัญจริงๆ (User Impact) และส่งเสริมให้ Security เป็น "ผู้สนับสนุน" ไม่ใช่ "ตำรวจ"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Security is a Shared Responsibility -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ความปลอดภัยคือความรับผิดชอบร่วมกัน</h2>
+          <div class="bg-black/50 p-8 rounded-xl text-center border border-gray-600 shadow-xl">
+            <p class="text-2xl font-bold text-white mb-6">People, Process, and Technology</p>
+            <p class="text-lg text-gray-200 mb-6">
+            "เทคโนโลยีและเครื่องมือที่ดี ไม่สามารถอุดช่องโหว่ได้ทั้งหมด หากปราศจากกระบวนการที่ถูกต้องและวัฒนธรรมทีมที่ดี"
+            </p>
+            <p class="text-md text-yellow-300 italic">
+            "Hire the right people and treat them right."
+            </p>
+            <p class="text-sm text-gray-400 mt-4 text-left">
+            DevSecOps ที่แท้จริงคือการสร้างวัฒนธรรมที่พนักงานทุกคน (Dev, Ops, Sec) มีความรู้ความเข้าใจ ตระหนักถึงความเสี่ยง และทำงานร่วมกันในกระบวนการที่โปร่งใสและตรวจสอบได้ (Blameless Culture)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Summary -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">สรุปบทเรียน (Summary)</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border-2 border-white/20 text-left space-y-4">
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Shift-Left Security:</strong> การตรวจหาและแก้ไขช่องโหว่ตั้งแต่ช่วงเริ่มต้นของ SDLC เพื่อลดต้นทุนและประหยัดเวลา</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Pipeline Security:</strong> การใช้ SAST (วิเคราะห์โค้ด) และ DAST (ทดสอบขณะรันไทม์) อัตโนมัติ</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Container & IaC Security:</strong> สแกนหา CVEs ใน Image, ใช้ Least Privilege และตรวจสอบ Configuration เสมอ</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Secrets Management:</strong> เลิก Hardcode ข้อมูลความลับ หันมาใช้ Vault หรือ Environment Variables</span>
+            </div>
+            <div class="flex items-start">
+              <span class="text-green-400 text-2xl mr-3">✔</span>
+              <span class="text-lg"><strong>Culture:</strong> หลีกเลี่ยง Anti-patterns ปรับใช้ Blameless Culture เพื่อให้ DevSecOps ยั่งยืน</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Lab Heads-up -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300">เตรียมตัวทำ Lab! 🔍</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-10 border-2 border-yellow-500/50 text-left">
+            <h3 class="text-3xl font-bold mb-6">Next: Image Scanning และการประเมินความปลอดภัย</h3>
+            <p class="text-lg mb-4">
+            ในส่วนปฏิบัติการของสัปดาห์นี้ เราจะมาทดลองทำหน้าที่ตรวจประเมินความปลอดภัยของแอปพลิเคชันที่เราสร้างขึ้นมา
+            </p>
+            <ul class="list-disc list-inside space-y-3 text-lg">
+              <li>✅ แนะนำและติดตั้งเครื่องมือสแกน Docker Image (เช่น <strong>Trivy</strong> หรือ Docker Scout)</li>
+              <li>✅ ทดลองสแกน Docker Image ที่สร้างไว้จากสัปดาห์ก่อนๆ และอ่านผลวิเคราะห์ (Vulnerabilities Report)</li>
+              <li>✅ ร่วมอภิปรายช่องโหว่ที่พบ (Critical / High) และสรุปแนวทางแก้ไขเพื่อให้โค้ดปลอดภัยยิ่งขึ้น</li>
+            </ul>
+            <div class="mt-8 text-center text-gray-300 text-sm">
+              เตรียม Terminal และ Docker Desktop ของคุณให้พร้อม แล้วเจอกันในชั่วโมง Lab ครับ!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Lab Overview -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6">Lab: Image Scanning & Security Assessment 🛡️</h2>
+          <p class="text-xl text-white/90 mb-8">
+          ค้นหาช่องโหว่ที่ซ่อนอยู่ใน Docker Image ของคุณ และเรียนรู้วิธีการอุดรอยรั่วก่อนนำไปใช้งานจริง
+          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border-l-8 border-teal-500 text-left">
+            <h3 class="text-2xl font-bold mb-4">🎯 เป้าหมายของ Lab นี้</h3>
+            <ul class="space-y-3 text-lg">
+              <li>✅ ทำความรู้จักและใช้งานเครื่องมือ <strong>Docker Scout</strong> และ <strong>Trivy</strong></li>
+              <li>✅ ทดลองสแกนหาช่องโหว่ (Vulnerabilities) ใน Docker Image เก่า</li>
+              <li>✅ อ่านและวิเคราะห์ผลลัพธ์จากรายงาน (CVEs)</li>
+              <li>✅ แก้ไขปัญหาโดยการเปลี่ยน Base Image และสแกนซ้ำ</li>
+              <li>✅ อภิปรายสรุป <strong>Best Practices</strong> ในการทำ Container Security</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Step 1 - Intro to Scanning Tools -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 1: แนะนำเครื่องมือ Image Scanning</h2>
+          <p class="mb-6 text-left">ใน Lab นี้เราจะโฟกัสที่ 2 เครื่องมือยอดนิยมสำหรับการสแกนหาช่องโหว่ (Software Composition Analysis - SCA)</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-blue-900/40 p-6 rounded-xl border border-blue-500 shadow-lg">
+              <h3 class="text-2xl font-bold text-blue-300 mb-2">1. Docker Scout</h3>
+              <p class="text-sm text-gray-200 mb-4">
+              ฟีเจอร์ที่ถูกผนวกเข้ามาใน Docker Desktop โดยตรง ช่วยวิเคราะห์ Supply Chain และให้คำแนะนำในการแก้ไข (Remediation) ทันที
+              </p>
+              <p class="text-xs text-yellow-300 font-mono">ใช้งานผ่าน GUI ของ Docker Desktop หรือคำสั่ง: <br> $ docker scout cves &lt;image&gt;</p>
+            </div>
+            <div class="bg-teal-900/40 p-6 rounded-xl border border-teal-500 shadow-lg">
+              <h3 class="text-2xl font-bold text-teal-300 mb-2">2. Trivy (by Aqua Security)</h3>
+              <p class="text-sm text-gray-200 mb-4">
+              เครื่องมือ Open-source ยอดนิยมอันดับ 1 สำหรับ CI/CD ใช้งานง่าย สแกนได้ทั้ง OS packages และไลบรารีภาษาต่างๆ (npm, pip, requirements.txt)
+              </p>
+              <p class="text-xs text-yellow-300 font-mono">ใช้งานผ่าน CLI: <br> $ trivy image &lt;image&gt;</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Step 2 - Prepare a Vulnerable Image -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 2: เตรียม Image ที่มีช่องโหว่เพื่อการทดสอบ</h2>
+          <p class="mb-4 text-left">เพื่อให้เห็นภาพชัดเจน เราจะจงใจดาวน์โหลด Base Image เวอร์ชันเก่าที่ตกรุ่นไปแล้ว ซึ่งมักจะเต็มไปด้วยช่องโหว่</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4 border-l-4 border-red-500">
+            <p class="text-gray-400"># 1. Pull Nginx เวอร์ชัน 1.14 (เก่าหลายปีแล้ว)</p>
+            <p class="text-green-400">$ docker pull nginx:1.14</p>
+            <p class="text-white text-xs">1.14: Pulling from library/nginx</p>
+            <p class="text-white text-xs">Digest: sha256:485b610fefec7ff6c463ffcd3edef... </p>
+            <br>
+            <p class="text-gray-400"># 2. ตรวจสอบว่า Image ถูกโหลดมาเรียบร้อย</p>
+            <p class="text-green-400">$ docker images | grep nginx</p>
+            <p class="text-white text-xs">nginx     1.14      ...      109MB</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Step 3 - Scan with Docker Scout -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 3: สแกนด้วย Docker Scout</h2>
+
+          <div class="bg-white/10 p-6 rounded-2xl text-left border border-blue-400">
+            <h3 class="text-xl font-bold text-blue-300 mb-4">วิธีที่ 1: ผ่าน GUI ของ Docker Desktop</h3>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-gray-200 mb-6">
+              <li>เปิดโปรแกรม Docker Desktop ไปที่เมนู <strong>Images</strong> ทางซ้ายมือ</li>
+              <li>ค้นหาภาพ <code>nginx:1.14</code></li>
+              <li>สังเกตคอลัมน์ "Vulnerabilities" ระบบอาจกำลังสแกน หรือให้คลิกเข้าไปดูรายละเอียด</li>
+              <li>คุณจะเห็นกราฟและรายการแพ็กเกจที่มีช่องโหว่แบ่งตามสี (Critical, High, Medium)</li>
+            </ol>
+
+            <h3 class="text-xl font-bold text-blue-300 mb-4">วิธีที่ 2: ผ่าน Command Line</h3>
+            <div class="bg-black/50 p-4 rounded-xl font-mono text-xs">
+              <p class="text-green-400">$ docker scout cves nginx:1.14</p>
+              <p class="text-gray-400 mt-2">... Analyzing image...</p>
+              <p class="text-red-400 font-bold mt-1">✗ CRITICAL: 15</p>
+              <p class="text-orange-400 font-bold">✗ HIGH: 48</p>
+              <p class="text-yellow-400 font-bold">✗ MEDIUM: 70</p>
+              <p class="text-white mt-1">What's Next? View base image update recommendations with:</p>
+              <p class="text-cyan-300">docker scout recommendations nginx:1.14</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Step 4 - Scan with Trivy -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 4: สแกนด้วย Trivy</h2>
+          <p class="mb-4 text-left text-sm">หากคุณไม่ได้ติดตั้ง Trivy ไว้ในเครื่อง สามารถใช้ Docker มารันตัว Trivy Container เพื่อสแกน Image ในเครื่องเราได้เลย!</p>
+
+          <div class="bg-black/80 p-6 rounded-xl text-left font-mono text-xs border-l-4 border-teal-500 shadow-xl overflow-x-auto">
+            <p class="text-gray-400"># รัน Trivy ผ่าน Docker โดยทำการ Mount docker.sock เพื่อให้ Trivy มองเห็น Image ในเครื่องเรา</p>
+            <p class="text-green-400">$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image nginx:1.14</p>
+            <br>
+            <p class="text-white">2026-04-09T10:00:00Z  INFO  Need to update DB</p>
+            <p class="text-white">2026-04-09T10:00:05Z  INFO  Vulnerability scanning...</p>
+            <p class="text-white">nginx:1.14 (debian 9.8)</p>
+            <p class="text-white">=========================</p>
+            <p class="text-white">Total: 250 (UNKNOWN: 0, LOW: 90, MEDIUM: 100, HIGH: 45, CRITICAL: 15)</p>
+            <br>
+            <table class="w-full text-left mt-2">
+              <tr class="text-yellow-300 border-b border-gray-600">
+                <th class="pb-1">LIBRARY</th><th class="pb-1">VULNERABILITY ID</th><th class="pb-1">SEVERITY</th><th class="pb-1">INSTALLED</th><th class="pb-1">FIXED IN</th>
+              </tr>
+              <tr class="text-white">
+                <td>apt</td><td class="text-cyan-300">CVE-2020-3810</td><td class="text-orange-400 font-bold">HIGH</td><td>1.4.9</td><td class="text-green-300">1.4.10</td>
+              </tr>
+              <tr class="text-white">
+                <td>openssl</td><td class="text-red-400">CVE-2021-3711</td><td class="text-red-500 font-bold">CRITICAL</td><td>1.1.0j</td><td class="text-green-300">1.1.1l</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Step 5 - Analyze Results -->
+      <div :class="{ 'active': currentSlide === 33 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 5: วิเคราะห์ผลลัพธ์ (Analysis)</h2>
+          <div class="bg-white/10 p-8 rounded-2xl text-left border border-white/20">
+            <h3 class="text-xl font-bold text-yellow-300 mb-4">การอ่านรายงาน CVE (Common Vulnerabilities and Exposures)</h3>
+            <ul class="list-disc list-inside space-y-3 text-md text-gray-200">
+              <li><strong>VULNERABILITY ID:</strong> รหัสสากลของช่องโหว่ สามารถนำไปค้นหาใน Google เพื่อดูว่าแฮกเกอร์โจมตีผ่านมันได้อย่างไร</li>
+              <li><strong>SEVERITY:</strong> ระดับความรุนแรง (Critical, High, Medium, Low) ทีม DevSecOps มักตั้งกฎว่า <em>"ห้าม Deploy หากมี Critical/High โผล่มา"</em></li>
+              <li><strong>FIXED IN:</strong> นี่คือข้อมูลที่มีค่าที่สุด! มันบอกว่าเวอร์ชันไหนของแพ็กเกจที่ผู้พัฒนาได้อุดรอยรั่วนี้แล้ว</li>
+            </ul>
+            <div class="mt-6 bg-red-900/40 p-4 rounded-xl border border-red-500 text-sm">
+              ⚠️ <strong>คำถามอภิปราย:</strong> ในฐานะนักพัฒนา เราควรจะไล่ <code>apt-get upgrade</code> ทีละแพ็กเกจใน Dockerfile ของเราหรือไม่?<br>
+              <strong>คำตอบ:</strong> ไม่ควร! วิธีที่ถูกต้องและยั่งยืนกว่าคือการ <strong>อัปเดต Base Image</strong> ให้เป็นเวอร์ชันใหม่ที่มีการ Patch แล้ว
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 34: Step 6 - Remediation -->
+      <div :class="{ 'active': currentSlide === 34 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6">Step 6: การอุดช่องโหว่ (Remediation)</h2>
+          <p class="mb-4 text-left">เราจะเปลี่ยนไปใช้ Base Image ที่มีขนาดเล็กที่สุด (Minimal Base Image) และเป็นเวอร์ชันใหม่ เพื่อลดพื้นที่โจมตี</p>
+
+          <div class="bg-black/50 p-6 rounded-xl text-left font-mono text-sm space-y-4">
+            <p class="text-gray-400"># 1. ลอง Pull image nginx รุ่น Alpine (เล็กและใหม่)</p>
+            <p class="text-green-400">$ docker pull nginx:alpine</p>
+            <br>
+            <p class="text-gray-400"># 2. นำภาพใหม่ไปสแกนด้วย Trivy</p>
+            <p class="text-green-400">$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image nginx:alpine</p>
+            <br>
+            <p class="text-white">nginx:alpine (alpine 3.18)</p>
+            <p class="text-white">=========================</p>
+            <p class="text-green-400 font-bold text-lg">Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)</p>
+          </div>
+          <p class="mt-4 text-sm text-left text-yellow-300 font-bold">
+          🎉 สังเกตว่า Vulnerabilities กลายเป็น 0 ทันที เพียงแค่เราเปลี่ยน Base Image!
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 35: Best Practices Discussion -->
+      <div :class="{ 'active': currentSlide === 35 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">อภิปรายสรุป: Best Practices ด้านความปลอดภัยของ Container</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+            <div class="bg-gray-800 p-5 rounded-xl border-t-4 border-green-500">
+              <h3 class="font-bold text-lg text-green-300 mb-2">1. ใช้ Minimal Base Images</h3>
+              <p class="text-sm text-gray-300">
+              หลีกเลี่ยง Image ที่พ่วง OS เต็มรูปแบบ (เช่น Ubuntu เต็ม) เปลี่ยนไปใช้ <code>Alpine</code> หรือ <code>Distroless</code> เพื่อลดของที่ไม่จำเป็นทิ้ง (ลด Attack Surface)
+              </p>
+            </div>
+            <div class="bg-gray-800 p-5 rounded-xl border-t-4 border-yellow-500">
+              <h3 class="font-bold text-lg text-yellow-300 mb-2">2. Least Privilege (Rootless)</h3>
+              <p class="text-sm text-gray-300">
+              ห้ามรันคอนเทนเนอร์ด้วยสิทธิ์ Root กำหนด <code>USER 1000</code> หรือ <code>USER node</code> ไว้เสมอ เพื่อป้องกัน Container Breakout
+              </p>
+            </div>
+            <div class="bg-gray-800 p-5 rounded-xl border-t-4 border-blue-500">
+              <h3 class="font-bold text-lg text-blue-300 mb-2">3. สแกนอัตโนมัติใน CI/CD</h3>
+              <p class="text-sm text-gray-300">
+              ผูกคำสั่ง Trivy ไว้ใน GitHub Actions หรือ GitLab CI และสั่งให้หยุดกระบวนการ Deploy ทันที (Fail the build) หากพบช่องโหว่ Critical/High
+              </p>
+            </div>
+            <div class="bg-gray-800 p-5 rounded-xl border-t-4 border-purple-500">
+              <h3 class="font-bold text-lg text-purple-300 mb-2">4. Image Signing</h3>
+              <p class="text-sm text-gray-300">
+              เซ็นชื่อกำกับ Image (เช่นใช้ Cosign/Sigstore) และตรวจสอบ Signature ก่อนรันใน Production ป้องกัน Supply Chain Attack
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 36: Lab Completion & Submission -->
+      <div :class="{ 'active': currentSlide === 36 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-8xl mb-4">🎖️</div>
+          <h2 class="text-4xl font-bold mb-6">Lab Complete! การส่งงาน</h2>
+          <div class="bg-black/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-white/20 text-left">
+            <h3 class="text-2xl font-bold mb-4 text-green-300">สิ่งที่ต้องส่ง (Submission):</h3>
+            <ul class="list-decimal list-inside space-y-4 text-lg">
+              <li>
+                <strong>ภาพที่ 1: ผลสแกน Image ที่มีช่องโหว่</strong>
+                <p class="text-base text-gray-300 mt-1 ml-6">ภาพ Terminal ที่รันคำสั่ง <code>trivy</code> หรือ <code>docker scout</code> กับ <code>nginx:1.14</code> โดยโชว์ให้เห็นจำนวน CRITICAL และ HIGH ที่พบ</p>
+              </li>
+              <li>
+                <strong>ภาพที่ 2: ผลสแกนหลังจากการ Remediation</strong>
+                <p class="text-base text-gray-300 mt-1 ml-6">ภาพ Terminal ที่รันสแกนกับ <code>nginx:alpine</code> ซึ่งแสดงผลลัพธ์ว่าปราศจากช่องโหว่ (Total: 0)</p>
+              </li>
+              <li>
+                <strong>รายงานสรุป (1 ย่อหน้า):</strong>
+                <p class="text-base text-gray-300 mt-1 ml-6">สรุปด้วยภาษาของคุณเองว่า "ทำไมการเปลี่ยน Base Image ถึงเป็นวิธีแก้ปัญหาช่องโหว่ที่ดีกว่าการพยายามรัน apt-get update ภายใน Container"</p>
+              </li>
+            </ul>
+            <div class="mt-6 text-sm text-center text-yellow-300">
+              อย่าลืมลบ Image ที่ไม่ได้ใช้ทิ้งด้วย <code>docker rmi nginx:1.14</code> เพื่อประหยัดพื้นที่ดิสก์!
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            // นับจำนวนสไลด์ทั้งหมด
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+            // เพิ่ม event listeners
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
