@@ -1,4 +1,6 @@
-Coding Development with AI Workshop
+.. image:: ./images/banner.png
+
+AI Frontier - Coding Development 
 ========================================================================
 
 .. list-table:: ตารางการอบรมวันที่ 6-8 พฤษภาคม 2569 (รวม 18 ชั่วโมง)
