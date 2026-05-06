@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../../workshop/aiswdev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day101.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title -->
+<div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-6xl font-bold mb-6 italic text-yellow-300">AI Frontier</h2>
+    <h3 class="text-4xl font-semibold mb-8">วิวัฒนาการจาก "คนพ่นโค้ด" สู่ "วาทยากร AI"</h3>
+    <p class="text-xl text-white/80 leading-relaxed mb-8">
+      บทนำสู่การพัฒนาซอฟต์แวร์ในยุค Agentic Era สำหรับผู้เริ่มต้นจากศูนย์
+    </p>
+    <div class="text-sm text-white/60">09:00 - 09:45 | บรรยายภาพรวม</div>
+  </div>
+</div>
+
+<!-- Slide 2: What is Software? -->
+<div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-blue-300">ซอฟต์แวร์คืออะไร?</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      ซอฟต์แวร์ไม่ใช่แค่ตัวเลขหรือตัวอักษรบนหน้าจอ แต่มันคือ "เครื่องมือ" ที่เราสร้างขึ้นเพื่อแก้ปัญหาให้มนุษย์ [1, 2]
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+      <ul class="list-disc list-inside space-y-2 text-lg">
+        <li>ช่วยให้เราทำงานได้เร็วขึ้น (เช่น เครื่องคิดเลข, ระบบบัญชี)</li>
+        <li>ช่วยให้เราสื่อสารกันได้ (เช่น Social Media)</li>
+        <li>ช่วยสร้างความบันเทิง (เช่น เกม, แอปดูหนัง)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Big Picture -->
+<div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">ภาพรวมของการสร้างซอฟต์แวร์</h2>
+    <div class="flex justify-between items-center space-x-4">
+      <div class="bg-blue-500/20 p-4 rounded-xl flex-1 border border-blue-400">
+        <h4 class="font-bold">1. ปัญหา (Problem)</h4>
+        <p class="text-sm">มนุษย์ต้องการอะไร?</p>
+      </div>
+      <div class="text-3xl">➡️</div>
+      <div class="bg-purple-500/20 p-4 rounded-xl flex-1 border border-purple-400">
+        <h4 class="font-bold">2. ความต้องการ (Requirements)</h4>
+        <p class="text-sm">ซอฟต์แวร์ต้องทำอะไรได้บ้าง? [3]</p>
+      </div>
+      <div class="text-3xl">➡️</div>
+      <div class="bg-green-500/20 p-4 rounded-xl flex-1 border border-green-400">
+        <h4 class="font-bold">3. ผลลัพธ์ (Solution)</h4>
+        <p class="text-sm">ซอฟต์แวร์ที่ใช้งานได้จริง [4]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Software Development Roles -->
+<div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-green-300">บทบาทในทีมพัฒนาซอฟต์แวร์</h2>
+    <p class="mb-8">การสร้างแอปพลิเคชัน 1 ตัว ต้องใช้คนหลายบทบาททำหน้าที่ร่วมกัน [5-7]:</p>
+    <div class="grid grid-cols-2 gap-6 text-left">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <h4 class="font-bold">Frontend Developer</h4>
+        <p class="text-sm opacity-80">ดูแลหน้าตา (UI) และสิ่งที่ผู้ใช้มองเห็น</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <h4 class="font-bold">Backend Developer</h4>
+        <p class="text-sm opacity-80">ดูแลระบบหลังบ้าน ข้อมูล และตรรกะคำนวณ</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <h4 class="font-bold">Tester (QA)</h4>
+        <p class="text-sm opacity-80">ตรวจสอบความถูกต้องและหาบั๊ก</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <h4 class="font-bold">DevOps</h4>
+        <p class="text-sm opacity-80">ดูแลการเอาซอฟต์แวร์ขึ้นระบบคลาวด์ (Cloud)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5: The Software Evolution -->
+<div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">วิวัฒนาการการสื่อสารกับคอมพิวเตอร์</h2>
+    <p class="text-xl opacity-90 italic">"จากคำสั่งระดับเครื่องจักร สู่ภาษามนุษย์"</p>
+    <div class="mt-8 relative border-l-4 border-yellow-300 pl-8 space-y-8 text-left max-w-2xl mx-auto">
+      <div>
+        <h4 class="font-bold text-yellow-300">ยุค 1950s - 60s: Punch Cards</h4>
+        <p class="text-sm">ใช้บัตรเจาะรู ต้องรอผลทั้งวัน ความผิดพลาดหนึ่งจุดหมายถึงต้องเริ่มใหม่หมด [8, 9]</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-blue-300">ยุค 1970s - 80s: Command Line</h4>
+        <p class="text-sm">พิมพ์คำสั่งผ่านหน้าจอสีดำ เริ่มมีการสนทนากับคอมพิวเตอร์มากขึ้น [10, 11]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: The Rise of IDEs -->
+<div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-blue-400">ยุค IDE (Turbo C, Visual Studio)</h2>
+    <p class="text-xl mb-8 leading-relaxed">
+      การรวมเครื่องมือทุกอย่างไว้ในที่เดียวเพื่อช่วยให้เขียนโค้ดได้เร็วขึ้น [12, 13]
+    </p>
+    <div class="bg-white/10 p-6 rounded-2xl text-left grid grid-cols-2 gap-4">
+      <div>
+        <h4 class="font-bold mb-2">จุดเด่น</h4>
+        <ul class="text-sm list-disc list-inside opacity-90">
+          <li>Highlight สีของโค้ดให้อ่านง่าย</li>
+          <li>ช่วยเติมโค้ดอัตโนมัติ (Autocomplete)</li>
+          <li>มีปุ่ม Run และ Debug ในตัว</li>
+        </ul>
+      </div>
+      <div class="flex justify-center items-center border-l border-white/20">
+        <p class="text-center text-sm font-semibold italic text-yellow-200">"เป็นเหมือนอู่ซ่อมรถที่มีเครื่องมือครบครัน"</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: Evolution Step 4: Cloud & Version Control -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-purple-300">ยุค Cloud & GitHub</h2>
+    <p class="text-xl opacity-90 mb-8 leading-relaxed">
+      เมื่อโค้ดไม่ได้อยู่แค่ในเครื่องเรา แต่ทำงานร่วมกันได้ทั้งโลก [14, 15]
+    </p>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white/10 p-4 rounded-xl border-t-4 border-purple-400">
+        <h4 class="font-bold">GitHub</h4>
+        <p class="text-sm">"สำรองและแบ่งปัน" เก็บประวัติการทำงาน ย้อนกลับไปแก้ไขได้ตลอดเวลา [16]</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl border-t-4 border-blue-400">
+        <h4 class="font-bold">Cloud Deployment</h4>
+        <p class="text-sm">"ออนไลน์ให้โลกเห็น" ไม่ต้องตั้งเซิร์ฟเวอร์เอง แต่ใช้บริการอย่าง Render [17]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: The AI Assistance Era -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-yellow-400">ยุค AI Co-pilot (2021+)</h2>
+    <p class="text-xl mb-8">
+      AI ไม่ใช่แค่เครื่องมือ แต่เป็น "คู่หูเขียนโค้ด" (Pair Programmer) [18-20]
+    </p>
+    <div class="bg-yellow-400/20 border border-yellow-400/40 p-6 rounded-2xl text-left">
+      <ul class="list-disc list-inside space-y-3 text-lg">
+        <li>แนะนำโค้ดให้เราแบบ Real-time ตามบริบทของงาน</li>
+        <li>ช่วยสร้าง Boilerplate (โค้ดมาตรฐาน) ที่น่าเบื่อให้ทันที</li>
+        <li>ช่วยอธิบายโค้ดที่เราไม่เข้าใจ [21]</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: From "Code Spitter" to "AI Orchestrator" -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">ความแตกต่างของบทบาท</h2>
+    <div class="grid grid-cols-2 gap-8">
+      <div class="bg-red-500/10 p-6 rounded-2xl border border-red-500/30">
+        <h4 class="text-2xl font-bold text-red-300 mb-4">Code Spitter (อดีต)</h4>
+        <ul class="text-left text-sm space-y-2 opacity-90">
+          <li>❌ โฟกัสที่การพิมพ์ Syntax ทีละบรรทัด</li>
+          <li>❌ ใช้เวลาส่วนใหญ่ไปกับงานซ้ำๆ</li>
+          <li>❌ จดจำฟังก์ชันจำนวนมากในหัว</li>
+        </ul>
+      </div>
+      <div class="bg-blue-500/10 p-6 rounded-2xl border border-blue-500/30">
+        <h4 class="text-2xl font-bold text-blue-300 mb-4">AI Orchestrator (ปัจจุบัน)</h4>
+        <ul class="text-left text-sm space-y-2 opacity-90">
+          <li>✅ โฟกัสที่การ "วางแผน" และ "สั่งการ"</li>
+          <li>✅ ใช้ AI จัดการงานซ้ำๆ และงาน Clerical [22]</li>
+          <li>✅ ทำหน้าที่เป็น "วาทยากร" ควบคุมเครื่องมือ AI [23-25]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: What is Vibe Coding? -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-pink-300">Vibe Coding คืออะไร?</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      แนวทางการเขียนโค้ดโดยใช้ "สัญชาตญาณ" และ "การสนทนา" กับ AI แทนการพิมพ์โค้ดเอง [26, 27]
+    </p>
+    <div class="bg-white/10 p-6 rounded-2xl text-left italic">
+      "ลืมไปเลยว่าโค้ดมีอยู่จริง แค่บอกความต้องการ แล้วดูมันเกิดขึ้นต่อหน้า"
+      <span class="block text-right font-normal not-italic mt-2 opacity-60">— นิยามโดย Andrej Karpathy [28]</span>
+    </div>
+    <p class="mt-6 text-sm text-yellow-200">
+      *เหมาะสำหรับการทำ Prototype หรือ MVPs อย่างรวดเร็ว [29]
+    </p>
+  </div>
+</div>
+
+<!-- Slide 11: The Danger of Vibes -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-red-400">ความเสี่ยงของ Vibe Coding</h2>
+    <p class="text-xl mb-8 leading-relaxed">
+      การยอมรับโค้ด AI โดยไม่ตรวจสอบ อาจนำไปสู่หายนะในระยะยาว [29-31]
+    </p>
+    <div class="bg-red-500/20 border border-red-500/40 p-6 rounded-2xl text-left">
+      <ul class="list-disc list-inside space-y-2 text-lg">
+        <li><strong>HALLUCINATIONS:</strong> AI สร้างโค้ดที่ "ดูเหมือนจะรันได้" แต่ทำงานผิดพลาด [32, 33]</li>
+        <li><strong>SECURITY:</strong> ช่องโหว่ความปลอดภัยที่แอบแฝง [34]</li>
+        <li><strong>LACK OF CONTROL:</strong> เราไม่เข้าใจว่าระบบทำงานอย่างไร เมื่อพังเราจะซ่อมไม่ได้ [23]</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Enter Google Antigravity -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-blue-300">Google Antigravity คืออะไร?</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      มันไม่ใช่แค่ IDE แต่คือ **Agentic Development Environment (ADE)** [35]
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left border-l-8 border-blue-500">
+      <p class="text-lg mb-4">สร้างมาเพื่อยุคที่ AI ทำงานแทนเราได้เกือบทั้งหมด (Agent-first era) [36]:</p>
+      <ul class="list-disc list-inside space-y-2 opacity-90">
+        <li>ไม่ได้ช่วยแค่ "เขียน" แต่ช่วย "วางแผน"</li>
+        <li>ทำงานข้ามเครื่องมือได้ (Browser, Terminal, Code Editor)</li>
+        <li>เข้าใจบริบทของทั้งโปรเจกต์ (Context Aware) [37]</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Mechanism 1: Implementation Plan -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">กลไก AI: Implementation Plan</h2>
+    <p class="text-xl mb-8 leading-relaxed">
+      ก่อนลงมือเขียนโค้ด AI ใน Antigravity จะสร้าง "แผนการดำเนินงาน" ให้คุณตรวจก่อน [38]
+    </p>
+    <div class="flex items-center space-x-6">
+      <div class="bg-white/10 p-6 rounded-2xl flex-1">
+        <h4 class="text-blue-300 font-bold mb-2">เหมือนกับการสร้างบ้าน</h4>
+        <p class="text-sm opacity-90">แทนที่จะก่ออิฐเลย AI จะเขียน "พิมพ์เขียว" และ "ลำดับงาน" ให้เราอนุมัติ เพื่อลดความผิดพลาดและหนี้ทางเทคนิค [39]</p>
+      </div>
+      <div class="text-5xl">📋</div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Mechanism 2: Browser Subagent -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">กลไก AI: Browser Subagent</h2>
+    <p class="text-xl mb-8">เมื่อ AI ไม่ได้อยู่แค่ในโค้ด แต่สามารถ "ท่องเว็บ" แทนเราได้ [38]</p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left border border-white/20">
+      <h3 class="text-2xl font-semibold mb-4 text-green-300">ตัวอย่างความสามารถ:</h3>
+      <ul class="list-disc list-inside text-lg space-y-2">
+        <li>เข้าไปตั้งค่าฐานข้อมูลใน Render.com</li>
+        <li>ตรวจสอบบั๊กที่เกิดขึ้นบนเว็บหน้าบ้าน</li>
+        <li>อ่านคู่มือการใช้งาน Library ใหม่ๆ จากเว็บโดยตรง</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Understanding Token Budgets -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Token คืออะไร?</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      Token คือ "สกุลเงิน" และ "น้ำมัน" ที่ AI ใช้ในการประมวลผล
+    </p>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <div class="text-2xl font-bold mb-2">1,000 Tokens</div>
+        <p class="text-xs">≈ 750 คำ ภาษาอังกฤษ</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <div class="text-2xl font-bold mb-2 text-yellow-300">Costs</div>
+        <p class="text-xs">ทุกครั้งที่คุณถาม AI คุณกำลัง "เสียตังค์" (หรือใช้โควตา)</p>
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <div class="text-2xl font-bold mb-2 text-green-300">Budget</div>
+        <p class="text-xs">การวางแผนจะช่วยลดค่าใช้จ่าย AI ได้ถึง 60-70%</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Cost & ROI Calculation -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-green-400">การคำนวณ Token Budget</h2>
+    <p class="text-xl opacity-90 mb-8">"ประสิทธิภาพสูงสุด ในต้นทุนที่ต่ำสุด"</p>
+    <div class="bg-white/10 p-6 rounded-2xl text-left border-l-4 border-green-500">
+      <h3 class="text-xl font-bold mb-4 italic">สูตรประหยัด Token สำหรับนักพัฒนา:</h3>
+      <ol class="list-decimal list-inside space-y-3">
+        <li><strong>เลือกรุ่นที่ใช่:</strong> ใช้โมเดลเล็กสำหรับงานง่าย และโมเดลใหญ่สำหรับงานวิเคราะห์ [40]</li>
+        <li><strong>คุมบริบท (Context):</strong> ส่งเฉพาะไฟล์ที่จำเป็นให้ AI อ่าน [41, 42]</li>
+        <li><strong>สรุปเซสชัน:</strong> เมื่อเริ่มคุยเรื่องใหม่ ให้สรุปงานเดิมเพื่อล้าง Context [43]</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Technical Debt in AI Boom -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-red-400">Technical Debt (หนี้ทางเทคนิค)</h2>
+    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+      การยอมรับโค้ดที่ "รันได้" แต่ "ห่วย" ในวันนี้ คือภาระที่ต้องจ่ายแพงในวันหน้า [44, 45]
+    </p>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+      <h4 class="font-bold text-yellow-300 mb-2">ทำไม AI ถึงสร้างหนี้?</h4>
+      <p class="text-sm italic">AI เน้นความ "น่าจะเป็น" ไม่ใช่ "ความถูกต้อง" เสมอไป [46]</p>
+      <ul class="mt-4 list-disc list-inside space-y-1 text-sm opacity-90">
+        <li>ใช้ฟังก์ชันที่เลิกใช้แล้ว (Deprecated) [30, 47]</li>
+        <li>โค้ดซ้ำซ้อน ดูแลรักษายาก [48]</li>
+        <li>สร้างช่องโหว่ความปลอดภัยใหม่ๆ [49, 50]</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Shocking Statistics -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8 text-white">
+    <h2 class="text-5xl font-bold mb-6">สถิติจากโลกความจริง (2026)</h2>
+    <p class="text-lg opacity-80 mb-8 leading-relaxed">ข้อมูลวิจัยจาก commits กว่า 300,000 รายการบน GitHub [44, 51]:</p>
+    <div class="grid grid-cols-2 gap-8">
+      <div class="bg-red-500/20 p-6 rounded-3xl border border-red-500/40">
+        <div class="text-6xl font-bold text-red-300 mb-2">89.1%</div>
+        <p class="text-lg">ของปัญหาที่ AI สร้าง คือ **Code Smells** (โค้ดที่ทำงานได้แต่แย่มาก) [44, 48]</p>
+      </div>
+      <div class="bg-yellow-500/20 p-6 rounded-3xl border border-yellow-500/40">
+        <div class="text-6xl font-bold text-yellow-300 mb-2">24.2%</div>
+        <p class="text-lg">ของปัญหาเหล่านี้ **ยังคงตกค้าง** อยู่ในระบบและสะสมเป็นหนี้ [44, 52]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: The Art of Writing Specs -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-blue-300">ทางแก้: การเขียน Spec</h2>
+    <p class="text-xl opacity-90 mb-8 leading-relaxed">
+      "ถ้าสั่งงานไม่ชัดเจน AI จะเดา และนั่นคือจุดเริ่มต้นของ Technical Debt" [53]
+    </p>
+    <div class="bg-white/10 p-6 rounded-2xl text-left border-l-4 border-blue-400">
+      <h3 class="text-2xl font-bold mb-4 italic">Spec คืออะไร?</h3>
+      <p class="text-lg">คือ "สัญญา" (Contract) ที่เราทำร่วมกับ AI เพื่อระบุว่าซอฟต์แวร์ต้องทำงานอย่างไร ข้อมูลต้องหน้าตาแบบไหน และต้องทดสอบอย่างไรให้ผ่าน [54-56]</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: 7 Elements of Technical Spec (Part 1) -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">7 องค์ประกอบหลักของ Tech Spec</h2>
+    <p class="mb-8 opacity-80 italic">"พื้นฐานที่จะทำให้ AI สร้าง MVP ได้ถูกต้อง 100%"</p>
+    <div class="space-y-4 text-left max-w-2xl mx-auto">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <span class="font-bold text-blue-300">1. Business Purpose:</span> ทำไปเพื่ออะไร? ใครคือผู้ใช้? [57, 58]
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <span class="font-bold text-blue-300">2. System Scope:</span> ทำอะไรบ้าง? และ **ไม่ทำ** อะไรบ้าง? [56, 59]
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <span class="font-bold text-blue-300">3. Data Structure:</span> โครงสร้างข้อมูลในฐานข้อมูล (Django Models) [60, 61]
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <span class="font-bold text-blue-300">4. UI/UX:</span> หน้าตาโปรแกรม (React Components) [62, 63]
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 21: 7 Elements of Technical Spec (Part 2) -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-green-300">หัวใจสำคัญของการควบคุม AI</h2>
+    <div class="space-y-4 text-left max-w-2xl mx-auto">
+      <div class="bg-white/10 p-4 rounded-xl">
+        <span class="font-bold text-green-300">5. Functional Requirements:</span> ขั้นตอนการทำงาน (Business Logic) [64]
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+        <span class="font-bold text-yellow-300 text-lg">6. Standards (.clinerules):</span> กฎเหล็กของทีมที่ AI ต้องทำตาม เช่น ห้ามทิ้ง Comment หรือต้องตั้งชื่อตัวแปรแบบไหน [65, 66]
+      </div>
+      <div class="bg-white/10 p-4 rounded-xl">
+        <span class="font-bold text-green-300">7. Testing Criteria:</span> เงื่อนไขการยอมรับงาน (Acceptance Criteria) [56, 67]
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 22: Role: Human-in-the-loop -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-yellow-300 text-shadow">Human-in-the-loop</h2>
+    <p class="text-xl mb-8 leading-relaxed">
+      AI ทำงาน แต่ **คุณ** รับผิดชอบผลลัพธ์ [68, 69]
+    </p>
+    <div class="flex items-center space-x-6">
+      <div class="text-6xl">🚦</div>
+      <div class="bg-white/10 p-6 rounded-2xl flex-1 text-left">
+        <h4 class="font-bold text-xl mb-2 text-green-300 text-shadow">"Trust but Verify" (เชื่อใจแต่ต้องตรวจสอบ)</h4>
+        <p class="text-sm leading-relaxed opacity-90">ในยุค AI นักพัฒนาต้องเปลี่ยนบทบาทมาเป็น **ผู้ตรวจโค้ด (Code Reviewer)** หน้าที่ของคุณคือการอ่านและประเมินว่าโค้ดที่ AI สร้างนั้น ปลอดภัยและมีคุณภาพตามมาตรฐานหรือไม่ ก่อนจะกด Accept [68, 70-72]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 23: The 10x Developer Blueprint -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">Blueprint สำหรับนักพัฒนา 10x</h2>
+    <p class="text-xl opacity-90 mb-8 leading-relaxed">"ใช้ AI ขยายศักยภาพของคุณ ไม่ใช่ลดทอนสติปัญญา" [25, 73]</p>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="bg-blue-500/20 p-4 rounded-2xl border border-blue-400/40 shadow-lg">
+        <h4 class="font-bold text-blue-300 mb-2">Intent First</h4>
+        <p class="text-xs">เข้าใจปัญหาอย่างถ่องแท้ก่อนเขียน Prompt [53, 74]</p>
+      </div>
+      <div class="bg-purple-500/20 p-4 rounded-2xl border border-purple-400/40 shadow-lg">
+        <h4 class="font-bold text-purple-300 mb-2">Contract Driven</h4>
+        <p class="text-xs">กำหนดข้อตกลงและอินเทอร์เฟซให้ชัดเจน [54]</p>
+      </div>
+      <div class="bg-green-500/20 p-4 rounded-2xl border border-green-400/40 shadow-lg">
+        <h4 class="font-bold text-green-300 mb-2">Review Culture</h4>
+        <p class="text-xs">รีวิวทุกบรรทัดเทียบกับมาตรฐานคุณภาพ [55, 75]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 24: What's Coming in Phase 1? -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-yellow-400 text-shadow">แผนที่นำทางสู่ MVP</h2>
+    <p class="text-xl mb-8 leading-relaxed">
+      ตลอด 3 วันนี้ เราจะเปลี่ยนโปรเจกต์ในฝันของคุณให้เป็นจริง
+    </p>
+    <div class="relative max-w-2xl mx-auto text-left space-y-4">
+      <div class="flex items-center bg-white/10 p-4 rounded-xl">
+        <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-4 font-bold shadow-md">1</div>
+        <p class="text-lg"><strong>Design:</strong> เขียน Spec และโครงสร้างฐานข้อมูล [60]</p>
+      </div>
+      <div class="flex items-center bg-white/10 p-4 rounded-xl">
+        <div class="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-4 font-bold shadow-md">2</div>
+        <p class="text-lg"><strong>Develop:</strong> ใช้ AI สร้าง Django Backend & React Frontend</p>
+      </div>
+      <div class="flex items-center bg-white/10 p-4 rounded-xl border-l-4 border-green-400 shadow-md">
+        <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-4 font-bold">3</div>
+        <p class="text-lg"><strong>Deploy:</strong> นำระบบขึ้นออนไลน์ผ่าน Render.com [17]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 25: Summary of Phase 1 Lectures -->
+<div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6 text-green-300">สรุปการบรรยายช่วงเช้า</h2>
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+      <ul class="list-disc list-inside space-y-2 text-lg">
+        <li><strong>บทบาทใหม่:</strong> คุณไม่ใช่แค่ผู้พิมพ์ แต่เป็น **Orchestrator** [23]</li>
+        <li><strong>เทคโนโลยีใหม่:</strong> Antigravity คือระบบที่ทำงานแทนเราด้วย Agent [35]</li>
+        <li><strong>การบริหารจัดการ:</strong> ต้องคุม Token Budget และลดหนี้ทางเทคนิค [44]</li>
+        <li><strong>อาวุธลับ:</strong> **Technical Spec 7 องค์ประกอบ** คือกุญแจสู่ความสำเร็จ [56]</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 26: Ready for Action? -->
+<div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-6xl font-bold mb-6 italic text-yellow-300 text-shadow">พร้อมเริ่มหรือยัง?</h2>
+    <p class="text-2xl text-white/90 mb-12 leading-relaxed">
+      ลำดับถัดไป: เตรียมสภาพแวดล้อมดิจิทัลของคุณ <br>
+      (Google ➡️ GitHub ➡️ Antigravity)
+    </p>
+    <div class="text-8xl animate-bounce">👇</div>
+  </div>
+</div>
+
+<!-- Slide 27: Questions? -->
+<div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-12">มีคำถามไหมครับ?</h2>
+    <div class="bg-white/10 p-8 rounded-3xl inline-block shadow-2xl">
+      <p class="text-lg mb-2">"ไม่มีคำถามไหนที่ง่ายเกินไปสำหรับการเรียนรู้สิ่งใหม่"</p>
+      <p class="text-sm opacity-60 italic text-blue-200">— AI Frontier Team</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 28: Closing Section 1 -->
+<div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <h2 class="text-5xl font-bold mb-6">พักเบรก 15 นาที</h2>
+    <p class="text-xl opacity-80 mb-8 leading-relaxed italic text-yellow-200">
+      "กลับมาเจอกันที่การตั้งค่าเครื่องมือปฏิบัติงานจริง"
+    </p>
+    <div class="text-sm text-white/60">เริ่มช่วงถัดไปในเวลา 10:45 น.</div>
+  </div>
+</div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
