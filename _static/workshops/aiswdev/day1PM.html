@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../workshops/aiswdev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./day104.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Section -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 italic uppercase">SolarCorp Workshop: Day 1</h2>
+          <p class="text-2xl text-white/90 mb-8 leading-relaxed">
+            ภาคปฏิบัติ: การวางรากฐานโครงการและออกแบบสถาปัตยกรรมด้วย AI-Native Workflow
+          </p>
+          <div class="text-sm text-white/70">ช่วงบ่าย | ภาคปฏิบัติการสร้างรากฐานระบบ</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Afternoon Objectives -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300">เป้าหมายของเวิร์กชอปวันนี้</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left space-y-4">
+            <p class="text-lg">✅ การตั้งค่า Workspace และเชื่อมต่อ GitHub Repository</p>
+            <p class="text-lg">✅ การเปลี่ยน SRS เป็น Technical Spec ที่ AI เข้าใจ 100%</p>
+            <p class="text-lg">✅ การออกแบบ Database Schema สำหรับระบบโซลาร์เซลล์</p>
+            <p class="text-lg">✅ การทำ API Contract เบื้องต้นระหว่าง Django และ React</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Project Vision (SRS 1.1) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300">วิสัยทัศน์โครงการ: SolarCorp</h2>
+          <p class="text-xl mb-8 opacity-90 leading-relaxed">
+            "เพิ่มขีดความสามารถในการแข่งขันผ่านระบบรับคำสั่งซื้ออัตโนมัติ และการจัดการ Lead อัจฉริยะ"
+          </p>
+          <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-yellow-500 text-left">
+            <p class="text-sm italic">เป้าหมายหลักคือการลดระยะเวลาและต้นทุนด้วย AI-Native Workflow เพื่อสร้างเว็บไซต์ที่แนะนำแพ็กเกจโซลาร์เซลล์ได้ตามค่าไฟจริงของลูกค้า</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Defining the Scope (SRS 1.2) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">ขอบเขตงานที่เราจะเริ่มสร้างวันนี้</h2>
+          <div class="grid grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h4 class="font-bold text-yellow-300 mb-2">1. Sales Automation</h4>
+              <p class="text-xs opacity-80">ระบบนำเสนอแพ็กเกจ 3kW, 5kW, 10kW และการประเมินราคาอัตโนมัติ</p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl">
+              <h4 class="font-bold text-green-300 mb-2">2. Lead Management</h4>
+              <p class="text-xs opacity-80">การจัดเก็บข้อมูลผู้สนใจ ประวัติการติดต่อ และแหล่งที่มาของแคมเปญ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Tech Stack Checklist (SRS 1.3) -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-10 italic">เทคโนโลยีที่เราจะใช้ (The Stack)</h2>
+          <div class="space-y-4 max-w-2xl mx-auto text-left">
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center mr-4">🐍</div>
+              <p><strong>Backend:</strong> Django (Python) จัดการผ่าน uv</p>
+            </div>
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-cyan-400 w-10 h-10 rounded-full flex items-center justify-center mr-4">⚛️</div>
+              <p><strong>Frontend:</strong> React + Tailwind CSS (Component-based)</p>
+            </div>
+            <div class="flex items-center bg-white/10 p-4 rounded-xl">
+              <div class="bg-purple-500 w-10 h-10 rounded-full flex items-center justify-center mr-4">🐘</div>
+              <p><strong>Database:</strong> SQLite (Dev) / PostgreSQL (Prod)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: The Orchestrator Paradigm -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-green-400">คุณคือวาทยกร (Orchestrator)</h2>
+          <p class="text-xl mb-12 italic">"AI คือเครื่องดนตรีที่ทรงพลัง แต่คุณคือคนคุมจังหวะและทิศทางทั้งหมด"</p>
+          <div class="flex items-center space-x-12">
+            <div class="text-center flex-1">
+              <div class="text-5xl mb-4">✍️</div>
+              <h4 class="font-bold">เขียน Spec</h4>
+            </div>
+            <div class="text-4xl">➡️</div>
+            <div class="text-center flex-1">
+              <div class="text-5xl mb-4">🤖</div>
+              <h4 class="font-bold">AI วางแผน</h4>
+            </div>
+            <div class="text-4xl">➡️</div>
+            <div class="text-center flex-1">
+              <div class="text-5xl mb-4">🧐</div>
+              <h4 class="font-bold">มนุษย์อนุมัติ</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Spec-Based Engineering (7 Elements) -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-10 text-shadow">ความลับของ Spec ที่แม่นยำ 100%</h2>
+          <div class="bg-gray-900/80 p-8 rounded-3xl border border-white/10 shadow-2xl text-left italic">
+            <p class="text-sm opacity-90 mb-4">เราจะใช้ Technical Spec 7 องค์ประกอบเพื่อลดหนี้ทางเทคนิค:</p>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <p>1. บทบาท (Persona)</p>
+              <p>2. บริบท (Context)</p>
+              <p>3. งาน (Task)</p>
+              <p>4. รูปแบบ (Format)</p>
+              <p>5. กฎเกณฑ์ (Constraints)</p>
+              <p>6. ตรรกะ (Logic)</p>
+              <p>7. การทดสอบ (Verification)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Setup Antigravity Workspace -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300">เริ่มการตั้งค่า Workspace</h2>
+          <p class="text-xl mb-8 leading-relaxed">เปิด Google Antigravity และทำตามขั้นตอนดังนี้:</p>
+          <div class="bg-white/10 p-6 rounded-2xl text-left space-y-4 shadow-xl">
+            <p>🎯 1. สร้างโฟลเดอร์ใหม่ชื่อ <code>solarcorp-project</code></p>
+            <p>🎯 2. เลือกโฟลเดอร์นี้เป็น Active Workspace ใน Antigravity</p>
+            <p>🎯 3. เชื่อมต่อกับ GitHub เพื่อเก็บประวัติการแก้ไขโค้ด</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Dependency Management with uv -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-green-300 italic">ความเร็วคือหัวใจ (NFR-2)</h2>
+          <p class="text-lg mb-8 leading-relaxed">เราจะใช้ `uv` เพื่อให้ AI ติดตั้งระบบได้รวดเร็วระดับวินาที</p>
+          <div class="bg-black/60 p-6 rounded-2xl border border-green-400/30 text-left font-mono text-sm">
+          > uv init <br>
+          > uv add django djangorestframework <br>
+            <span class="text-white opacity-50 italic"># สังเกตความเร็วที่เหนือกว่า pip ธรรมดา 10-100 เท่า</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Task: Project Briefing -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-10">การบรีฟงานให้ AI Agent</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border border-white/20 shadow-2xl text-left">
+            <h4 class="text-xs font-bold text-yellow-300 uppercase mb-4">ส่งคำสั่งแรกใน Agent Manager:</h4>
+            <p class="text-lg italic leading-relaxed">
+              "อ้างอิงจาก SRS.md ฉันต้องการเริ่มต้นโครงการ SolarCorp ช่วยสรุปขั้นตอนการวางโครงสร้างโปรเจกต์ (Implementation Plan) และเตรียมไฟล์ที่จำเป็นสำหรับระบบจัดการสมาชิกเบื้องต้น"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Human-in-the-loop: Implementation Plan -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-red-400">จุดตรวจสอบ: แผนการปฏิบัติงาน</h2>
+          <p class="text-xl mb-8 leading-relaxed">ห้ามให้ AI เขียนโค้ดจนกว่าแผนจะผ่านการตรวจ!</p>
+          <div class="bg-white/10 p-6 rounded-2xl text-left border-l-8 border-red-500">
+            <p class="text-sm mb-2 font-bold">สิ่งที่ต้องตรวจในแผน (Plan Review):</p>
+            <ul class="list-disc list-inside space-y-1 text-xs opacity-90">
+              <li>มีการแยกโฟลเดอร์ Backend และ Frontend หรือไม่?</li>
+              <li>มีการเตรียมไฟล์สำหรับการเก็บข้อมูล Lead (FR-1.1) หรือยัง?</li>
+              <li>แผนการติดตั้งฐานข้อมูล SQLite สำหรับช่วงพัฒนาถูกต้องไหม?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Designing Data Models: Members & Leads -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6">การออกแบบข้อมูล: Member & Lead</h2>
+          <p class="text-xl mb-8 opacity-90 italic">อ้างอิงจาก FR-1.1 และ FR-1.3</p>
+          <div class="grid grid-cols-2 gap-4 text-left font-mono text-xs text-blue-300">
+            <div class="bg-gray-900 p-4 rounded-xl border border-white/10">
+              <h4 class="text-white mb-2">Lead Model</h4>
+              <p>- Name, Phone, Email</p>
+              <p>- Monthly Bill (float)</p>
+              <p>- UTM Source (string)</p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl border border-white/10">
+              <h4 class="text-white mb-2">Member Model</h4>
+              <p>- User (OneToOne)</p>
+              <p>- Registration Date</p>
+              <p>- Marketing Consent (PDPA)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Designing Data Models: Products & Orders -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-10">การออกแบบข้อมูล: Products & Orders</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border border-white/20 shadow-2xl text-left grid grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-yellow-300 font-bold mb-2">Package Model (FR-2.1)</h4>
+              <ul class="text-xs space-y-1">
+                <li>- Capacity (3kW, 5kW, 10kW)</li>
+                <li>- Price, Description</li>
+                <li>- Is Promo Active?</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-green-400 font-bold mb-2">Order Model (FR-3.1)</h4>
+              <ul class="text-xs space-y-1">
+                <li>- Customer, Package</li>
+                <li>- Status (Pending, Confirmed)</li>
+                <li>- Installation Location</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Activity 1: ER Diagram Generation -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300 uppercase italic">กิจกรรม: สร้างผังข้อมูลอัจฉริยะ</h2>
+          <div class="bg-gray-900/50 p-8 rounded-3xl border border-white/20 text-left space-y-4 shadow-2xl">
+            <p class="text-lg">1. เปิดไฟล์ <code>SRS.md</code> และ Copy ส่วน Functional Requirements</p>
+            <p class="text-lg">2. สั่ง AI: <strong>"ช่วยออกแบบ ER Diagram และ Django Models สำหรับโครงการ SolarCorp ตามข้อกำหนดนี้"</strong></p>
+            <p class="text-lg">3. ตรวจสอบความสัมพันธ์แบบ ForeignKey ระหว่าง Order และ Package</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: API Contract: The Solar Agreement -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300">สัญญาข้อมูล (API Contract)</h2>
+          <p class="text-xl mb-8 leading-relaxed italic text-shadow">"ตกลงกันก่อน ว่าจะส่งอะไรให้กัน"</p>
+          <div class="bg-white/10 p-6 rounded-2xl text-left border-l-8 border-blue-400 italic">
+            <p class="text-sm mb-4 font-bold text-yellow-200">ตัวอย่าง JSON สำหรับ Lead (POST):</p>
+            <pre class="bg-black/40 p-4 rounded-xl text-xs font-mono text-green-400">
+              {
+              "name": "Somsak",
+              "phone": "0812345678",
+              "monthly_bill": 3500,
+              "pdpa_consent": true
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Introduction to .clinerules -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-10 text-shadow italic">การกำหนดกฎเหล็ก (.clinerules)</h2>
+          <div class="bg-gray-900/80 p-8 rounded-3xl border border-white/10 shadow-2xl text-left italic">
+            <p class="text-sm mb-4">กฎที่เราต้องใส่เพื่อให้ AI ทำงานสอดคล้องกับ SRS:</p>
+            <ul class="text-xs font-mono space-y-2 text-blue-300">
+              <li>- ทุก Model ต้องมี created_at และ updated_at</li>
+              <li>- ต้องมี Docstring อธิบายการทำงานของทุกคลาส</li>
+              <li>- ห้ามใช้ฟังก์ชันคำนวณที่หน้า Frontend ให้เรียกจาก Backend เท่านั้น (FR-2.3)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Handling Code Smells Early -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-red-400">ระวังหนี้ทางเทคนิค (Code Smells)</h2>
+          <p class="text-xl mb-8 leading-relaxed">สถิติพบว่าโค้ดที่ AI สร้างอาจมีปัญหาแฝงถึง 89.1%</p>
+          <div class="grid grid-cols-2 gap-4 text-left text-xs opacity-90">
+            <div class="p-4 bg-red-500/10 rounded-xl border border-red-500/20">❌ Unused Variables</div>
+            <div class="p-4 bg-red-500/10 rounded-xl border border-red-500/20">❌ Duplicated Logic</div>
+            <div class="p-4 bg-red-500/10 rounded-xl border border-red-500/20">❌ Insecure Hardcoding</div>
+            <div class="p-4 bg-red-500/10 rounded-xl border border-red-500/20">❌ Inconsistent Naming</div>
+          </div>
+          <p class="mt-8 text-sm italic text-yellow-200">"เราจะใช้คำสั่ง /verify เพื่อแสกนหาจุดเหล่านี้ทันทีที่เริ่มสร้างฟีเจอร์"</p>
+        </div>
+      </div>
+
+      <!-- Slide 17: Activity 2: The Project Brief -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-5xl font-bold mb-10 uppercase text-yellow-300">กิจกรรม: ร่าง Project Brief</h2>
+          <div class="bg-white/10 p-8 rounded-3xl inline-block text-left shadow-2xl border border-yellow-500/30">
+            <p class="text-lg mb-4 italic">"จงเขียนเป้าหมาย 3 อย่างที่คุณต้องการให้ AI ทำสำเร็จในเย็นวันนี้"</p>
+            <ul class="space-y-3 opacity-90 text-sm">
+              <li>1. สร้างฐานข้อมูล SolarCorp เบื้องต้น</li>
+              <li>2. เปิดหน้า Admin Dashboard ให้แอดมินเข้าไปกรอกแพ็กเกจได้</li>
+              <li>3. เตรียม API Endpoint สำหรับรับข้อมูลผู้สนใจ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Artifacts: The Proof of Work -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-green-400 italic text-shadow">หลักฐานความสำเร็จ (Artifacts)</h2>
+          <p class="text-xl mb-8 leading-relaxed">Antigravity จะสร้างไฟล์ยืนยันการทำงานมาให้คุณ:</p>
+          <div class="flex items-center space-x-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl flex-1 border border-white/20">
+              <p class="text-sm">🎥 **Walkthrough:** วิดีโอบันทึกการทดสอบฟีเจอร์โดย AI</p>
+              <p class="text-sm mt-4">📋 **Task List:** รายการงานที่ทำเสร็จแล้วและสถานะปัจจุบัน</p>
+            </div>
+            <div class="text-6xl animate-bounce">📁</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Managing Token Budget -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300 uppercase">การบริหารงบประมาณสมอง (Tokens)</h2>
+          <p class="text-xl mb-8 leading-relaxed opacity-90 italic">"ห้ามส่งโค้ดทั้งโปรเจกต์ให้ AI ทุกครั้ง"</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left border-l-8 border-blue-500">
+            <p class="text-xs">ใช้ความสามารถในการจัดการ Context ของ Antigravity:</p>
+            <ul class="list-disc list-inside space-y-2 text-[10px] mt-4">
+              <li>ส่งเฉพาะไฟล์ที่เกี่ยวข้องโดยใช้เครื่องหมาย @filename</li>
+              <li>ใช้คำสั่ง /compact เพื่อยุบบริบทที่ยาวเกินไป</li>
+              <li>แยกงานเป็นชิ้นเล็ก (Small Units) เพื่อลดความสับสน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: PDPA Compliance Check (SRS 1.4) -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-10 text-pink-300">กฎความปลอดภัย: PDPA Consent</h2>
+          <div class="bg-gray-900/80 p-8 rounded-3xl border border-pink-400/20 shadow-2xl text-left italic">
+            <p class="text-lg mb-4">"ต้องมีช่องติ๊กยอมรับการเก็บข้อมูลในทุกแบบฟอร์มลงทะเบียน"</p>
+            <p class="text-sm font-bold text-yellow-300">คำสั่งที่ Orchestrator ต้องใช้:</p>
+            <p class="text-xs bg-black/40 p-3 rounded font-mono text-green-400">
+              "ตรวจสอบว่าฟอร์มลงทะเบียน SolarCorp มีการส่งค่า pdpa_accepted: true และจัดเก็บวันที่ที่กดยอมรับลงฐานข้อมูลด้วย"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Autonomous Testing: The Security Scan -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-red-500 uppercase italic">เกราะป้องกัน: /security-scan</h2>
+          <p class="text-xl mb-8 leading-relaxed">เรียกใช้ Security Subagent เพื่อแสกนโค้ดทั้งโปรเจกต์</p>
+          <div class="flex items-center space-x-6 text-left">
+            <div class="bg-black/60 p-6 rounded-2xl flex-1 border border-red-400/30 font-mono text-green-400">
+            > /security-scan SolarCorp/backend/ <br>
+              <span class="text-white opacity-50">...Scanning for SQLi, XSS, Secret Leaks...</span>
+            </div>
+            <div class="text-6xl animate-pulse">🛡️</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Activity 3: Building the First Feature -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-300 uppercase text-shadow">ลงมือ: สร้างระบบหลังบ้านขั้นต้น</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border border-white/20 text-left space-y-4 shadow-xl">
+            <p class="text-lg">1. เปิด Antigravity Chat และใช้คำสั่ง <strong>/cook</strong></p>
+            <p class="text-lg">2. ให้ AI สร้าง Django Project และเปิดใช้งาน <strong>Django Admin</strong></p>
+            <p class="text-lg">3. สั่งให้ AI เพิ่มข้อมูลแพ็กเกจโซลาร์เซลล์ตัวอย่าง 3 ขนาดลงไป</p>
+            <p class="text-lg">4. รันคำสั่ง <code>python manage.py runserver</code> และตรวจสอบผล</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Troubleshooting with /debug -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-10 text-blue-300 italic">เมื่อเกิดข้อผิดพลาด...</h2>
+          <div class="bg-gray-900 p-8 rounded-3xl border border-white/10 shadow-2xl text-left">
+            <p class="text-lg mb-4 italic">"อย่าพยายามแก้โค้ดเองในจุดที่คุณยังไม่เข้าใจ"</p>
+            <p class="text-sm font-bold text-yellow-300">ใช้คำสั่งวิเคราะห์บั๊ก:</p>
+            <p class="text-xs bg-black/40 p-3 rounded font-mono text-blue-400">> /debug วิเคราะห์ Log การ Migration ที่ล้มเหลว</p>
+            <p class="mt-4 text-[10px] opacity-70">"AI จะค้นหาสาเหตุและเสนอแผนการซ่อมแซมให้คุณทันที"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Definition of Done: Day 1 -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-10 text-green-300 uppercase">นิยามของคำว่า "เสร็จ" วันที่ 1</h2>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="p-4 bg-green-500/20 rounded-xl border border-green-400/40">✅ Workspace & GitHub พร้อม</div>
+            <div class="p-4 bg-green-500/20 rounded-xl border border-green-400/40">✅ Database Models ถูกสร้างครบ</div>
+            <div class="p-4 bg-green-500/20 rounded-xl border border-green-400/40">✅ Admin Panel จัดการข้อมูลได้จริง</div>
+            <div class="p-4 bg-green-500/20 rounded-xl border border-green-400/40">✅ มีแผนปฏิบัติงานสำหรับวันพรุ่งนี้</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Mid-Workshop Reflection -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-12 uppercase text-shadow">ช่วงถาม-ตอบ (Q&A)</h2>
+          <div class="bg-white/10 p-10 rounded-3xl border border-white/20 shadow-2xl">
+            <p class="text-2xl italic mb-4">"มีอุปสรรคในการสั่ง AI ออกแบบฐานข้อมูลไหมครับ?"</p>
+            <div class="text-6xl mt-6 animate-bounce">🤔❓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Summary of Progress -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-10 text-green-400 italic">สรุปภาพรวมวันนี้</h2>
+          <div class="grid grid-cols-3 gap-4 mb-10 text-xs">
+            <div class="p-3 bg-white/10 rounded-xl">เข้าใจกลไก AI Agent</div>
+            <div class="p-3 bg-white/10 rounded-xl">เขียน Spec แม่นยำ</div>
+            <div class="p-3 bg-white/10 rounded-xl">วางรากฐาน SolarCorp สำเร็จ</div>
+          </div>
+          <p class="text-lg font-bold text-shadow italic text-yellow-300">"คุณได้ก้าวเข้าสู่ยุค Agentic Software Engineering อย่างเต็มตัวแล้ว!"</p>
+        </div>
+      </div>
+
+      <!-- Slide 27: Closing Day 1 Workshop -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-5xl font-bold mb-6 italic text-yellow-300 uppercase">ยินดีด้วยกับความสำเร็จวันนี้</h2>
+          <p class="text-2xl opacity-90 mb-10 leading-relaxed uppercase">
+            พักผ่อนให้เต็มที่ เพื่อกลับมาลุย <br>
+            **Fullstack Development ในวันพรุ่งนี้!**
+          </p>
+          <div class="text-sm text-white/60">ขอบคุณสำหรับการทำงานร่วมกันครับ</div>
+          <div class="mt-12 text-7xl animate-pulse">👋🚀</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
