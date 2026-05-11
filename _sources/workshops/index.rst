@@ -7,4 +7,5 @@ Workshops
 
    programming/index
    aiswdev/index
+   codinghackathon/index
    dax/index
