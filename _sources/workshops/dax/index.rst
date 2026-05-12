@@ -16,7 +16,7 @@ Data Analysis Expressions (DAX)
      - **Data Analysis Foundations & Power Query** 
         * ขั้นตอนการวิเคราะห์ข้อมูล (Data Analysis Process)
         * เทคนิค SMART ในการเตรียมข้อมูล
-        * การทำความสะอาดข้อมูลขั้นสูงด้วย Power Query แ
+        * การทำความสะอาดข้อมูลขั้นสูงด้วย Power Query 
         * หลักการ Responsible & Ethical AI
    * - 11:00 - 12:00
      - Workshop (1 ชม.)
