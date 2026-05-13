@@ -35,7 +35,7 @@ AI Frontier - Coding Hackathon
       - **Security & Refactoring:** ตรวจสอบช่องโหว่ความปลอดภัยและกำจัด AI Slop เพื่อให้โค้ดพร้อมใช้งานระยะยาว
     * - 09:00 - 12:00
       - Hackathon Session 2
-      - 
+      - `ย้ายจาก Pythonanywhere ไป Render ▶️ <../../_static/workshops/aiswdev/pythonanywhere2render.html>`_
     * - 13:00 - 16:30
       - Hackathon Session 3
       - 

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../workshops/aiswdev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./pythonanywhere2render.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title Section -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 italic uppercase">Django Migration Guide</h2>
+          <p class="text-2xl text-white/90 mb-8 leading-relaxed">
+            คู่มือการย้ายโปรเจกต์ 'mysite' จาก PythonAnywhere สู่ Render.com ผ่าน GitHub
+          </p>
+          <div class="text-sm text-white/70 italic">สร้างซอฟต์แวร์ที่ยั่งยืนด้วย Modern Cloud Infrastructure</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Introduction & Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-yellow-300">เส้นทางการย้ายระบบ (Migration Roadmap)</h2>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left space-y-2 border-l-8 border-yellow-500">
+            <p class="text-lg">1. <strong>เตรียมข้อมูล</strong> บีบอัดและดาวน์โหลดจาก PythonAnywhere</p>
+            <p class="text-lg">2. <strong>Source Control</strong> จัดการโค้ดผ่าน GitHub Repository</p>
+            <p class="text-lg">3. <strong>Infrastructure</strong ตั้งค่า Render และ PostgreSQL</p>
+            <p class="text-lg">4. <strong>Production Config</strong ปรับแต่ง Django ให้พร้อมออนไลน์</p>
+            <p class="text-lg">5. <strong>Deployment</strong นำระบบขึ้นใช้งานจริง (Go Live)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: PythonAnywhere - Bash Console -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300 uppercase">ขั้นตอนที่ 1: บีบอัดโปรเจกต์</h2>
+          <p class="text-xl mb-8 opacity-90">เริ่มต้นที่ PythonAnywhere Dashboard เพื่อรวบรวมไฟล์ </p>
+          <div class="bg-gray-900 p-6 rounded-2xl text-left font-mono text-sm border border-blue-400/30">
+            <p class="text-green-400"># เปิด Bash Console และพิมพ์คำสั่งดังนี้:</p>
+            <p>cd ~</p>
+            <p>zip -r mysite.zip mysite</p>
+          </div>
+          <p class="mt-6 text-xs italic opacity-70">"คำสั่งนี้จะสร้างไฟล์ mysite.zip ที่บรรจุทุกไฟล์ในโฟลเดอร์ mysite ของคุณ"</p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Download to Local -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-10">การดาวน์โหลดไฟล์ลงเครื่อง</h2>
+          <div class="flex items-center space-x-8 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl flex-1 border border-white/20">
+              <h4 class="font-bold mb-4">ดาวน์โหลดจากหน้า Files:</h4>
+              <ul class="list-disc list-inside space-y-2 text-sm">
+                <li>ไปที่เมนู <strong>Files</strong> ใน PythonAnywhere</li>
+                <li>ค้นหาไฟล์ <code>mysite.zip</code> ใน Home directory</li>
+                <li>คลิกที่ชื่อไฟล์เพื่อดาวน์โหลด</li>
+                <li>นำไปเก็บไว้ที่ Drive <storng>D:/</storng></li>
+              </ul>
+            </div>
+            <div class="text-8xl">💾</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: GitHub - Create Repository -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-6 text-pink-300">ขั้นตอนที่ 2: สร้าง GitHub Repository</h2>
+          <p class="text-xl mb-8 leading-relaxed">วางรากฐานการจัดการเวอร์ชัน (Version Control) </p>
+          <div class="bg-white/10 p-6 rounded-2xl text-left border-l-8 border-pink-500 italic shadow-xl">
+            <ul class="space-y-4 text-sm">
+              <li>🎯 <strong>Repository Name</strong> <code>mysite</code></li>
+              <li>🎯 <strong>Description</strong เขียนคำอธิบายโปรเจกต์สั้นๆ</li>
+              <li>🎯 <strong>.gitignore</strong เลือกเทมเพลต <strong>Python</strong> เพื่อป้องกันไฟล์ขยะ </li>
+              <li>🎯 <strong>Visibility</strong Public หรือ Private ตามต้องการ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Git Clone to Local -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 uppercase">การ Clone มาที่เครื่องคอมพิวเตอร์</h2>
+          <div class="bg-gray-900 p-8 rounded-3xl border border-white/10 shadow-2xl text-left italic">
+            <p class="text-sm font-bold text-yellow-300 mb-4">เปิด Terminal/Command Prompt และรัน:</p>
+            <div class="bg-black/40 p-4 rounded-xl text-xs font-mono text-green-400">
+              d: <br>
+              mkdir Github <br>
+              cd Github <br>
+              git clone https://github.com/YOUR_USER/mysite.git 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Extract & Prepare Files -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300 italic">การเตรียมไฟล์โปรเจกต์</h2>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-blue-400/20 shadow-xl">
+              <h4 class="font-bold text-xs uppercase mb-2">1. Extract:</h4>
+              <p class="text-xs">นำไฟล์ใน <code>mysite.zip</code> ทั้งหมดออกมาวางที่ <code>D:/Github/mysite</code></p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-blue-400/20 shadow-xl">
+              <h4 class="font-bold text-xs uppercase mb-2">2. Structure:</h4>
+              <p class="text-xs">ตรวจสอบว่าไฟล์ <code>manage.py</code> อยู่ที่ root ของ Repository</p>
+            </div>
+          </div>
+          <p class="mt-8 text-sm italic text-yellow-200">"ตอนนี้เครื่อง Local และ GitHub ของคุณพร้อมสำหรับการตั้งค่าคลาวด์แล้ว"</p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Render.com - Account Setup -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-green-300 uppercase">ขั้นตอนที่ 3: ตั้งค่า Render.com</h2>
+          <p class="text-xl mb-12">แพลตฟอร์ม Cloud ยุคใหม่ที่รองรับ Django ได้ดีเยี่ยม </p>
+          <div class="space-y-4 max-w-2xl mx-auto text-left">
+            <div class="flex items-center bg-white/10 p-4 rounded-xl border border-white/20">
+              <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center mr-4">1</div>
+              <p>สมัครบัญชีที่ <strong>Render.com</strong></p>
+            </div>
+            <div class="flex items-center bg-white/10 p-4 rounded-xl border border-white/20">
+              <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center mr-4">2</div>
+              <p>เชื่อมต่อบัญชีกับ <strong>GitHub</strong> ของคุณ </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Create PostgreSQL Database -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-purple-300 italic">การสร้างฐานข้อมูล PostgreSQL</h2>
+          <p class="text-xl mb-8 leading-relaxed opacity-90">เปลี่ยนจาก SQLite สู่ฐานข้อมูลมาตรฐานธุรกิจ </p>
+          <div class="bg-gray-900/80 p-8 rounded-3xl border border-purple-500/20 shadow-2xl text-left italic">
+            <ul class="text-sm space-y-4">
+              <li>🔹 คลิกปุ่ม <strong>New</strong> -> <strong>PostgreSQL</strong></li>
+              <li>🔹 ตั้งชื่อฐานข้อมูล (เช่น <code>mysitedb</code>)</li>
+              <li>🔹 สำคัญ:*คัดลอก <strong>Internal Database URL</strong> เก็บไว้เพื่อใช้เชื่อมต่อ </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Django Config - Dependencies -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-6 uppercase text-shadow">ขั้นตอนที่ 4: ปรับแต่ง Django (Settings)</h2>
+          <p class="text-xl mb-8 italic">ติดตั้งแพ็กเกจที่จำเป็นสำหรับ Production </p>
+          <div class="bg-gray-900 p-6 rounded-2xl text-left font-mono text-xs text-blue-300 border border-white/10">
+            <p class="text-yellow-400"># เพิ่มสิ่งนี้ใน requirements.txt:</p>
+            psycopg2-binary  # Adapter สำหรับ PostgreSQL <br>
+            dj-database-url  # จัดการ DB URL ผ่าน Env <br>
+            whitenoise       # เสิร์ฟไฟล์ Static 
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Settings.py - Database Config -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-3xl font-bold mb-6 text-green-300 italic">การเชื่อมต่อฐานข้อมูลอัจฉริยะ</h2>
+          <div class="bg-gray-900 p-6 rounded-2xl text-left border border-green-500/30 font-mono text-[11px] leading-relaxed">
+            import dj_database_url <br>
+            import os <br> <br>
+            DATABASES = { <br>
+            &nbsp;&nbsp;'default': dj_database_url.config( <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;default='sqlite:///db.sqlite3', <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;conn_max_age=600 <br>
+            &nbsp;&nbsp;) <br>
+            } 
+          </div>
+          <p class="mt-4 text-[10px] opacity-70">"โค้ดนี้จะใช้ PostgreSQL อัตโนมัติเมื่ออยู่บนคลาวด์ และใช้ SQLite เมื่อพัฒนาบนเครื่อง"</p>
+        </div>
+      </div>
+
+      <!-- Slide 11: Settings.py - WhiteNoise & Statics -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-yellow-400 uppercase italic">การจัดการไฟล์ Static</h2>
+          <div class="bg-white/10 p-6 rounded-2xl text-left space-y-4 border-l-8 border-yellow-500">
+            <p class="text-xs font-bold">1. ใน MIDDLEWARE (ต่อจาก SecurityMiddleware):</p>
+            <code class="text-[10px] bg-black/40 p-2 block">'whitenoise.middleware.WhiteNoiseMiddleware', </code>
+            <p class="text-xs font-bold">2. ตั้งค่า Storage:</p>
+            <code class="text-[10px] bg-black/40 p-2 block">STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' </code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Settings.py - Security Check -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-red-400 uppercase text-shadow">ความปลอดภัย (NFR-3)</h2>
+          <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-red-500/10 p-4 rounded-xl border border-red-500/30">
+              <h4 class="font-bold text-red-300 text-xs italic">DEBUG = False</h4>
+              <p class="text-[10px] opacity-80">ป้องกันไม่ให้โชว์ Error ละเอียดแก่บุคคลภายนอก </p>
+            </div>
+            <div class="bg-green-500/10 p-4 rounded-xl border border-green-500/30">
+              <h4 class="font-bold text-green-300 text-xs italic">ALLOWED_HOSTS</h4>
+              <p class="text-[10px] opacity-80">ใส่โดเมนของ Render (เช่น <code>['*']</code> หรือระบุ URL จริง) </p>
+            </div>
+          </div>
+          <p class="mt-8 text-xs italic opacity-70">"ห้ามลืมเปลี่ยน SECRET_KEY ให้ดึงจาก Environment Variable ด้วย!" </p>
+        </div>
+      </div>
+
+      <!-- Slide 13: Build Script (build.sh) -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-blue-300">การทำ Automation ด้วย Build Script</h2>
+          <p class="text-xl mb-8 leading-relaxed opacity-90 italic">สร้างไฟล์ <code>build.sh</code> ไว้ที่ Root Directory </p>
+          <div class="bg-gray-900 p-6 rounded-2xl text-left font-mono text-[10px] text-green-400 border border-blue-400/30">
+            set -o errexit <br>
+            pip install -r requirements.txt <br>
+            python manage.py collectstatic --no-input <br>
+            python manage.py migrate
+          </div>
+          <p class="mt-4 text-xs italic opacity-70">"รันคำสั่ง <code>chmod a+x build.sh</code> เพื่ออนุญาตให้ระบบรันไฟล์นี้ได้" </p>
+        </div>
+      </div>
+
+      <!-- Slide 14: Render.com - Web Service Setup -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-6 uppercase text-shadow">ขั้นตอนที่ 5: เริ่มการ Deployment</h2>
+          <div class="bg-white/10 p-8 rounded-3xl border border-white/20 shadow-2xl relative text-left italic">
+            <ul class="space-y-4 text-sm">
+              <li>🚀 คลิก <strong>New -> Web Service</strong></li>
+              <li>🚀 เลือก Repository <code>mysite</code></li>
+              <li>🚀 <strong>Language</strong> Python</li>
+              <li>🚀 <strong>Build Command</strong> <code>./build.sh</code> </li>
+              <li>🚀 <strong>Start Command</strong <code>gunicorn core.wsgi:application</code> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Environment Variables Setup -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-8 text-pink-300 uppercase">การตั้งค่าตัวแปรสภาพแวดล้อม</h2>
+          <p class="mb-8 italic opacity-80">ไปที่เมนู Environment ใน Web Service และระบุค่าดังนี้ :</p>
+          <div class="grid grid-cols-2 gap-4 text-left font-mono text-xs">
+            <div class="bg-gray-900 p-4 rounded-xl border border-white/10">
+              <h4 class="text-blue-300 font-bold mb-2 italic">DATABASE_URL</h4>
+              <p>นำ URL จาก PostgreSQL มาวาง </p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl border border-white/10">
+              <h4 class="text-green-300 font-bold mb-2 italic">SECRET_KEY</h4>
+              <p>ระบุรหัสลับสำหรับแอปพลิเคชัน</p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl border border-white/10 col-span-2">
+              <h4 class="text-yellow-300 font-bold mb-2 italic">PYTHON_VERSION</h4>
+              <p>ระบุเวอร์ชัน เช่น 3.12.3 </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Final Step - Push to GitHub -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-5xl font-bold mb-6 text-yellow-300 uppercase italic">ส่งมอบโค้ด (Push to Git)</h2>
+          <div class="bg-gray-900/50 p-8 rounded-3xl border border-white/20 text-left space-y-4 shadow-2xl font-mono text-xs">
+            git add . <br>
+            git commit -m "Configure for Render deployment" <br>
+            git push origin main 
+          </div>
+          <p class="mt-8 text-sm italic text-shadow">"ทันทีที่คุณ Push, Render จะเริ่มขั้นตอนการ Build ให้อัตโนมัติ!" </p>
+        </div>
+      </div>
+
+      <!-- Slide 17: Live Sync & Monitoring -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-6 text-green-400 italic">การตรวจสอบสถานะ (Go Live!)</h2>
+          <div class="flex items-center space-x-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl flex-1 border border-white/20">
+              <ul class="space-y-4 text-xs">
+                <li>🎥 ติดตาม Logs การ Build ในหน้า Dashboard ของ Render</li>
+                <li>🎥 หากขึ้นสถานะ Live แสดงว่าการออนไลน์สำเร็จ! </li>
+                <li>🎥 ตรวจสอบ URL <code>.onrender.com</code> เพื่อดูหน้าเว็บจริง </li>
+              </ul>
+            </div>
+            <div class="text-7xl animate-pulse">🚀</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Success: Project is Online! -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-5xl font-bold mb-6 italic text-yellow-300 uppercase">ขอแสดงความยินดี!</h2>
+          <p class="text-2xl opacity-90 mb-12 leading-relaxed">
+            โปรเจกต์ Django 'mysite' ของคุณ <br>
+            <strong>เปิดให้บริการทั่วโลกแล้วบนคลาวด์คุณภาพ!</strong>
+          </p>
+          <div class="text-9xl animate-bounce">🌍✨</div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Summary & Resources -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 text-white">
+          <h2 class="text-4xl font-bold mb-8 italic">สรุปสิ่งที่ได้รับ</h2>
+          <div class="grid grid-cols-3 gap-4 mb-10 text-[10px]">
+            <div class="p-3 bg-white/10 rounded-xl">จัดการ Git สากล</div>
+            <div class="p-3 bg-white/10 rounded-xl">ฐานข้อมูลระดับธุรกิจ</div>
+            <div class="p-3 bg-white/10 rounded-xl">รองรับ CI/CD อัตโนมัติ</div>
+          </div>
+          <div class="text-sm opacity-60">ศึกษาเพิ่มเติมได้ที่: <strong>render.com/docs/deploy-django</strong> </div>
+          <div class="mt-8 text-6xl animate-pulse">👋🛸</div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
