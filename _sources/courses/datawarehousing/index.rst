@@ -1,150 +1,77 @@
-การทำคลังข้อมูล
-====================================
+========================================================================
+**การสร้างคลังข้อมูล**
+========================================================================
 
-.. warning::
-
-   ฉบับปรับปรุงเน้นการใช้งานในยุค Generative AI
-
-จุดมุ่งหมาย
-------------------------------------------------------------
-
-1. นักศึกษาสามารถอธิบายหลักการทำคลังข้อมูลและการแทนความรู้จากการทำคลังข้อมูล
-2. นักศึกษาสามารถอธิบายขั้นตอนวิธีในการพัฒนาและออกแบบโมเดลข้อมูลในการทำคลังข้อมูล
-3. นักศึกษาสามารถใช้ซอฟต์แวร์ในการเก็บรักษาข้อมูลและแยกข้อมูล
-4. นักศึกษาสามารถอธิบายวิธีการทำคลังข้อมูลด้วยเทคการแปลงข้อมูลและโหลดข้อมูล 
-
-
-คำอธิบายรายวิชา
-------------------------------------------------------------
-
-  แนวคิดเกี่ยวกับคลังข้อมูล ความหมาย โครงสร้าง กระบวนการจัดการ การพัฒนาโมเดลข้อมูล การออกแบบโมเดลข้อมูล กระบวนการในการเก็บรักษาข้อมูล การแยกข้อมูล การแปลงข้อมูลและการโหลดข้อมูล ประสิทธิภาพการออกแบบโมเดลข้อมูล กรณีศึกษาทางธุรกิจ
-
-
-  Concepts of data warehousing; definition, structures, management process; data model development; data model design; data retention process; data extraction; data conversion and data loading; data design performance; business case study
-
-
-แผนการเรียนรู้
-------------------------------------------------------------
-
-.. list-table:: แผนการสอนรายวิชา Modern Data Warehousing for Generative AI
+.. list-table:: กำหนดการวิชาการสร้างคลังข้อมูลและโครงการประกอบการเรียน
+   :widths: 8 42 25 25
    :header-rows: 1
-   :widths: 4 10 12 12
 
-   * - สัปดาห์
-     - หัวข้อ
-     - ผลลัพธ์การเรียนรู้
-     - ลิงก์สื่อการเรียนรู้เพิ่มเติม
-
+   * - **สัปดาห์ที่**
+     - **หัวข้อและรายละเอียดกิจกรรม**
+     - **กิจกรรมโครงการ (Project Phase)**
+     - **แหล่งข้อมูลและลิงก์**
    * - 1
-     - บทนำสู่ Data Warehousing ยุคใหม่
-     - เข้าใจภาพรวมของ Modern DW และความเชื่อมโยงกับ Generative AI
-     - https://www.snowflake.com/guides/what-is-data-warehouse
 
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk01.html>`_
+     - **บทนำสู่ DW/BI และทบทวนฐานข้อมูล**
+
+       ภารกิจของคลังข้อมูลเพื่อการตัดสินใจ และรูปแบบปกติที่ 3 (3NF)
+     - **Phase 1:** กำหนดขอบเขตธุรกิจและรวบรวมความต้องการสำหรับ "แพลตฟอร์มอีคอมเมิร์ซอัจฉริยะ"
+     - `History of Data Warehousing <https://www.geeksforgeeks.org/history-of-data-warehousing/>`_
    * - 2
-     - Architectures
-     - วิเคราะห์และเปรียบเทียบสถาปัตยกรรม DW สมัยใหม่
-     - https://docs.databricks.com/lakehouse/index.html
-
+     - **ระเบียบวิธีออกแบบ**: การเปรียบเทียบแนวทางของ **Inmon** (Top-down) และ **Kimball** (Bottom-up)
+     - วิเคราะห์ระบบต้นทาง (Source Systems) และเลือกวิธีออกแบบที่เหมาะสมกับโครงการ
+     - `Kimball vs Inmon Models <https://en.wikipedia.org/wiki/Bill_Inmon>`_
    * - 3
-     - Data Modeling สำหรับ DW
-     - ออกแบบโมเดลข้อมูล Star และ Snowflake ได้อย่างเหมาะสม
-     - https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/
-
+     - **Dimensional Modeling I**: การสร้าง **Star Schema**, ตารางข้อเท็จจริง (Fact) และตารางมิติ (Dimension)
+     - ออกแบบ Star Schema เบื้องต้นสำหรับยอดขาย (Sales Analysis)
+     - `Principles of Dimensional Modeling <https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/>`_
    * - 4
-     - Data Ingestion & ETL/ELT
-     - วางแผนและพัฒนา pipeline สำหรับ ingest ข้อมูล
-     - https://docs.getdbt.com/docs/introduction
-
+     - **Dimensional Modeling II**: การจัดการมิติที่เปลี่ยนแปลงช้า (**SCD**) และ Junk Dimensions
+     - **Phase 1 (ต่อ):** ออกแบบ SCD Type 2 เพื่อติดตามประวัติลูกค้าในโครงการ
+     - `SCD Management Techniques <https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/slowly-changing-dimension/>`_
    * - 5
-     - Data Quality & Governance
-     - ประเมินคุณภาพข้อมูลและนำหลัก Data Governance ไปประยุกต์
-     - https://greatexpectations.io/
-
+     - **การรวบรวมความต้องการ**: การใช้ **Information Packages** เพื่อกำหนดตัวชี้วัดและลำดับชั้น (Hierarchies)
+     - สรุปแผนภาพ Information Package สำหรับโครงการส่งอาจารย์
+     - `The Data Warehouse Lifecycle <https://www.wiley.com/en-us/The+Data+Warehouse+Lifecycle+Toolkit%2C+2nd+Edition-p-9780470149775>`_
    * - 6
-     - Modern Storage Formats
-     - เลือกใช้ format เช่น Parquet/Delta/Iceberg ให้เหมาะกับ use-case
-     - https://delta.io/
-
+     - **วิวัฒนาการสู่คลาวด์**: การแยกส่วน Storage และ Compute บนแพลตฟอร์มอย่าง Snowflake หรือ BigQuery
+     - **Phase 2:** เริ่มต้นตั้งค่าสภาพแวดล้อมบนคลาวด์เพื่อเตรียมรับข้อมูลโครงการ
+     - `Cloud DW For Dummies <https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/>`_
    * - 7
-     - SQL for Analytics & Feature Engineering
-     - เขียน SQL เชิงลึกเพื่อวิเคราะห์และสร้างฟีเจอร์สำหรับ AI
-     - https://mode.com/sql-tutorial/
-
+     - **Data Lakehouse**: การใช้ **Medallion Architecture** (Bronze, Silver, Gold Layers)
+     - ออกแบบการจัดเก็บข้อมูลโครงการตามเลเยอร์ Medallion
+     - `Medallion Architecture Guide <https://www.databricks.com/glossary/medallion-architecture>`_
    * - 8
-     - Midterm: Hands-on Project Review
-     - นำเสนอ pipeline ที่ออกแบบเอง และได้รับ feedback
-     - (ไฟล์แนบ/รายงานตามที่อาจารย์กำหนด)
-
+     - **การออกแบบทางกายภาพ**: กลยุทธ์การทำ Indexing และ Partitioning รวมถึงการสอบกลางภาค
+     - ปรับแต่งประสิทธิภาพ (Physical Tuning) ของตารางในโครงการ
+     - `Physical Design Process <https://www.postgresql.org/docs/current/indexes.html>`_
    * - 9
-     - Introduction to Generative AI
-     - อธิบายการทำงานของ LLM และแนวคิดพื้นฐานของ GenAI
-     - https://platform.openai.com/docs/introduction
-
+     - **ท่อส่งข้อมูล (ETL vs. ELT)**: การเปลี่ยนผ่านสู่ ELT และการใช้ Change Data Capture (CDC)
+     - **Phase 3:** สร้างท่อส่งข้อมูลจากไฟล์ Raw (Bronze) ไปยังตาราง Silver
+     - `ETL vs ELT Shift <https://www.rivery.io/blog/etl-vs-elt/>`_
    * - 10
-     - Connecting DW to GenAI
-     - สร้าง flow ในการนำข้อมูลจาก DW ไปใช้ใน GenAI
-     - https://docs.langchain.com/
-
+     - **คุณภาพและธรรมาภิบาล**: การทำ Data Profiling และ Master Data Management (MDM)
+     - สร้างการตรวจสอบคุณภาพข้อมูล (Data Quality Checks) อัตโนมัติในท่อส่งข้อมูล
+     - `OpenMetadata Context Layer <https://open-metadata.org/>`_
    * - 11
-     - RAG (Retrieval Augmented Generation)
-     - สร้างระบบที่ใช้ข้อมูลจาก DW เพื่อ enhance LLM
-     - https://www.llamaindex.ai/
-
+     - **เลเยอร์ความหมาย (Semantic Layer)**: การรวมตรรกะธุรกิจเพื่อให้ AI และผู้ใช้เห็นข้อมูลตรงกัน
+     - พัฒนา Semantic Layer (เช่น dbt หรือ Looker) สำหรับโครงการ
+     - `Semantic Layer Architecture <https://www.databricks.com/blog/semantic-layer-architecture-components-design-patterns-and-ai-integration>`_
    * - 12
-     - DW สำหรับ Fine-tuning
-     - เตรียม dataset สำหรับ fine-tune LLM ด้วยข้อมูลจาก DW
-     - https://huggingface.co/docs/transformers/training
-
+     - **การวิเคราะห์หลายมิติ (OLAP)**: การทำ Slicing, Dicing และ Drilling down บนชุดข้อมูล
+     - สร้างแดชบอร์ดเบื้องต้นเพื่อทดสอบการวิเคราะห์แบบ OLAP
+     - `ClickHouse Developer Course <https://tinybird.co/clickhouse-course>`_
    * - 13
-     - Case Study: Chatbot/AI Generator
-     - ออกแบบระบบ AI ที่ใช้ DW จริงในการตอบคำถาม
-     - https://cloud.google.com/solutions/genai-chat-app-data
-
+     - **การเพิ่มประสิทธิภาพด้วย AI**: การใช้ ML สำหรับ Query Optimization และพยากรณ์ปริมาณงาน
+     - **Phase 4:** นำผลพยากรณ์จาก ML มาช่วยปรับขนาดทรัพยากรคลาวด์ในโครงการ
+     - `AI-Driven DW Innovations <https://doi.org/10.37745/ejcsit.2013/vol13n52185194>`_
    * - 14
-     - Final Project Work
-     - สร้างโครงงานแบบ end-to-end ที่บูรณาการเนื้อหาทั้งหมด
-     - (Google Colab / GitHub / เอกสารแนบตามกลุ่ม)
-
+     - **AI เอเจนต์ในวิศวกรรมข้อมูล**: การสร้างท่อส่งข้อมูลที่เยียวยาตัวเองได้ (Self-healing Pipelines)
+     - พัฒนา AI เอเจนต์พื้นฐานเพื่อตรวจจับข้อผิดพลาดใน Pipeline ของโครงการ
+     - `Agentic AI for Data Engineering <https://doi.org/10.47059/ijirct.2024.v12i03.009>`_
    * - 15
-     - Final Presentation
-     - นำเสนอผลงานสรุป และอภิปรายศักยภาพของระบบที่สร้าง
-     - (ไฟล์สไลด์ / สรุปผลการนำเสนอ)
-
-เกณฑ์การให้คะแนนรายวิชา
---------------------------
-
-.. list-table:: สัดส่วนคะแนน
-   :widths: 50 10 40
-   :header-rows: 1
-
-   * - รายการ
-     - สัดส่วน (%)
-     - หมายเหตุ
-   * - การบ้าน
-
-       **ประกอบด้วย**
-
-       1. แบบฝึกหัดรายสัปดาห์ / Quizzes
-       2. แบบฝึกหัดเขียน SQL/ETL/Modeling
-       3. การมีปฏิสัมพันธ์ ถาม-ตอบ ช่วยเหลือเพื่อน ฯลฯ
-     - 30%
-     - * ตรวจสอบความเข้าใจรายบท
-       * ทักษะทางเทคนิค
-   * - ประเมินรายงาน / โครงงาน
-
-       **เกณฑ์ย่อย**
-
-       1. ออกแบบ schema ได้ถูกต้อง สอดคล้องกับ use-case
-       2. ใช้ข้อมูลจาก DW ใน pipeline ของ GenAI เช่น RAG
-       3. ใช้ Snowflake, dbt, LangChain ฯลฯ ได้อย่างเหมาะสม
-       4. อธิบายเหตุผลและการเลือกวิธีการได้ดี
-       5. อธิบายเข้าใจง่าย มี demo หรือ dashboard ประกอบ
-     - 20%
-     - ความสามารถในการอธิบาย วิเคราะห์ และสื่อสาร
-   * - สอบกลางภาค (Midterm Examination)
-     - 25%
-     - เนื้อหาสัปดาห์ที่ 1 - 7
-   * - สอบปลายภาค (Final Examination)
-     - 25%
-     - เนื้อหาสัปดาห์ที่ 8 - 15
+     - **เวิร์กโฟลว์ AI ระดับการผลิต**: การใช้ **Agentic Views** และการนำเสนอโครงการสุดท้าย
+     - นำเสนอ "The Agentic E-Commerce Platform" ที่สามารถตอบคำถามภาษาธรรมชาติได้
+     - `AV-SQL: Agentic Views <https://arxiv.org/abs/2512.08769>`_
 

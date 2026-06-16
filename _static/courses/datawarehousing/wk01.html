@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            พื้นฐานคลังข้อมูลและ<br>
+            <span class="text-yellow-300">แพลตฟอร์มข้อมูลองค์กร</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การสร้างคลังข้อมูลและเวิร์กโฟลว์ AI เอเจนต์ระดับการผลิต
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">โครงการหลักของวิชา</h2>
+            <div class="flex items-center justify-center gap-4">
+              <div class="bg-yellow-400 text-yellow-900 font-bold px-4 py-2 rounded-lg">
+                Project: Agentic E-Commerce Intelligence Platform
+              </div>
+            </div>
+            <p class="mt-4 text-center text-white/80 italic">
+              "เปลี่ยนข้อมูลดิบให้เป็นปัญญาประดิษฐ์ที่ช่วยตัดสินใจทางธุรกิจ"
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">สัปดาห์ที่ 1: บทนำและแนวคิดพื้นฐาน</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>อธิบายภารกิจและนิยามของคลังข้อมูล (Data Warehouse) ได้อย่างถูกต้อง</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>เปรียบเทียบความแตกต่างระหว่างระบบ OLTP และระบบสนับสนุนการตัดสินใจ (DSS) ได้</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>ระบุสาเหตุของ "วิกฤตข้อมูล" (Information Crisis) ในองค์กรสมัยใหม่ได้</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>วิเคราะห์ Subject Area และ Metrics เบื้องต้นสำหรับธุรกิจอีคอมเมิร์ซได้</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What is a Data Warehouse? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 italic text-yellow-300">"คลังข้อมูลคืออะไร?"</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 shadow-2xl border border-white/20">
+            <p class="text-2xl mb-8 leading-relaxed">
+              "คลังข้อมูล คือ กลุ่มของข้อมูลที่ถูกจัดระเบียบตาม <strong>หัวเรื่อง (Subject-Oriented)</strong>, <strong>บูรณาการเข้าด้วยกัน (Integrated)</strong>, <strong>คงสภาพไว้ (Non-volatile)</strong> และ <strong>แปรผันตามกาลเวลา (Time-variant)</strong> เพื่อสนับสนุนการตัดสินใจของผู้บริหาร"
+            </p>
+            <div class="flex justify-end text-xl font-semibold text-white/70">
+              — Bill Inmon, บิดาแห่งคลังข้อมูล
+            </div>
+          </div>
+          <div class="mt-10 grid grid-cols-4 gap-4">
+            <div class="bg-blue-500/40 p-4 rounded-xl border border-blue-300/30">เน้นหัวเรื่อง</div>
+            <div class="bg-blue-500/40 p-4 rounded-xl border border-blue-300/30">รวมข้อมูล</div>
+            <div class="bg-blue-500/40 p-4 rounded-xl border border-blue-300/30">ไม่ถูกลบ/แก้ไข</div>
+            <div class="bg-blue-500/40 p-4 rounded-xl border border-blue-300/30">เก็บประวัติศาสตร์</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Operational vs Informational Systems -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center">การขับเคลื่อนล้อธุรกิจ vs การเฝ้าดูล้อธุรกิจ</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-blue-400">
+              <h2 class="text-2xl font-bold mb-4 text-blue-300">ระบบปฏิบัติการ (OLTP)</h2>
+              <ul class="space-y-3 text-lg">
+                <li>• <stong>เป้าหมาย</stong> ทำให้ธุรกิจดำเนินไปได้ (เช่น รับคำสั่งซื้อ)</li>
+                <li>• <strong></strong>ข้อมูล</stong> ข้อมูลปัจจุบัน ทันทีทันใด</li>
+                <li>• <strong></strong>การใช้งาน</stong> เพิ่ม/แก้ไข/ลบ ทีละรายการ</li>
+                <li>• <strong></strong>ผู้ใช้</stong> พนักงานระดับปฏิบัติการ</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-yellow-400">
+              <h2 class="text-2xl font-bold mb-4 text-yellow-300">คลังข้อมูล (DSS/DW)</h2>
+              <ul class="space-y-3 text-lg">
+                <li>• <strong>เป้าหมาย</strong> เพื่อเฝ้าดูและวางแผนกลยุทธ์</li>
+                <li>• <strong>ข้อมูล</strong> ข้อมูลย้อนหลังหลายปี</li>
+                <li>• <strong>การใช้งาน</strong> อ่านอย่างเดียว, คำสั่งค้นหาซับซ้อน</li>
+                <li>• <strong>ผู้ใช้</strong> ผู้บริหาร, นักวิเคราะห์ข้อมูล</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Active Learning 1 - Introduction -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase tracking-wider">
+            กิจกรรมกลุ่ม (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">วิกฤตข้อมูลในโลก E-Commerce</h1>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+              <span class="bg-white text-blue-900 w-8 h-8 rounded-full flex items-center justify-center">?</span>
+              สถานการณ์จำลอง:
+            </h2>
+            <p class="text-xl leading-relaxed mb-6 italic">
+              "บริษัทของคุณมีฐานข้อมูลแยกกัน (Silos) เช่น ระบบขายหน้าเว็บ, ระบบคลังสินค้า, ระบบการตลาด และระบบขนส่ง... CEO ถามคุณว่า <strong>'ทำไมกำไรสุทธิของเราในภาคใต้ถึงลดลง 15% ในเดือนที่ผ่านมา ทั้งที่ยอดขายเพิ่มขึ้น?'</strong>"
+            </p>
+            <div class="space-y-4">
+              <p class="font-bold text-yellow-300 text-lg">คำสั่ง:</p>
+              <ol class="list-decimal list-inside space-y-2 text-lg text-white/90">
+                <li>ระบุชื่อฐานข้อมูล (Silos) ที่อาจมีอยู่ในบริษัทนี้</li>
+                <li>อธิบายว่าทำไมเราถึงตอบคำถาม CEO ทันทีไม่ได้ (ติดปัญหาอะไรบ้าง?)</li>
+                <li>ข้อมูลที่เรามีตอนนี้ขาด "คุณสมบัติ" อะไรของการเป็นข้อมูลเชิงกลยุทธ์?</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Active Learning 1 - Steps & Solution -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-6 text-center text-green-300">แนวทางคำตอบและการวิเคราะห์</h1>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-xl mb-3 text-blue-300 text-center">1. แหล่งข้อมูล (Silos)</h3>
+              <ul class="text-sm space-y-2">
+                <li class="bg-white/5 p-2 rounded">• CRM (ข้อมูลลูกค้า)</li>
+                <li class="bg-white/5 p-2 rounded">• ERP (บัญชี/การเงิน)</li>
+                <li class="bg-white/5 p-2 rounded">• WMS (สต็อกสินค้า)</li>
+                <li class="bg-white/5 p-2 rounded">• Social Media (Ads)</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-xl mb-3 text-red-300 text-center">2. อุปสรรคสำคัญ</h3>
+              <ul class="text-sm space-y-2">
+                <li class="bg-red-500/20 p-2 rounded">• ข้อมูลไม่สอดคล้องกัน (Inconsistent)</li>
+                <li class="bg-red-500/20 p-2 rounded">• ข้อมูลกระจัดกระจาย (Disparate)</li>
+                <li class="bg-red-500/20 p-2 rounded">• ไม่มีข้อมูลย้อนหลังเพื่อดูแนวโน้ม</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-xl mb-3 text-yellow-300 text-center">3. สิ่งที่ขาดหายไป</h3>
+              <p class="text-sm leading-relaxed">
+                ข้อมูลปัจจุบันขาดความ <strong>บูรณาการ (Integrated)</strong> ทำให้เห็นภาพรวมทั้งบริษัทไม่ได้ และขาด <strong>บริบททางเวลา (Time-variant)</strong> ทำให้เปรียบเทียบแนวโน้มอดีตกับปัจจุบันไม่ได้
+              </p>
+            </div>
+          </div>
+          <div class="mt-8 bg-green-500/20 p-4 rounded-2xl border border-green-400 text-center text-xl font-bold">
+            💡 สรุป: คลังข้อมูลจะมาแก้ปัญหานี้โดยการ "ทำข้อมูลให้พร้อมใช้สำหรับถาม-ตอบ" ไม่ใช่แค่เก็บข้อมูลรายการรายวัน
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Active Learning 2 - Step-by-Step Instruction -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-6">ขั้นตอนการออกแบบความต้องการเบื้องต้น</h1>
+          <div class="text-xl mb-8 text-yellow-300 font-semibold">การระบุ "Information Package" สำหรับวิเคราะห์ยอดขาย</div>
+          <div class="grid gap-4 text-left max-w-2xl mx-auto">
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4 border border-white/10">
+              <div class="bg-yellow-400 text-black font-bold w-10 h-10 rounded-full flex items-center justify-center shrink-0">1</div>
+              <div><strong>ระบุสิ่งที่ต้องการวัด (Facts)</strong> คุณอยากรู้ตัวเลขอะไร? (เช่น ยอดขายสุทธิ, กำไร)</div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4 border border-white/10">
+              <div class="bg-yellow-400 text-black font-bold w-10 h-10 rounded-full flex items-center justify-center shrink-0">2</div>
+              <div><strong>ระบุมิติที่ใช้มอง (Dimensions)</strong> คุณอยากดูตัวเลขนั้นแยกตามอะไร? (เช่น เวลา, สินค้า, พื้นที่)</div>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl flex items-center gap-4 border border-white/10">
+              <div class="bg-yellow-400 text-black font-bold w-10 h-10 rounded-full flex items-center justify-center shrink-0">3</div>
+              <div><strong>กำหนดลำดับชั้น (Hierarchies)</strong> ในแต่ละมิติมีระดับย่อยอย่างไร? (เช่น ปี > ไตรมาส > เดือน)</div>
+            </div>
+          </div>
+          <div class="mt-8 p-6 bg-white/5 rounded-2xl italic border-dashed border border-white/30">
+            ลองใช้ 3 ขั้นตอนนี้ ออกแบบ Information Package สำหรับโครงการ E-Commerce ของคุณ!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Active Learning 2 - Solution -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-10 text-yellow-300">เฉลย: Information Package (Sales Analysis)</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-2 overflow-hidden shadow-2xl">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-blue-900 text-white">
+                  <th class="p-4 border border-gray-300">มิติ: เวลา (Time)</th>
+                  <th class="p-4 border border-gray-300">มิติ: สถานที่ (Location)</th>
+                  <th class="p-4 border border-gray-300">มิติ: สินค้า (Product)</th>
+                </tr>
+              </thead>
+              <tbody class="text-lg">
+                <tr class="bg-gray-100">
+                  <td class="p-4 border border-gray-300 italic text-gray-500">ปี (Year)</td>
+                  <td class="p-4 border border-gray-300 italic text-gray-500">ภูมิภาค (Region)</td>
+                  <td class="p-4 border border-gray-300 italic text-gray-500">หมวดหมู่ (Category)</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border border-gray-300 italic text-gray-500">ไตรมาส (Quarter)</td>
+                  <td class="p-4 border border-gray-300 italic text-gray-500">จังหวัด (State)</td>
+                  <td class="p-4 border border-gray-300 italic text-gray-500">ยี่ห้อ (Brand)</td>
+                </tr>
+                <tr class="bg-gray-100 font-bold">
+                  <td class="p-4 border border-gray-300">เดือน (Month)</td>
+                  <td class="p-4 border border-gray-300">เมือง/เขต (City)</td>
+                  <td class="p-4 border border-gray-300">ชื่อสินค้า (Name)</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="bg-yellow-100 font-bold">
+                  <td colspan="3" class="p-6 text-center border border-gray-300">
+                    ตัวเลขที่ใช้วัด (Facts): ยอดขายจริง, ยอดพยากรณ์, กำไรเบื้องต้น, จำนวนหน่วยที่ขาย
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p class="mt-8 text-white/80">
+            *ตารางนี้จะเป็นรากฐานในการออกแบบ <strong>Star Schema</strong> ในสัปดาห์ที่ 3 ต่อไป*
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 9: Summary & Next Steps -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">บทสรุปและสิ่งที่จะเรียนต่อ</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6">
+            <div class="flex items-start gap-4">
+              <div class="text-3xl text-yellow-300">✓</div>
+              <p class="text-xl">DW ไม่ใช่แค่ฐานข้อมูล แต่เป็น <strong>สภาพแวดล้อม (Environment)</strong> เพื่อการวิเคราะห์</p>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl text-yellow-300">✓</div>
+              <p class="text-xl">ภารกิจของ DW คือการ <strong>"จัดพิมพ์ (Publish)"</strong> ข้อมูลให้ผู้ใช้ตัดสินใจได้เอง</p>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl text-yellow-300">✓</div>
+              <p class="text-xl">หัวใจสำคัญคือการเข้าใจ <strong>ความต้องการทางธุรกิจ (Business Requirements)</strong></p>
+            </div>
+          </div>
+          <div class="mt-10 p-6 bg-blue-500 rounded-2xl font-bold text-2xl animate-pulse">
+            สัปดาห์หน้า: การปะทะกันของยักษ์ใหญ่ - Kimball vs Inmon!
+          </div>
+        </div>
+      </div>
+
+      นี่คือสไลด์บรรยายสำหรับ **ส่วนที่ 2: การทบทวนฐานข้อมูลเชิงสัมพันธ์และรูปแบบปกติที่ 3 (Relational Refresher and 3rd Normal Form)** ของสัปดาห์ที่ 1 พร้อมกิจกรรม Active Learning และแนวทางคำตอบในภาษาไทยครับ
+
+      ---
+
+      <!-- Slide 10: Part 2 Title -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ส่วนที่ 2:<br>
+            <span class="text-yellow-300">การทบทวนฐานข้อมูลเชิงสัมพันธ์และ 3NF</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light italic">
+            "รากฐานที่แข็งแกร่งคือกุญแจสู่การจัดการข้อมูลระดับองค์กร"
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวข้อหลัก</h2>
+            <ul class="space-y-2 text-lg">
+              <li>• ทฤษฎีฐานข้อมูลเชิงสัมพันธ์ (Relational Theory Refresher)</li>
+              <li>• รูปแบบปกติที่ 3 (3rd Normal Form - 3NF)</li>
+              <li>• การออกแบบแผนภาพความสัมพันธ์ (ER Diagramming)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Relational Core Concepts -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">แนวคิดหลักของฐานข้อมูลเชิงสัมพันธ์</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-3 underline">ตาราง (Relations)</h3>
+              <p>ข้อมูลถูกเก็บในรูปแบบแถว (Rows) และคอลัมน์ (Columns) โดยแต่ละแถวต้องมีความเป็นเอกลักษณ์</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-3 underline">คีย์ (Keys)</h3>
+              <p>**Primary Key:** ระบุตัวตนในตาราง<br>**Foreign Key:** สร้างความสัมพันธ์ระหว่างตาราง</p>
+            </div>
+          </div>
+          <div class="mt-8 bg-blue-500/30 p-6 rounded-2xl italic">
+            "ในคลังข้อมูล เรามักใช้ **Surrogate Key** (คีย์ตัวแทน) แทน Natural Key เพื่อประสิทธิภาพในการติดตามประวัติข้อมูล"
+          </div>
+          <div class="mt-6 text-sm text-white/60">
+            ทรัพยากรเพิ่มเติม: <a href="https://www.geeksforgeeks.org/introduction-of-relational-model-and-codd-rules-in-dbms/" class="underline text-yellow-300">Codd's Rules and Relational Model</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Why 3NF Matters? -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">รูปแบบปกติที่ 3 (3NF)</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-300 italic">กฎเหล็กของ 3NF:</h2>
+            <p class="text-xl mb-6">
+              "ข้อมูลทุกอย่างต้องขึ้นตรงกับ **คีย์ (The Key)**, **คีย์ทั้งหมด (The Whole Key)** และ **ไม่มีอะไรนอกจากคีย์ (Nothing but the Key)**"
+            </p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-4 bg-green-500/20 p-4 rounded-lg">
+                <span class="text-2xl font-bold">1</span>
+                <span>ลดความซ้ำซ้อนของข้อมูล (Data Redundancy)</span>
+              </div>
+              <div class="flex items-center gap-4 bg-green-500/20 p-4 rounded-lg">
+                <span class="text-2xl font-bold">2</span>
+                <span>รักษาความถูกต้องสอดคล้องกัน (Data Consistency)</span>
+              </div>
+              <div class="flex items-center gap-4 bg-red-500/20 p-4 rounded-lg">
+                <span class="text-2xl font-bold">!</span>
+                <span>**ข้อเสีย:** ทำให้การ Query ซับซ้อนเพราะต้อง Join หลายตาราง</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: ERD Visualizing Relationships -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300 text-center">แผนภาพ ERD</h1>
+          <p class="text-xl mb-8">การมองเห็นความสัมพันธ์ช่วยให้เราออกแบบคลังข้อมูลได้แม่นยำขึ้น</p>
+          <div class="bg-white rounded-3xl p-6 text-gray-900 shadow-xl max-w-2xl mx-auto">
+            <!-- Simplified representation of ERD logic -->
+            <div class="flex justify-between items-center gap-8">
+              <div class="border-4 border-blue-600 p-4 rounded-xl font-bold">ตาราง: ลูกค้า</div>
+              <div class="h-1 bg-gray-400 w-24 relative">
+                <span class="absolute -top-6 left-0 text-sm">1</span>
+                <span class="absolute -top-6 right-0 text-sm">N</span>
+              </div>
+              <div class="border-4 border-blue-600 p-4 rounded-xl font-bold">ตาราง: คำสั่งซื้อ</div>
+            </div>
+            <p class="mt-4 text-sm text-gray-600 italic">ความสัมพันธ์แบบ One-to-Many: ลูกค้า 1 คน สั่งซื้อได้หลายครั้ง</p>
+          </div>
+          <div class="mt-10 text-lg">
+            เครื่องมือแนะนำ: <a href="https://www.erwin.com/" class="underline text-yellow-300">erwin Data Modeler</a> หรือ <a href="https://www.draw.io/" class="underline text-yellow-300">draw.io</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Active Learning 2 - The 3NF Challenge -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 uppercase">
+            กิจกรรมกลุ่ม (25 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-6">ความท้าทายในการออกแบบ 3NF</h1>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+              <span class="bg-white text-blue-900 w-8 h-8 rounded-full flex items-center justify-center italic">i</span>
+              ภารกิจ:
+            </h2>
+            <p class="text-xl leading-relaxed mb-6">
+              "ออกแบบโครงสร้างตาราง 3NF สำหรับระบบ **คำสั่งซื้อ (Orders)** ในร้านค้าออนไลน์ โดยให้กำจัดข้อมูลที่ซ้ำซ้อนออกไปให้หมด"
+            </p>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="bg-black/20 p-4 rounded-lg">
+                <p class="font-bold text-yellow-300 mb-2">ชุดข้อมูลที่ต้องจัดการ:</p>
+                <ul class="text-sm space-y-1">
+                  <li>- เลขที่คำสั่งซื้อ, วันที่สั่งซื้อ</li>
+                  <li>- ชื่อลูกค้า, ที่อยู่ลูกค้า, เบอร์โทร</li>
+                  <li>- รหัสสินค้า, ชื่อสินค้า, ราคาต่อหน่วย</li>
+                  <li>- จำนวนที่สั่ง, ราคารวมรายการ</li>
+                </ul>
+              </div>
+              <div class="bg-black/20 p-4 rounded-lg">
+                <p class="font-bold text-yellow-300 mb-2">เป้าหมาย:</p>
+                <ul class="text-sm space-y-1">
+                  <li>1. ระบุ Entities ที่ควรมี</li>
+                  <li>2. วาดความสัมพันธ์ (ERD)</li>
+                  <li>3. อธิบายว่าทำไมถึงต้องแยกตาราง?</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Step-by-Step Modeling Guide -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8">ขั้นตอนการทำความสะอาดแบบจำลอง (Normalization)</h1>
+          <div class="space-y-4 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-4 border border-white/10 items-center">
+              <div class="bg-blue-500 text-white w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-bold">1NF</div>
+              <p>กำจัด Repeating Groups (หนึ่งช่องเก็บข้อมูลได้ค่าเดียว)</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-4 border border-white/10 items-center">
+              <div class="bg-blue-600 text-white w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-bold">2NF</div>
+              <p>ข้อมูลที่ไม่ใช่คีย์ต้องขึ้นกับ Primary Key ทั้งหมด (กำจัด Partial Dependency)</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-4 border border-white/10 items-center">
+              <div class="bg-blue-700 text-white w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-bold">3NF</div>
+              <p>ข้อมูลที่ไม่ใช่คีย์ต้องไม่ขึ้นกับคีย์อื่น (กำจัด Transitive Dependency)</p>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic text-white/70">
+            ดาวน์โหลดชุดข้อมูลตัวอย่าง: <a href="https://archive.ics.uci.edu/ml/datasets/iris" class="underline text-yellow-300">Fisher's Iris Flower Dataset</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Active Learning 2 - Solution -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 text-center">เฉลย: 3NF Retail Schema</h1>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white text-gray-900 p-4 rounded-xl shadow-lg border-t-8 border-blue-500">
+              <h3 class="font-bold border-b mb-2">Customers</h3>
+              <ul class="text-xs text-left">
+                <li>PK: Customer_ID</li>
+                <li>- Name</li>
+                <li>- Address</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-4 rounded-xl shadow-lg border-t-8 border-green-500">
+              <h3 class="font-bold border-b mb-2">Products</h3>
+              <ul class="text-xs text-left">
+                <li>PK: Product_ID</li>
+                <li>- Description</li>
+                <li>- Unit_Price</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-4 rounded-xl shadow-lg border-t-8 border-yellow-500">
+              <h3 class="font-bold border-b mb-2">Orders</h3>
+              <ul class="text-xs text-left">
+                <li>PK: Order_ID</li>
+                <li>FK: Customer_ID</li>
+                <li>- Order_Date</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-4 rounded-xl shadow-lg border-t-8 border-red-500">
+              <h3 class="font-bold border-b mb-2">Order_Lines</h3>
+              <ul class="text-xs text-left">
+                <li>PK: Line_ID</li>
+                <li>FK: Order_ID</li>
+                <li>FK: Product_ID</li>
+                <li>- Quantity</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-10 p-6 bg-white/10 rounded-2xl border border-white/20 text-left">
+            <p class="font-bold text-yellow-300 mb-2">ทำไมต้องออกแบบแบบนี้?</p>
+            <ul class="text-sm space-y-1 text-white/90">
+              <li>• หากลูกค้าเปลี่ยนที่อยู่ ข้อมูลในคำสั่งซื้อเก่าจะไม่ผิดเพี้ยน</li>
+              <li>• หากสินค้าเปลี่ยนชื่อ เราแก้ไขที่ตาราง Product ที่เดียว</li>
+              <li>• **ความท้าทายใน DW:** หากต้องการดูยอดขายรวมตามที่อยู่ลูกค้า เราต้อง Join ถึง 3 ตาราง!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Next Step Teaser -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">บทสรุปส่วนที่ 2</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-4 border border-white/20">
+            <p class="text-xl">✅ **3NF** เหมาะมากสำหรับระบบเก็บข้อมูล (Data Capture) เพราะความถูกต้องแม่นยำ</p>
+            <p class="text-xl">❌ แต่ **3NF** อาจช้าเกินไปสำหรับระบบวิเคราะห์ (Data Analytics) ระดับ Petabytes</p>
+          </div>
+          <div class="mt-12">
+            <p class="text-2xl font-bold text-yellow-300 mb-6">เตรียมพบกับ ส่วนที่ 3:</p>
+            <div class="bg-blue-600 px-8 py-4 rounded-2xl text-3xl font-black shadow-2xl inline-block animate-bounce">
+              วิวัฒนาการสู่คลาวด์และ AI เอเจนต์!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **แหล่งข้อมูลและทรัพยากรสำหรับส่วนที่ 2:**
+
+*   **ทฤษฎีการทำให้เป็นบรรทัดฐาน (Normalization):** [Database Normalization (1NF, 2NF, 3NF, BCNF)](https://www.studytonight.com/dbms/database-normalization.php)
+*   **เครื่องมือฝึกฝน ERD ออนไลน์:** [Lucidchart - ER Diagram Tool](https://www.lucidchart.com/pages/er-diagrams)
+*   **วิดีโออธิบายกฎของ Codd:** [Codd's 12 Rules in DBMS](https://youtu.be/p6fAInM_VTo)
+*   **Spider 2.0 Dataset (สำหรับการ Query ซับซ้อน):** [Spider 2.0: Real-world Enterprise Text-to-SQL](https://arxiv.org/abs/2411.07763)
+
+-->
+
+
+      นี่คือสไลด์บรรยายสำหรับ **ส่วนที่ 3: วิวัฒนาการสมัยใหม่และการเริ่มต้นโครงการ (Modern Evolution and Project Kick-off)** ของสัปดาห์ที่ 1 พร้อมกิจกรรมการเรียนรู้เชิงรุก (Active Learning) และแหล่งข้อมูลประกอบในภาษาไทยครับ
+
+      ---
+
+      <!-- Slide 18: Part 3 Title -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ส่วนที่ 3:<br>
+            <span class="text-yellow-300">วิวัฒนาการสู่ Cloud และ AI เอเจนต์</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            ก้าวข้ามขีดจำกัดของคลังข้อมูลแบบเดิมสู่แพลตฟอร์มอัจฉริยะ
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-center">สิ่งที่เราจะครอบคลุม</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="flex items-center gap-2">
+                <span class="text-yellow-300">☁️</span> คลังข้อมูลบนคลาวด์ (Cloud DW)
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-yellow-300">🏅</span> Medallion Architecture
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-yellow-300">🤖</span> Agentic AI ในงานวิศวกรรมข้อมูล
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-yellow-300">📊</span> การเริ่มโครงการภาคปฏิบัติ
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Transition to Cloud -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">ทำไมต้องเป็นคลังข้อมูลบนคลาวด์?</h1>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl shadow-xl">
+              <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <span>⚡</span> แยกส่วน Compute & Storage
+              </h3>
+              <p class="text-lg">เพิ่มหรือลดกำลังประมวลผลได้อิสระจากขนาดข้อมูล ช่วยลดค่าใช้จ่ายมหาศาล</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl shadow-xl">
+              <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <span>♾️</span> Near-Infinite Scalability
+              </h3>
+              <p class="text-lg">รองรับข้อมูลระดับ Petabytes และผู้ใช้พร้อมกันจำนวนมากโดยประสิทธิภาพไม่ตก</p>
+            </div>
+          </div>
+          <div class="mt-10 bg-blue-600/30 p-6 rounded-2xl italic border border-blue-400">
+            "คลาวด์เปลี่ยนคลังข้อมูลจากตู้เก็บเอกสารที่เต็มไว ให้กลายเป็นมหาสมุทรข้อมูลที่ไร้ขอบเขต"
+          </div>
+          <div class="mt-6 text-sm">
+            อ่านเพิ่มเติม: <a href="https://www.snowflake.com/en/resources/resource/cloud-data-warehousing-for-dummies/" class="underline text-yellow-300 italic">Cloud Data Warehousing For Dummies</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: The Medallion Architecture -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-6">Medallion Architecture</h1>
+          <p class="text-xl mb-10">การจัดการข้อมูลให้สะอาดและพร้อมใช้ด้วยโครงสร้าง 3 เลเยอร์</p>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-[#CD7F32]/40 p-6 rounded-3xl border-2 border-[#CD7F32]">
+              <h3 class="text-3xl font-black mb-2">BRONZE</h3>
+              <p class="text-sm font-bold text-yellow-200 mb-4">Raw / Immutable</p>
+              <p class="text-xs">เก็บข้อมูลดิบทุกอย่างที่ได้รับจากแหล่งต้นทาง ห้ามเปลี่ยนแปลง</p>
+            </div>
+            <div class="bg-[#C0C0C0]/40 p-6 rounded-3xl border-2 border-[#C0C0C0]">
+              <h3 class="text-3xl font-black mb-2 text-gray-200">SILVER</h3>
+              <p class="text-sm font-bold text-yellow-200 mb-4">Cleaned / Conformed</p>
+              <p class="text-xs">ลบข้อมูลซ้ำ ทำความสะอาด และจัดรูปแบบตามเอนทิตีธุรกิจ (เช่น Customer)</p>
+            </div>
+            <div class="bg-[#FFD700]/40 p-6 rounded-3xl border-2 border-[#FFD700]">
+              <h3 class="text-3xl font-black mb-2 text-yellow-300">GOLD</h3>
+              <p class="text-sm font-bold text-yellow-200 mb-4">Curated / Business</p>
+              <p class="text-xs">ข้อมูลที่ถูกสรุปผล (Aggregated) และพร้อมส่งต่อให้ BI หรือ AI เอเจนต์</p>
+            </div>
+          </div>
+          <div class="mt-10 text-sm italic">
+            ทรัพยากร: <a href="https://www.databricks.com/glossary/medallion-architecture" class="underline text-yellow-300">Medallion Architecture Guide by Databricks</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Agentic AI in Data Engineering -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">การปฏิวัติของ AI เอเจนต์ (Agentic Revolution)</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 text-left border border-white/20">
+            <p class="text-xl mb-6 leading-relaxed">
+              ในแพลตฟอร์มข้อมูลยุคใหม่ AI ไม่ได้เป็นแค่เครื่องมือถาม-ตอบ แต่ทำหน้าที่เป็น **"เอเจนต์"** ที่ทำงานแทนเราได้:
+            </p>
+            <ul class="space-y-4">
+              <li class="flex items-center gap-4">
+                <div class="bg-yellow-400 text-black p-2 rounded-lg font-bold">Self-Healing</div>
+                <span>ตรวจพบข้อผิดพลาดในท่อส่งข้อมูลและซ่อมแซมตัวเองได้อัตโนมัติ</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="bg-yellow-400 text-black p-2 rounded-lg font-bold">Autonomous Design</div>
+                <span>ช่วยออกแบบ Schema และการ Query ข้อมูลตามความต้องการภาษาธรรมชาติ</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="bg-yellow-400 text-black p-2 rounded-lg font-bold">Adaptive Tuning</div>
+                <span>พยากรณ์ปริมาณงานและปรับทรัพยากรคลาวด์เพื่อลดค่าใช้จ่าย</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8 text-sm italic">
+            งานวิจัยอ้างอิง: <a href="https://arxiv.org/abs/2512.08769" class="underline text-yellow-300">A Practical Guide for Production-Grade Agentic AI Workflows</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Active Learning 3 - Medallion Mapping -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม: MEDALLION MAPPING (15 นาที)
+          </div>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6">จงระบุว่างานต่อไปนี้ควรอยู่ในเลเยอร์ใดของ Medallion Architecture:</p>
+            <div class="space-y-4 text-lg">
+              <div class="bg-black/20 p-4 rounded-xl">1. การรวมยอดขายรายเดือนแยกตามหมวดหมู่สินค้า</div>
+              <div class="bg-black/20 p-4 rounded-xl">2. การรับไฟล์ JSON การคลิกของลูกค้าผ่านหน้าเว็บ</div>
+              <div class="bg-black/20 p-4 rounded-xl">3. การแก้ไขชื่อลูกค้าให้สะกดถูกต้องและเอาช่องว่างออก</div>
+              <div class="bg-black/20 p-4 rounded-xl">4. การตรวจสอบความสัมพันธ์ระหว่างเลขที่สั่งซื้อและรหัสลูกค้า</div>
+            </div>
+            <div class="mt-8 p-4 bg-yellow-400/20 border-l-4 border-yellow-400 text-sm">
+              *ใช้กรณีศึกษา "แพลตฟอร์มอีคอมเมิร์ซอัจฉริยะ" ของเราเป็นหลัก*
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Active Learning 3 - Solution -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-10 text-green-400 underline">เฉลย: Medallion Mapping</h1>
+          <div class="space-y-6">
+            <div class="flex items-center gap-6 bg-white/10 p-5 rounded-2xl border border-white/20">
+              <div class="bg-[#FFD700] text-black w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl shadow-lg shrink-0">G</div>
+              <p class="text-xl text-left">**Gold:** การสรุปยอดขายรายเดือน (Aggregation เพื่อรายงานผล)</p>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-5 rounded-2xl border border-white/20">
+              <div class="bg-[#CD7F32] text-white w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl shadow-lg shrink-0">B</div>
+              <p class="text-xl text-left">**Bronze:** รับไฟล์ JSON ดิบ (Ingestion พื้นที่พักข้อมูลดิบ)</p>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-5 rounded-2xl border border-white/20">
+              <div class="bg-[#C0C0C0] text-black w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl shadow-lg shrink-0">S</div>
+              <p class="text-xl text-left">**Silver:** แก้ไขการสะกดชื่อและตรวจสอบความถูกต้อง (Cleaning/Validation)</p>
+            </div>
+          </div>
+          <p class="mt-10 italic text-white/60">"จำไว้ว่า: Silver คือจุดที่ข้อมูลเริ่มมี 'คุณภาพ' ส่วน Gold คือจุดที่ข้อมูลมี 'มูลค่าทางธุรกิจ'"</p>
+        </div>
+      </div>
+
+      <!-- Slide 24: Project Kick-off Phase 1 -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">เริ่มต้นโครงการ Phase 1</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <h2 class="text-3xl font-bold mb-6 underline italic">ภารกิจสัปดาห์นี้:</h2>
+            <div class="space-y-6 text-xl">
+              <div class="flex items-start gap-4">
+                <span class="text-2xl">📋</span>
+                <div>**กำหนดขอบเขตธุรกิจ:** "Agentic E-Commerce Platform" ของคุณจะช่วยแก้ปัญหาอะไรเป็นหลัก? (เช่น การบริหารสต็อกสินค้า หรือการตลาดเฉพาะบุคคล)</div>
+              </div>
+              <div class="flex items-start gap-4">
+                <span class="text-2xl">📝</span>
+                <div>**ร่าง Information Package แรก:** ระบุ Metrics และ Dimensions ที่สำคัญสำหรับโครงการของคุณ</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-10 bg-green-500/30 p-6 rounded-2xl flex items-center gap-4">
+            <span class="text-4xl animate-pulse">🚀</span>
+            <div class="text-left">
+              <p class="font-bold">แนะนำชุดข้อมูลเริ่มต้น:</p>
+              <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="underline text-yellow-300 text-sm italic">Brazilian E-Commerce Public Dataset by Olist</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Summary of Week 1 -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300">สรุปภาพรวมสัปดาห์ที่ 1</h1>
+          <div class="grid gap-6">
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-yellow-400 text-left">
+              <p class="text-xl font-bold">1. คลังข้อมูลคือสภาพแวดล้อมเพื่อการตัดสินใจเชิงกลยุทธ์ (DSS)</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-blue-400 text-left">
+              <p class="text-xl font-bold">2. 3NF ดีสำหรับระบบปฏิบัติการ แต่ 'แพ็กเกจข้อมูล' สำคัญกว่าในการวิเคราะห์</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400 text-left">
+              <p class="text-xl font-bold">3. อนาคตคือ Cloud Lakehouse และ AI ที่ช่วยจัดการข้อมูลอัตโนมัติ</p>
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-yellow-400 text-yellow-900 px-10 py-4 rounded-full shadow-2xl inline-block">
+            See you next week: "The Battle of Giants - Kimball vs Inmon"!
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **แหล่งข้อมูลและทรัพยากรสำหรับส่วนที่ 3:**
+
+*   **สถาปัตยกรรมคลังข้อมูลอัจฉริยะ (AI-Driven DW):** [AI-Driven Data Warehousing: ML Innovations](https://doi.org/10.37745/ejcsit.2013/vol13n52185194)
+*   **แนวทางการออกแบบ Agentic AI:** [A Practical Guide for Production-Grade Agentic AI Workflows](https://arxiv.org/abs/2512.08769)
+*   **คู่มือเลเยอร์ข้อมูล Medallion:** [Bronze, Silver and Gold Layers in Modern Lakehouses](https://www.databricks.com/glossary/medallion-architecture)
+*   **คลังข้อมูลบนคลาวด์สำหรับผู้เริ่มต้น:** [Snowflake: Cloud Data Warehousing For Dummies](https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/)
+*   **ชุดข้อมูลโครงการ (Dataset):** [Olist E-Commerce Dataset (Kaggle)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

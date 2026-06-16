@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk02.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 1: พื้นฐานคลังข้อมูลและ<br>
+            <span class="text-yellow-300">แพลตฟอร์มข้อมูลองค์กร</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Enterprise Data Platforms and Production-Grade Agentic AI Workflows
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">โครงการประจำหลักสูตร</h2>
+            <div class="flex items-center justify-center gap-4">
+              <div class="bg-yellow-400 text-yellow-900 font-bold px-6 py-2 rounded-lg shadow-lg">
+                Project: Agentic E-Commerce Intelligence Platform
+              </div>
+            </div>
+            <p class="mt-4 text-center text-white/80 italic">
+              "เปลี่ยนข้อมูลดิบให้กลายเป็นปัญญาประดิษฐ์ที่ช่วยตัดสินใจเชิงกลยุทธ์"
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">ส่วนที่ 1: ภารกิจและนิยามของคลังข้อมูล</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>อธิบาย <strong>ภารกิจ (Mission)</strong> และนิยามของคลังข้อมูลได้อย่างถูกต้องตามหลักการของ Inmon</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>เปรียบเทียบความแตกต่างระหว่างระบบ <strong>Operational (OLTP)</strong> และระบบ <strong>Informational (DW/DSS)</strong> ได้</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>วิเคราะห์วิกฤตข้อมูล (Information Crisis) และความต้องการ Subject Area ในธุรกิจอีคอมเมิร์ซ</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>ระบุแนวโน้มของคลังข้อมูลสมัยใหม่ที่ขับเคลื่อนด้วย <strong>Cloud</strong> และ <strong>Agentic AI</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What is a Data Warehouse? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300 italic">"คลังข้อมูลคืออะไร?"</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 shadow-2xl border border-white/20">
+            <p class="text-2xl mb-8 leading-relaxed">
+              "คลังข้อมูล คือ กลุ่มข้อมูลที่ถูกจัดระเบียบตาม <strong>หัวเรื่อง (Subject-Oriented)</strong>, มีการ <storng>บูรณาการ (Integrated)</storng>, มีความเป็น <strong>ประวัติศาสตร์ (Time-Variant)</strong> และ <strong>คงสภาพ (Non-Volatile)</strong> เพื่อสนับสนุนการตัดสินใจ"
+            </p>
+            <div class="flex justify-end text-xl font-semibold text-white/70">
+              — Bill Inmon, บิดาแห่งคลังข้อมูล
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            แหล่งอ้างอิง: <a href="https://en.wikipedia.org/wiki/Bill_Inmon" class="underline text-yellow-300">Bill Inmon and the Definition of Data Warehouse</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: The Mission of Data Warehouse -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">ภารกิจของคลังข้อมูล</h1>
+          <div class="bg-white text-blue-900 rounded-3xl p-10 shadow-2xl">
+            <h2 class="text-4xl font-black mb-6 uppercase tracking-tighter">"To Publish Data Assets"</h2>
+            <p class="text-xl leading-relaxed text-gray-700">
+              ภารกิจหลักคือการ <strong>"จัดพิมพ์"</strong> ทรัพยากรข้อมูลขององค์กร เพื่อให้ผู้ใช้สามารถนำไปประกอบการตัดสินใจได้อย่างมีประสิทธิภาพสูงสุด ความสำเร็จวัดจาก <strong>การใช้งานจริงของ User</strong> ไม่ใช่แค่ขนาดของฐานข้อมูล
+            </p>
+          </div>
+          <div class="mt-10 grid grid-cols-3 gap-4">
+            <div class="bg-green-500/20 p-4 rounded-xl border border-green-400">เข้าถึงง่าย (Accessible)</div>
+            <div class="bg-green-500/20 p-4 rounded-xl border border-green-400">น่าเชื่อถือ (Credible)</div>
+            <div class="bg-green-500/20 p-4 rounded-xl border border-green-400">ทันเวลา (Timely)</div>
+          </div>
+          <div class="mt-6 text-sm italic">
+            อ่านเพิ่มเติม: <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="underline text-yellow-300">The Data Warehouse ETL Toolkit (Ralph Kimball)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Operational vs. Informational -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300 underline">ระบบปฏิบัติการ vs. ระบบข้อมูล</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white/10 p-8 rounded-2xl border-t-8 border-blue-400">
+              <h2 class="text-2xl font-bold mb-4">Operational (OLTP)</h2>
+              <p class="mb-4 italic text-blue-300">"Making the wheels of business turn"</p>
+              <ul class="space-y-2 text-sm text-white/90">
+                <li>• <strong>เป้าหมาย:</strong> บันทึกรายการประจำวัน (Transaction)</li>
+                <li>• <strong>ข้อมูล</strong> ปัจจุบัน, มีรายละเอียดสูง</li>
+                <li>• <strong>การใช้งาน</strong> อ่าน/เขียน ตลอดเวลา</li>
+                <li>• <strong>ตัวอย่าง</strong> การกดสั่งซื้อสินค้าในแอปฯ</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-8 rounded-2xl border-t-8 border-yellow-400">
+              <h2 class="text-2xl font-bold mb-4">Informational (DW/DSS)</h2>
+              <p class="mb-4 italic text-yellow-300">"Watching the wheels of business turn"</p>
+              <ul class="space-y-2 text-sm text-white/90">
+                <li>• <strong>เป้าหมาย</strong> สนับสนุนการตัดสินใจ/วิเคราะห์</li>
+                <li>• <strong>ข้อมูล</strong> ประวัติศาสตร์, สรุปผลแล้ว</li>
+                <li>• <strong>การใช้งาน</strong> อ่านอย่างเดียว (Read-Intensive)</li>
+                <li>• <strong>ตัวอย่าง</strong> รายงานยอดขายแยกตามภูมิภาครายปี</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Active Learning 1 - Brainstorming -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม: วิกฤตข้อมูล (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ทำไมข้อมูลมหาศาลถึงตอบคำถามง่ายๆ ไม่ได้?</h1>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6 italic">
+              "CEO ถามว่า: <strong>'ทำไมกำไรสุทธิของเราในภาคใต้ลดลง 15% ในเดือนที่ผ่านมา ทั้งที่ยอดขายเพิ่มขึ้น?'</strong>"
+            </p>
+            <div class="space-y-4">
+              <p class="font-bold text-yellow-300">ภารกิจของนักศึกษา:</p>
+              <ol class="list-decimal list-inside space-y-2 text-lg">
+                <li>ระบุ <strong>แหล่งข้อมูล (Silos)</strong> ที่คุณต้องไปค้นหาเพื่อตอบคำถามนี้</li>
+                <li>คุณจะพบกับอุปสรรคอะไรบ้างเมื่อพยายามรวมข้อมูลเหล่านี้?</li>
+                <li>ทำไมฐานข้อมูล OLTP ของฝ่ายขายเพียงอย่างเดียวถึงไม่เพียงพอ?</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Active Learning 1 - Solution -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยและการวิเคราะห์กิจกรรม</h1>
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-white/10">
+              <h3 class="font-bold text-lg mb-3 text-blue-300">1. แหล่งข้อมูล (Silos)</h3>
+              <ul class="text-xs space-y-2">
+                <li>• <strong>Sales DB</strong> ยอดขายต่อรายการ</li>
+                <li>• <strong>Logistics DB</strong> ค่าขนส่งที่เพิ่มขึ้น</li>
+                <li>• <strong>Marketing DB</strong> ค่าโฆษณา/โปรโมชั่น</li>
+                <li>• <strong>Inventory DB</strong> ต้นทุนการเก็บสินค้า</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/10">
+              <h3 class="font-bold text-lg mb-3 text-red-300">2. อุปสรรคที่พบ</h3>
+              <ul class="text-xs space-y-2">
+                <li>• <strong>รหัสสินค้าไม่ตรงกัน</strong> ระหว่างระบบคลังกับระบบขาย</li>
+                <li>• <strong>ข้อมูลกระจัดกระจาย</strong> อยู่บนคลาวด์บ้าง ใน Excel บ้าง</li>
+                <li>• <strong>ขาดข้อมูลประวัติ</strong> ข้อมูลเก่าถูกทับ (Overwrite) ไปแล้ว</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/10">
+              <h3 class="font-bold text-lg mb-3 text-yellow-300">3. บทสรุปของ DW</h3>
+              <p class="text-xs leading-relaxed">
+                คลังข้อมูลจะนำข้อมูลเหล่านี้มา <strong>Integrated</strong> (รวมศูนย์) และ <strong>Subject-Oriented</strong> (เน้นเรื่องกำไร) เพื่อให้วิเคราะห์สาเหตุ (Root Cause) ได้ในที่เดียวโดยไม่ต้องทำ Manual Join ทุกครั้ง
+              </p>
+            </div>
+          </div>
+          <div class="mt-10 bg-green-500/20 p-4 rounded-xl border border-green-400 text-center">
+            💡 <strong>หัวใจสำคัญ</strong> คลังข้อมูลเปลี่ยน "ข้อมูลรายการ" ให้กลายเป็น "ความรู้เชิงกลยุทธ์"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Modern Trends - Agentic AI -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300 text-center">วิวัฒนาการสู่ Agentic AI</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6">คลังข้อมูลยุคใหม่ไม่ใช่แค่ที่เก็บข้อมูล แต่เป็นสมองของ AI เอเจนต์:</p>
+            <div class="grid gap-4">
+              <div class="flex items-center gap-4 bg-blue-600/30 p-4 rounded-xl border border-blue-400">
+                <div class="text-3xl">🤖</div>
+                <div><strong>Agentic Views (AV-SQL)</strong> AI ที่สามารถแปลงคำถามภาษาธรรมชาติให้เป็น SQL Query ที่ซับซ้อนได้เอง</div>
+              </div>
+              <div class="flex items-center gap-4 bg-blue-600/30 p-4 rounded-xl border border-blue-400">
+                <div class="text-3xl">☁️</div>
+                <div><strong>Cloud Native</strong> แยก Storage ออกจาก Compute (เช่น Snowflake) เพื่อรองรับ Scale ที่ไร้ขีดจำกัด</div>
+              </div>
+              <div class="flex items-center gap-4 bg-blue-600/30 p-4 rounded-xl border border-blue-400">
+                <div class="text-3xl">🔧</div>
+                <div><strong>Self-Healing</strong> ท่อส่งข้อมูลที่ซ่อมแซมตัวเองได้ด้วย ML เมื่อเกิดความผิดพลาดของข้อมูล</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            งานวิจัยอ้างอิง: <a href="https://arxiv.org/abs/2512.08769" class="underline text-yellow-300">AV-SQL: Decomposing Complex Text-to-SQL Queries with Agentic Views</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Active Learning 2 - Information Package -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 uppercase">
+            เวิร์กชอป: ออกแบบความต้องการ (25 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-6 italic">การระบุ "Subject Area" และ "Metrics"</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6 font-bold">โจทย์: ในฐานะทีม Data Engineer ของโครงการ "E-Commerce Intelligence Platform"</p>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+              <div class="bg-blue-50 p-4 rounded-xl">
+                <h3 class="font-bold border-b border-blue-200 mb-2">ขั้นตอนที่ 1: กำหนดหัวเรื่อง</h3>
+                <p>ระบุ 3 Subject Areas ที่สำคัญที่สุดสำหรับธุรกิจขายของออนไลน์ (เช่น Sales, Inventory)</p>
+              </div>
+              <div class="bg-blue-50 p-4 rounded-xl">
+                <h3 class="font-bold border-b border-blue-200 mb-2">ขั้นตอนที่ 2: กำหนดตัวชี้วัด (Metrics)</h3>
+                <p>ภายใต้หัวเรื่อง "Sales" คุณต้องการวัดตัวเลขอะไรบ้าง? (ระบุมา 3 อย่าง)</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            Dataset แนะนำสำหรับการฝึกฝน: <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="underline text-yellow-300 italic">Brazilian E-Commerce Public Dataset by Olist</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Active Learning 2 - Solution / Example -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300">เฉลย: Information Package (Sales Subject)</h1>
+          <div class="bg-white rounded-3xl overflow-hidden shadow-2xl">
+            <table class="w-full text-left border-collapse text-gray-900">
+              <thead class="bg-blue-900 text-white">
+                <tr>
+                  <th class="p-4 border">Dimensions (มิติการมอง)</th>
+                  <th class="p-4 border">Hierarchies (ลำดับชั้น)</th>
+                  <th class="p-4 border">Facts / Metrics (ตัวเลขที่วัด)</th>
+                </tr>
+              </thead>
+              <tbody class="text-lg">
+                <tr>
+                  <td class="p-4 border bg-gray-50">Time (เวลา)</td>
+                  <td class="p-4 border bg-gray-50 text-sm">Year > Quarter > Month > Day</td>
+                  <td rowspan="3" class="p-4 border font-bold text-center align-middle bg-yellow-100">
+                    - Total Sales Amount<br>
+                    - Quantity Sold<br>
+                    - Gross Profit Margin<br>
+                    - Order Count
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-4 border">Product (สินค้า)</td>
+                  <td class="p-4 border text-sm">Category > Brand > SKU</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border bg-gray-50">Location (พื้นที่)</td>
+                  <td class="p-4 border bg-gray-50 text-sm">Region > State > City</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-8 text-center italic text-white/80">"ตารางนี้จะเป็นรากฐานในการออกแบบ Star Schema ในสัปดาห์ที่ 3 ต่อไป"</p>
+        </div>
+      </div>
+
+      <!-- Slide 11: Summary and Next Steps -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">บทสรุปสัปดาห์ที่ 1</h1>
+          <div class="grid gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-yellow-400">
+              <p class="text-xl font-bold">คลังข้อมูลคือสภาพแวดล้อม ไม่ใช่แค่ซอฟต์แวร์ เพื่อเปลี่ยนข้อมูลเป็นความรู้</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-blue-400">
+              <p class="text-xl font-bold">ระบบ OLTP เน้นการทำงาน ระบบ Informational เน้นการวิเคราะห์เชิงลึก</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400">
+              <p class="text-xl font-bold">Agentic AI ต้องการคลังข้อมูลที่มี Semantic Layer และ Governance ที่แข็งแกร่ง</p>
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            สัปดาห์หน้า: การปะทะกันของยักษ์ใหญ่ - Kimball vs Inmon!
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 1: Part 2 Title -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ส่วนที่ 2:<br>
+            <span class="text-yellow-300">ระเบียบวิธีออกแบบคลังข้อมูล</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light italic">
+            "Inmon vs. Kimball: การเลือกสถาปัตยกรรมที่ใช่สำหรับองค์กร"
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20 text-lg">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวข้อการเรียนรู้</h2>
+            <ul class="space-y-2">
+              <li>• แนวทาง Top-Down ของ Bill Inmon (Corporate Information Factory)</li>
+              <li>• แนวทาง Bottom-Up ของ Ralph Kimball (Bus Architecture)</li>
+              <li>• การเปรียบเทียบความเร็วในการส่งมอบและบทบาทของผู้ใช้</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Bill Inmon's Top-Down Approach -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">แนวทางของ Bill Inmon</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <h2 class="text-2xl font-bold mb-4 italic underline">Corporate Information Factory (CIF)</h2>
+            <p class="text-lg mb-6 leading-relaxed">
+              Inmon เชื่อในการสร้าง <strong>"Atomic Data Warehouse"</strong> ที่เก็บข้อมูลในรูปแบบ <strong>3rd Normal Form (3NF)</strong> เพื่อเป็นแหล่งความจริงเดียวของทั้งองค์กรก่อน แล้วจึงกระจายข้อมูลไปยัง **Data Marts** ของแต่ละแผนก
+            </p>
+            <div class="grid grid-cols-2 gap-4 text-sm font-bold">
+              <div class="bg-blue-600/40 p-4 rounded-xl border border-blue-400">✅ ข้อมูลมีความถูกต้องสูงสุด (Data Integrity)</div>
+              <div class="bg-blue-600/40 p-4 rounded-xl border border-blue-400">✅ ลดความซ้ำซ้อนของข้อมูลทั้งองค์กร</div>
+              <div class="bg-red-600/40 p-4 rounded-xl border border-red-400">❌ ใช้เวลาออกแบบนาน (4-9 เดือนเพื่อเริ่มเห็นผล)</div>
+              <div class="bg-red-600/40 p-4 rounded-xl border border-red-400">❌ ผู้ใช้เข้าถึงข้อมูลได้ยากในระยะแรก</div>
+            </div>
+          </div>
+          <div class="mt-6 text-sm">
+            แหล่งข้อมูล: <a href="https://en.wikipedia.org/wiki/Bill_Inmon" class="underline text-yellow-300">ประวัติและทฤษฎีของ Bill Inmon</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Ralph Kimball's Bottom-Up Approach -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">แนวทางของ Ralph Kimball</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <h2 class="text-2xl font-bold mb-4 italic underline">Data Warehouse Bus Architecture</h2>
+            <p class="text-lg mb-6 leading-relaxed">
+              Kimball เน้นการสร้าง <strong>Data Marts</strong> ตามกระบวนการทางธุรกิจ (เช่น ยอดขาย) โดยใช้ <strong>Dimensional Modeling (Star Schema)</strong> และเชื่อมโยงกันด้วย <strong>Conformed Dimensions</strong>
+            </p>
+            <div class="grid grid-cols-2 gap-4 text-sm font-bold">
+              <div class="bg-green-600/40 p-4 rounded-xl border border-green-400">✅ ส่งมอบผลลัพธ์เร็ว (เป้าหมาย 90 วัน)</div>
+              <div class="bg-green-600/40 p-4 rounded-xl border border-green-400">✅ ผู้ใช้เข้าใจง่าย เข้าถึงข้อมูลได้โดยตรง</div>
+              <div class="bg-red-600/40 p-4 rounded-xl border border-red-400">❌ เสี่ยงต่อการเกิดข้อมูลไม่ตรงกันหากขาดมาตรฐาน</div>
+              <div class="bg-red-600/40 p-4 rounded-xl border border-red-400">❌ ต้องมีการจัดการ Conformed Dimensions อย่างเข้มงวด</div>
+            </div>
+          </div>
+          <div class="mt-6 text-sm italic">
+            เทคนิคการสร้างแบบจำลอง: <a href="https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/" class="underline text-yellow-300">Kimball Dimensional Modeling Techniques</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Comparison Table -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">สรุปความแตกต่าง: Inmon vs. Kimball</h1>
+          <div class="bg-white rounded-3xl overflow-hidden shadow-2xl text-gray-900">
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-blue-900 text-white">
+                <tr>
+                  <th class="p-4 border">หัวข้อเปรียบเทียบ</th>
+                  <th class="p-4 border">Bill Inmon (Top-Down)</th>
+                  <th class="p-4 border">Ralph Kimball (Bottom-Up)</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr>
+                  <td class="p-4 border font-bold bg-gray-50">โมเดลข้อมูลหลัก</td>
+                  <td class="p-4 border bg-gray-50">ERD / 3rd Normal Form (3NF)</td>
+                  <td class="p-4 border bg-gray-50">Dimensional / Star Schema</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border font-bold">เป้าหมายหลัก</td>
+                  <td class="p-4 border">Technical Solution / IT Driven</td>
+                  <td class="p-4 border">Business Need / User Driven</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border font-bold bg-gray-50 text-red-600">ระยะเวลาส่งมอบ</td>
+                  <td class="p-4 border bg-gray-50">นาน (เน้นโครงสร้างองค์กร)</td>
+                  <td class="p-4 border bg-gray-50">เร็ว (เน้นกระบวนการธุรกิจ)</td>
+                </tr>
+                <tr>
+                  <td class="p-4 border font-bold">บทบาทของผู้ใช้</td>
+                  <td class="p-4 border">เป็นผู้รับข้อมูล (Passive)</td>
+                  <td class="p-4 border">มีส่วนร่วมสูง (Active Participant)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-6 text-center text-white/70 italic text-xs">
+            อ้างอิงจาก: Business Intelligence Journal, Winter 2004
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 5: Active Learning 2 - Data Flow Workshop -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม: วาดเส้นทางข้อมูล (30 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic text-yellow-300">"The Data Flow Challenge"</h1>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6 font-bold underline">โจทย์โครงการ: แพลตฟอร์มอีคอมเมิร์ซอัจฉริยะ</p>
+            <p class="text-lg leading-relaxed mb-6">
+              ให้นักศึกษาวาดผังการไหลของข้อมูล (Data Flow) ตั้งแต่ระบบต้นทางไปจนถึงมือผู้ใช้ โดยแบ่งกลุ่มทำ 2 แนวทาง:
+            </p>
+            <div class="grid grid-cols-2 gap-8">
+              <div class="bg-black/20 p-5 rounded-xl border border-blue-400/50">
+                <h3 class="font-bold text-blue-300 mb-2 underline text-center">กลุ่ม A: แนวทาง Inmon</h3>
+                <p class="text-sm">วาดข้อมูลจาก Ingestion -> 3NF Warehouse -> Data Marts</p>
+              </div>
+              <div class="bg-black/20 p-5 rounded-xl border border-green-400/50">
+                <h3 class="font-bold text-green-300 mb-2 underline text-center">กลุ่ม B: แนวทาง Kimball</h3>
+                <p class="text-sm">วาดข้อมูลจาก Ingestion -> Bus/Conformed Dimensions -> Data Marts</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Solution Step 1 - Inmon's Data Flow -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-blue-300 underline">เฉลยขั้นตอนที่ 1: Inmon's Strategy (CIF)</h1>
+          <div class="space-y-4">
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-blue-500">
+              <div class="bg-white text-blue-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shrink-0">1</div>
+              <div><strong>Ingestion</strong> ดึงข้อมูลดิบจาก Silos (Web Sales, Inventory, CRM) เข้าสู่ Staging</div>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-blue-500">
+              <div class="bg-white text-blue-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shrink-0">2</div>
+              <div><strong>Atomic Warehouse (EDW)</strong> ทำ ETL เพื่อจัดเก็บข้อมูลในรูปแบบ <strong>3NF</strong> (เน้นความถูกต้องของเอนทิตีธุรกิจ)</div>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-blue-500">
+              <div class="bg-white text-blue-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shrink-0">3</div>
+              <div><strong>Departmental Data Marts</strong> สร้าง "หน้าต่างข้อมูล" ที่ดึงจาก EDW ไปสรุปผลตามความต้องการของแผนก (เช่น Sales Mart)</div>
+            </div>
+          </div>
+          <p class="mt-6 text-sm italic text-white/60"><strong>ทำไมต้อง Inmon?</strong> เพื่อสร้างโครงสร้างข้อมูลที่แข็งแกร่งที่สุดและรองรับการขยายตัวในระยะยาวขององค์กรขนาดใหญ่</p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Solution Step 2 - Kimball's Data Flow -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนที่ 2: Kimball's Strategy (Bus)</h1>
+          <div class="space-y-4">
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-green-500">
+              <div class="bg-white text-green-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shrink-0">1</div>
+              <div><strong>Requirements Discovery</strong> ระบุกระบวนการธุรกิจ (Business Process) ที่เร่งด่วนที่สุด (เช่น ยอดขายรายวัน)</div>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-green-500">
+              <div class="bg-white text-green-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shrink-0">2</div>
+              <div><strong>Dimensional Design</strong> สร้าง <strong>Star Schema</strong> (Fact + Dimensions) โดยตรงเพื่อความรวดเร็ว</div>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-green-500">
+              <div class="bg-white text-green-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shrink-0">3</div>
+              <div><strong>Integration via Bus</strong> ใช้ <strong>Conformed Dimensions</strong> (เช่น มิติ 'สินค้า' ที่เหมือนกัน) เชื่อมทุก Mart เข้าด้วยกัน</div>
+            </div>
+          </div>
+          <p class="mt-6 text-sm italic text-white/60"><strong>ทำไมต้อง Kimball?</strong* เพื่อให้ธุรกิจอีคอมเมิร์ซที่เปลี่ยนไวเห็นผลลัพธ์และวิเคราะห์ข้อมูลได้ทันทีในเวลาไม่กี่เดือน</p>
+        </div>
+      </div>
+
+      <!-- Slide 8: Solution Step 3 - Critical Analysis -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8">บทสรุปกิจกรรม: คุณจะเลือกแนวทางไหน?</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-blue-900 italic">เกณฑ์การตัดสินใจ (Criteria):</h2>
+            <div class="grid grid-cols-2 gap-6 text-left">
+              <div class="p-4 bg-blue-50 rounded-xl">
+                <p class="font-bold text-blue-800">เลือกแนวทาง Inmon หาก...</p>
+                <ul class="text-sm space-y-1 mt-2">
+                  <li>• มีงบประมาณและทีมงาน IT ขนาดใหญ่</li>
+                  <li>• ต้องการความถูกต้องระดับสูงสุดของข้อมูล 3NF</li>
+                  <li>• สามารถรอผลลัพธ์ได้นานกว่า 6 เดือน</li>
+                </ul>
+              </div>
+              <div class="p-4 bg-green-50 rounded-xl">
+                <p class="font-bold text-green-800">เลือกแนวทาง Kimball หาก...</p>
+                <ul class="text-sm space-y-1 mt-2">
+                  <li>• ต้องการความเร็วและผลลัพธ์แบบ Agile</li>
+                  <li>• ข้อมูลเน้นที่ Business Metrics และ KPI</li>
+                  <li>• ผู้ใช้ต้องการวิเคราะห์ข้อมูลด้วยตัวเอง (Self-Service)</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-8 p-4 bg-yellow-100 rounded-xl border-2 border-yellow-400 font-bold text-lg">
+              💡 คำแนะนำสมัยใหม่: ใช้แนวทาง <strong>Hybrid</strong> - สร้างชั้นข้อมูลแบบ Inmon บน Cloud (Bronze/Silver) และส่งมอบแบบ Kimball (Gold/Mart)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Summary & Resources -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">บทสรุปส่วนที่ 2 และทรัพยากร</h1>
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 text-left space-y-6">
+            <p class="text-xl">✅ เข้าใจความแตกต่างระหว่างแนวทางข้อมูลศูนย์กลาง (Inmon) และแนวทางกระบวนการธุรกิจ (Kimball)</p>
+            <p class="text-xl">✅ รู้วิธีเลือกสถาปัตยกรรมให้เหมาะกับ "Project Context" ของโครงการอีคอมเมิร์ซ</p>
+          </div>
+          <div class="mt-10 grid grid-cols-2 gap-4">
+            <div class="bg-blue-600 px-6 py-4 rounded-xl text-sm font-bold shadow-lg">
+              <p>Dataset สำหรับโครงการ:</p>
+              <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="underline italic">Brazilian E-Commerce Public Dataset</a>
+            </div>
+            <div class="bg-blue-600 px-6 py-4 rounded-xl text-sm font-bold shadow-lg">
+              <p>งานวิจัยอ้างอิง:</p>
+              <a href="https://arxiv.org/abs/2411.07763" class="underline italic">Spider 2.0: Enterprise Text-to-SQL Workflow</a>
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            ส่วนต่อไป: การเริ่มออกแบบ Star Schema ครั้งแรกของคุณ!
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Slide 17: Part 3 Title -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            ส่วนที่ 3:<br>
+            <span class="text-yellow-300">การตัดสินใจเลือกและเริ่มต้นโครงการ</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light italic">
+            "เลือกรากฐานที่ถูกต้อง เพื่อสร้างอนาคตที่ยั่งยืนให้ข้อมูลองค์กร"
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">สิ่งที่เราจะเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-lg">
+              <div class="flex items-center gap-2">🎯 เกณฑ์การเลือก Methodology</div>
+              <div class="flex items-center gap-2">🤝 แนวทางผสมผสาน (Hybrid)</div>
+              <div class="flex items-center gap-2">🚀 Project Phase 2 Kick-off</div>
+              <div class="flex items-center gap-2">🤖 AI-Native Architecture</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Methodology Selection Criteria -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8">ปัจจัยในการตัดสินใจเลือกแนวทาง</h1>
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border-b-4 border-blue-400">
+              <h3 class="text-xl font-bold mb-3 text-blue-300">1. งบประมาณและทักษะ</h3>
+              <p class="text-sm">Inmon ต้องการทีม IT และงบประมาณสูงกว่าเพื่อวางโครงสร้างส่วนกลาง</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-b-4 border-green-400">
+              <h3 class="text-xl font-bold mb-3 text-green-300">2. ความเร็ว (Time-to-Value)</h3>
+              <p class="text-sm">Kimball ให้ผลลัพธ์แรกได้ใน 90 วัน เหมาะกับธุรกิจที่ต้องการความไว</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-b-4 border-yellow-400">
+              <h3 class="text-xl font-bold mb-3 text-yellow-300">3. ความซับซ้อนของข้อมูล</h3>
+              <p class="text-sm">หากแหล่งข้อมูลกระจัดกระจายและไม่ตรงกันอย่างรุนแรง Inmon จะช่วยเรื่อง Integrity ได้ดีกว่า</p>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            อ่านเพิ่มเติม: <a href="https://www.wiley.com/en-us/The+Data+Warehouse+Lifecycle+Toolkit%2C+2nd+Edition-p-9780470149775" class="underline text-yellow-300">The Data Warehouse Lifecycle Toolkit</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: The Hybrid Approach -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">แนวทางแบบผสมผสาน (Hybrid Approach)</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 shadow-2xl flex flex-col md:flex-row gap-8 items-center">
+            <div class="flex-1 text-left">
+              <h2 class="text-3xl font-black text-blue-900 mb-4">"Inmon in the Back, Kimball in the Front"</h2>
+              <ul class="space-y-4 text-lg">
+                <li>🔹 <strong>Backend</strong> สร้างชั้นข้อมูลแบบ Inmon (3NF/Data Vault) เพื่อความแม่นยำ</li>
+                <li>🔹 <strong>Frontend</strong> ส่งมอบข้อมูลแบบ Kimball (Star Schema) เพื่อให้ User ใช้งานง่าย</li>
+                <li>🔹 <strong>Result</strong> ได้ทั้งความเสถียรของระบบและประสิทธิภาพในการวิเคราะห์</li>
+              </ul>
+            </div>
+            <div class="bg-blue-50 p-6 rounded-2xl border-2 border-dashed border-blue-400">
+              <p class="font-bold text-blue-800 italic">"เป็นที่นิยมมากในยุค Cloud Lakehouse เพราะสามารถทำ Medallion Architecture ได้ง่าย"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: AI-Native and Headless Warehouses -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">อนาคต: AI-Native Headless Warehouses</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6 leading-relaxed">
+              ในปัจจุบัน แนวคิดการออกแบบต้องรองรับ <strong>AI Agents</strong> ที่เข้าถึงข้อมูลได้โดยตรงผ่าน **Semantic Layer**:
+            </p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-4 bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+                <div class="text-3xl">🧠</div>
+                <div>**Headless Analytics:** แยกตรรกะธุรกิจออกจากเครื่องมือ BI เพื่อให้ AI และมนุษย์เห็นความจริงเดียวกัน</div>
+              </div>
+              <div class="flex items-center gap-4 bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+                <div class="text-3xl">🤖</div>
+                <div>**Agentic Workflows:** AI ที่ซ่อมแซมท่อส่งข้อมูล (Self-healing) และออกแบบ Schema เบื้องต้นได้เอง</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            งานวิจัยอ้างอิง: <a href="https://arxiv.org/abs/2512.08769" class="underline text-yellow-300">Production-Grade Agentic AI Workflows Guide</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Active Learning 3 - Methodology Pitch -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม: METHODOLOGY PITCH (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">คุณจะเลือกแนวทางไหน?</h1>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6 font-bold underline text-yellow-300">สถานการณ์จำลอง (Scenario):</p>
+            <p class="text-lg leading-relaxed mb-6 italic">
+              "บริษัท Startup อีคอมเมิร์ซของคุณเพิ่งได้รับเงินทุน และต้องการ **รายงานวิเคราะห์ยอดขายและพฤติกรรมลูกค้า** เพื่อนำเสนอบอร์ดบริหารภายใน **3 เดือน** ทีมงานของคุณมี Data Engineer เพียง 2 คน และทุกคนถนัด SQL เป็นหลัก"
+            </p>
+            <div class="space-y-4">
+              <p class="font-bold text-white">ภารกิจ:</p>
+              <ol class="list-decimal list-inside space-y-2 text-lg text-white/90">
+                <li>คุณจะแนะนำแนวทาง **Inmon** หรือ **Kimball**? เพราะเหตุใด?</li>
+                <li>หากคุณเลือกแนวทาง **Hybrid** คุณจะวางโครงสร้างอย่างไรให้ทันเวลา?</li>
+                <li>ระบุ 1 ประโยชน์ที่ **AI เอเจนต์** จะช่วยในสถานการณ์ที่ทีมงานมีจำกัดเช่นนี้</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Solution Step 1 - Business Constraint Analysis -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนที่ 1: วิเคราะห์ข้อจำกัด (Constraints)</h1>
+          <div class="grid grid-cols-2 gap-8">
+            <div class="bg-white/10 p-6 rounded-2xl">
+              <h3 class="font-bold text-yellow-300 mb-2">ข้อจำกัดด้านเวลา (3 เดือน)</h3>
+              <p class="text-sm">เวลาน้อยเกินไปสำหรับแนวทาง **Inmon** แบบดั้งเดิมที่ต้องใช้การออกแบบ 3NF ทั้งองค์กรนานหลายเดือน</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl">
+              <h3 class="font-bold text-yellow-300 mb-2">ข้อจำกัดด้านบุคลากร (2 คน)</h3>
+              <p class="text-sm">ทีมเล็กต้องเน้นแนวทางที่ **User-facing** และส่งมอบผลลัพธ์ได้เร็วที่สุดเพื่อพิสูจน์มูลค่าโครงการ</p>
+            </div>
+          </div>
+          <div class="mt-8 bg-green-500/20 p-4 rounded-xl border border-green-400 text-center font-bold">
+            💡 คำแนะนำเบื้องต้น: เลือกแนวทาง **Kimball (Bottom-Up)** เป็นหลักเพื่อความเร็ว
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Solution Step 2 - The Hybrid Recommendation -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนที่ 2: วางโครงสร้าง Hybrid (Medallion Style)</h1>
+          <div class="space-y-4">
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-[#CD7F32]">
+              <div>**Bronze/Silver:** ใช้แนวคิด Inmon เก็บข้อมูลกึ่งโครงสร้าง (JSON) และทำความสะอาดเบื้องต้นเพื่อความถูกต้อง</div>
+            </div>
+            <div class="flex items-center gap-6 bg-white/10 p-4 rounded-2xl border-l-8 border-[#FFD700]">
+              <div>**Gold:** ใช้แนวคิด Kimball สร้าง **Star Schema** สำหรับงานวิเคราะห์ที่ User ต้องการทันที</div>
+            </div>
+            <div class="bg-blue-600/40 p-4 rounded-xl text-sm italic text-center">
+              "การใช้ Cloud Warehouse ช่วยให้เราทำ 3NF ในชั้น Silver และ Star Schema ในชั้น Gold ได้พร้อมกันโดยไม่เสียเวลามากเกินไป"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Solution Step 3 - Agentic AI Benefit -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-green-300">เฉลยขั้นตอนที่ 3: บทบาทของ AI เอเจนต์</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-purple-900">ตัวช่วยสำหรับทีมขนาดเล็ก:</h2>
+            <div class="grid gap-4 text-left">
+              <div class="p-4 bg-purple-50 rounded-xl flex gap-4 items-start">
+                <span class="bg-purple-600 text-white p-1 rounded font-bold">1</span>
+                <p>**Autonomous Error Handling:** AI เอเจนต์สามารถตรวจสอบและซ่อมแซมความผิดพลาดใน Pipeline ของทีมงานที่มีจำกัดได้ (Self-healing)</p>
+              </div>
+              <div class="p-4 bg-purple-50 rounded-xl flex gap-4 items-start">
+                <span class="bg-purple-600 text-white p-1 rounded font-bold">2</span>
+                <p>**AV-SQL Interface:** ช่วยให้ CEO สามารถถามคำถามภาษาธรรมชาติและได้ SQL Query กลับมาทันที ลดภาระทีมวิศวกรในการเขียนรายงานรายวัน</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Project Phase 2 Kick-off -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">เริ่มต้นโครงการ Phase 2</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <h2 class="text-3xl font-bold mb-6 italic underline">การวิเคราะห์ระบบต้นทาง (Source Systems)</h2>
+            <p class="text-xl mb-6 leading-relaxed">
+              ก่อนจะลงมือสร้างคลังข้อมูล คุณต้องเข้าใจ **"ความจริงในระบบปฏิบัติการ"** ของโครงการก่อน:
+            </p>
+            <div class="space-y-4 text-lg">
+              <div class="flex items-center gap-3">✅ ทำ **Source System Tracking Report** ระบุ DBMS และขนาดข้อมูล</div>
+              <div class="flex items-center gap-3">✅ ระบุ **System-of-Record** สำหรับข้อมูลแต่ละประเภท (เช่น Customer, Sales)</div>
+              <div class="flex items-center gap-3">✅ สำรวจ **Data Quality Issues** เบื้องต้นที่ต้องได้รับการแก้ไข</div>
+            </div>
+          </div>
+          <div class="mt-8 bg-blue-600 px-8 py-4 rounded-full text-xl font-bold shadow-lg inline-block">
+            Dataset ฝึกฝน: <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="underline italic">Brazilian E-Commerce (Olist)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Summary & References -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300">บทสรุปสัปดาห์ที่ 2</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              ไม่มีสถาปัตยกรรมใดที่ดีที่สุดแบบเดียว ทุกอย่างขึ้นกับบริบทธุรกิจ (Business Context)
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              ในยุคคลาวด์ แนวทาง **Hybrid** กลายเป็นมาตรฐานใหม่ที่ให้ทั้งความเร็วและความถูกต้อง
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              การเตรียมข้อมูลให้พร้อมสำหรับ AI เอเจนต์ต้องการ **Semantic Layer** ที่ชัดเจนตั้งแต่วันแรก
+            </div>
+          </div>
+          <div class="mt-12 space-y-2">
+            <p class="text-sm font-bold text-white/60 uppercase">แหล่งข้อมูลแนะนำ:</p>
+            <div class="flex flex-wrap justify-center gap-4 text-xs">
+              <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="underline">Cloud DW For Dummies</a>
+              <a href="https://www.databricks.com/glossary/medallion-architecture" class="underline">Medallion Architecture</a>
+              <a href="https://arxiv.org/abs/2512.08769" class="underline">Agentic AI Workflows Paper</a>
+            </div>
+          </div>
+          <div class="mt-10 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            See you Week 3: Dimensional Modeling I
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>
