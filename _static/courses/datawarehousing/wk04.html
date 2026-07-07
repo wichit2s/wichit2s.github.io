@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk04.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 4: การสร้างแบบจำลองมิติ II<br>
+            <span class="text-yellow-300">SCD และเทคนิคขั้นสูง</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การจัดการการเปลี่ยนแปลงของข้อมูลประวัติและมิติรูปแบบพิเศษ
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวใจสำคัญของสัปดาห์นี้</h2>
+            <p class="text-center text-white/80 italic">
+              "ในโลกของข้อมูล สิ่งเดียวที่คงที่คือการเปลี่ยนแปลง... เราจะเก็บประวัติศาสตร์อย่างไรไม่ให้ข้อมูลผิดเพี้ยน?"
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">Phase 1: Advanced Dimensional Design</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>วิเคราะห์และเลือกใช้ SCD ประเภทต่างๆ (Type 1, 2, 3) ได้ตามความต้องการธุรกิจ</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>ออกแบบโครงสร้าง **Degenerate Dimensions** สำหรับรหัสเอกสารได้</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>สร้าง **Junk Dimensions** เพื่อจัดระเบียบกลุ่มของ Flags และ Indicators</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>อธิบายบทบาทของ **Agentic AI** ในการตรวจจับความผิดเพี้ยนของมิติอัตโนมัติ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Introduction to SCD -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Slowly Changing Dimensions (SCD)</h1>
+          <p class="text-2xl mb-8">คือเทคนิคการจัดการมิติที่มีการเปลี่ยนแปลงค่าของแอตทริบิวต์เมื่อเวลาผ่านไป</p>
+          <div class="bg-white/10 p-8 rounded-3xl border border-white/20 text-left">
+            <h3 class="text-xl font-bold mb-4">ทำไมต้องทำ SCD?</h3>
+            <ul class="space-y-4 text-lg">
+              <li>• เพื่อรักษาความถูกต้องของการรายงานผลย้อนหลัง</li>
+              <li>• เพื่อติดตามพฤติกรรมลูกค้าที่เปลี่ยนแปลง (เช่น การย้ายที่อยู่)</li>
+              <li>• เพื่อให้ AI เอเจนต์เข้าใจบริบทของข้อมูล ณ ช่วงเวลานั้นๆ อย่างแม่นยำ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: SCD Type 1 - Overwrite -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">SCD Type 1: การเขียนทับ (Overwrite)</h1>
+          <div class="bg-white text-gray-900 p-8 rounded-2xl shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+              <div class="bg-red-100 p-4 rounded-lg">
+                <p class="font-bold">ข้อมูลเก่า:</p>
+                <p>สมชาย - กทม.</p>
+              </div>
+              <div class="text-4xl">➞</div>
+              <div class="bg-green-100 p-4 rounded-lg">
+                <p class="font-bold">ข้อมูลใหม่:</p>
+                <p>สมชาย - **เชียงใหม่**</p>
+              </div>
+            </div>
+            <p class="text-lg">**คุณสมบัติ:** เขียนทับค่าเดิมทันที ไม่เก็บประวัติ</p>
+            <p class="text-lg font-bold text-red-600">**ข้อควรระวัง:** ยอดขายเก่าใน กทม. จะถูกเปลี่ยนเป็น เชียงใหม่ ทั้งหมดในรายงาน!</p>
+            <p class="mt-4 italic text-sm text-gray-500">*ใช้สำหรับ: การแก้ไขคำสะกดผิด หรือข้อมูลที่ไม่ต้องการเก็บประวัติ*</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: SCD Type 2 - Partitioning History -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">SCD Type 2: การสร้างแถวใหม่ (New Row)</h1>
+          <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl overflow-x-auto">
+            <h3 class="font-bold mb-4 text-blue-600">ตารางมิติลูกค้า (Dim_Customer)</h3>
+            <table class="w-full text-sm border-collapse border border-gray-300">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="border p-2">Surrogate Key</th>
+                  <th class="border p-2">Customer_ID (NK)</th>
+                  <th class="border p-2">Province</th>
+                  <th class="border p-2">Effective_Date</th>
+                  <th class="border p-2">Current_Flag</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="text-gray-400">
+                  <td class="border p-2">101</td>
+                  <td class="border p-2">C-001</td>
+                  <td class="border p-2">กทม.</td>
+                  <td class="border p-2">2022-01-01</td>
+                  <td class="border p-2">N</td>
+                </tr>
+                <tr class="bg-yellow-50 font-bold">
+                  <td class="border p-2">505</td>
+                  <td class="border p-2">C-001</td>
+                  <td class="border p-2">เชียงใหม่</td>
+                  <td class="border p-2">2024-06-13</td>
+                  <td class="border p-2">Y</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-6 text-lg text-center">**มาตรฐานทองคำ:** แบ่งส่วนประวัติศาสตร์ได้อย่างสมบูรณ์ (Perfectly Partitions History)</p>
+        </div>
+      </div>
+
+      <!-- Slide 6: SCD Type 3 - Alternate Realities -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">SCD Type 3: การเพิ่มคอลัมน์ใหม่ (New Field)</h1>
+          <div class="bg-white text-gray-900 p-8 rounded-2xl shadow-xl">
+            <p class="text-xl mb-6">เน้นการเปรียบเทียบระหว่าง "ค่าปัจจุบัน" และ "ค่าก่อนหน้า" (Current vs. Previous)</p>
+            <div class="bg-blue-50 p-6 rounded-xl border-l-8 border-blue-500">
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <p class="font-bold">Customer_Name</p>
+                  <p>สมชาย</p>
+                </div>
+                <div>
+                  <p class="font-bold text-green-600">Current_Province</p>
+                  <p>เชียงใหม่</p>
+                </div>
+                <div>
+                  <p class="font-bold text-gray-500">Previous_Province</p>
+                  <p>กทม.</p>
+                </div>
+              </div>
+            </div>
+            <p class="mt-8 italic">"ช่วยให้มองเห็น 'ความจริงสองด้าน' ในแถวเดียว แต่เก็บประวัติได้จำกัด"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Active Learning 1 - SCD Challenge -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ภารกิจ: เลือก SCD ให้โครงการ E-Commerce</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left">
+            <p class="text-xl mb-6 font-bold">โจทย์: จงระบุว่าสถานการณ์ต่อไปนี้ควรใช้ SCD ประเภทใด?</p>
+            <div class="space-y-4">
+              <div class="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                1. พนักงานสะกดชื่อยี่ห้อสินค้าผิดจาก "Appel" เป็น "Apple"
+              </div>
+              <div class="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                2. ลูกค้า VIP ย้ายที่อยู่จากกรุงเทพฯ ไปภูเก็ต และเราต้องการให้ยอดขายเก่าแสดงที่กรุงเทพฯ ส่วนยอดใหม่แสดงที่ภูเก็ต
+              </div>
+              <div class="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                3. ฝ่ายการตลาดต้องการดูยอดขายรวมปีนี้เทียบกับเขตการขายเก่าของปีที่แล้วในรายงานเดียว
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Solution 1 - SCD Challenge Breakdown -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนการแก้ปัญหา SCD</h1>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 border border-white/20 items-center">
+              <div class="bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg">Type 1</div>
+              <p class="text-xl">**แก้คำผิด:** เพราะข้อมูลเดิมผิดพลาดทางเทคนิค ไม่ใช่การเปลี่ยนแปลงทางธุรกิจ</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 border border-white/20 items-center">
+              <div class="bg-green-400 text-black font-bold px-4 py-2 rounded-lg">Type 2</div>
+              <p class="text-xl">**ย้ายที่อยู่:** เพื่อ "Partition History" ให้ยอดขายเก่าและใหม่ผูกกับสถานที่ที่ถูกต้อง ณ เวลานั้น</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 border border-white/20 items-center">
+              <div class="bg-blue-400 text-black font-bold px-4 py-2 rounded-lg">Type 3</div>
+              <p class="text-xl">**เทียบเขตเก่า/ใหม่:** เพื่อสร้าง "Alternate Realities" ให้วิเคราะห์เปรียบเทียบในแถวเดียวกันได้</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Degenerate Dimensions -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">Degenerate Dimensions (มิติเสื่อม)</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-2xl mb-6 font-bold italic">"มิติที่ไม่มีตารางเป็นของตัวเอง แต่อยู่ในตาราง Fact"</p>
+            <div class="grid md:grid-cols-2 gap-8">
+              <div class="bg-white/10 p-6 rounded-xl">
+                <h4 class="font-bold mb-2">ตัวอย่าง:</h4>
+                <ul class="text-lg">
+                  <li>• เลขที่คำสั่งซื้อ (Order Number)</li>
+                  <li>• เลขที่ใบกำกับภาษี (Invoice ID)</li>
+                  <li>• รหัสพัสดุ (Tracking Number)</li>
+                </ul>
+              </div>
+              <div class="bg-white/10 p-6 rounded-xl">
+                <h4 class="font-bold mb-2">ทำไมต้องทำ?</h4>
+                <ul class="text-lg">
+                  <li>• ลดการ Join ตารางที่ไม่จำเป็น</li>
+                  <li>• ข้อมูลเหล่านี้มักไม่มีคุณลักษณะอื่น (Attributes) ให้เก็บ</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Junk Dimensions -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">Junk Dimensions (มิติขยะ/รวมมิตร)</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 shadow-2xl flex flex-col items-center">
+            <p class="text-xl mb-6">รวบรวม Flags และ Text Indicators ที่กระจัดกระจายมารวมไว้ที่เดียว</p>
+            <div class="flex gap-4 mb-6">
+              <div class="bg-red-100 p-2 rounded">Is_Refunded?</div>
+              <div class="bg-blue-100 p-2 rounded">Payment_Method</div>
+              <div class="bg-green-100 p-2 rounded">Promotion_Applied?</div>
+            </div>
+            <div class="text-3xl mb-6">⬇</div>
+            <div class="bg-yellow-400 p-6 rounded-2xl font-bold shadow-lg">
+              Dim_Transaction_Profiles (Junk Dimension)
+            </div>
+            <p class="mt-4 text-sm italic">"ช่วยลดจำนวนคอลัมน์ Foreign Key ในตาราง Fact ได้มหาศาล"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Active Learning 2 - Junk Dimension Design -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            เวิร์กชอป (25 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ออกแบบ Junk Dimension</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold">ภารกิจ Phase 1 (ต่อ):</p>
+            <p class="mb-6">ในโครงการ E-Commerce ของคุณ มีแฟล็ก 3 ตัวดังนี้:</p>
+            <ul class="mb-6 space-y-2 italic">
+              <li>1. **Payment_Status** (Paid, Pending)</li>
+              <li>2. **Delivery_Type** (Standard, Express)</li>
+              <li>3. **Is_Gift** (Yes, No)</li>
+            </ul>
+            <p class="font-bold underline text-blue-600">คำถาม:</p>
+            <p>1. จงระบุจำนวนแถวทั้งหมดที่อาจเกิดขึ้นใน Junk Dimension นี้ (Cross Join)</p>
+            <p>2. วาดโครงสร้างตาราง Junk Dimension เบื้องต้น</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Solution 2 - Step-by-Step Junk Design -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนการสร้าง Junk Dimension</h1>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="text-xl font-bold mb-4 text-yellow-300">1. การคำนวณขนาดตาราง:</h3>
+              <p class="text-2xl leading-relaxed">
+                2 (Payment) x 2 (Delivery) x 2 (Gift) = **8 แถว**
+              </p>
+              <p class="mt-4 text-sm italic">"ตาราง Junk จะเก็บทุกความเป็นไปได้ของการรวมกันของ Flags"</p>
+            </div>
+            <div class="bg-white text-gray-900 p-6 rounded-xl shadow-lg overflow-x-auto">
+              <h3 class="font-bold mb-2 text-blue-600">2. โครงสร้างตาราง:</h3>
+              <table class="w-full text-xs border border-gray-300">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="border p-1">Profile_Key (SK)</th>
+                    <th class="border p-1">Payment</th>
+                    <th class="border p-1">Delivery</th>
+                    <th class="border p-1">Gift?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="border p-1">1</td><td class="border p-1">Paid</td><td class="border p-1">Standard</td><td class="border p-1">Yes</td></tr>
+                  <tr><td class="border p-1">2</td><td class="border p-1">Paid</td><td class="border p-1">Standard</td><td class="border p-1">No</td></tr>
+                  <tr><td class="border p-1">...</td><td class="border p-1">...</td><td class="border p-1">...</td><td class="border p-1">...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="mt-8 bg-green-500/20 p-4 rounded-xl border border-green-400 text-center font-bold">
+            💡 ประโยชน์: ลด Foreign Key ใน Fact Table จาก 3 เหลือเพียง 1 คอลัมน์!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: SCD and AI Agents -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">SCD ในยุคของ AI Agents</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6">AI เอเจนต์สมัยใหม่ (เช่น AV-SQL) มีบทบาทสำคัญในการจัดการ SCD:</p>
+            <ul class="space-y-4 text-lg">
+              <li class="flex items-center gap-4">
+                <div class="bg-purple-600 text-white p-2 rounded-lg font-bold">Auto-Detection</div>
+                <span>ตรวจจับ Schema Drift หรือการเปลี่ยนแปลงของมิติต้นทางอัตโนมัติ</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="bg-purple-600 text-white p-2 rounded-lg font-bold">Agentic Mapping</div>
+                <span>AI ช่วยเขียน SQL สำหรับการสร้าง SCD Type 2 ที่ซับซ้อนได้แม่นยำขึ้น</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="bg-purple-600 text-white p-2 rounded-lg font-bold">Semantic Stability</div>
+                <span>ช่วยให้ Semantic Layer คงความถูกต้องแม้ข้อมูลประวัติจะเปลี่ยนไป</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Summary and Next Steps -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300">บทสรุปสัปดาห์ที่ 4</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. **SCD Type 2** คือวิธีหลักในการเก็บประวัติข้อมูลในคลังข้อมูลสมัยใหม่
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. **Degenerate Dimensions** ช่วยลดความซับซ้อนโดยการเก็บรหัสเอกสารไว้ใน Fact
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. **Junk Dimensions** ทำให้โมเดลสะอาดขึ้นโดยการรวมกลุ่ม Flags
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: Requirements Gathering & Information Packages
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **แหล่งข้อมูลและทรัพยากรสำหรับสัปดาห์ที่ 4:**
+
+*   **เทคนิค SCD ขั้นสูง:** [SCD Management Techniques - Kimball Group](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/slowly-changing-dimension/)
+*   **การจัดการ Surrogate Keys ใน SCD:** [The Data Warehouse ETL Toolkit (Kimball & Caserta)](https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575)
+*   **Agentic AI ในงานวิศวกรรมข้อมูล:** [AV-SQL: Decomposing Complex Text-to-SQL Queries (arXiv)](https://arxiv.org/abs/2512.08769)
+*   **แนวทางการเลือก SCD ในธุรกิจประกันภัย:** [Data Warehousing Fundamentals (Ponniah)](https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072)
+*   **ตัวอย่างโครงสร้าง Medallion Silver Layer:** [Medallion Architecture Guide](https://www.databricks.com/glossary/medallion-architecture)
+
+-->
+
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

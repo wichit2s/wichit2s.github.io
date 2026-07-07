@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk03.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 3: การสร้างแบบจำลองมิติ I<br>
+            <span class="text-yellow-300">การออกแบบ Star Schema</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            จากความต้องการทางธุรกิจสู่โครงสร้างฐานข้อมูลเพื่อการวิเคราะห์,
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวใจสำคัญของสัปดาห์นี้</h2>
+            <p class="text-center text-white/80 italic">
+              "การกำหนดระดับรายละเอียด (Grain) คือรากฐานที่สำคัญที่สุดของการทำคลังข้อมูล",
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">Phase 1: Foundation of Dimensional Design</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>ประยุกต์ใช้กระบวนการออกแบบ 4 ขั้นตอน (4-Step Design Process) ของ Kimball ได้</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>กำหนดและประกาศ <strong>Grain</strong> ของตารางข้อเท็จจริงได้อย่างแม่นยำ,</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>จำแนกประเภทของ Fact (Additive vs. Semi-additive) ได้อย่างถูกต้อง,</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>อธิบายความจำเป็นของการใช้ **Surrogate Keys** ในตารางมิติได้,</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Part 1 Title -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">ส่วนที่ 1: รากฐานและ Grain</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-3xl font-bold mb-6 underline">กระบวนการออกแบบ 4 ขั้นตอน</h2>
+            <ol class="space-y-4 text-2xl">
+              <li>1. **เลือกกระบวนการธุรกิจ (Select the Business Process)**</li>
+              <li>2. **ประกาศระดับรายละเอียด (Declare the Grain)**</li>
+              <li>3. **ระบุมิติ (Identify the Dimensions)**</li>
+              <li>4. **ระบุข้อเท็จจริง (Identify the Facts)**</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Step 1 & 2 - Process and Grain -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">การประกาศ Grain: หัวใจของแบบจำลอง</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-blue-400 text-left">
+              <h2 class="text-2xl font-bold mb-4">1. Business Process</h2>
+              <p class="text-lg">คือ กิจกรรมระดับปฏิบัติการ (เช่น การขาย, การรับคืนสินค้า) ที่สร้างตัวเลขเพื่อนำมาวัดผล</p>
+            </div>
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-yellow-400 text-left">
+              <h2 class="text-2xl font-bold mb-4">2. The Grain</h2>
+              <p class="text-lg">คือ "หนึ่งแถวในตาราง Fact คืออะไร?" ต้องเป็นระดับที่ละเอียดที่สุดที่เป็นไปได้เพื่อให้วิเคราะห์ได้ทุกมุมมอง,</p>
+            </div>
+          </div>
+          <div class="mt-8 bg-red-500/20 p-4 rounded-xl border border-red-400 text-center font-bold">
+            ⚠️ คำเตือน: อย่าผสม Grain ที่ต่างกันในตาราง Fact เดียวกัน!
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Active Learning 1 - The "One-Row-Per" Challenge -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม (15 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ภารกิจ: ประกาศ Grain ของอีคอมเมิร์ซ</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6 font-bold">โจทย์: จากชุดข้อมูล Olist E-Commerce จงระบุ Grain Statement ของตารางการขาย</p>
+            <div class="space-y-4">
+              <p class="italic">"หนึ่งแถวในตาราง `Order_Items_Fact` คือ..."</p>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-blue-100 rounded-lg border-2 border-blue-300">A) หนึ่งคำสั่งซื้อต่อหนึ่งลูกค้า</div>
+                <div class="p-4 bg-blue-100 rounded-lg border-2 border-blue-300">B) หนึ่งรายการสินค้าในหนึ่งคำสั่งซื้อ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Solution 1 - Grain Statement -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนที่ 1: การกำหนด Grain</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <h2 class="text-3xl font-bold mb-4 text-green-400">คำตอบที่ถูกต้องคือ: B</h2>
+            <p class="text-2xl mb-6">**"One row per individual product item in a transaction."**</p>
+            <div class="space-y-4 text-lg">
+              <p>**เหตุผล:**</p>
+              <ul class="list-disc list-inside space-y-2">
+                <li>ในหนึ่ง Order ลูกค้าอาจซื้อสินค้าหลายชนิด (Product IDs)</li>
+                <li>หากใช้ Grain เป็น "หนึ่งคำสั่งซื้อ" (A) เราจะไม่สามารถวิเคราะห์ยอดขายแยกตามรายสินค้าได้</li>
+                <li>Grain ระดับ "Item Line" ช่วยให้เรา Drill-down ไปหาข้อมูลที่ละเอียดที่สุดได้</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Part 2 Title -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">ส่วนที่ 2: ตารางข้อเท็จจริง (Fact Tables)</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-2xl font-bold mb-4 italic underline">ลักษณะของตาราง Fact,</h2>
+            <p class="text-xl mb-6">ประกอบด้วยมาตรวัดที่เป็นตัวเลข (Quantitative Measurements) และ Foreign Keys ที่เชื่อมไปยังตารางมิติ</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-blue-600/40 p-4 rounded-xl text-center">มาตรวัด (Facts)</div>
+              <div class="bg-blue-600/40 p-4 rounded-xl text-center">คีย์เชื่อมโยง (FKs)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Fact Types - Additive vs Semi-additive -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">ประเภทของ Facts,</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white text-gray-900 p-8 rounded-2xl shadow-xl">
+              <h2 class="text-2xl font-bold mb-4 text-blue-600">Fully Additive Facts</h2>
+              <p class="mb-4">บวกกันได้ทุกมิติ (สินค้า, เวลา, พื้นที่)</p>
+              <ul class="text-sm space-y-1">
+                <li>• ยอดขาย (Amount)</li>
+                <li>• จำนวนหน่วย (Quantity)</li>
+                <li>• กำไร (Profit)</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-8 rounded-2xl shadow-xl">
+              <h2 class="text-2xl font-bold mb-4 text-red-600">Semi-additive Facts</h2>
+              <p class="mb-4">บวกกันได้บางมิติ แต่ **ห้ามบวกข้ามเวลา**</p>
+              <ul class="text-sm space-y-1">
+                <li>• ยอดคงเหลือในบัญชี (Account Balance)</li>
+                <li>• จำนวนสินค้าในสต็อก (Inventory Count)</li>
+                <li>• อัตราผลตอบแทน (%)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Active Learning 2 - Fact Identification -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            เวิร์กชอป (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">การระบุ Facts สำหรับโครงการ</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left">
+            <p class="text-xl mb-4 font-bold">จากรายการต่อไปนี้ จงเลือก Facts ที่ควรอยู่ใน `Order_Fact` ของเรา:</p>
+            <div class="grid grid-cols-2 gap-4 text-sm font-bold">
+              <div class="p-3 bg-gray-100 rounded border">1. รหัสสั่งซื้อ (Order_ID)</div>
+              <div class="p-3 bg-gray-100 rounded border">2. ราคาสินค้า (Price)</div>
+              <div class="p-3 bg-gray-100 rounded border">3. ค่าขนส่ง (Freight_Value)</div>
+              <div class="p-3 bg-gray-100 rounded border">4. วันที่สั่งซื้อ (Order_Date)</div>
+              <div class="p-3 bg-gray-100 rounded border">5. ชื่อลูกค้า (Customer_Name)</div>
+              <div class="p-3 bg-gray-100 rounded border">6. จำนวนที่ซื้อ (Quantity)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Solution 2 - Fact Identification -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนที่ 2: การคัดเลือก Facts</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <h3 class="text-2xl font-bold mb-4 text-yellow-300">Facts ที่ถูกต้อง (ตัวเลขที่วัดผลได้):</h3>
+            <ul class="space-y-4 text-xl">
+              <li>✅ **Price:** มาตรวัดพื้นฐาน (Fully Additive)</li>
+              <li>✅ **Freight_Value:** มาตรวัดต้นทุน (Fully Additive)</li>
+              <li>✅ **Quantity:** จำนวนนับ (Fully Additive)</li>
+            </ul>
+            <div class="mt-6 p-4 bg-red-500/20 border-l-4 border-red-500">
+              <p class="text-sm font-bold">ทำไมข้ออื่นถึงไม่ใช่?</p>
+              <p class="text-xs italic">Order_ID และ Date เป็นมิติ (Dimension), Customer_Name เป็นคุณสมบัติ (Attribute) ไม่ใช่ตัวเลขที่ใช้วัดผลโดยตรงในตาราง Fact,</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Part 3 Title -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">ส่วนที่ 3: ตารางมิติและคีย์ตัวแทน</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-2xl font-bold mb-4 italic underline">ลักษณะของมิติ (Dimension),</h2>
+            <p class="text-xl mb-6">คือ ตารางที่เก็บคำอธิบาย (Context) เพื่อตอบคำถามว่า ใคร (Who), อะไร (What), ที่ไหน (Where), เมื่อไหร่ (When)</p>
+            <div class="bg-blue-600/30 p-6 rounded-2xl border border-blue-400 font-bold">
+              "Dimension Tables must use Surrogate Keys!",
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Surrogate Keys vs. Natural Keys -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8">ทำไมต้องใช้ Surrogate Keys?</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-red-500">
+              <h2 class="text-xl font-bold mb-4">Natural Key (ID จากต้นทาง)</h2>
+              <p class="text-sm italic mb-4 text-red-600">"เสี่ยงต่อการเปลี่ยนแปลงและซ้ำซ้อน"</p>
+              <ul class="text-xs space-y-2">
+                <li>• ขึ้นอยู่กับระบบ ERP/CRM ต้นทาง</li>
+                <li>• หากระบบต้นทางลบหรือเปลี่ยน ID ประวัติใน DW จะเสีย</li>
+                <li>• มักเป็นตัวอักษรทำให้ Query ช้า</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-green-500">
+              <h2 class="text-xl font-bold mb-4">Surrogate Key (คีย์ตัวแทน)</h2>
+              <p class="text-sm italic mb-4 text-green-600">"สร้างความอิสระและติดตามประวัติได้"</p>
+              <ul class="text-xs space-y-2">
+                <li>• เป็นตัวเลข (Integer) ที่ DW สร้างเอง</li>
+                <li>• ช่วยในการจัดการ **Slowly Changing Dimensions (SCD)**</li>
+                <li>• เพิ่มประสิทธิภาพในการ Join ข้อมูล</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Active Learning 3 - Star Schema Design -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมสุดท้าย (30 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">ออกแบบ Star Schema ครั้งแรก</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold">ภารกิจ Phase 1 Project:</p>
+            <p class="mb-6">จงวางโครงสร้าง **Star Schema** สำหรับ "Sales Analysis" โดยระบุ:</p>
+            <div class="grid grid-cols-2 gap-4 text-sm font-bold">
+              <div class="p-3 bg-yellow-50 rounded border-2 border-yellow-300">1. Fact Table Name & Facts</div>
+              <div class="p-3 bg-green-50 rounded border-2 border-green-300">2. Dimension Tables (อย่างน้อย 4 มิติ)</div>
+              <div class="p-3 bg-blue-50 rounded border-2 border-blue-300">3. กำหนด Primary Key และ Foreign Keys</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Solution 3 - Step-by-Step Star Schema -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-green-300 underline">เฉลยขั้นตอนที่ 3: โครงสร้าง Star Schema สมบูรณ์,</h1>
+          <div class="grid grid-cols-3 gap-4 items-center">
+            <!-- Dimensions Left -->
+            <div class="space-y-4">
+              <div class="bg-white text-gray-900 p-3 rounded shadow text-xs">
+                <h4 class="font-bold border-b mb-1">Dim_Product</h4>
+                <p>PK: Product_Key (SK)</p>
+                <p>Product_ID (NK)</p>
+                <p>Category, Brand</p>
+              </div>
+              <div class="bg-white text-gray-900 p-3 rounded shadow text-xs">
+                <h4 class="font-bold border-b mb-1">Dim_Customer</h4>
+                <p>PK: Customer_Key (SK)</p>
+                <p>Customer_ID (NK)</p>
+                <p>City, State</p>
+              </div>
+            </div>
+            <!-- Fact Center -->
+            <div class="bg-yellow-400 text-yellow-900 p-6 rounded-2xl shadow-2xl text-center border-4 border-yellow-600">
+              <h3 class="text-xl font-black mb-4 underline">Sales_Fact</h3>
+              <div class="text-left text-sm space-y-1">
+                <p>FK: Product_Key</p>
+                <p>FK: Customer_Key</p>
+                <p>FK: Date_Key</p>
+                <p>FK: Store_Key</p>
+                <hr class="border-yellow-700 my-2">
+                <p class="font-bold text-center">Facts:</p>
+                <p>• Sales_Amount</p>
+                <p>• Quantity</p>
+                <p>• Freight_Value</p>
+              </div>
+            </div>
+            <!-- Dimensions Right -->
+            <div class="space-y-4">
+              <div class="bg-white text-gray-900 p-3 rounded shadow text-xs">
+                <h4 class="font-bold border-b mb-1">Dim_Date</h4>
+                <p>PK: Date_Key (SK)</p>
+                <p>Full_Date, Year</p>
+                <p>Quarter, Month</p>
+              </div>
+              <div class="bg-white text-gray-900 p-3 rounded shadow text-xs">
+                <h4 class="font-bold border-b mb-1">Dim_Store</h4>
+                <p>PK: Store_Key (SK)</p>
+                <p>Store_ID (NK)</p>
+                <p>Region, Manager</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Summary and Week 4 Preview -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300">บทสรุปสัปดาห์ที่ 3</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. การออกแบบเริ่มจากการเลือก **Business Process** และระบุ **Grain**
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. **Fact Table** ต้องเป็นตัวเลขที่บวกกันได้ (Fully Additive) เพื่อการ Drill-down,
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. **Surrogate Keys** สำคัญมากในการปกป้อง DW จากการเปลี่ยนแปลงของระบบต้นทาง,
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: Slowly Changing Dimensions (SCDs)
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>
