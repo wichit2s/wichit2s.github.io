@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk07.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 7: สถาปัตยกรรมคลังข้อมูล<br>
+            <span class="text-yellow-300">และยุคสมัยของ Lakehouse</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การวางโครงสร้างระบบข้อมูลองค์กรจากอดีตสู่แนวคิด Data Mesh และ AI-Native
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวใจสำคัญของสัปดาห์นี้</h2>
+            <p class="text-center text-white/80 italic">
+              "สถาปัตยกรรมที่ดีย่อมรองรับทั้งความแม่นยำของมนุษย์และความฉลาดของ AI" 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a>
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">Phase 2: Global Architecture Design</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>จำแนกประเภทสถาปัตยกรรม (Centralized, Data Marts, Federated) ได้ <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+              <span>วิเคราะห์วิวัฒนาการจาก Data Warehouse สู่ Data Lakehouse ได้ <a href="https://doi.org/10.1145/3448016.3457544" class="text-yellow-300 underline"></a></span>
+            </div>
+          </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>เปรียบเทียบแนวคิด **Data Mesh** และ **Data Fabric** ในระดับองค์กรได้ <a href="http://www.ijsat.org" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>ออกแบบ Semantic Layer เพื่อรองรับ Agentic AI ในโครงการได้ <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: General Architecture Principles -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">หลักการสถาปัตยกรรมพื้นฐาน</h1>
+          <div class="grid grid-cols-3 gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold border-b mb-2">Centralized DW</h4>
+              <p class="text-xs">ฐานข้อมูลเดียวรวมศูนย์ ข้อมูลมีความถูกต้องสูงสุด (Integrity) <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold border-b mb-2">Independent Marts</h4>
+              <p class="text-xs">แยกตามแผนก รวดเร็วแต่เสี่ยงข้อมูลไม่ตรงกัน (Data Silos) <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold border-b mb-2">Federated DW</h4>
+              <p class="text-xs">เชื่อมโยงระบบเดิมที่กระจัดกระจายเข้าด้วยกันอย่างหลวมๆ <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+          </div>
+          <div class="mt-10 p-6 bg-blue-600/30 rounded-2xl italic border border-blue-400">
+            "สถาปัตยกรรมแบบดั้งเดิมมักเน้น 'การเก็บข้อมูล' แต่ยุคใหม่เน้น 'การเปิดเผยข้อมูล' (Publish Assets)" <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-yellow-300 underline"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Legacy Systems (SAP BW, Teradata, Hadoop) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">ยักษ์ใหญ่ในอดีตสู่รากฐานปัจจุบัน</h1>
+          <div class="space-y-4 text-left">
+            <div class="bg-white text-gray-900 p-4 rounded-xl flex gap-4 items-center">
+              <div class="bg-blue-900 text-white p-2 rounded font-bold">SAP BW</div>
+              <p class="text-sm">โดดเด่นเรื่องการรวมแอปพลิเคชันธุรกิจและ Metadata <a href="https://catalog.utdallas.edu/2016/graduate/courses/acct6309" class="text-blue-600 underline"></a></p>
+            </div>
+            <div class="bg-white text-gray-900 p-4 rounded-xl flex gap-4 items-center">
+              <div class="bg-orange-600 text-white p-2 rounded font-bold">Teradata</div>
+              <p class="text-sm">ต้นแบบระบบประมวลผลขนานขนาดใหญ่ (MPP) <a href="https://catalog.utdallas.edu/2016/graduate/courses/acct6309" class="text-blue-600 underline"></a></p>
+            </div>
+            <div class="bg-white text-gray-900 p-4 rounded-xl flex gap-4 items-center">
+              <div class="bg-yellow-500 text-black p-2 rounded font-bold">Hadoop/Hive</div>
+              <p class="text-sm">การจัดเก็บระดับ Petabytes บนฮาร์ดแวร์ทั่วไป (Commodity Hardware) <a href="https://dl.acm.org/doi/10.1145/1687553.1687609" class="text-blue-600 underline"></a></p>
+            </div>
+          </div>
+          <p class="mt-8 italic text-white/60">"ปัจจุบันแนวคิดเหล่านี้ถูกรวมร่างใหม่ในรูปแบบ **Lakehouse** บน Cloud"</p>
+        </div>
+      </div>
+
+      <!-- Slide 5: The Data Lakehouse Revolution -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300 text-shadow-lg">การรวมร่าง: Data Lakehouse</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6">Lakehouse คือการรวมข้อดีของ 2 โลกเข้าด้วยกัน <a href="https://doi.org/10.1145/3448016.3457544" class="text-yellow-300 underline"></a>:</p>
+            <div class="grid grid-cols-2 gap-8">
+              <div class="p-4 bg-blue-500/20 rounded-xl border-l-4 border-blue-400">
+                <h4 class="font-bold text-blue-300">Data Warehouse</h4>
+                <p class="text-xs">รองรับ ACID Transactions, Schema Enforcement และ Performance สูง</p>
+              </div>
+              <div class="p-4 bg-green-500/20 rounded-xl border-l-4 border-green-400">
+                <h4 class="font-bold text-green-300">Data Lake</h4>
+                <p class="text-xs">รองรับข้อมูลทุกประเภท (Unstructured), ราคาประหยัด และ Open Format <a href="https://www.snowflake.com/en/blog/the-snowflake-elastic-data-warehouse/" class="text-yellow-300 underline"></a></p>
+              </div>
+            </div>
+            <p class="mt-8 text-center text-lg font-bold">"Lakehouse คือสมองที่วิเคราะห์ได้ทั้ง BI และ AI ในที่เดียว"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Active Learning 1 - Architecture Mapping -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">เก่าปะทะใหม่: Architecture Mapping</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-6 font-bold underline">ภารกิจ: จับคู่คุณสมบัติกับสถาปัตยกรรมที่เหมาะสม</p>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="space-y-3">
+                <div class="p-3 bg-gray-100 rounded border">1. รองรับการเทรน Model ML โดยตรง</div>
+                <div class="p-3 bg-gray-100 rounded border">2. เน้นความถูกต้องของรายงานการเงินองค์กร</div>
+                <div class="p-3 bg-gray-100 rounded border">3. วิเคราะห์คลิกบนเว็บไซต์ (Clickstream) ดิบๆ</div>
+              </div>
+              <div class="space-y-3">
+                <div class="p-3 bg-blue-100 rounded border font-bold">A. Data Warehouse (3NF/Traditional)</div>
+                <div class="p-3 bg-green-100 rounded border font-bold">B. Data Lake (Bronze Layer)</div>
+                <div class="p-3 bg-yellow-100 rounded border font-bold">C. Data Lakehouse</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Solution 1 - Strategic Mapping -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 1: การเลือกสถาปัตยกรรม</h1>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 border border-white/20 items-center">
+              <div class="bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg shrink-0">1 ➞ C</div>
+              <p class="text-xl">**Lakehouse:** เพราะรวม Engine ประมวลผล ML และ SQL ไว้บนข้อมูลชุดเดียวกัน <a href="https://doi.org/10.1145/3448016.3457544" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 border border-white/20 items-center">
+              <div class="bg-blue-400 text-black font-bold px-4 py-2 rounded-lg shrink-0">2 ➞ A</div>
+              <p class="text-xl">**Traditional DW:** เหมาะกับงานที่ต้องการ Schema Enforcement สูงและตรวจสอบย้อนกลับได้ง่าย <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 border border-white/20 items-center">
+              <div class="bg-green-400 text-black font-bold px-4 py-2 rounded-lg shrink-0">3 ➞ B</div>
+              <p class="text-xl">**Data Lake:** พื้นที่พักข้อมูลดิบ (Landing Zone) ก่อนทำความสะอาด <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-300 underline"></a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Data Mesh vs. Data Fabric -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">อนาคตของระบบกระจายศูนย์</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-purple-500 shadow-2xl">
+              <h2 class="text-2xl font-bold mb-4">Data Mesh</h2>
+              <p class="text-sm italic mb-4">"การเปลี่ยนโครงสร้างองค์กร"</p>
+              <ul class="text-xs space-y-2">
+                <li>• แบ่งความเป็นเจ้าของตามโดเมน (Domain Ownership)</li>
+                <li>• ข้อมูลคือผลิตภัณฑ์ (Data as a Product)</li>
+                <li>• เน้นการกระจายอำนาจการตัดสินใจ <a href="http://www.ijsat.org" class="text-blue-600 underline"></a></li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-blue-500 shadow-2xl">
+              <h2 class="text-2xl font-bold mb-4">Data Fabric</h2>
+              <p class="text-sm italic mb-4">"การใช้ AI เชื่อมโยงทางเทคนิค"</p>
+              <ul class="text-xs space-y-2">
+                <li>• รวมศูนย์ด้วย Metadata อัจฉริยะ</li>
+                <li>• ใช้ AI/ML ในการค้นหาและเชื่อมโยงข้อมูลอัตโนมัติ</li>
+                <li>• สร้าง Unified Access Layer เหนือทุกระบบ <a href="http://www.ijsat.org" class="text-blue-600 underline"></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Semantic Layer: The Brain of Agentic AI -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Semantic Layer & Agentic AI</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6 font-bold italic underline">ทำไม AI ต้องการ Semantic Layer? <a href="https://www.databricks.com/blog/semantic-layer-architecture-components-design-patterns-and-ai-integration" class="text-yellow-300 underline"></a></p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-4 bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+                <div class="bg-white text-purple-900 font-bold px-2 rounded">ความหมาย</div>
+                <div>นิยามธุรกิจที่เป็นมาตรฐาน (เช่น Net Sales) ทำให้ AI ไม่สับสนเมื่อเขียน SQL <a href="https://arxiv.org/abs/2411.07763" class="text-yellow-300 underline"></a></div>
+              </div>
+              <div class="flex items-center gap-4 bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+                <div class="bg-white text-purple-900 font-bold px-2 rounded">ความปลอดภัย</div>
+                <div>กำหนดสิทธิ์เข้าถึง (RBAC/ABAC) ที่ AI ต้องปฏิบัติตามอย่างเคร่งครัด <a href="https://doi.org/10.1109/CFS.2025.001" class="text-yellow-300 underline"></a></div>
+              </div>
+            </div>
+            <p class="mt-8 text-lg font-bold text-center">"AI Agent ที่เก่ง ต้องอยู่บนคลังข้อมูลที่มีระเบียบ (Headless Warehouse)" <a href="https://www.triplewhale.com/blog/powering-the-agentic-revolution" class="text-yellow-300 underline"></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Active Learning 2 - Architecting the Agentic Platform -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            เวิร์กชอป: สถาปนิกข้อมูล (30 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ออกแบบ Agentic Architecture</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left">
+            <p class="text-xl mb-4 font-bold">โจทย์: โครงการ Agentic E-Commerce Platform</p>
+            <div class="space-y-4 text-lg">
+              <div>**Step 1:** ระบุแหล่งข้อมูล (Source Systems) ที่ต้องเข้าถึง <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="text-blue-600 underline">[Kaggle]</a></div>
+              <div>**Step 2:** วางโครงสร้าง 3 ชั้นของ Medallion (Bronze/Silver/Gold) <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-blue-600 underline"></a></div>
+              <div>**Step 3:** ระบุจุดที่ **AI Agent** จะเข้ามาช่วยในระบบนี้ <a href="https://arxiv.org/abs/2512.08769" class="text-blue-600 underline"></a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Solution 2 - Step-by-Step Modern Architecture -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 2: ผังโครงการสมัยใหม่</h1>
+          <div class="grid grid-cols-3 gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border border-dashed border-[#CD7F32]">
+              <h4 class="font-bold text-[#CD7F32]">BRONZE (Raw)</h4>
+              <p class="text-[10px]">เก็บ JSON คลิกเกมนักเขียน และ CSV ยอดขายดิบๆ จาก Olist Dataset <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-dashed border-[#C0C0C0]">
+              <h4 class="font-bold text-[#C0C0C0]">SILVER (Cleansed)</h4>
+              <p class="text-[10px]">สร้าง **dim_customer** และ **fact_order** ที่สะอาดแล้ว พร้อมทำ SCD Type 2 <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-dashed border-[#FFD700]">
+              <h4 class="font-bold text-[#FFD700]">GOLD (Aggregated)</h4>
+              <p class="text-[10px]">สรุปยอดขายรายเดือนแยกตามหมวดหมู่ พร้อมส่งต่อให้ AI เอเจนต์วิเคราะห์เทรนด์ <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-300 underline"></a></p>
+            </div>
+          </div>
+          <div class="mt-8 bg-purple-500/20 p-4 rounded-xl border border-purple-400 font-bold">
+            💡 AI Role: ใช้ **AV-SQL Agent** ทำ Question Rewriting แปลงคำถามผู้ใช้เป็น SQL เหนือชั้น Gold <a href="https://arxiv.org/abs/2411.07763" class="text-yellow-300 underline"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Summary and Week 8 Prep -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">บทสรุปสัปดาห์ที่ 7</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. สถาปัตยกรรมวิวัฒนาการจากระบบศูนย์กลาง (Centralized) สู่ระบบกระจายศูนย์ (Mesh/Fabric) 
+              <a href="http://www.ijsat.org" class="text-yellow-300 underline"></a>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. **Data Lakehouse** คือมาตรฐานใหม่ที่คุ้มค่าและรองรับงานทั้ง BI และ AI ในแพลตฟอร์มเดียว 
+              <a href="https://doi.org/10.1145/3448016.3457544" class="text-yellow-300 underline"></a>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. **Semantic Layer** เป็นกุญแจสำคัญที่ทำให้ AI เข้าใจข้อมูลธุรกิจได้อย่างถูกต้อง 
+              <a href="https://www.databricks.com/blog/semantic-layer-architecture-components-design-patterns-and-ai-integration" class="text-yellow-300 underline"></a>
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: Mid-term Exam (Weeks 1-7 Review)!
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **แหล่งข้อมูลและทรัพยากรสำหรับสัปดาห์ที่ 7:**
+
+*   **รากฐานสถาปัตยกรรม:** [Data Warehousing Fundamentals (Paulraj Ponniah)](https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072)
+*   **วิวัฒนาการ Lakehouse:** [Lakehouse: A New Generation of Open Platforms (Armbrust et al.)](https://doi.org/10.1145/3448016.3457544)
+*   **คู่มือสถาปัตยกรรม Medallion:** [Medallion Architecture: Bronze, Silver and Gold Layers](https://www.databricks.com/glossary/medallion-architecture)
+*   **การจัดการ Data Mesh/Fabric:** [Data Management Evolution (Parimi et al., IJSAT)](http://www.ijsat.org)
+*   **Agentic AI ในงานวิศวกรรมข้อมูล:** [A Practical Guide for Production-Grade Agentic AI Workflows (arXiv)](https://arxiv.org/abs/2512.08769)
+*   **การวิจัย AV-SQL:** [AV-SQL: Decomposing Complex Text-to-SQL Queries (arXiv)](https://arxiv.org/abs/2411.07763)
+*   **ชุดข้อมูลโครงการ (Dataset):** [Brazilian E-Commerce (Olist) - Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+-->
+
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

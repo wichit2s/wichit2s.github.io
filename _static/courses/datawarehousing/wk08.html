@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk08.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 8: การทบทวน<br>
+            <span class="text-yellow-300">เตรียมสอบกลางภาค</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            สรุปหัวใจสำคัญจากสัปดาห์ที่ 1 ถึง 7: จากพื้นฐานสู่สถาปัตยกรรมสมัยใหม่
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">กำหนดการสอบ</h2>
+            <p class="text-center text-white/80 italic">
+              "การสอบครั้งนี้จะครอบคลุมตั้งแต่ประวัติศาสตร์คลังข้อมูลไปจนถึง Agentic AI" 
+              <a href="https://catalog.utdallas.edu/2016/graduate/courses/acct6309" class="text-yellow-300 underline"></a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Review Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">หัวข้อการทบทวน</h1>
+          <div class="grid md:grid-cols-2 gap-4 text-left text-lg">
+            <div class="bg-white/10 p-4 rounded-xl border border-white/10">1. นิยามและภารกิจของ DW <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/10">2. Inmon vs. Kimball <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/10">3. การออกแบบ Star Schema <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/10">4. เทคนิค SCD ขั้นสูง <a href="https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/slowly-changing-dimension/" class="text-yellow-300 underline"></a></div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/10">5. คลังข้อมูลบนคลาวด์ <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/10">6. Lakehouse & AI Agent <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Foundations Review -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">บทที่ 1: พื้นฐานและนิยาม</h1>
+          <div class="bg-white text-blue-900 rounded-3xl p-8 text-left shadow-2xl">
+            <h3 class="text-2xl font-black border-b-2 border-blue-900 mb-4 pb-2">นิยามโดย Bill Inmon</h3>
+            <p class="text-lg leading-relaxed italic mb-6">
+              "คลังข้อมูลคือกลุ่มข้อมูลที่ถูกจัดระเบียบตาม **หัวเรื่อง (Subject-oriented)**, มีการ **บูรณาการ (Integrated)**, มีความเป็น **ประวัติศาสตร์ (Time-variant)** และ **คงสภาพ (Non-volatile)**" 
+              <a href="https://en.wikipedia.org/wiki/Bill_Inmon" class="text-blue-600 underline"></a>
+            </p>
+            <div class="grid grid-cols-2 gap-4 text-sm font-bold">
+              <div class="p-3 bg-blue-100 rounded-lg">Operational (OLTP): ทำงานรายวัน <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-blue-600 underline"></a></div>
+              <div class="p-3 bg-yellow-100 rounded-lg">Informational (DW): วิเคราะห์เชิงลึก <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-blue-600 underline"></a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Methodology Review (Inmon vs Kimball) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300 underline">บทที่ 2: ระเบียบวิธีออกแบบ</h1>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border-t-8 border-blue-500">
+              <h3 class="text-2xl font-bold mb-4">Top-Down (Inmon)</h3>
+              <ul class="text-sm space-y-2">
+                <li>• เริ่มจาก Atomic Data Warehouse (3NF) <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></li>
+                <li>• เน้นความแม่นยำของข้อมูลทั้งองค์กร</li>
+                <li>• ใช้เวลานานในการเห็นผล</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-t-8 border-green-500">
+              <h3 class="text-2xl font-bold mb-4">Bottom-Up (Kimball)</h3>
+              <ul class="text-sm space-y-2">
+                <li>• เริ่มจาก Data Marts (Dimensional) <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></li>
+                <li>• เน้นกระบวนการธุรกิจและความรวดเร็ว</li>
+                <li>• เชื่อมโยงด้วย Conformed Dimensions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Active Learning 1 - Methodology Choice -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            โจทย์ทบทวน 1 (15 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">ควรเลือกแนวทางไหน?</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left">
+            <p class="text-xl mb-4 font-bold">สถานการณ์:</p>
+            <p class="text-lg leading-relaxed italic mb-6">
+              "บริษัทอีคอมเมิร์ซของคุณเพิ่งเปิดตัว และต้องการเห็น **รายงานสรุปยอดขายรายวัน** ทันทีในเดือนแรก ข้อมูลในระบบต้นทางยังไม่ซับซ้อนมากนัก"
+            </p>
+            <p class="font-bold underline text-blue-600">คำถาม: ระหว่าง Inmon และ Kimball คุณจะเลือกอะไร? เพราะอะไร?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Solution 1 - Step-by-Step Selection -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 1: การเลือก Methodology</h1>
+          <div class="space-y-4 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-500">
+              <p class="text-xl font-bold">Step 1: วิเคราะห์ความต้องการ</p>
+              <p class="text-sm">เป้าหมายคือรายงานยอดขายรายวันในเวลาที่รวดเร็ว (Time-to-Value) <a href="https://www.wiley.com/en-us/The+Data+Warehouse+Lifecycle+Toolkit%2C+2nd+Edition-p-9780470149775" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-500">
+              <p class="text-xl font-bold">Step 2: เลือกผู้ชนะคือ **Kimball**</p>
+              <p class="text-sm">เพราะแนวทาง Bottom-Up เน้นการสร้าง Data Mart ตามกระบวนการธุรกิจ (Sales) และส่งมอบผลลัพธ์ได้ไวที่สุด <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-blue-600/40 p-4 rounded-xl text-center italic text-sm">
+              "จำไว้ว่า: Kimball เน้น Agile และ Business Process ส่วน Inmon เน้นโครงสร้างศูนย์กลาง (Strategic)"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Dimensional Design & Grain -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">บทที่ 3-4: การออกแบบมิติและ Grain</h1>
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold text-blue-300 underline mb-2">The Grain</h4>
+              <p class="text-xs">ประกาศระดับที่ละเอียดที่สุดของข้อมูล (เช่น "หนึ่งแถวต่อหนึ่งรายการในพัสดุ") <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold text-green-300 underline mb-2">Facts</h4>
+              <p class="text-xs">มาตรวัดตัวเลข (Quantity, Price) มักเป็น **Fully Additive** (บวกกันได้ทุกมิติ) <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 class="font-bold text-red-300 underline mb-2">Dimensions</h4>
+              <p class="text-xs">แอตทริบิวต์เชิงคุณภาพ (Who, What, Where) ต้องมี **Surrogate Keys** <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-yellow-300 underline"></a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: SCD (Slowly Changing Dimensions) Summary -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">บทที่ 4: การจัดการ SCD</h1>
+          <div class="bg-white rounded-3xl p-6 shadow-2xl text-gray-900 overflow-hidden">
+            <table class="w-full text-sm border-collapse border border-gray-300">
+              <thead class="bg-blue-900 text-white">
+                <tr>
+                  <th class="p-3 border">SCD Type</th>
+                  <th class="p-3 border">ความหมาย</th>
+                  <th class="p-3 border">การประยุกต์ใช้</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-3 border font-bold">Type 1</td>
+                  <td class="p-3 border italic">Overwrite (เขียนทับ) <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-blue-600 underline"></a></td>
+                  <td class="p-3 border">แก้ไขคำสะกดผิด</td>
+                </tr>
+                <tr class="bg-gray-100">
+                  <td class="p-3 border font-bold">Type 2</td>
+                  <td class="p-3 border italic">New Row (สร้างแถวใหม่) <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-blue-600 underline"></a></td>
+                  <td class="p-3 border text-green-600 font-bold">เก็บประวัติศาสตร์ (Gold Standard)</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border font-bold">Type 3</td>
+                  <td class="p-3 border italic">New Field (เพิ่มคอลัมน์) <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-blue-600 underline"></a></td>
+                  <td class="p-3 border">ดูค่าปัจจุบัน vs ก่อนหน้า</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Active Learning 2 - Star Schema Diagnosis -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            โจทย์ทบทวน 2 (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">แก้ปัญหา Grain</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left">
+            <p class="text-xl mb-4 font-bold">ปัญหา:</p>
+            <p class="text-lg leading-relaxed mb-6">
+              "ในตาราง `Sales_Fact` แถวที่ 1 เก็บ **ยอดขายรวมทั้งปี** แต่แถวที่ 2 เก็บ **ยอดขายรายวัน** ของพนักงานคนหนึ่ง"
+            </p>
+            <p class="font-bold underline text-red-600">คำถาม: การกระทำนี้ผิดกฎข้อใดของการสร้างแบบจำลองมิติ? และควรแก้ไขอย่างไร?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Solution 2 - Step-by-Step Diagnosis -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 2: การวินิจฉัย Grain</h1>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 items-center border border-white/20">
+              <div class="bg-red-500 text-white font-bold p-2 rounded shrink-0">กฎที่ผิด</div>
+              <p class="text-xl">**Mixed Grain!** ห้ามผสมระดับรายละเอียดที่ต่างกันในตาราง Fact เดียวกันเด็ดขาด <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-500">
+              <p class="text-xl font-bold">วิธีแก้ไข:</p>
+              <ol class="list-decimal list-inside text-sm mt-2">
+                <li>สร้างตาราง `Daily_Sales_Fact` สำหรับ Grain ระดับรายวัน</li>
+                <li>สร้างตาราง `Annual_Sales_Aggregate` สำหรับข้อมูลสรุปรายปี (Aggregates) <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-yellow-300 underline"></a></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Cloud & Lakehouse Evolution -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">บทที่ 6-7: คลาวด์และ Lakehouse</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 text-left border border-white/20">
+            <div class="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="font-bold text-blue-300 italic mb-3">Cloud DW (Snowflake/BigQuery)</h4>
+                <ul class="text-xs space-y-2">
+                  <li>• **Separation of Storage/Compute:** ขยายอิสระ <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></li>
+                  <li>• **Elasticity:** จ่ายตามที่ใช้จริง <a href="https://www.snowflake.com/en/blog/the-snowflake-elastic-data-warehouse/" class="text-yellow-300 underline"></a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-bold text-green-300 italic mb-3">The Lakehouse Platform</h4>
+                <ul class="text-xs space-y-2">
+                  <li>• รวมข้อดีของ Data Warehouse และ Data Lake <a href="https://doi.org/10.1145/3448016.3457544" class="text-yellow-300 underline"></a></li>
+                  <li>• รองรับทั้ง BI และ AI/Machine Learning <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Medallion Architecture & AI Agents -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">สมัยใหม่: Medallion & AI</h1>
+          <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="bg-[#CD7F32]/40 p-3 rounded-xl border border-[#CD7F32]">
+              <h5 class="font-bold">BRONZE</h5>
+              <p class="text-[10px]">ข้อมูลดิบ/Landing <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-[#C0C0C0]/40 p-3 rounded-xl border border-[#C0C0C0]">
+              <h5 class="font-bold">SILVER</h5>
+              <p class="text-[10px]">สะอาด/Conformed <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-[#FFD700]/40 p-3 rounded-xl border border-[#FFD700] text-black">
+              <h5 class="font-bold text-yellow-900">GOLD</h5>
+              <p class="text-[10px]">สรุปผล/Business <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-900 underline"></a></p>
+            </div>
+          </div>
+          <div class="p-5 bg-purple-600/30 rounded-2xl border-2 border-purple-400">
+            <p class="font-bold italic">"Agentic AI (เช่น AV-SQL) ช่วยแปลงคำถามมนุษย์เป็น SQL เหนือเลเยอร์เหล่านี้โดยอัตโนมัติ" <a href="https://arxiv.org/abs/2411.07763" class="text-yellow-300 underline"></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Active Learning 3 - AI Agent Security -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            โจทย์ทบทวน 3 (15 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ความปลอดภัยของ AI เอเจนต์</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold">โจทย์:</p>
+            <p class="text-lg leading-relaxed mb-6 italic">
+              "หากคุณสร้าง AI เอเจนต์ให้พนักงานฝ่ายขายใช้งาน คุณจะทำอย่างไรเพื่อให้มั่นใจว่า AI จะไม่เข้าถึงข้อมูล **เงินเดือนพนักงาน** ที่อยู่ในคลังข้อมูลเดียวกัน?"
+            </p>
+            <p class="font-bold underline text-purple-600">คำถาม: ระบุ 2 กลไกสำคัญในการควบคุมความปลอดภัยนี้</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Solution 3 - Step-by-Step AI Security -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 3: การวางระบบความปลอดภัย</h1>
+          <div class="space-y-6 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 items-center border border-white/20">
+              <div class="bg-purple-500 text-white font-bold p-2 rounded shrink-0">1</div>
+              <p class="text-xl">**Role-Based Access Control (RBAC):** กำหนดสิทธิ์ให้ Account ที่ AI ใช้งานมีสิทธิ์อ่านเฉพาะตารางยอดขายเท่านั้น <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl flex gap-6 items-center border border-white/20">
+              <div class="bg-purple-500 text-white font-bold p-2 rounded shrink-0">2</div>
+              <p class="text-xl">**Semantic Layer Filtering:** ใช้ Semantic Layer ในการซ่อนมิติที่ละเอียดอ่อนไม่ให้ AI มองเห็นใน Context ของฝ่ายขาย <a href="https://doi.org/10.1109/CFS.2025.001" class="text-yellow-300 underline"></a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Conclusion & Final Tips -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">เคล็ดลับส่งท้าย</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. เน้นทำความเข้าใจ **ความแตกต่างของ 3NF และ Dimensional Model** ให้แม่นยำ
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. ฝึกฝนการวาด **Star Schema** และระบุ Grain ให้ถูกต้องตามโจทย์ธุรกิจ
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. อย่าลืมทบทวนความแตกต่างระหว่าง **SCD Type 1 และ 2** ซึ่งออกสอบบ่อยมาก
+            </div>
+          </div>
+          <div class="mt-12 text-3xl font-black bg-white text-blue-900 px-10 py-6 rounded-full shadow-2xl inline-block animate-pulse">
+            GOOD LUCK ON YOUR MID-TERM! 🚀
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **แหล่งข้อมูลอ้างอิงทั้งหมดสำหรับการทบทวน (Weeks 1-7):**
+
+*   **รากฐานและทฤษฎี:** [Data Warehousing Fundamentals (Paulraj Ponniah)](https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072)
+*   **การออกแบบ Kimball:** [The Data Warehouse Lifecycle Toolkit (Kimball Group)](https://www.wiley.com/en-us/The+Data+Warehouse+Lifecycle+Toolkit%2C+2nd+Edition-p-9780470149775)
+*   **เทคนิค ETL และมิติ:** [The Data Warehouse ETL Toolkit (Kimball & Caserta)](https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575)
+*   **คลังข้อมูลบนคลาวด์:** [Cloud Data Warehousing For Dummies (Snowflake Edition)](https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/)
+*   **วิวัฒนาการ Lakehouse:** [Lakehouse: A New Generation of Open Platforms (Armbrust et al.)](https://doi.org/10.1145/3448016.3457544)
+*   **คู่มือสถาปัตยกรรม Medallion:** [Bronze, Silver and Gold Layers (Tacnode/Databricks)](https://www.databricks.com/glossary/medallion-architecture)
+*   **Agentic AI งานวิจัย:** [AV-SQL: Decomposing Complex Text-to-SQL (arXiv)](https://arxiv.org/abs/2411.07763)
+*   **แนวทางการออกแบบ Agentic AI:** [A Practical Guide for Production-Grade Agentic AI Workflows (arXiv)](https://arxiv.org/abs/2512.08769)
+
+-->
+
+    </div>
+
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

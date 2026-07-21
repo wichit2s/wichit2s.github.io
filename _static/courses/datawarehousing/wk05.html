@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk05.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 5: การรวบรวมความต้องการ<br>
+            <span class="text-yellow-300">และแพ็กเกจข้อมูล</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การเปลี่ยนปัญหาทางธุรกิจให้เป็นโครงสร้างข้อมูลเพื่อการวิเคราะห์เชิงกลยุทธ์
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวใจสำคัญของสัปดาห์นี้</h2>
+            <p class="text-center text-white/80 italic">
+              "คลังข้อมูลไม่ใช่เรื่องของเทคโนโลยี แต่เป็นเรื่องของการแก้ปัญหาให้ผู้ใช้" 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a>
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">Phase 1: Requirements Analysis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>อธิบายความแตกต่างระหว่างความต้องการของระบบ OLTP และ Data Warehouse ได้ 
+                  <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+              <span>ระบุ **หัวเรื่อง (Subject Areas)** ที่สำคัญจากกระบวนการทางธุรกิจได้ 
+                <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></span>
+            </div>
+          </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>ออกแบบ **Information Package Diagram** เพื่อระบุ Dimensions และ Facts ได้ 
+                  <a href="https://www.wiley.com/en-us/The+Data+Warehouse+Lifecycle+Toolkit%2C+2nd+Edition-p-9780470149775" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>ประยุกต์ใช้เทคนิค **Agentic AI** ในการปรับจูนและวิเคราะห์ความต้องการอัตโนมัติได้ 
+                  <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Subject-Oriented Nature -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">การจัดระเบียบตามหัวเรื่อง (Subject-Oriented)</h1>
+          <p class="text-2xl mb-8">คลังข้อมูลไม่ได้เก็บตามแอปพลิเคชัน (เช่น ระบบบัญชี) แต่เก็บตาม "สิ่งที่ธุรกิจสนใจ"</p>
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-red-500/20 p-6 rounded-2xl border-t-4 border-red-500">
+              <h3 class="font-bold mb-2">Operational (App-Based)</h3>
+              <ul class="text-sm space-y-1">
+                <li>• ระบบรับคำสั่งซื้อ (Order Entry)</li>
+                <li>• ระบบควบคุมคลังสินค้า (Inventory System)</li>
+                <li>• ระบบจัดการข้อร้องเรียน (Claims)</li>
+              </ul>
+            </div>
+            <div class="bg-green-500/20 p-6 rounded-2xl border-t-4 border-green-500">
+              <h3 class="font-bold mb-2">Data Warehouse (Subject-Based)</h3>
+              <ul class="text-sm space-y-1">
+                <li>• การวิเคราะห์การขาย (Sales Analysis)</li>
+                <li>• พฤติกรรมลูกค้า (Customer Behavior)</li>
+                <li>• ประสิทธิภาพผลิตภัณฑ์ (Product Performance)</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-sm italic">อ้างอิง: <b>Subject Area Reporting</b> 
+            <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 4: Active Learning 1 - Identifying Subject Areas -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            กิจกรรมกลุ่ม (15 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">ภารกิจ: ค้นหา Subject Areas</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold">สถานการณ์: ธนาคารท้องถิ่น (Local Community Bank)</p>
+            <p class="mb-6">จงระบุหัวเรื่อง (Subject Areas) ที่สำคัญอย่างน้อย 3 หัวเรื่อง เพื่อใช้ในคลังข้อมูลของธนาคารนี้</p>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="p-4 bg-blue-100 rounded-xl border border-blue-300 text-center font-bold">Subject 1: ?</div>
+              <div class="p-4 bg-blue-100 rounded-xl border border-blue-300 text-center font-bold">Subject 2: ?</div>
+              <div class="p-4 bg-blue-100 rounded-xl border border-blue-300 text-center font-bold">Subject 3: ?</div>
+            </div>
+          </div>
+          <p class="mt-6 text-sm">ใบ้คำ: ลองดูตัวอย่างบริษัทประกันภัยและสายการบินในแหล่งข้อมูล 
+            <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 5: Solution 1 - Subject Area Identification -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 1: การกำหนด Subject Areas</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <h3 class="text-2xl font-bold mb-6 text-yellow-300">ตัวอย่าง Subject Areas สำหรับธนาคาร:</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+              <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl">
+                <h4 class="font-bold text-blue-600 border-b mb-3">1. ลูกค้า (Customer)</h4>
+                <p class="text-sm">เพื่อวิเคราะห์ข้อมูลประชากร, ความเสี่ยงเครดิต และความภักดีของลูกค้า</p>
+              </div>
+              <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl">
+                <h4 class="font-bold text-blue-600 border-b mb-3">2. บัญชี (Account)</h4>
+                <p class="text-sm">เพื่อวิเคราะห์ยอดเงินคงเหลือ, การทำรายการ (Transactions) และประเภทของบัญชี</p>
+              </div>
+              <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl">
+                <h4 class="font-bold text-blue-600 border-b mb-3">3. สินเชื่อ (Loan)</h4>
+                <p class="text-sm">เพื่อติดตามการชำระคืน, อัตราดอกเบี้ย และหนี้เสีย (NPL)</p>
+              </div>
+            </div>
+            <p class="mt-8 italic text-sm text-white/70">**ทำไมไม่ใช่ "ระบบลงทะเบียน"?** เพราะเราไม่ได้ต้องการเก็บแค่ข้อมูลที่ลูกค้ากรอก แต่เราต้องการ "หัวข้อ" เพื่อวิเคราะห์ประสิทธิภาพธุรกิจ</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Introduction to Information Packages -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8">แนวคิด "Information Packages"</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6">คือ "พิมพ์เขียว" ที่ใช้ระบุความต้องการข้อมูลสำหรับแต่ละ Subject Area 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+            <div class="grid grid-cols-3 gap-4 font-bold text-center">
+              <div class="bg-blue-600/40 p-4 rounded-xl border border-blue-400">Dimensions (คอลัมน์)</div>
+              <div class="bg-blue-600/40 p-4 rounded-xl border border-blue-400">Hierarchies (ลำดับชั้น)</div>
+              <div class="bg-yellow-400 text-black p-4 rounded-xl border border-yellow-600">Facts (แถวล่าง)</div>
+            </div>
+            <p class="mt-6 text-lg">ช่วยให้นักออกแบบรู้ว่าต้องดึงข้อมูลอะไร (What) และวิเคราะห์ตามมุมมองใด (How)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Anatomy of the Package -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">โครงสร้างภายในของ Information Package</h1>
+          <div class="bg-white rounded-3xl p-6 text-gray-900 shadow-2xl overflow-hidden">
+            <table class="w-full border-collapse border border-gray-300">
+              <thead class="bg-blue-900 text-white">
+                <tr>
+                  <th colspan="3" class="p-4 border">Information Subject: Sales Analysis <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr class="bg-gray-200 font-bold">
+                  <td class="p-3 border">Dimension: Time</td>
+                  <td class="p-3 border">Dimension: Location</td>
+                  <td class="p-3 border">Dimension: Product</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border italic">Year (ปี)</td>
+                  <td class="p-3 border italic">Region (ภูมิภาค)</td>
+                  <td class="p-3 border italic">Category (หมวดหมู่)</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border italic">Quarter (ไตรมาส)</td>
+                  <td class="p-3 border italic">State (รัฐ/จังหวัด)</td>
+                  <td class="p-3 border italic">Brand (ยี่ห้อ)</td>
+                </tr>
+                <tr class="bg-yellow-100 font-black">
+                  <td colspan="3" class="p-6 border text-center">
+                    Facts/Metrics: ยอดขายพยากรณ์, ยอดขายจริง, กำไรขั้นต้น, จำนวนหน่วย 
+                    <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Agentic AI in Requirements -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">AI เอเจนต์กับการวิเคราะห์ความต้องการ</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6">AI เอเจนต์สามารถช่วยแก้ปัญหาความไม่ชัดเจนในความต้องการ (Nebulous Requirements):</p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-4 bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+                <div class="bg-white text-purple-900 font-bold px-2 rounded">Agent 1</div>
+                <div>**Question Rewriting:** แปลงคำถามกว้างๆ ของผู้ใช้ให้เป็นความต้องการทางข้อมูลที่ชัดเจน 
+                  <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></div>
+              </div>
+              <div class="flex items-center gap-4 bg-purple-600/30 p-4 rounded-xl border border-purple-400">
+                <div class="bg-white text-purple-900 font-bold px-2 rounded">Agent 2</div>
+                <div>**Schema Mapping:** แนะนำตารางต้นทางที่อาจเกี่ยวข้องกับหัวเรื่องที่ต้องการ 
+                  <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">"AI ช่วยลด Linguistic Ambiguity (ความคลุมเครือทางภาษา) ได้อย่างมาก" <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a></div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Active Learning 2 - Step-by-Step Workshop -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            เวิร์กชอป: สร้างพิมพ์เขียว (30 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">การออกแบบ Information Package</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold underline">โจทย์โครงการ: การวิเคราะห์ยอดขาย E-Commerce</p>
+            <div class="space-y-4 text-lg">
+              <div>**Step 1:** ระบุมาตรวัด (Facts) ที่ต้องการรู้เกี่ยวกับยอดขาย (มาอย่างน้อย 3 อย่าง)</div>
+              <div>**Step 2:** ระบุมิติการมอง (Dimensions) ที่สำคัญ (อย่างน้อย 3 มิติ)</div>
+              <div>**Step 3:** สร้างลำดับชั้น (Hierarchies) สำหรับมิติ "พื้นที่ (Location)"</div>
+            </div>
+          </div>
+          <p class="mt-6 text-sm">เทคนิค: ใช้หลักการ <b>Plan-Execute-Assess</b> ในการเลือกข้อมูล 
+            <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 10: Solution 2 - Step 1: Defining Facts -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 1: การกำหนด Facts</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <p class="text-xl mb-6">Facts ต้องเป็นตัวเลขเชิงปริมาณ (Quantitative) ที่ใช้ในการวัดความสำเร็จ:</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 bg-yellow-400/20 border-l-4 border-yellow-400">
+                <h4 class="font-bold text-yellow-300">1. ยอดขายรวม (Sales Amount)</h4>
+                <p class="text-sm">มาตรวัดหลักของรายได้</p>
+              </div>
+              <div class="p-4 bg-yellow-400/20 border-l-4 border-yellow-400">
+                <h4 class="font-bold text-yellow-300">2. กำไรสุทธิ (Net Profit)</h4>
+                <p class="text-sm">ยอดขายหลังหักต้นทุนและค่าขนส่ง</p>
+              </div>
+              <div class="p-4 bg-yellow-400/20 border-l-4 border-yellow-400">
+                <h4 class="font-bold text-yellow-300">3. จำนวนคำสั่งซื้อ (Order Count)</h4>
+                <p class="text-sm">เพื่อวิเคราะห์ปริมาณงานและการเติบโต</p>
+              </div>
+              <div class="p-4 bg-yellow-400/20 border-l-4 border-yellow-400">
+                <h4 class="font-bold text-yellow-300">4. อัตรากำไร (%)</h4>
+                <p class="text-sm">Fact กึ่งรวม (Semi-additive) 
+                  <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Solution 2 - Step 2: Defining Dimensions -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 2: การกำหนด Dimensions</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <p class="text-xl mb-6">Dimensions คือ "บริบท" ที่ใช้ตอบคำถามว่า ใคร, อะไร, ที่ไหน, เมื่อไหร่:</p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-6">
+                <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center font-bold text-2xl">เมื่อไหร่</div>
+                <p class="text-xl font-bold text-blue-300">มิติเวลา (Time Dimension):</p>
+                <p>ขาดไม่ได้สำหรับคลังข้อมูล เพื่อดูแนวโน้ม (Time-variant) 
+                  <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a></p>
+              </div>
+              <div class="flex items-center gap-6">
+                <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center font-bold text-2xl">อะไร</div>
+                <p class="text-xl font-bold text-green-300">มิติสินค้า (Product Dimension):</p>
+                <p>เพื่อดูว่าสินค้ากลุ่มใดสร้างรายได้สูงสุด</p>
+              </div>
+              <div class="flex items-center gap-6">
+                <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center font-bold text-2xl">ที่ไหน</div>
+                <p class="text-xl font-bold text-red-300">มิติพื้นที่ (Location Dimension):</p>
+                <p>เพื่อหาตลาดที่ยังมีโอกาสเติบโต</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Solution 2 - Step 3: Hierarchies -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 3: การสร้าง Hierarchies</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-6 text-blue-900">ตัวอย่างลำดับชั้นมิติพื้นที่ (Location Hierarchy):</h3>
+            <div class="flex justify-between items-center max-w-2xl mx-auto">
+              <div class="bg-blue-100 p-4 rounded-xl font-bold">ภูมิภาค (Region)</div>
+              <div class="text-3xl text-gray-400">➞</div>
+              <div class="bg-blue-100 p-4 rounded-xl font-bold">จังหวัด (State)</div>
+              <div class="text-3xl text-gray-400">➞</div>
+              <div class="bg-blue-100 p-4 rounded-xl font-bold">เมือง (City)</div>
+              <div class="text-3xl text-gray-400">➞</div>
+              <div class="bg-blue-100 p-4 rounded-xl font-bold">รหัส (Zip)</div>
+            </div>
+            <div class="mt-10 p-4 bg-gray-50 border-dashed border-2 border-gray-300 italic">
+              "Hierarchies ช่วยให้ผู้ใช้สามารถทำกิจกรรม **Drill-Down** (เจาะลึกรายละเอียด) ได้ในเครื่องมือ BI" 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-blue-600 underline"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Summary and Phase 2 Prep -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300">บทสรุปสัปดาห์ที่ 5</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. การรวบรวมความต้องการต้องเน้นที่ **Subject areas** ไม่ใช่ระบบงาน (Operational Silos) 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. **Information Packages** คือพื้นฐานในการสร้าง Star Schema และการเชื่อมโยงข้อมูล 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. **Facts** ต้องสอดคล้องกับมิติ (Dimensions) ที่มีลำดับชั้น (Hierarchies) ชัดเจน 
+              <a href="https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072" class="text-yellow-300 underline"></a>
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            สัปดาห์หน้า: วิวัฒนาการสู่คลาวด์ (Cloud DW) และ Snowflake!
+          </div>
+        </div>
+      </div>
+
+      ---
+
+      <!--
+### **แหล่งข้อมูลและทรัพยากรสำหรับสัปดาห์ที่ 5:**
+
+*   **ทฤษฎีพื้นฐาน Information Packages:** [Data Warehousing Fundamentals (Paulraj Ponniah)](https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072)
+*   **วงจรชีวิตการออกแบบ (Lifecycle):** [The Data Warehouse Lifecycle Toolkit (Kimball Group)](https://www.wiley.com/en-us/The+Data+Warehouse+Lifecycle+Toolkit%2C+2nd+Edition-p-9780470149775)
+*   **เทคนิคการเก็บความต้องการขั้นสูง:** [Requirement Definitions: Scope and Content Guide](https://www.wiley.com/en-us/Data+Warehousing+Fundamentals+for+IT+Professionals%2C+2nd+Edition-p-9780470462072) (อ้างอิงหน้า 116-118)
+*   **Agentic AI ในงานวิศวกรรมข้อมูล:** [AV-SQL: Decomposing Complex Text-to-SQL Queries (arXiv)](https://arxiv.org/abs/2512.08769)
+*   **ชุดข้อมูลโครงการ (Dataset):** [Brazilian E-Commerce (Olist) สำหรับฝึกระบุ Metrics](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

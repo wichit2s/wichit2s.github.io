@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk09.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Week 9: ETL & Modern<br>
+            <span class="text-yellow-300">Data Engineering</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Building the Lifeline of the Data Warehouse: From Static Pipelines to Agentic Workflows
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Project Milestone</h2>
+            <div class="flex items-center justify-center gap-4">
+              <div class="bg-yellow-400 text-yellow-900 font-bold px-6 py-2 rounded-lg shadow-lg">
+                Phase 3: Automated Pipeline Development
+              </div>
+            </div>
+            <p class="mt-4 text-center text-white/80 italic">
+              "The ETL system is the back room of the data warehouse, where raw data is refined into valuable assets" 
+              <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-yellow-300 underline"></a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">Learning Outcomes</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>Explain the 3 main stages of the ETL process: Extraction, Transformation, and Loading</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>Differentiate between traditional ETL and modern Cloud-native ELT architectures</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>Apply data cleaning and conforming techniques to ensure data quality</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>Integrate Agentic AI for autonomous, self-healing pipeline monitoring</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Part 1 Title -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">Part 1: The Traditional ETL Paradigm</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-3xl font-bold mb-4 italic">"Making data usable"</h2>
+            <p class="text-xl mb-6">ETL is the process of extracting data from source systems, transforming it into a common format, and loading it into the target data warehouse.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Data Extraction Challenges -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center text-yellow-300">Challenges of Data Extraction</h1>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white/10 p-6 rounded-2xl border-b-4 border-blue-400 text-left">
+              <h3 class="font-bold text-lg mb-2">Heterogeneous Sources</h3>
+              <p class="text-sm">Connecting to RDBMS, XML, Flat Files, and ERP systems simultaneously.</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-b-4 border-blue-400 text-left">
+              <h3 class="font-bold text-lg mb-2">CDC (Change Data Capture)</h3>
+              <p class="text-sm">Identifying only new or modified records to reduce processing time.</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-b-4 border-blue-400 text-left">
+              <h3 class="font-bold text-lg mb-2">Source System Impact</h3>
+              <p class="text-sm">Minimizing the performance overhead on production systems during extract.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Data Cleaning & Conforming -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Data Cleaning: Ensuring Integrity</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left shadow-xl">
+            <p class="text-xl mb-6 font-bold">"Quality is the most visible metric of ETL success"</p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-4 bg-red-50 p-4 rounded-xl">
+                <span class="text-2xl">⚠️</span>
+                <div>**Parsing:** Breaking single fields (e.g., Address) into structured components.</div>
+              </div>
+              <div class="flex items-center gap-4 bg-blue-50 p-4 rounded-xl">
+                <span class="text-2xl">🔄</span>
+                <div>**Deduplication:** Identifying and merging duplicate records from different systems.</div>
+              </div>
+              <div class="flex items-center gap-4 bg-green-50 p-4 rounded-xl">
+                <span class="text-2xl">📏</span>
+                <div>**Standardization:** Converting character sets (EBCDIC to ASCII) and units.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Active Learning 1 - The Logical Data Map -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            Group Activity (20 min)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">Designing a Logical Data Map</h1>
+          <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold text-yellow-300">Scenario: Customer Ingestion</p>
+            <p class="mb-6">You have two source systems: **CRM (Oracle)** and **Web App (CSV)**. Create a map for the `Dim_Customer` table.</p>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="p-4 bg-white/10 rounded-lg border border-white/20">
+                **CRM Columns:** `cust_id`, `fname`, `lname`, `addr_line`
+              </div>
+              <div class="p-4 bg-white/10 rounded-lg border border-white/20">
+                **Web Columns:** `email`, `full_name`, `signup_date`
+              </div>
+            </div>
+            <p class="mt-6 font-bold">Task: Identify 3 transformation rules needed to merge these into one dimension.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Solution 1 - Step-by-Step Data Mapping -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">Solution 1: Step-by-Step Data Map</h1>
+          <div class="space-y-4 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-500">
+              <p class="text-xl font-bold">Step 1: Entity Identification</p>
+              <p class="text-sm">Use **Email** as the natural key to link CRM records to Web App records.</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-500">
+              <p class="text-xl font-bold">Step 2: String Concatenation</p>
+              <p class="text-sm">Merge `CRM.fname` + `CRM.lname` to match the format of `Web.full_name`.</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-500">
+              <p class="text-xl font-bold">Step 3: Surrogate Key Generation</p>
+              <p class="text-sm">Assign a unique integer `Customer_Key` to decouple the warehouse from source IDs.</p>
+            </div>
+          </div>
+          <p class="mt-8 italic text-sm text-white/60">Reference: **The Surrogate Key Pipeline** 
+            <a href="https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 8: Part 2 Title -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">Part 2: The ELT & Cloud Evolution</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-3xl font-bold mb-4 italic">"Flip the script"</h2>
+            <p class="text-xl mb-6">ELT leverages the massive compute power of modern cloud data warehouses to transform data *after* it is loaded.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: ETL vs. ELT Architecture -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8">ETL vs. ELT Comparison</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-blue-500 shadow-2xl">
+              <h2 class="text-2xl font-bold mb-4 text-blue-600">Traditional ETL</h2>
+              <ul class="text-xs space-y-2">
+                <li>• **Transform:** Happens in a staging area (outside the DB).</li>
+                <li>• **Load:** Only cleaned data enters the warehouse.</li>
+                <li>• **Pros:** Efficient storage, robust quality control.</li>
+                <li>• **Cons:** Scalability bottleneck as data grows.</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-green-500 shadow-2xl">
+              <h2 class="text-2xl font-bold mb-4 text-green-600">Modern ELT</h2>
+              <ul class="text-xs space-y-2">
+                <li>• **Load:** Raw data is loaded into the warehouse first.</li>
+                <li>• **Transform:** Scalable cloud compute does the work.</li>
+                <li>• **Pros:** Infinite scalability, supports ML/AI directly.</li>
+                <li>• **Cons:** Requires strict data governance.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-6 text-sm italic">Citation: **ETL vs ELT Evolution** 
+            <a href="https://www.ijfmr.com/" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 10: Medallion Architecture (Bronze/Silver/Gold) -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Medallion Architecture</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-lg mb-6 leading-relaxed">The standard for organizing data in modern Lakehouses:</p>
+            <div class="grid grid-cols-3 gap-4 font-bold text-center">
+              <div class="bg-[#CD7F32] p-4 rounded-xl">Bronze (Raw)</div>
+              <div class="bg-[#C0C0C0] text-black p-4 rounded-xl">Silver (Cleaned)</div>
+              <div class="bg-[#FFD700] text-black p-4 rounded-xl">Gold (Business)</div>
+            </div>
+            <ul class="mt-8 space-y-2 text-sm italic">
+              <li>• **Bronze:** Landing zone for raw data (e.g., Kaggle Olist JSON).</li>
+              <li>• **Silver:** Conformed dimensions and facts (Kimball compliant).</li>
+              <li>• **Gold:** Aggregated tables ready for AI Agents and BI dashboards.</li>
+            </ul>
+          </div>
+          <p class="mt-8 text-sm italic">Read more: **Medallion Architecture Guide** 
+            <a href="https://www.databricks.com/glossary/medallion-architecture" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 11: Part 3 Title -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">Part 3: Agentic AI & Autonomous Data Engineering</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-3xl font-bold mb-4 italic">"Self-healing pipelines"</h2>
+            <p class="text-xl mb-6">AI Agents are transforming ETL from static scripts into intelligent, autonomous workflows.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: AI-Driven Performance & Healing -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8">The AI-Native Pipeline Framework</h1>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl">
+              <h4 class="font-bold text-purple-600 border-b mb-3">Self-Healing</h4>
+              <p class="text-sm mb-4">Agents detect pipeline failures (e.g., schema drift) and automatically suggest or apply SQL fixes.</p>
+              <div class="bg-purple-50 p-2 rounded text-xs italic">"Anomaly detection is key to autonomous systems."</div>
+            </div>
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl">
+              <h4 class="font-bold text-purple-600 border-b mb-3">Cost Optimization</h4>
+              <p class="text-sm mb-4">ML models predict workload spikes and scale cloud compute resources before they fail.</p>
+              <div class="bg-purple-50 p-2 rounded text-xs italic">"Adaptive indexing based on query frequency."</div>
+            </div>
+          </div>
+          <p class="mt-8 text-sm italic">Citation: **AI-Driven Data Warehousing** 
+            <a href="https://doi.org/10.37745/ejcsit.2013/vol13n52185194" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 13: AV-SQL: Agentic Views in ETL -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">AV-SQL for Transformation</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6">Traditional Text-to-SQL fails on complex joins. AV-SQL solves this by:</p>
+            <ol class="space-y-4 text-lg">
+              <li>1. **Question Rewriting:** Clarifying implicit constraints (e.g., "Active Users").</li>
+              <li>2. **Agent View Generation:** Creating modular CTE-based views for large schemas.</li>
+              <li>3. **Iterative Validation:** Running execution-based checks to fix syntax errors.</li>
+            </ol>
+          </div>
+          <p class="mt-8 text-sm italic">Research Paper: **AV-SQL Framework** 
+            <a href="https://arxiv.org/abs/2411.07763" class="text-yellow-300 underline"></a></p>
+        </div>
+      </div>
+
+      <!-- Slide 14: Active Learning 2 - Designing an AI Workflow -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            Workshop (30 min)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">Designing an Agentic ETL Workflow</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-4 font-bold underline">Problem: Schema Drift</p>
+            <p class="mb-6 italic">"A source system added a new column `loyalty_tier` to the users table without notice. Your pipeline is failing."</p>
+            <div class="space-y-4 text-lg">
+              <div>**Step 1:** Describe how a **Monitoring Agent** detects this failure.</div>
+              <div>**Step 2:** How does the **LLM Planner** design a fix?</div>
+              <div>**Step 3:** What metadata is updated after the repair?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Solution 2 - Step-by-Step AI Repair -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">Solution 2: AI-Native Healing Steps</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <ul class="space-y-4 text-xl">
+              <li>✅ **Detection:** Monitoring Agent compares the incoming data frame schema against the **Metadata Repository**.</li>
+              <li>✅ **Planning:** The LLM Planner identifies the mismatch and generates a dynamic `ALTER TABLE` statement for the Silver layer.</li>
+              <li>✅ **Audit:** The **Governance Layer** records the change in data lineage to ensure auditability.</li>
+            </ul>
+            <div class="mt-8 p-4 bg-purple-600/20 border-l-4 border-purple-500 italic">
+              "Modern pipelines use 'Prompt Engineering' as part of their logic." 
+              <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Summary and Project Phase 3 -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">Week 9 Summary</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. ETL is complex; quality transformations often require human judgment or AI assistance.
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. ELT on Cloud (Medallion) is the modern standard for high-volume Lakehouses.
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. Agentic AI enables self-healing and performance optimization beyond static code.
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: Data Visualization using Tableau!
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **References & Resources for Week 9:**
+
+*   **ETL Theory & Foundations:** [The Data Warehouse ETL Toolkit (Kimball)](https://www.wiley.com/en-us/The+Data+Warehouse+ETL+Toolkit%3A+Practical+Techniques+for+Extracting%2C+Cleaning%2C+Conforming%2C+and+Delivering+Data-p-9780764567575)
+*   **Architectural Shifts:** [ETL vs ELT: Evolving Approaches (IJFMR)](https://www.ijfmr.com/)
+*   **AI Innovations:** [AI-Driven Data Warehousing Optimization (EA Journals)](https://doi.org/10.37745/ejcsit.2013/vol13n52185194)
+*   **Agentic Frameworks:** [A Practical Guide for Production-Grade Agentic AI Workflows (arXiv)](https://arxiv.org/abs/2512.08769)
+*   **Advanced Text-to-SQL:** [AV-SQL: Decomposing Complex Queries (arXiv)](https://arxiv.org/abs/2411.07763)
+*   **Medallion Guide:** [Medallion Architecture Overview (Tacnode/Databricks)](https://www.databricks.com/glossary/medallion-architecture)
+*   **Course Roadmap:** [UT Dallas ACCT/MIS 6309 Syllabus](https://catalog.utdallas.edu/2016/graduate/courses/acct6309)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

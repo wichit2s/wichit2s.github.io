@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk06.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            สัปดาห์ที่ 6: วิวัฒนาการสู่<br>
+            <span class="text-yellow-300">คลังข้อมูลบนคลาวด์</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            การเปลี่ยนผ่านจาก On-Premise สู่ความยืดหยุ่นของ Cloud-Native Architecture
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">หัวใจสำคัญของสัปดาห์นี้</h2>
+            <p class="text-center text-white/80 italic">
+              "การแยกส่วนประมวลผลออกจากพื้นที่จัดเก็บข้อมูล คือจุดเริ่มต้นของประสิทธิภาพที่ไร้ขีดจำกัด" 
+              <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a>
+            </p>
+          </div>
+          <div class="text-lg text-white/80">
+            <span class="bg-white/20 px-4 py-2 rounded-full">Phase 2: Cloud Infrastructure Setup</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">ผลลัพธ์การเรียนรู้</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>อธิบายข้อจำกัดของคลังข้อมูลแบบเดิมและประโยชน์ของระบบบนคลาวด์ได้ 
+                  <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+              <span>วิเคราะห์สถาปัตยกรรม **Multi-cluster Shared Data** ของ Snowflake ได้ 
+                <a href="https://www.snowflake.com/en/blog/the-snowflake-elastic-data-warehouse/" class="text-yellow-300 underline"></a></span>
+            </div>
+          </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>เปรียบเทียบการทำงานระหว่าง **Snowflake** และ **BigQuery** เบื้องต้นได้ 
+                  <a href="https://www.databricks.com/blog/2020/06/24/introducing-delta-engine.html" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>ตั้งค่าสภาพแวดล้อมบนคลาวด์ (Compute/Storage) สำหรับโครงการได้ 
+                  <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Traditional Crisis -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">วิกฤตของคลังข้อมูลแบบเดิม (On-Premise)</h1>
+          <div class="grid grid-cols-2 gap-8 text-left">
+            <div class="bg-red-500/20 p-6 rounded-2xl border-l-4 border-red-500">
+              <h3 class="font-bold mb-2">1. การแข่งขันแย่งชิงทรัพยากร</h3>
+              <p class="text-sm">งานโหลดข้อมูล (Load) และงานวิเคราะห์ (Query) แย่ง RAM/CPU เดียวกัน ทำให้ระบบล่ม 
+                <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></p>
+            </div>
+            <div class="bg-red-500/20 p-6 rounded-2xl border-l-4 border-red-500">
+              <h3 class="font-bold mb-2">2. ความยากในการขยาย (Scalability)</h3>
+              <p class="text-sm">ต้องซื้อฮาร์ดแวร์เพิ่มล่วงหน้าหลายเดือน และมักใช้งานไม่คุ้มค่าในช่วงนอกเวลาทำงาน 
+                <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></p>
+            </div>
+          </div>
+          <div class="mt-10 p-6 bg-white/10 rounded-xl italic">
+            "ในอดีต เราต้องทำ Preplanning อย่างหนัก แต่ปัจจุบันเราเน้น **Rapid Iteration** (การทำซ้ำอย่างรวดเร็ว)" 
+            <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Active Learning 1 - The Infrastructure Bottleneck -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            กิจกรรมกลุ่ม (15 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">คลังข้อมูลล่มในวันลดราคา!</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30">
+            <p class="text-xl mb-4 font-bold">สถานการณ์: วันที่ 11.11 (Double Day)</p>
+            <p class="mb-6">บริษัทอีคอมเมิร์ซของคุณมีผู้ใช้เพิ่มขึ้น 20 เท่า และฝ่ายการตลาดต้องการดูรายงานยอดขายแบบ Real-time ทุก 5 นาที แต่ระบบคลังข้อมูลแบบเดิมกำลัง **"อืด"** มาก</p>
+            <div class="space-y-4">
+              <p class="font-bold text-blue-600">คำถาม:</p>
+              <ol class="list-decimal list-inside space-y-2">
+                <li>ปัญหาเกิดจากการรวมศูนย์ (Centralized) ของอะไรบ้าง?</li>
+                <li>หากคุณแก้ปัญหาด้วยการซื้อเซิร์ฟเวอร์เพิ่มหลังจบงาน 11.11 จะเกิดผลเสียอย่างไรในระยะยาว?</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Solution 1 - Strategic Analysis -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 1: การวิเคราะห์ปัญหาโครงสร้างพื้นฐาน</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="p-4 bg-white text-gray-900 rounded-xl">
+                <h4 class="font-bold border-b mb-2">1. สาเหตุของปัญหา</h4>
+                <p class="text-sm">เกิดจาก **Resource Contention** (การแย่งชิงทรัพยากร) ระหว่างการโหลดข้อมูลสินค้าเข้า (Ingestion) และการสืบค้นรายงาน (Query) ที่ใช้ท่อประมวลผลเดียวกัน 
+                  <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></p>
+              </div>
+              <div class="p-4 bg-white text-gray-900 rounded-xl">
+                <h4 class="font-bold border-b mb-2">2. ผลเสียระยะยาว</h4>
+                <p class="text-sm">**Inflexibility:** หลังจากวัน 11.11 ระบบจะเหลือว่าง (Idle) แต่คุณยังต้องจ่ายค่าบำรุงรักษาฮาร์ดแวร์มหาศาล (Sunk Cost) 
+                  <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></p>
+              </div>
+            </div>
+            <p class="mt-8 text-center text-xl font-bold text-yellow-300 italic">"นี่คือเหตุผลที่เราต้องการความยืดหยุ่น (Elasticity) ของ Cloud DW!"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Decoupling Storage and Compute -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300 text-center text-shadow-lg">การแยกส่วนพื้นที่จัดเก็บและการประมวลผล</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6 font-bold italic underline">สถาปัตยกรรมของ Snowflake <a href="https://www.snowflake.com/en/blog/the-snowflake-elastic-data-warehouse/" class="text-yellow-300 underline"></a>:</p>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-blue-600/40 p-4 rounded-xl border-t-4 border-blue-300 text-center">
+                <h4 class="font-bold">Cloud Services</h4>
+                <p class="text-xs">บริหารจัดการ, Metadata, ความปลอดภัย</p>
+              </div>
+              <div class="bg-green-600/40 p-4 rounded-xl border-t-4 border-green-300 text-center">
+                <h4 class="font-bold">Virtual Warehouse</h4>
+                <p class="text-xs">ส่วนประมวลผล (Compute) ที่ยืดหยุ่นและขยายได้อิสระ</p>
+              </div>
+              <div class="bg-yellow-600/40 p-4 rounded-xl border-t-4 border-yellow-300 text-center text-white">
+                <h4 class="font-bold">Database Storage</h4>
+                <p class="text-xs">พื้นที่จัดเก็บข้อมูลแบบรวมศูนย์ที่รองรับได้ไม่จำกัด</p>
+              </div>
+            </div>
+            <p class="mt-8 text-lg text-center font-bold">"Workload Isolation: การตลาดและวิศวกรรมใช้ CPU แยกกัน แต่เห็นข้อมูลเดียวกัน!" <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Elasticity vs. Scalability -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8">นิยามความสำเร็จบนคลาวด์</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-blue-500 shadow-2xl">
+              <h2 class="text-2xl font-bold mb-4">Scalability (ขยายขนาด)</h2>
+              <p class="text-sm italic mb-4">"รองรับข้อมูลระดับ Petabytes"</p>
+              <ul class="text-xs space-y-2">
+                <li>• เพิ่มพลังประมวลผลตามความซับซ้อนของ Query</li>
+                <li>• ไม่มีการจำกัดพื้นที่จัดเก็บข้อมูลเบื้องหลัง</li>
+                <li>• สามารถให้บริการผู้ใช้พร้อมกัน (Concurrency) ได้หลักพันคน</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-8 rounded-2xl text-left border-t-8 border-green-500 shadow-2xl">
+              <h2 class="text-2xl font-bold mb-4">Elasticity (ความยืดหยุ่น)</h2>
+              <p class="text-sm italic mb-4">"จ่ายเท่าที่ใช้ (On-demand)"</p>
+              <ul class="text-xs space-y-2">
+                <li>• เปิด-ปิด ส่วนประมวลผลได้ทันทีเมื่อไม่มีการใช้งาน</li>
+                <li>• ปรับขนาดจากเซิร์ฟเวอร์จิ๋วเป็นซูเปอร์คอมพิวเตอร์ในไม่กี่วินาที</li>
+                <li>• เหมาะสำหรับงานที่มีความผันผวนสูง (Spiky workloads) <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Active Learning 2 - Cost & Performance Calculation -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg">
+            เวิร์กชอป: การคำนวณต้นทุน (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8 italic">เปรียบเทียบ TCO (Total Cost of Ownership)</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left">
+            <p class="text-xl mb-4 font-bold">โจทย์: บริษัท E-Commerce ต้องประมวลผลรายงานใหญ่ 2 ฉบับต่อวัน</p>
+            <div class="grid grid-cols-2 gap-8 text-sm">
+              <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                <h4 class="font-bold border-b border-blue-200 mb-2">Option A: On-Premise</h4>
+                <p>ซื้อเซิร์ฟเวอร์ $50,000 (ใช้ได้ 3 ปี) ค่าดูแล \$2,000/เดือน ไม่ว่ารายงานจะรันกี่ชั่วโมงก็ตาม</p>
+              </div>
+              <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                <h4 class="font-bold border-b border-green-200 mb-2">Option B: Cloud DW</h4>
+                <p>ไม่มีค่าเริ่มต้น ค่าประมวลผล \$10 ต่อชั่วโมง (รันรายงานละ 1 ชม.) ค่าจัดเก็บคงที่ \$50/เดือน</p>
+              </div>
+            </div>
+            <p class="mt-6 font-bold text-center underline text-blue-600">จงคำนวณต้นทุนต่อเดือนของทั้งสองตัวเลือก!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Solution 2 - Step-by-Step Calculation -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลยขั้นตอนที่ 2: การคำนวณเปรียบเทียบต้นทุน</h1>
+          <div class="grid md:grid-cols-2 gap-8 text-left">
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-yellow-300 mb-4 border-b">ต้นทุน Option A:</h3>
+              <ul class="space-y-2 text-sm">
+                <li>• ค่าตัดจำหน่ายเซิร์ฟเวอร์ (\$50,000 / 36 เดือน)  \$1,388</li>
+                <li>• ค่าดูแลรักษาพนักงานและไฟฟ้า \$2,000</li>
+                <li class="font-bold text-red-300">• รวมต่อเดือน: **\$3,388**</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+              <h3 class="font-bold text-yellow-300 mb-4 border-b">ต้นทุน Option B:</h3>
+              <ul class="space-y-2 text-sm">
+                <li>• ค่ารันรายงาน (\$10 x 2 ฉบับ x 30 วัน)  \$600</li>
+                <li>• ค่าจัดเก็บข้อมูล \$50</li>
+                <li class="font-bold text-green-300">• รวมต่อเดือน: **\$650**</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 bg-green-500/20 p-4 rounded-xl border border-green-400 font-bold">
+            💡 บทสรุป: คลาวด์ช่วยลดค่าใช้จ่ายแฝง และเปลี่ยนจาก "ค่าใช้จ่ายลงทุน (CapEx)" เป็น "ค่าใช้จ่ายดำเนินการ (OpEx)" 
+            <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: AI-Driven Performance Optimization -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">อนาคต: คลังข้อมูลที่เพิ่มประสิทธิภาพด้วย AI</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <p class="text-xl mb-6 leading-relaxed">ในสถาปัตยกรรมคลาวด์สมัยใหม่ ML จะเข้ามาช่วยจัดการอัตโนมัติ:</p>
+            <ul class="space-y-4 text-lg">
+              <li class="flex items-center gap-4">
+                <div class="bg-purple-600 text-white p-2 rounded-lg font-bold">Adaptive Indexing</div>
+                <span>สร้างและลบดัชนี (Index) อัตโนมัติตามพฤติกรรมการใช้งานจริง <a href="https://doi.org/10.37745/ejcsit.2013/vol13n52185194" class="text-yellow-300 underline"></a></span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="bg-purple-600 text-white p-2 rounded-lg font-bold">Workload Forecasting</div>
+                <span>พยากรณ์ปริมาณงานล่วงหน้าและขยายขนาด Compute รอไว้ <a href="https://doi.org/10.37745/ejcsit.2013/vol13n52185194" class="text-yellow-300 underline"></a></span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="bg-purple-600 text-white p-2 rounded-lg font-bold">Cost Guardrail</div>
+                <span>ใช้ ML ตรวจสอบ Query ที่ "แพงเกินจำเป็น" และแจ้งเตือนก่อนรัน <a href="https://doi.org/10.37745/ejcsit.2013/vol13n52185194" class="text-yellow-300 underline"></a></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Project Phase 2 - Setting Up the Lab -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Project Phase 2 Kick-off</h1>
+          <div class="bg-white text-gray-900 p-8 rounded-3xl text-left shadow-2xl border-4 border-yellow-400">
+            <h2 class="text-2xl font-black mb-6 underline">ภารกิจสัปดาห์นี้: การสร้าง "บ้าน" บนคลาวด์</h2>
+            <ol class="space-y-4 text-lg font-bold">
+              <li>1. สมัครบัญชี **Snowflake Free Trial** หรือใช้ **BigQuery Sandbox** <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-blue-600 underline"></a></li>
+              <li>2. สร้าง **Database Storage** เพื่อรองรับข้อมูลโครงการอีคอมเมิร์ซ</li>
+              <li>3. ทดลองสร้าง **Virtual Warehouse (Compute)** ขนาดเล็ก (X-Small)</li>
+              <li>4. อัปโหลดไฟล์ตัวอย่าง (Kaggle Dataset) เข้าสู่ระบบ <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" class="text-blue-600 underline">[Kaggle]</a></li>
+            </ol>
+          </div>
+          <p class="mt-8 text-white/70 italic text-sm">"เรากำลังเตรียมรากฐานสำหรับ Medallion Architecture ในสัปดาห์หน้า"</p>
+        </div>
+      </div>
+
+      <!-- Slide 12: Summary and Next Steps -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white" >
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">บทสรุปสัปดาห์ที่ 6</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">
+              1. คลังข้อมูลบนคลาวด์แก้ปัญหา **Resource Contention** ด้วยการแยกส่วน Compute/Storage 
+              <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">
+              2. **Elasticity** ช่วยให้ธุรกิจเปลี่ยนความไวได้ตามความต้องการ (Spiky Workloads) 
+              <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a>
+            </div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">
+              3. **Zero-Management:** คุณไม่ต้องเป็นช่างซ่อมเซิร์ฟเวอร์ แต่เป็น "สถาปนิกข้อมูล" อย่างเต็มตัว 
+              <a href="https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/" class="text-yellow-300 underline"></a>
+            </div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: Data Lakehouse & Medallion Architecture!
+          </div>
+        </div>
+      </div>
+
+      <!--
+
+### **แหล่งข้อมูลและทรัพยากรสำหรับสัปดาห์ที่ 6:**
+
+*   **คู่มือ Snowflake สำหรับผู้เริ่มต้น:** [Cloud Data Warehousing For Dummies (Snowflake Special Edition)](https://www.itupdate.com/resource/cloud-data-warehousing-for-dummies/)
+*   **นวัตกรรม ML ในคลังข้อมูล:** [AI-Driven Data Warehousing: ML Innovations for Performance (Rangini, 2025)](https://doi.org/10.37745/ejcsit.2013/vol13n52185194)
+*   **วิวัฒนาการสถาปัตยกรรม:** [From Data Warehouse to Lakehouse Evolution (Binariks)](https://binariks.com/blog/from-data-warehouse-to-lakehouse/)
+*   **สถาปัตยกรรม Snowflake เชิงลึก:** [The Snowflake Elastic Data Warehouse (Dageville et al.)](https://www.snowflake.com/en/blog/the-snowflake-elastic-data-warehouse/) (อ้างอิงผ่านเนื้อหา)
+*   **ชุดข้อมูลโครงการ (Dataset):** [Brazilian E-Commerce Public Dataset (Kaggle)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    // นับจำนวนสไลด์ทั้งหมด
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+
+    // เพิ่ม event listeners
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>
