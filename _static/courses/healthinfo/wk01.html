@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Heallth Informatics">
+    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop in Health Informatics</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- สไลด์ที่ 1: หน้าปกรายวิชา -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ปฏิบัติการสารสนเทศด้านสุขภาพ</h2>
+            <p class="text-2xl text-white/90 mb-8 leading-relaxed font-semibold">
+              สัปดาห์ที่ ๑: บทนำสู่สารสนเทศสุขภาพและการเตรียมข้อมูล 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-xl font-semibold mb-4">อาจารย์ผู้สอน</h3>
+              <p class="text-lg leading-relaxed mx-auto max-w-2xl">
+                <a href="https://staff.sci.ubu.ac.th/wichit.s" class="text-blue-400 hover:text-blue-200">ดร.วิชิต สมบัติ</a>
+              </p>
+            </div>
+            <div class="text-sm text-white/70 mt-8">หมวดวิชาเฉพาะ (วิชาบังคับ) | หลักสูตรวิทยาศาสตรบัณฑิต สาขาวิชาวิทยาศาสตร์การแพทย์ </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 2: นิยามสารสนเทศสุขภาพ -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">สารสนเทศสุขภาพคืออะไร?</h2>
+            <p class="text-xl text-left text-white/90 mb-8 leading-relaxed indent-12">
+              <strong>สารสนเทศสุขภาพ (Health Informatics)</strong> คือศาสตร์และการปฏิบัติงานที่เกี่ยวข้องกับการจัดการข้อมูลสุขภาพเพื่อให้เกิดข้อมูลและสารสนเทศที่มีความหมาย (Data plus Meaning)  โดยมีเทคโนโลยีทำหน้าที่สนับสนุนเพื่อช่วยในการตัดสินใจทางการแพทย์อย่างรอบคอบ 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">หัวใจสำคัญ</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>ไม่ใช่แค่เรื่องคอมพิวเตอร์:</strong> <br/><p class="indent-12">นิยามโดย Greenes & Shortliffe (1990) ชี้ว่าศาสตร์นี้เน้นกระบวนการคิดทางปัญญา การประมวลผลข้อมูล และงานด้านการสื่อสาร </p></li>
+                <li><strong>เน้นข้อมูลที่มีความหมาย:</strong><br/><p class="indent-12"> ให้ความสำคัญกับการนำสถิติและข้อมูลดิบมาสกัดความหมายเพื่อปรับปรุงการรักษารายบุคคล </p></li>
+                <li><strong>การยกระดับผลสัมฤทธิ์:</strong><br/><p class="indent-12"> มุ่งใช้ข้อมูลเพื่อปรับปรุงระบบดูแลสุขภาพ งานสาธารณสุข และขับเคลื่อนงานวิจัยชีวการแพทย์ระดับสูง </p</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: ความรู้เบื้องต้น </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 3: ปัจจัยด้านพฤติกรรมมนุษย์และองค์กร -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ความเข้าใจด้านพฤติกรรมและองค์กร</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              ระบบสารสนเทศสุขภาพที่มีประสิทธิภาพจำต้องคำนึงถึง <strong>พฤติกรรมมนุษย์และบริบทขององค์กร (Human and Organization Behavior)</strong> เสมอ  เนื่องจากบุคลากรการดูแลสุขภาพเป็นแกนหลักในการใช้งานจริงระดับปฏิบัติงาน 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">องค์ประกอบที่ต้องวิเคราะห์</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>ปฏิสัมพันธ์กับเทคโนโลยี:</strong><br/><p class="indent-12"> ศึกษาพฤติกรรมความพร้อมและอุปสรรคในการใช้งานระบบคอมพิวเตอร์ของแพทย์และพยาบาล </p></li>
+                <li><strong>ปัจจัยขับเคลื่อนทางจิตวิทยา:</strong><br/><p class="indent-12"> สิ่งที่ส่งผลต่อประสิทธิภาพการรับเอาและยอมรับระบบสารสนเทศในสภาพแวดล้อมทางคลินิก </p</li>
+                <li><strong>การนำนวัตกรรมมาประยุกต์ใช้:</strong><br/><p class="indent-12"> การพิจารณาความสอดคล้องกับพฤติกรรมในองค์กรเพื่อเพิ่มความร่วมมือในการทำงาน </p</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: พฤติกรรมมนุษย์และองค์กร </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 4: Informed & Assisted Care -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">หลักการ Informed & Assisted</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              หัวใจหลักของปฏิบัติการสารสนเทศสุขภาพคือการบูรณาการระบบเพื่อสร้างความรอบรู้ (Informed) และการช่วยเหลือ (Assisted) ในระบบรักษาพยาบาล 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">แกนแนวคิดสองด้าน</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>Informed (ข้อมูลที่พร้อมใช้):</strong><br/><p class="indent-12"> การจัดสรรข้อมูลสุขภาพที่ถูกต้องให้กับผู้ใช้ในเวลาที่เหมาะสมและในรูปแบบที่เป็นประโยชน์  <br><span class="text-sm text-white/85"><em>ตัวอย่าง: แพทย์เห็นประวัติแพ้ยาและประวัติยาเดิมของผู้ป่วยทันทีก่อนการสั่งใช้ยาเพื่อป้องกันความผิดพลาด </em></span></p></li>
+                <li><strong>Assisted (ระบบคอยช่วยเหลือ):</strong><br/><p class="indent-12"> การนำเทคโนโลยีมาช่วยทุ่นแรงหรือลดความเสี่ยงในการดำเนินงาน  <br><span class="text-sm text-white/85"><em>ตัวอย่าง: แอปพลิเคชันบนมือถือที่คอยแจ้งเตือนผู้ป่วยให้รับประทานยาตามนัดเพื่อเพิ่มอัตราการปฏิบัติตามแผนการรักษา </em></span></p></li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: วงจรชีวิตข้อมูลทางคลินิก </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 5: ขอบเขตและการประยุกต์ใช้งาน -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ขอบเขตของสารสนเทศสุขภาพ</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              ทิศทางการทำงานด้านสารสนเทศสุขภาพครอบคลุมตั้งแต่ระดับรายบุคคล กลุ่มประชากร ไปจนถึงระบบสาธารณสุขขนาดใหญ่ 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">ขอบเขตหลัก (Scopes)</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>Clinical Informatics:</strong><br/><p class="indent-12"> นำข้อมูลมาสนับสนุนเครื่องมือวินิจฉัย การรักษาพยาบาล และระบบคัดกรองผู้ป่วยของแพทย์  <em>(เช่น ระบบเวชระเบียนอิเล็กทรอนิกส์ EHRs, ระบบสั่งการรักษาโดยแพทย์ CPOE, และระบบตัดสินใจทางคลินิก CDSS )</em></p></li>
+                <li><strong>Public Health Informatics:</strong><br/><p class="indent-12"> การวิเคราะห์ข้อมูลระบาดวิทยาเพื่อติดตามการแพร่ระบาด และการเฝ้าระวังโรคภัยคุกคามในระดับประชากร </p></li>
+                <li><strong>Consumer Health Informatics:</strong><br/><p class="indent-12"> การสนับสนุนสารสนเทศแก่ตัวผู้ป่วยโดยตรงเพื่อให้เข้าใจและรักษาสุขภาพของตนเอง เช่น ประวัติสุขภาพส่วนบุคคล PHRs และอุปกรณ์สวมใส่ </p></li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: ขอบเขตและอาชีพ </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 6: ประโยชน์และแรงผลักดันระดับโลก -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">แรงขับเคลื่อนและประโยชน์ของระบบ</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              องค์การอนามัยโลก (WHO) ชี้ว่าระบบข้อมูลสุขภาพที่ถูกต้องและทันท่วงที คือหัวใจสำคัญของการวางนโยบายและโปรแกรมการดูแลสุขภาพให้มีประสิทธิภาพสูงสุด 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">ประโยชน์หลักทางคลินิกและเชิงระบบ</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>เพิ่มประสิทธิภาพองค์กร (Efficiency):</strong><br/><p class="indent-12"> ลดภาระงานเอกสารและลดระยะเวลารอตรวจของคนไข้ <em>(เช่น ระบบการจองคิวนัดหมายและเตือนอัตโนมัติ )</em></p></li>
+                <li><strong>ยกระดับคุณภาพและความปลอดภัย (Quality & Safety):</strong><br/><p class="indent-12"> ตรวจวินิจฉัยโรคได้รวดเร็วและแม่นยำยิ่งขึ้น <em>(เช่น การนำโมเดล AI มาร่วมคัดกรองและวิเคราะห์ภาพถ่ายเอกซเรย์เพื่อตรวจหาโรคมะเร็งในระยะเริ่มต้น )</em></p></li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: ประโยชน์ของเทคโนโลยีสุขภาพ </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 7: ปัญหาและข้อจำกัดในโลกความเป็นจริง -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ปัญหาทั่วไปในการประยุกต์ใช้ข้อมูล</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              แม้จะมีเทคโนโลยีที่ก้าวหน้า แต่ในเชิงปฏิบัติจริงยังมีปัญหาความล้มเหลวที่มักพบบ่อยครั้งในการเตรียมและจัดการข้อมูลสุขภาพ 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">อุปสรรคสำคัญ</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>การใช้งานข้อมูลไม่เพียงพอ (Insufficient Usage):</strong><br/><p class="indent-12"> แม้จะมีการรวบรวมข้อมูลดิบจำนวนมหาศาลจากเซ็นเซอร์หรือเฝ้าระวังโรค แต่ข้อมูลกลับถูกกองทิ้งไว้โดยไม่นำมาวิเคราะห์หาข้อมูลเชิงลึก </p></li>
+                <li><strong>คุณภาพข้อมูลไม่ดีพอ (Inadequate Quality):</strong><br/><p class="indent-12"> ปัญหาระดับบันทึกข้อมูล หากการป้อนข้อมูลระเบียนสุขภาพล่าช้า มีจุดบกพร่อง หรือกรอกข้อมูลผิดพลาด คุณภาพของผลลัพธ์การวิเคราะห์และการตัดสินใจก็จะถูกลดทอนลงทันที (Garbage In, Garbage Out) </p</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: ข้อควรระวังและทิศทางการเตรียมข้อมูล </div>
+          </div>
+        </div>
+      </div>
+
+            <!-- สไลด์ที่ 7: บทนำสู่การติดตั้งเครื่องมือสำหรับปฏิบัติการ (Introduction & Toolchain) -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">เริ่มต้นจัดเตรียมเครื่องมือพัฒนาโปรแกรม</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              ในการจัดการข้อมูลสุขภาพ ปัญหาหลักคือการติดตั้งโปรแกรมและไลบรารีเวอร์ชันที่ไม่ตรงกัน  <br>
+              เราจะเปลี่ยนมาใช้ <strong>Modern Developer Toolchain</strong> ที่มีประสิทธิภาพสูง รวดเร็ว และล็อกเวอร์ชันเพื่อป้องกันความเสียหายเชิงระบบ
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4">เครื่องมือที่เราจะใช้ติดตั้ง</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-2 mx-auto max-w-2xl">
+                <li><strong>Scoop:</strong><br/><p class="indent-12"> ระบบติดตั้งแพ็กเกจ Command Line สำหรับ Windows ช่วยเลี่ยงการรันไฟล์ติดตั้ง .exe แบบเดิมๆ</p></li>
+                <li><strong>uv:</strong><br/><p class="indent-12"> เครื่องมือจัดการโปรเจกต์ Python ยุคใหม่ (Rust-based) ที่ทำงานรวดเร็วและสร้างสภาพแวดล้อมจำลอง (Virtual Environment) ได้ในตัว </p</li>
+                <li><strong>JupyterLab & pandas:</strong><br/><p class="indent-12"> สภาพแวดล้อมและไลบรารีหลักสำหรับการจัดเตรียมและวิเคราะห์ข้อมูลตารางผู้ป่วยในวิชานี้ </p</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: ขั้นตอนการเตรียมระบบ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 8: ขั้นตอนที่ 1 - การติดตั้ง Scoop ผ่าน PowerShell -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ขั้นตอนที่ 1: ติดตั้ง Scoop ผ่าน PowerShell</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              เปิดโปรแกรม Windows PowerShell เพื่อทำการตั้งค่าระบบและติดตั้งตัวจัดการแพ็กเกจ Scoop 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-4 text-left">
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">1. เปิดสิทธิ์การรันสคริปต์บน Windows:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto mb-4">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</pre>
+              
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">2. ดาวน์โหลดและติดตั้ง Scoop:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">irm get.scoop.sh | iex</pre>
+            </div>
+            <div class="bg-yellow-400/20 text-yellow-300 text-sm py-2 px-4 rounded-lg inline-block">
+              💡 <strong>ข้อแนะนำ:</strong> เมื่อติดตั้งเสร็จ ให้พิมพ์คำสั่ง <code class="font-mono text-white bg-black/40 px-2 py-0.5 rounded">scoop --version</code> เพื่อทดสอบความถูกต้อง
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: การติดตั้ง Scoop</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 9: ขั้นตอนที่ 2 - ติดตั้ง Git และ uv ด้วย Scoop -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ขั้นตอนที่ 2: ติดตั้ง Git และ uv ผ่าน Scoop</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              เราจะทำการติดตั้ง Git เพื่อใช้ดาวน์โหลดข้อมูล และติดตั้ง uv สำหรับควบคุมเวอร์ชันของ Python โครงงาน 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-6">
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">สั่งงานผ่าน PowerShell:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">scoop install git uv</pre>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-left text-sm text-white/95">
+              <div class="bg-white/5 rounded-xl p-4">
+                <h4 class="font-bold text-lg mb-2">ทำไมต้องใช้ git?</h4>
+                <p>เพื่อใช้ในการเรียกดูและดาวน์โหลดไฟล์ชุดข้อมูลทางการแพทย์สาธารณะและ template งานปฏิบัติการต่าง ๆ ได้สะดวก</p>
+              </div>
+              <div class="bg-white/5 rounded-xl p-4">
+                <h4 class="font-bold text-lg mb-2">ทำไมต้องใช้ uv?</h4>
+                <p>เพราะ <strong>uv</strong> ทำงานเร็วกว่า pip/conda ถึง 10-100 เท่า และจัดการติดตั้งเวอร์ชัน Python ให้เหมาะสมกับสเปคเครื่องออฟไลน์โดยอัตโนมัติ</p>
+              </div>
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: ติดตั้ง Git และ uv</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 10: ขั้นตอนที่ 3 - การริเริ่มโครงงานใหม่ด้วย uv init -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ขั้นตอนที่ 3: สร้างและเปิดโปรเจกต์ด้วย uv init</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              การสร้างสภาพแวดล้อมที่สะอาดและเป็นระบบ เพื่อแยกชุดข้อมูลและไลบรารีออกจากตัวเครื่องคอมพิวเตอร์หลัก 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">สร้างโฟลเดอร์โครงงานและเปิดใช้งาน:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto mb-4">
+# 1. ย้ายตำแหน่งการทำงานไปที่ไดรฟ์ D:
+D:
+
+# 2. สร้างและเข้าไปยังไดเรกทอรีโครงการ
+mkdir health-informatics
+cd health-informatics
+
+# 3. เริ่มต้นระบบโครงงาน Python ด้วย uv
+uv init</pre>
+              <h4 class="font-semibold text-white/90 mb-2">📦 ไฟล์ที่ระบบจะสร้างขึ้นให้อัตโนมัติ:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm text-white/85">
+                <li><code class="font-mono bg-black/30 px-1 py-0.5 rounded">pyproject.toml</code> — ไฟล์สำหรับกำหนดค่าการตั้งค่าโครงงาน</li>
+                <li><code class="font-mono bg-black/30 px-1 py-0.5 rounded">main.py</code> — ไฟล์ Python ตัวอย่างสำหรับการทดสอบระบบรันโค้ด</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: การเตรียมโครงสร้างไดเรกทอรี</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 11: ขั้นตอนที่ 4 - ติดตั้ง jupyterlab และ pandas -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ขั้นตอนที่ 4: ติดตั้ง JupyterLab และ pandas</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              ทำการระบุตัวแปรเพื่อดาวน์โหลดและติดตั้งเครื่องมือแก้ไขรหัสคำสั่ง (JupyterLab) และไลบรารีจัดการข้อมูลผู้ป่วย (pandas) ลงในโครงการ 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-6">
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">รันคำสั่งในไดเรกทอรีโครงงาน:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">uv add jupyterlab pandas faker</pre>
+            </div>
+            <div class="bg-white/5 rounded-2xl p-5 text-left text-sm space-y-2">
+              <p class="text-base font-semibold text-yellow-300">🔒 ความปลอดภัยและความยั่งยืนของข้อมูล (Reproducibility):</p>
+              <p>
+                คำสั่ง <code class="font-mono bg-black/30 px-1 py-0.5 rounded">uv add</code> จะสร้างไฟล์ <code class="font-mono bg-black/30 px-1 py-0.5 rounded">uv.lock</code> ขึ้นมา เพื่อทำหน้าที่ล็อกเวอร์ชันของแพ็กเกจให้เหมือนกันสำหรับนักศึกษาทุกคน 
+                ทำให้เมื่อนำโปรเจกต์นี้ไปรันที่เครื่องอื่นหรือส่งอาจารย์ผู้สอน โค้ดที่เขียนจะยังคงรันได้ปกติโดยไม่มีปัญหาเรื่องเวอร์ชันชนกัน 
+              </p>
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: จัดการ Dependencies ของ Python</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 12: ขั้นตอนที่ 5 - สั่งเปิดใช้งาน jupyter lab -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ขั้นตอนที่ 5: เริ่มใช้งาน Jupyter Lab</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-8 leading-relaxed">
+              เปิดสภาพแวดล้อมการเขียนโปรแกรมและการทำ Pre-processing ข้อมูลสุขภาพเพื่อเตรียมการฝึกปฏิบัติการประจำสัปดาห์ 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-6">
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">รันคำสั่งเพื่อเปิดสภาพแวดล้อม:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">uv run jupyter lab</pre>
+            </div>
+            <div class="bg-white/5 rounded-2xl p-5 text-left text-sm">
+              <p class="text-base font-semibold text-yellow-300 mb-2">🚀 สิ่งที่จะเกิดขึ้นถัดไป:</p>
+              <ul class="list-decimal list-inside space-y-1 text-white/90">
+                <li>เบราว์เซอร์ของเครื่องจะเปิดขึ้นมาที่ที่อยู่ <code class="font-mono bg-black/30 px-1 rounded">http://localhost:8888</code> โดยอัตโนมัติ</li>
+                <li>ไดเรกทอรีซ้ายมือจะแสดงไฟล์ <code class="font-mono bg-black/30 px-1 rounded">main.py</code> และไฟล์อื่น ๆ ของโครงการ </li>
+                <li>นักศึกษาสามารถสร้างไฟล์ Notebook ใหม่ (<code class="font-mono bg-black/30 px-1 rounded">.ipynb</code>) และเริ่มต้นเขียนโปรแกรมวิเคราะห์ไฟล์ CSV/JSON เพื่อเริ่มงาน Homework 1 ได้ทันที! </li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: เปิดใช้งาน Jupyter Lab</div>
+          </div>
+        </div>
+      </div>
+
+
+            <!-- สไลด์ที่ 13: บทนำสู่รูปแบบข้อมูลสุขภาพ (Tabular CSV vs Semi-structured JSON) -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ความหลากหลายของข้อมูลสุขภาพ</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-8 leading-relaxed">
+              ในระบบสารสนเทศสุขภาพเชิงคลินิก ข้อมูลมีทั้งแบบตารางที่มีโครงสร้างชัดเจน และแบบกึ่งมีโครงสร้างที่ยืดหยุ่นสูง 
+            </p>
+            <div class="grid grid-cols-2 gap-6 text-left">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 class="text-2xl font-bold mb-3 text-yellow-300">📊 1. รูปแบบ CSV</h3>
+                <p class="text-base text-white/90 mb-4 leading-relaxed">
+                  เป็นข้อมูลตาราง (Tabular format) จัดเก็บแถวและคอลัมน์ชัดเจน เช่น ข้อมูลผลตรวจแล็บ สัญญาณชีพ หรือประวัติผู้ป่วยพื้นฐาน 
+                </p>
+                <span class="text-sm font-semibold bg-white/20 px-2 py-1 rounded">ตัวอย่าง: MIMIC-IV Clinical Tables </span>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 class="text-2xl font-bold mb-3 text-yellow-300">📦 2. รูปแบบ JSON</h3>
+                <p class="text-base text-white/90 mb-4 leading-relaxed">
+                  เป็นข้อมูลกึ่งมีโครงสร้าง (Semi-structured) ในรูปแบบคู่กุญแจ-มูลค่า (Key-Value) เหมาะกับการซ้อนข้อมูลซับซ้อนและการส่งข้ามระบบ 
+                </p>
+                <span class="text-sm font-semibold bg-white/20 px-2 py-1 rounded">ตัวอย่าง: มาตรฐาน HL7 FHIR Resources </span>
+              </div>
+            </div>
+            <div class="text-sm text-white/70 mt-8"><a class="" href="https://physionet.org/content/parkinsons-disease-smartwatch/1.0.0/">🔗 PADS - Parkinsons Disease Smartwatch dataset</a></div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: โครงสร้างข้อมูลสุขภาพ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 14: ปฏิบัติการกับไฟล์ CSV ด้วย pandas (Loading CSV Files) -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การอ่านและจัดการไฟล์ CSV ด้วย pandas</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-6 leading-relaxed">
+              เครื่องมือที่สำคัญที่สุดในการจัดการข้อมูลแบบตารางขนาดใหญ่ใน Python คือไลบรารี <strong>pandas</strong> 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-xl font-semibold mb-3 text-yellow-300">💻 ชุดคำสั่งตรวจสอบและเรียกดูข้อมูล:</h3>
+              <ul class="list-disc list-inside space-y-1 text-sm text-white/85">
+                <li><a class="text-blue-400 hover:text-blue-200" href="./patients_data.csv" target="_blank"><code class="font-mono bg-black/30 px-1 rounded">patients_data.csv</code></a></li>
+              </ul>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed mb-4">
+import pandas as pd
+
+# 1. โหลดข้อมูลผู้ป่วยจากไฟล์ CSV
+df = pd.read_csv('patients_data.csv')
+
+# 2. ตรวจสอบมิติข้อมูล (แถว, คอลัมน์) และหัวตาราง
+print(f"ขนาดชุดข้อมูล: {df.shape}")
+df.head(5) # แสดงข้อมูล 5 แถวแรก</pre>
+              <h4 class="font-semibold text-white/90 mb-1">🔍 สิ่งที่นักศึกษาต้องสังเกต:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm text-white/85">
+                <li><code class="font-mono bg-black/30 px-1 rounded">df.shape</code> แสดงโครงสร้างข้อมูลในรูป (จำนวนผู้ป่วย, จำนวนตัวแปรตรวจวัด) </li>
+                <li><code class="font-mono bg-black/30 px-1 rounded">df.dtypes</code> ช่วยวิเคราะห์ประเภทตัวแปรว่ามีลักษณะเป็นตัวเลขหรือตัวอักษร </li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: pandas สำหรับจัดการข้อมูลสุขภาพ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 15: ปฏิบัติการกับไฟล์ JSON และ Nested Data ด้วย Python (Loading JSON) -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การจัดการระเบียนข้อมูลผู้ป่วยแบบ JSON</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-6 leading-relaxed">
+              ระเบียนสุขภาพดิจิทัลสมัยใหม่ เช่น มาตรฐาน <strong>HL7 FHIR</strong> มักเก็บในรูปแบบ JSON ที่มีโครงสร้างซ้อนกัน 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-xl font-semibold mb-3 text-yellow-300">💻 การเขียนรหัส Python เพื่อเข้าถึงค่าแบบระบุ Key:</h3>
+              <ul class="list-disc list-inside space-y-1 text-sm text-white/85">
+                <li><a class="text-blue-400 hover:text-blue-200" href="./patient_fhir_demo.json" target="_blank"><code class="font-mono bg-black/30 px-1 rounded">patient_fhir_demo.json</code></a></li>
+              </ul>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed mb-4">
+import json
+
+# 1. โหลดไฟล์ JSON ของเวชระเบียนผู้ป่วย
+with open('patient_fhir_demo.json', 'r') as file:
+    record = json.load(file)
+
+# 2. การสืบค้นข้อมูลเชิงลึกในโครงสร้าง Dictionary แบบซ้อน (Nested Key)
+patient_name = record['resource']['name']['given']
+birth_date = record['resource']['birthDate']
+
+print(f"ผู้ป่วย: {patient_name} | วันเกิด: {birth_date}")</pre>
+              <h4 class="font-semibold text-white/90 mb-1">💡 คำอธิบายเชิงระบบ:</h4>
+              <p class="text-sm text-white/80 leading-relaxed">
+                การเข้าถึงข้อมูล JSON จำเป็นต้องอาศัยการเขียนโปรแกรมเชิงโครงสร้างดิกชันนารี (Dictionary Map) เพื่อไล่เรียงหาตำแหน่งตัวแปรที่แท้จริง 
+              </p>
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: สารสนเทศแบบกึ่งโครงสร้าง</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 16: การแปลง JSON เป็น pandas DataFrame (Normalizing JSON) -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การคลี่โครงสร้าง JSON เพื่อวิเคราะห์แบบกลุ่ม</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-8 leading-relaxed">
+              ในการวิเคราะห์ผู้ป่วยทั้งกลุ่ม (Cohort Analysis) เราจำต้องแปลงโครงสร้างซ้อนของ JSON ให้กลายเป็นตารางแบนราบเพื่อการคำนวณที่ง่ายขึ้น 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-4">
+              <h3 class="text-xl font-semibold mb-2 text-yellow-300">💻 ชุดคำสั่งทำความสะอาดโครงสร้างซับซ้อน (Flattening):</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed">
+# แปลงโครงสร้างแบบซ้อน (Nested JSON) ให้เป็นตารางแบนเรียบง่ายแบบอัตโนมัติ
+df_patients = pd.json_normalize(
+    record, 
+    record_path=['entry'], 
+    meta=['id', 'resourceType']
+)
+df_patients.head()</pre>
+            </div>
+            <p class="text-lg text-left indent-12 text-white/90 leading-relaxed max-w-2xl mx-auto">
+              ฟังก์ชัน <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">pd.json_normalize</code> จะช่วยลดเวลาในการเขียนโค้ดสกัดกิ่งข้อมูลซับซ้อนออกเป็นตารางสถิติกลุ่มในทันที 
+            </p>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: เทคนิคเตรียมข้อมูลสากล</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 17: ประเด็นการจัดการหน่วยความจำและการวิเคราะห์ข้อมูลความจุสูง (Memory & Scalability) -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ข้อควรระวังในการจัดการข้อมูลสุขภาพขนาดใหญ่</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-8 leading-relaxed">
+              ข้อมูลทางการแพทย์และจีโนมิกส์มีขนาดที่เติบโตแบบก้าวกระโดด  เราต้องเรียนรู้วิธีบริหารจัดการทรัพยากรหน่วยความจำอย่างคุ้มค่า 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <h3 class="text-2xl font-semibold mb-4 text-red-300">🚫 ข้อห้ามและทางเลือกที่ดีกว่าในการเขียนโค้ด</h3>
+              <ul class="list-disc list-inside text-left text-lg space-y-3 mx-auto max-w-2xl">
+                <li><strong>หลีกเลี่ยงการโหลดไฟล์สื่อดิบ (Raw Media Array):</strong><br/><p class="indent-12"> ไม่โหลดข้อมูลรูปภาพ (DICOM) หรือสัญญาณชีพขนาดใหญ่เข้ามาเก็บในตาราง DataFrame โดยตรงเพื่อความปลอดภัยของระบบ </p></li>
+                <li><strong>การใช้พิกัดตำแหน่งไฟล์ (File Paths Pointer):</strong><br/><p class="indent-12"> ควรใช้วิธีจัดเก็บค่าระบุตำแหน่งไฟล์พิกัดและ deterministic path แทนการฝังไฟล์แบบออฟไลน์  <em>(เทียบเคียงโครงสร้างท่อส่งข้อมูลสากลของ MIMIC-IV) </em></p</li>
+                <li><strong>คัดกรองข้อมูลเฉพาะส่วนที่สำคัญ (Selective Filtering):</strong><br/><p class="indent-12"> ดึงข้อมูลเฉพาะคอลัมน์และช่วงระยะเวลาที่จำเป็นเพื่อความประหยัดของหน่วยประมวลผล (RAM) </p</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: การจัดการและบำรุงรักษาทรัพยากรคอมพิวเตอร์</div>
+          </div>
+        </div>
+      </div>
+
+            <!-- สไลด์ที่ 18: บทนำสู่การทำความสะอาดข้อมูลทางคลินิก (Introduction to Clinical Data Cleaning) -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ธรรมชาติของข้อมูลสุขภาพและการทำความสะอาด</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-8 leading-relaxed">
+              ชุดข้อมูลสุขภาพในโลกความเป็นจริงมักมี "สัญญาณรบกวน" (Real-world noise)  เช่น การพิมพ์ผิด ช่องข้อมูลว่าง  
+              หรือค่าที่บันทึกผิดพลาดทางชีววิทยา ซึ่งอาจทำให้แบบจำลอง AI ทางการแพทย์ทำงานผิดพลาดและส่งผลกระทบต่อความปลอดภัยของคนไข้
+            </p>
+            <div class="grid grid-cols-2 gap-6 text-left">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 class="text-2xl font-bold mb-3 text-yellow-300">⚠️ 1. ค่าสูญหาย (Missing Values)</h3>
+                <p class="text-sm text-white/90 leading-relaxed">
+                  เกิดจากกระบวนการตรวจรักษาที่ไม่ได้ทำกับผู้ป่วยทุกคน หรือข้อผิดพลาดในการดึงและจัดเก็บข้อมูล  
+                  ส่งผลให้ข้อมูลขาดความสมบูรณ์ (Incompleteness) 
+                </p>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 class="text-2xl font-bold mb-3 text-red-300">🚫 2. ค่าผิดปกติ (Outliers)</h3>
+                <p class="text-sm text-white/90 leading-relaxed">
+                  ข้อมูลที่มีค่าสูงหรือต่ำผิดปกติเกินกว่าค่าทางสรีรวิทยาของมนุษย์ หรือการบันทึกเครื่องมือแพทย์ที่ผิดพลาด  
+                  ซึ่งจำเป็นต้องคัดกรองและกำจัดออกก่อนนำไปวิเคราะห์ต่อ 
+                </p>
+              </div>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: คุณภาพและความน่าเชื่อถือของข้อมูล</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 19: การจัดการค่าสูญหายด้วย pandas (Handling Missing Values with pandas) -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">คำสั่งตรวจสอบและจัดการค่าสูญหาย (Null/NaN)</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-6 leading-relaxed">
+              เราใช้ไลบรารี <strong>pandas</strong> ในการระบุปริมาณข้อมูลที่ว่าง และใช้กลวิธีแก้ไขจุดบกพร่องตามระดับความสำคัญ
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-4">
+              <h3 class="text-lg font-semibold mb-2 text-yellow-300">💻 คำสั่งจัดการค่าสูญหายใน Jupyter Notebook:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed">
+# 1. นับจำนวนค่าว่างในแต่ละคอลัมน์ของข้อมูลผู้ป่วย
+print(df.isnull().sum())
+
+# 2. การคัดทิ้ง (Drop) แถวที่ไม่มีข้อมูลแล็บสำคัญ เช่น 'HbA1c_level'
+df_cleaned = df.dropna(subset=['HbA1c_level'])
+
+# 3. การแทนค่าว่าง (Imputation) ด้วยค่าเฉลี่ยสถิติของกลุ่มคนไข้
+mean_bp = df['systolic_bp'].mean()
+df['systolic_bp'] = df['systolic_bp'].fillna(mean_bp)</pre>
+            </div>
+            <p class="text-sm text-white/80 max-w-2xl mx-auto text-left">
+              💡 <strong>ข้อตระหนักเชิงระบบ:</strong> การคัดทิ้งข้อมูล (dropna) อาจทำให้เสียขนาดตัวอย่างวิจัย  ในขณะที่การแทนค่าด้วยค่าเฉลี่ย (fillna)  
+              ช่วยคงขนาดกลุ่มผู้ป่วยไว้ได้ แต่ต้องพิจารณาไม่ให้ขัดต่อหลักสถิติระบาดวิทยา
+            </p>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: pandas Imputation Techniques</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 20: การตรวจจับและจัดการค่าผิดปกติทางการแพทย์ (Outliers Detection & Validity Checks) -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การตรวจจับค่าผิดปกติ (Outliers) ทางสรีรวิทยา</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-6 leading-relaxed">
+              การทำความสะอาดทางคลินิก ต้องอาศัยหลักการ <strong>Validity Checks (การตรวจสอบความสมเหตุสมผล)</strong> และสรีรวิทยาพื้นฐานร่วมด้วย 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-4">
+              <h3 class="text-lg font-semibold mb-2 text-red-300">💻 คำสั่งกำจัดค่าที่ขัดแย้งทางสรีรวิทยาและสถิติ:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed">
+# 1. การลบข้อมูลอายุที่ติดลบ (ความผิดพลาดทางอายุ) หรือลบคนไข้ที่อายุ > 89 เพื่อจำกัดความเสี่ยง re-identification 
+df = df[(df['Age'] >= 0) & (df['Age'] &lt;= 89)]
+
+# 2. การตัดค่าสถิตินอกช่วงเปอร์เซ็นไทล์ (Outlier Thresholding) 
+# ลบแถวที่คอลัมน์ข้อมูลความดันสูงเกินเปอร์เซ็นไทล์ที่ 99 (อาจเกิดจากสัญญานหลุด) 
+threshold_bp = df['systolic_bp'].quantile(0.99)
+df = df[df['systolic_bp'] &lt;= threshold_bp]</pre>
+            </div>
+            <p class="text-sm text-white/80 max-w-2xl mx-auto text-left">
+              🔬 <strong>ตัวอย่าง Validity Check:</strong> ผู้ป่วยไม่สามารถมีอายุติดลบได้ หรือ วันที่ให้ผู้ป่วยออกจากจากโรงพยาบาล (Discharge Date) 
+              ต้องไม่เป็นวันก่อนวันที่รับผู้ป่วยเข้าโรงพยาบาล (Admission Date) เด็ดขาด 
+            </p>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: การลบข้อมูล Physiologically Implausible</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 21: การคัดกรองข้อมูลผู้ป่วยตามเงื่อนไข (Patient Cohort & Boolean Filtering) -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การกรองข้อมูลผู้ป่วย (Boolean Indexing)</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-6 leading-relaxed">
+              ทักษะสกัดกลุ่มผู้ป่วยเฉพาะโรคหรือกลุ่มที่มีความเสี่ยงสูง (Prioritizing patients at risk) เพื่อวินิจฉัยและวางแนวทางรักษารายบุคคล 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-4">
+              <h3 class="text-lg font-semibold mb-2 text-yellow-300">💻 คำสั่งคัดกรองกลุ่มเป้าหมาย (Cohort Extraction):</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed">
+# 1. กรองเฉพาะผู้ป่วยเบาหวานสูงอายุที่มีความเสี่ยงสะสม (Age > 60 ปี และมีระดับน้ำตาล HbA1c > 7.0 %) 
+high_risk_diabetic = df[
+    (df['Age'] > 60) & 
+    (df['HbA1c_level'] > 7.0)
+]
+
+print(f"จำนวนผู้ป่วยกลุ่มเสี่ยงสูงสุด: {high_risk_diabetic.shape} ราย")
+high_risk_diabetic.head()</pre>
+            </div>
+            <p class="text-lg text-white/95 leading-relaxed max-w-2xl mx-auto">
+              ตัวแปรประเภท Boolean Array ทำหน้าที่เสมือนหน้าต่างคัดกรอง (Mask) ซึ่งกรองหาแถวที่มีเงื่อนไขเป็น <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">True</code> 
+              ขึ้นมาเป็นตารางใหม่สำหรับดำเนินงานต่อในทันที
+            </p>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: เทคนิคคัดกรองกลุ่มคนไข้เป้าหมาย</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 22: การแปลงและปรับประเภทข้อมูล (Data Type & DateTime Conversion) -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">การปรับเปลี่ยนประเภทข้อมูล (Type Conversion)</h2>
+            <p class="text-xl text-left indent-12 text-white/90 mb-6 leading-relaxed">
+              ในขั้นตอนวิเคราะห์ข้อมูลสุขภาพ ความผิดพลาดมักเกิดจากการระบุชนิดข้อมูลคอลัมน์ไม่ตรงกับลักษณะแท้จริงของค่าที่บันทึก 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-4">
+              <h3 class="text-lg font-semibold mb-2 text-yellow-300">💻 คำสั่งจัดแจงชนิดข้อมูลให้ถูกต้อง:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed">
+# 1. ตรวจสอบชนิดข้อมูลของ DataFrame
+print(df.dtypes)
+
+# 2. แปลงอายุจากทศนิยมให้เป็นจำนวนเต็มเพื่อการวิเคราะห์ทางสถิติ (Discrete Variable) 
+df['Age'] = df['Age'].astype(int)
+
+# 3. แปลงคอลัมน์วันที่สมัครจากการเป็น 'ตัวหนังสือ (object)' ไปเป็น 'วันเวลา (Datetime)'
+df['admission_date'] = pd.to_datetime(df['admission_date'])
+print(df['admission_date'].dtypes) # แสดงผลเป็น datetime64[ns]</pre>
+            </div>
+            <p class="text-sm text-white/80 max-w-2xl mx-auto text-left">
+              💡 <strong>ความสำคัญของ Datetime:</strong> หากเราไม่แปลงประเภทวันที่เป็น Datetime ก่อน ตัวแปรนั้นจะทำหน้าที่เพียงตัวหนังสือ (String) 
+              ทำให้เราไม่สามารถนำวันที่ไปคำนวณหามิติทางเวลาหรือนำไปหาช่วงเวลารักษา (Length of Stay) ได้อย่างถูกต้อง
+            </p>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: การเปลี่ยนชนิดคอลัมน์ด้วย pandas</div>
+          </div>
+        </div>
+      </div>
+
+          <!-- สไลด์ที่ 23: ทำไมต้องบันทึกข้อมูลผลลัพธ์ระหว่างทาง? (Why Save Intermediate Work?) -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ความจำเป็นในการบันทึกข้อมูลระหว่างทาง</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-8 leading-relaxed">
+              ในกระบวนการทำงานข้อมูลสุขภาพ (Health Data Lifecycle) เมื่อเราจัดการเตรียมและทำความสะอาดข้อมูลดิบแล้ว <br>
+              การบันทึกสถานะของชุดข้อมูลที่สะอาด (Cleaned Intermediate State) เป็นขั้นตอนที่สำคัญมากทางวิทยาการข้อมูล 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
+              <h3 class="text-2xl font-semibold mb-4 text-yellow-300">💡 เหตุผลเชิงระบบและแนวปฏิบัติที่ดี:</h3>
+              <ul class="list-disc list-inside text-lg space-y-3 mx-auto max-w-2xl">
+                <li><strong>ประหยัดทรัพยากรระบบ (Computational Efficiency):</strong><br/><p class="indent-12"> ป้องกันการรันโปรเซสทำความสะอาดข้อมูลขนาดใหญ่ที่ซับซ้อนซ้ำหลายรอบ ช่วยลดภาระหน่วยประมวลผล (RAM)</p></li>
+                <li><strong>ความยืดหยุ่นในการพัฒนาโปรแกรม (Modularity):</strong> <br/<p class="indent-12"ช่วยให้แพทย์หรือผู้ใช้สามารถสืบค้น ค้นหา หรือเขียนบันทึกเพิ่มเติมได้ในระหว่างที่เข้าตรวจคนไข้จริง </p</li>
+                <li><strong>การควบคุมความปลอดภัย (Security & Audit):</strong> <br/<p class="indent-12"การบันทึกข้อมูลสารสนเทศที่ผ่านการ Pre-process แล้ว จะช่วยให้ผู้บริหารสามารถกำกับดูแล ตรวจสอบ และนำข้อมูลไปประกอบการวางนโยบายที่ปลอดภัยได้สะดวกขึ้น </p</li>
+              </ul>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: วงจรชีวิตข้อมูลสารสนเทศสุขภาพ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 24: คำสั่งส่งออกข้อมูลตารางผ่าน pandas (Exporting to CSV and JSON) -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">ชุดคำสั่งการส่งออกข้อมูลตารางด้วย pandas</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-6 leading-relaxed">
+              เมื่อทำความสะอาดข้อมูลเสร็จแล้ว เราจะใช้ฟังก์ชันดั้งเดิมของ <strong>pandas</strong> บันทึกตารางกลับไปเป็นไฟล์ CSV หรือส่งต่อเป็นโครงสร้าง JSON 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-6">
+              <h3 class="text-lg font-semibold mb-2 text-yellow-300">💻 โค้ดส่งออกไฟล์ใน Jupyter Notebook:</h3>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed">
+# 1. ส่งออกตารางสะอาดเป็นไฟล์ CSV (โดยไม่เซฟดัชนีแถว)
+df_cleaned.to_csv('cleaned_patients_data.csv', index=False)
+
+# 2. ส่งออกเป็นไฟล์ข้อมูล JSON เพื่อเตรียมส่งผ่านเครือข่ายสากล
+df_cleaned.to_json('cleaned_patients_records.json', orient='records', indent=4)</pre>
+            </div>
+            <div class="bg-yellow-400/20 text-yellow-300 text-sm py-2 px-4 rounded-lg inline-block">
+              ⚠️ <strong>ข้อควรระวัง:</strong> การตั้งค่า <code class="font-mono text-white bg-black/40 px-2 py-0.5 rounded">index=False</code> ในไฟล์ CSV จะป้องกันการสร้างคอลัมน์ดัชนีเปล่าที่ไม่มีชื่อเมื่อเปิดอ่านไฟล์ในครั้งถัดไป
+            </div>
+            <div class="text-sm text-white/70 mt-6">สัปดาห์ที่ 1: Data Output Commands</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 25: สรุปภาพรวมเนื้อหาบทเรียน (Summary of Week 1) -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">สรุปเนื้อหาประจำสัปดาห์ที่ ๑</h2>
+            <p class="text-xl text-white/90 text-left indent-12 mb-8 leading-relaxed">
+              สัปดาห์แรก มุ่งเน้นการวางรากฐานทางความคิดควบคู่ไปกับทักษะวิชาชีพเชิงปฏิบัติการจัดการข้อมูลดิบ 
+            </p>
+            <div class="grid grid-cols-3 gap-4 text-left text-sm">
+              <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+                <h4 class="font-bold text-lg text-yellow-300 mb-2">🧠 1. สารสนเทศสุขภาพ</h4>
+                <p class="text-white/85 leading-relaxed">
+                  ไม่ใช่แค่เรื่องเครื่องคอมพิวเตอร์ แต่เป็นกระบวนการจัดแจงข้อมูลและการประมวลผลอย่างเป็นระบบ (Data + Meaning) เพื่อเพิ่มความปลอดภัยและยกระดับระบบบริการทางการแพทย์ 
+                </p>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+                <h4 class="font-bold text-lg text-yellow-300 mb-2">🛠️ 2. สภาพแวดล้อมที่ทำซ้ำได้</h4>
+                <p class="text-white/85 leading-relaxed">
+                  การติดตั้งระบบจัดการแบบล็อกเวอร์ชัน (Scoop, uv และ lockfiles) จะช่วยขจัดปัญหาระบบพังในภายหลัง ทำให้นักศึกษาสามารถทำซ้ำผลลัพธ์การทดลองได้อย่างน่าเชื่อถือ 
+                </p>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5">
+                <h4 class="font-bold text-lg text-yellow-300 mb-2">🧹 3. Pre-processing</h4>
+                <p class="text-white/85 leading-relaxed">
+                  ทักษะการตรวจสอบความถูกต้องของข้อมูล (Validity Checks) เช่น การกรองอายุที่ขัดแย้งทางชีววิทยา และการจัดการกับระเบียนสูญหายด้วย Pandas ก่อนนำข้อมูลไปป้อนเข้าโมเดล AI 
+                </p>
+              </div>
+            </div>
+            <div class="text-sm text-white/70 mt-8">สัปดาห์ที่ 1: บทสรุปปฏิบัติการ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 26: โจทย์การบ้านปฏิบัติการสัปดาห์ที่ 1 (Homework 1 Assignment) -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-4 text-red-300">โจทย์ปฏิบัติการและการบ้าน ๑ (Homework 1)</h2>
+            <p class="text-lg text-white/90 mb-6">
+              การบ้านประจำสัปดาห์ เพื่อประเมินผลสัมฤทธิ์ CLO2 
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left mb-4">
+              <h3 class="text-xl font-bold mb-3 text-yellow-300">📋 รายละเอียดโจทย์งาน (Individual Assignment):</h3>
+              <ol class="list-decimal list-inside text-base space-y-2 text-white/95">
+                <li>ให้นักศึกษาดาวน์โหลดชุดข้อมูลประวัติผู้ป่วยจำลองดิบ <a  class="text-blue-400 hover:text-blue-200" href="./raw_patients.csv"><code class="font-mono bg-black/40 px-1.5 py-0.5 rounded text-yellow-300">raw_patients.csv</code></a></li>
+                <li>ใช้ <strong>Jupyter Notebook</strong> ออฟไลน์ เขียนโค้ดตรวจสอบและหาจำนวนค่าว่าง (Null) ทั้งหมดในไฟล์</li>
+                <li>ทำความสะอาดค่าสูญหายในคอลัมน์ผลเลือด <code class="font-mono bg-black/40 px-1 py-0.5 rounded">HbA1c_level</code> โดยการแทนที่ด้วย <strong>ค่าเฉลี่ยสถิติ (Mean Imputation)</strong></li>
+                <li>กรองคัดทิ้งคนไข้ที่ระบุอายุเป็นค่าติดลบ หรืออายุเกินสรีรวิทยาที่เป็นไปได้จริง (Validity Checks)</li>
+                <li>ส่งออกผลลัพธ์สุดท้ายเป็นไฟล์ CSV ชื่อ <code class="font-mono bg-black/40 px-1.5 py-0.5 rounded text-green-300">student_id_homework1.csv</code> และอัปโหลดไฟล์ <code class="font-mono bg-black/40 px-1.5 py-0.5 rounded">.ipynb</code> บนระบบ</li>
+              </ol>
+            </div>
+            <p class="text-sm text-yellow-300 font-semibold">
+              📅 กำหนดการส่งงาน: ก่อนเริ่มคาบเรียนปฏิบัติการสัปดาห์ถัดไป (สัปดาห์ที่ ๒)
+            </p>
+            <div class="text-sm text-white/70 mt-4">สัปดาห์ที่ 1: การบ้านประเมินผลสัมฤทธิ์</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 27: แหล่งข้อมูลอ้างอิงและการติดต่ออาจารย์ผู้สอน (References & Contacts) -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-5xl font-bold mb-6">แหล่งวิชาการแนะนำและการติดต่อผู้สอน</h2>
+            <p class="text-xl text-white/90 mb-8 leading-relaxed">
+              ช่องทางการการเรียนรู้เพิ่มเติม 
+            </p>
+            <div class="grid grid-cols-2 gap-6 text-left mb-6 text-sm">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5">
+                <h3 class="text-xl font-bold text-yellow-300 mb-3">📚 สื่อการศึกษาและข้อมูลเปิดสากล:</h3>
+                <ul class="list-disc list-inside space-y-2 text-white/90">
+                  <li><strong>รายวิชา MUx MOOC:</strong> "เทคโนโลยีดิจิทัลและสารสนเทศทางสุขภาพ" </li>
+                  <li><strong>ชุดการบรรยายวิชาการ:</strong> โดย อ.ดร.นพ.นวนรรน ธีระอัมพรพันธุ์ </li>
+                  <li><strong>หนังสือ "ความรอบรู้ด้านสุขภาพ":</strong> โดย ผศ.ดร.ขวัญเมือง แก้วดำเกิง </li>
+                  <li><strong>แหล่งฐานข้อมูลสากล:</strong> PhysioNet & UCI Machine Learning Repository </li>
+                </ul>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5">
+                <h3 class="text-xl font-bold text-yellow-300 mb-3">📬 ช่องทางสอบถามและติดต่อผู้สอน:</h3>
+                <p class="mb-2 leading-relaxed">
+                  <strong>ดร.วิชิต สมบัติ</strong> <br>
+                  📧 wichit.s@ubu.ac.th | 📞 ๐๙๘-๐๙๗-๓๓๒๖ 
+                </p>
+              </div>
+            </div>
+            <div class="text-lg font-semibold text-yellow-300">
+              แล้วพบกันในสัปดาห์ที่ ๒ กับหัวข้อ "การเชื่อมโยงข้อมูลจากหลายชุดข้อมูลและการจัดกลุ่ม" ครับ! 
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
+

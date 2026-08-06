@@ -14,5 +14,6 @@ Courses
    oop/index
    devops/index
    toi/index
+   healthinfo/index
 
 
