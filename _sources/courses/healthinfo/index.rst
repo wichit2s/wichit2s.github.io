@@ -56,16 +56,22 @@ Workshop in Health Informatics
        - การเชื่อมโยงข้อมูลจากหลายชุดข้อมูล
        - Group by / having
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
+
+       * `สไลด์ <../../_static/courses/healthinfo/wk02.html>`_
    * - 3
      - **Finding Insights with pandas**
        
        - การวิเคราะห์และค้นหาข้อมูลเชิงลึกด้วย pandas Library
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
+
+       * `สไลด์ <../../_static/courses/healthinfo/wk03.html>`_
    * - 4
      - **Big Data Infrastructure**
        
        - ETL process, data pipeline, data lake
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
+
+       * `สไลด์ <../../_static/courses/healthinfo/wk04.html>`_
    * - 5
      - **Relational Database & SQL (Part 1)**
        

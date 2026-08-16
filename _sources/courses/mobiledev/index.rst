@@ -51,31 +51,33 @@
      - สอบกลางภาค
      - ประเมินความเข้าใจพื้นฐาน Flutter
      - -
-   * - 9
-     - GetX State Management
-     - เข้าใจ controller, Rx และ reactive UI
-     - https://pub.dev/packages/get
-   * - 10
-     - GetX Routing & DI
-     - ใช้ NamedRoute, Middleware และ Dependency Injection
-     - https://pub.dev/packages/get#navigation-management
    * - 11
-     - PocketBase เบื้องต้น
-     - ติดตั้งและใช้งาน PocketBase กับ Flutter
-     - https://pocketbase.io/docs
+     - ทบทวนเนื้อหาก่อนกลางภาค
+
+       * `สไลด์ <../../_static/courses/mobiledev/wk11.html>`_
+     - Flutter Review & Compass Application
+     - https://docs.flutter.dev/app-architecture/case-study 
    * - 12
-     - การเชื่อมต่อ PocketBase
-     - Auth, CRUD, และ media upload จากแอป
-     - https://pocketbase.io/docs/collections-api
+     - การพัฒนา Backend
+     - REST API Backend with Django REST Framework & JWT Authentication
+     - https://www.django-rest-framework.org/
+
+       https://django-rest-framework-simplejwt.readthedocs.io/en/latest/ 
+
+       https://www.geeksforgeeks.org/python/jwt-authentication-with-django-rest-framework/ 
    * - 13
-     - Model-Context Protocol (MCP)
-     - เข้าใจการใช้งาน LLM backend กับ Flutter
-     - https://github.com/modelcontext/mcp
+     - การพัฒนา Flutter Data Layer
+     - Data Layer (Services & Repositories)
+     - 
    * - 14
-     - การประยุกต์ใช้ MCP
-     - สร้าง LLM feature เช่น chatbot / auto-complete
-     - https://github.com/modelcontext/mcp
+     - การพัฒนา Flutter UI Layer 
+     - UI Layer (ViewModels, Views & Command Pattern)
+     - 
    * - 15
+     - Dependency Injection & Testing
+     - การพึ่งพากันผ่านระบบและการทดสอบ
+     - 
+   * - 16
      - นำเสนอโปรเจกต์
      - นำเสนอผลงาน และรับข้อเสนอแนะ
      - -

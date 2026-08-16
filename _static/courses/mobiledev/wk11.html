@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Heallth Informatics">
+    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Development</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/mobiledev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk11.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- สไลด์ที่ 0: สารบัญหมวดที่ 1 (Table of Contents) -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 0">
+        <div class="text-center max-w-4xl mx-auto">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 11 • Part 1
+          </span>
+          <h2 class="text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ยินดีต้อนรับสู่การพัฒนามือถือครึ่งเทอมหลัง
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+            <h3 class="text-base font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญหมวดที่ 1: แนะนำวิชาและเป้าหมายหลังกลางภาค</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <button @click="currentSlide = 1" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 1</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ยินดีต้อนรับสู่ครึ่งเทอมหลัง</div>
+              </button>
+              <button @click="currentSlide = 2" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 2</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">แผนการเรียนรู้ 5 สัปดาห์</div>
+              </button>
+              <button @click="currentSlide = 3" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 3</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">แนะนำโปรเจกต์ Compass App</div>
+              </button>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกที่เมนูเพื่อเลือกศึกษาแต่ละสไลด์ หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูเนื้อหาทีละหน้า</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 1: ยินดีต้อนรับสู่ครึ่งเทอมหลัง -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 1">
+      <div class="max-w-4xl mx-auto w-full">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="flex-1">
+            <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Slide 1 • Introduction
+            </span>
+            <h2 class="text-4xl font-bold mt-4 mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+              ยินดีต้อนรับสู่ครึ่งเทอมหลัง! 
+            </h2>
+            <div class="space-y-4 text-slate-200 text-sm md:text-base leading-relaxed">
+              <p>
+                ในครึ่งเทอมแรก นักศึกษาได้เรียนรู้พื้นฐานการออกแบบหน้าจอและ Widget เบื้องต้นใน Flutter มาแล้ว สำหรับครึ่งเทอมหลังนี้ เราจะก้าวไปอีกขั้นสู่ <strong class="text-yellow-300">"การพัฒนาแอปพลิเคชันระดับมืออาชีพ"</strong>
+              </p>
+              <div class="bg-white/5 rounded-xl p-4 border border-white/10 space-y-2">
+                <h4 class="font-bold text-blue-300">🚀 สิ่งที่เราจะมุ่งเน้นนับจากนี้:</h4>
+                <ul class="list-disc list-inside space-y-1 text-slate-300">
+                  <li>การจัดการสถาปัตยกรรมแอปพลิเคชันขนาดใหญ่ด้วยสไตล์ <strong class="text-yellow-200">MVVM</strong> ของทีมงาน Google</li>
+                  <li>การต่อเชื่อมระบบหลังบ้านจริงด้วย <strong class="text-yellow-200">Django REST Framework</strong></li>
+                  <li>การรักษาความปลอดภัยขั้นสูงด้วยระบบ <strong class="text-yellow-200">JWT Token Rotation</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="w-full md:w-80 bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center text-3xl mb-3">🎓</div>
+            <h4 class="font-bold text-yellow-300 mb-1">เป้าหมายหลัก</h4>
+            <p class="text-xs text-slate-300">พัฒนานักศึกษาจากการเขียนโค้ดหน้าจอเดี่ยว สู่การออกแบบระบบแอปพลิเคชันที่สามารถเชื่อมต่อ API และทำงานร่วมกันในทีมได้จริง</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- สไลด์ที่ 2: แผนการเรียนรู้ 5 สัปดาห์ (Post-Midterm Roadmap) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 2">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 2 • Curriculum Roadmap
+              </span>
+              <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                เส้นทางการเรียนรู้ 5 สัปดาห์ 
+              </h2>
+              <div class="space-y-3 text-xs md:text-sm">
+                <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+                  <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
+                  <div>
+                    <strong class="text-yellow-300">สัปดาห์ที่ 1 (วันนี้):</strong> ทบทวนพื้นฐาน Flutter & เจาะลึกการแบ่งเลเยอร์สถาปัตยกรรมแอป
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+                  <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
+                  <div>
+                    <strong class="text-yellow-300">สัปดาห์ที่ 2:</strong> พัฒนาหลังบ้าน Django REST Framework + ระบบล็อกอิน JWT Secure Rotation
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+                  <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
+                  <div>
+                    <strong class="text-yellow-300">สัปดาห์ที่ 3:</strong> ลุยเขียน Data Layer ฝั่ง Flutter สื่อสารผ่าน REST API & จัดการเก็บ Token ถาวร
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+                  <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">4</span>
+                  <div>
+                    <strong class="text-yellow-300">สัปดาห์ที่ 4:</strong> พัฒนา UI Layer แบบ MVVM เต็มขั้น ทำความเข้าใจและเขียนชุดคำสั่ง Command Pattern
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+                  <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">5</span>
+                  <div>
+                    <strong class="text-yellow-300">สัปดาห์ที่ 5:</strong> ประกอบวงจรด้วย Dependency Injection (DI), ทำชุดทดสอบจำลอง (Test Fakes)
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/2">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="flutter_django_roadmap.jpg" alt="5-Week Flutter & Django Learning Roadmap" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2">🗺️ แผนภาพแสดงเส้นทางการเรียนรู้ตลอด 5 สัปดาห์ถัดจากนี้</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 3: แนะนำแอปพลิเคชันเป้าหมาย: Compass App -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 3">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 3 • Target Project
+              </span>
+              <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                แอปเป้าหมาย: Compass App 
+              </h2>
+              <p class="text-slate-200 text-sm md:text-base mb-4 leading-relaxed">
+                โปรเจกต์หลักของเราคือ <strong>Compass App</strong> (แอปบันทึกตารางการเดินทางและการจองทริป) ซึ่งดัดแปลงโครงสร้างมาจากแอปพลิเคชันต้นแบบระดับ Production ของทีมผู้พัฒนา Flutter เพื่อให้มั่นใจว่านักศึกษาจะได้จับงานที่ใกล้เคียงการทำงานจริงที่สุด
+              </p>
+              <div class="bg-yellow-500/10 rounded-xl p-4 border border-yellow-500/20 text-xs md:text-sm space-y-2">
+                <h4 class="font-bold text-yellow-300">🔧 คุณสมบัติเด่นของแอปพลิเคชัน:</h4>
+                <ul class="list-disc list-inside space-y-1 text-slate-300">
+                  <li>การสลับสภาพแวดล้อมจำลอง (Local JSON / Background Server API)</li>
+                  <li>ฟังก์ชันการทำงานครบวงจร: ตารางทริป, คลังกิจกรรม และตารางจอง</li>
+                  <li>รองรับสถาปัตยกรรมแบบแยกเลเยอร์เพื่อเพิ่มระดับการทำ Test Coverage</li>
+                </ul>
+              </div>
+              <div class="mt-4">
+                <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-lg hover:shadow-blue-500/20 transition-all">
+                  📁 ตรวจสอบโปรเจกต์บน GitHub (คลิกเพื่อเปิด) 
+                </a>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/2">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="compass_app_mockup.jpg" alt="Compass App UI Mockup" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2"> หน้าตาและส่วนหน้าต่างแสดงผล UI ของแอปพลิเคชัน Compass (แอปเป้าหมาย)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 4: สารบัญหมวดที่ 2 (Table of Contents) -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 4">
+        <div class="text-center max-w-4xl mx-auto">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 11 • Part 2
+          </span>
+          <h2 class="text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ทบทวนพื้นฐาน Flutter & UI State
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+            <h3 class="text-base font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญหมวดที่ 2: ทบทวนพื้นฐาน Flutter & UI State</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <button @click="currentSlide = 5" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 4</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">StatelessWidget vs StatefulWidget</div>
+              </button>
+              <button @click="currentSlide = 6" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 5</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">แนวคิด UI is a function of state</div>
+              </button>
+              <button @click="currentSlide = 7" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 6</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">การจัดการสถานะภายในด้วย `setState`</div>
+              </button>
+              <button @click="currentSlide = 8" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 7</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ทำไมต้องมีสถาปัตยกรรมแอปพลิเคชัน?</div>
+              </button>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกที่เมนูเพื่อเลือกศึกษาแต่ละสไลด์ หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูเนื้อหาทีละหน้า</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 5: ทบทวนโครงสร้างหน้าจอ StatelessWidget vs StatefulWidget -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 5">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 4 • StatelessWidget vs StatefulWidget
+              </span>
+              <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                ความแตกต่างของโครงสร้างหน้าจอ 
+              </h2>
+              <div class="space-y-4 text-slate-200 text-sm md:text-base leading-relaxed">
+                <p>
+                  ในการพัฒนาอินเตอร์เฟซด้วย Flutter ส่วนประกอบของหน้าจอจะถูกประกอบขึ้นจาก Widget ซึ่งถูกออกแบบให้มีขนาดเล็กและสามารถนำมาใช้งานซ้ำได้ [1]. โดยระบบแบ่ง Widget พื้นฐานออกเป็นสองประเภทหลัก:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 class="font-bold text-blue-300 mb-2">🔵 StatelessWidget</h4>
+                    <p class="text-xs text-slate-300">
+                      หน้าจอที่ทำงานแบบไร้สถานะ (Immutable) โดยข้อมูลที่ถูกกำหนดผ่านทาง Constructor จะไม่สามารถเปลี่ยนแปลงค่าได้ตลอดอายุการทำงาน [1, 2]. เหมาะสำหรับหน้าจอแสดงผลคงที่ [1].
+                    </p>
+                  </div>
+                  <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 class="font-bold text-yellow-300 mb-2">🟡 StatefulWidget</h4>
+                    <p class="text-xs text-slate-300">
+                      หน้าจอที่มีการเปลี่ยนแปลงข้อมูลภายในตัวแอปพลิเคชัน (Mutable State) ซึ่งเมื่อมีการเปลี่ยนแปลงข้อมูลใด ๆ ระบบจะทำการวาดหน้าจอใหม่ (Rebuild) ทันที [3].
+                    </p>
+                  </div>
+                </div>
+                <div class="mt-4 pt-2">
+                  <span class="text-xs text-slate-400">🔗 ศึกษาข้อมูลเพิ่มเติมได้ที่:</span>
+                  <a href="https://docs.flutter.dev/development/ui/widgets" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                    https://docs.flutter.dev/development/ui/widgets 
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/2">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="stateless_vs_stateful.jpg" alt="StatelessWidget vs StatefulWidget Infographic" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2"> แผนภาพจำลองการทำงานและสิทธิ์การเปลี่ยนแปลงค่าภายในของ Widget ทั้งสองระบบ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 6: ทบทวนแนวคิด UI is a function of state -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 6">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 5 • Declarative UI Concepts
+              </span>
+              <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                แนวคิด UI is a function of state 
+              </h2>
+              <div class="space-y-4 text-slate-200 text-sm md:text-base leading-relaxed">
+                <p>
+                  Flutter ทำงานอยู่บนแนวคิดเชิงประกาศ (Declarative UI) ซึ่งหมายความว่าระบบจะทำงานโดยการสะท้อนสถานะ (State) ล่าสุดออกมาเป็นภาพอินเตอร์เฟซบนหน้าจอ [3].
+                </p>
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                  <p class="text-xs md:text-sm text-slate-300">
+                    เมื่อสถานะหรือชุดข้อมูลหลักมีการอัปเดตเกิดขึ้น ตัวแอปพลิเคชันจะกระตุ้นคำสั่งการ Rebuild หน้าจอส่วนที่เกี่ยวข้องทั้งหมดขึ้นมาทดแทนส่วนเดิม [3].
+                  </p>
+                  <p class="text-xs md:text-sm text-slate-300 font-bold text-yellow-300">
+                    สมการที่เป็นหัวใจหลักในการวาดหน้าจอของ Flutter ถูกนิยามไว้คือ:
+                  </p>
+                  <div class="text-center py-2 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-yellow-200">
+                    UI = f(State)
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    นอกจากนี้ การออกแบบให้เลเยอร์ตัวกลางส่งผ่านสถานะที่เป็นข้อมูลประเภทที่ไม่สามารถเปลี่ยนแปลงค่าได้ (Immutable State) จะช่วยลดโอกาสเกิดบั๊กและปัญหาการแก้ไขข้อมูลที่ผิดรูปในระบบลงได้ [3, 4].
+                  </p>
+                </div>
+                <div class="mt-2">
+                  <span class="text-xs text-slate-400">🔗 ศึกษาข้อมูลเพิ่มเติมได้ที่:</span>
+                  <a href="https://docs.flutter.dev/data-and-backend/state-mgmt/declarative" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                    https://docs.flutter.dev/data-and-backend/state-mgmt/declarative 
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/2">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="ui_function_of_state.jpg" alt="UI is a function of state Infographic" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2"> การป้อนข้อมูลสถานะ (State) เข้าสู่ฟังก์ชันประมวลผลเพื่อแปลงเป็นหน้าต่างผู้ใช้งานแบบอัตโนมัติ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 7: ทบทวนการจัดการสถานะภายในด้วย `setState` -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 7">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 6 • Internal State & setState
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การจัดการสถานะภายในด้วย setState 
+          </h2>
+          <div class="space-y-4 text-slate-200 text-sm md:text-base leading-relaxed">
+            <p>
+              การใช้งานฟังก์ชัน <code class="bg-white/10 px-1.5 py-0.5 rounded text-yellow-300">setState</code> เป็นกลไกเริ่มต้นและง่ายที่สุดในการบริหารจัดการสถานะชั่วคราว (Ephemeral State) ที่ทำงานอยู่เฉพาะตัวแปรภายในหน้าจอคอมโพเนนต์เดี่ยว [5, 6].
+            </p>
+            <div class="bg-white/5 rounded-xl p-5 border border-white/10 space-y-3">
+              <div class="flex items-start gap-3">
+                <div class="bg-blue-500/20 text-blue-300 rounded-lg p-2 font-bold text-xs shrink-0">1</div>
+                <p class="text-xs md:text-sm text-slate-300">
+                  เมื่อคำสั่งถูกเรียกใช้เพื่อแก้ไขสถานะหรือค่าพารามิเตอร์ภายใน ตัวแอปพลิเคชันจะกระตุ้นคำสั่งการ Rebuild โดยสั่งรันเมธอด <code class="bg-white/10 px-1 py-0.5 rounded text-blue-300">build</code> ของ Widget นั้น ๆ อีกครั้งทันที [3].
+                </p>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="bg-red-500/20 text-red-300 rounded-lg p-2 font-bold text-xs shrink-0">⚠️</div>
+                <p class="text-xs md:text-sm text-slate-300">
+                  <strong>ข้อจำกัดสำคัญ:</strong> เมื่อแอปพลิเคชันมีขนาดใหญ่และเริ่มแบ่งเป็นโครงสร้างหน้าจอซ้อนกันลึก ๆ การนำสถานะภายในไปแบ่งปันข้อมูลให้กับ Widgets ตัวอื่นที่อยู่ภายนอกจะทำได้ยากและทำให้โค้ดพันกันอย่างยุ่งเหยิง [1, 5].
+                </p>
+              </div>
+            </div>
+            <div class="mt-4 pt-2">
+              <span class="text-xs text-slate-400">🔗 ศึกษาข้อมูลเพิ่มเติมได้ที่:</span>
+              <a href="https://docs.flutter.dev/data-and-backend/state-mgmt/intro" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                https://docs.flutter.dev/data-and-backend/state-mgmt/intro 
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 8: ทำไมแอปพลิเคชันระดับโปรดักชันต้องมี "สถาปัตยกรรม"? -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 8">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 7 • Why App Architecture?
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ทำไมต้องออกแบบสถาปัตยกรรมแอปพลิเคชัน? 🏗️
+          </h2>
+          <div class="space-y-4 text-slate-200 text-sm md:text-base leading-relaxed">
+            <p>
+              เมื่อขนาดของโปรเจกต์เติบโตขึ้นเรื่อย ๆ การพัฒนาโดยปราศจากการควบคุมย่อมก่อให้เกิดผลเสียอย่างรุนแรง การนำ **สถาปัตยกรรม (Architecture)** มาประยุกต์ใช้งานจะช่วยป้องกันการเขียนโค้ดที่รกรุงรังและช่วยเพิ่มคุณภาพของโปรแกรมในแง่มุมต่าง ๆ [7]:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h4 class="font-bold text-yellow-300 mb-2">🤝 Scalability</h4>
+                <p class="text-xs text-slate-300">
+                  ช่วยกำหนดขอบเขตและหลักการแยกส่วนงาน (Separation of Concerns) ทำให้ทีมพัฒนาสามารถเขียนและแก้ไขระบบไปพร้อมกันได้โดยไม่เกิดปัญหาโค้ดชนกัน (Code Conflicts) [8, 9].
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h4 class="font-bold text-blue-300 mb-2">🔄 Extensibility</h4>
+                <p class="text-xs text-slate-300">
+                  แอปพลิเคชันจะมีความยืดหยุ่นสูง การเพิ่มความสามารถหรือฟีเจอร์ใหม่ ๆ เข้าไปภายหลังจะทำได้สะดวก รวดเร็ว และไม่มีความเสี่ยงที่จะพังระบบประมวลผลภายในส่วนอื่น ๆ [10].
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h4 class="font-bold text-green-300 mb-2">🧪 Testability</h4>
+                <p class="text-xs text-slate-300">
+                  เพิ่มขีดจำกัดในการวางชุดทดสอบ (Unit & Widget Tests) เพราะการจัดข้อมูลเป็นระบบชั้นทำให้คุณสามารถใช้ "ข้อมูลจำลอง" ทดสอบลอจิกแต่ละส่วนได้ทันทีโดยไม่ต้องเชื่อมต่อข้อมูลเน็ตเวิร์กของจริง [6, 11].
+                </p>
+              </div>
+            </div>
+            <div class="mt-4 pt-2">
+              <span class="text-xs text-slate-400">🔗 ศึกษาข้อมูลเพิ่มเติมได้ที่:</span>
+              <a href="https://docs.flutter.dev/app-architecture" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                https://docs.flutter.dev/app-architecture 
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 9: สารบัญหมวดที่ 3 (Table of Contents) & Separation of Concerns -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 9">
+        <div class="text-center max-w-4xl mx-auto">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 11 • Part 3
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สถาปัตยกรรม MVVM & โครงสร้าง Compass App
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญหมวดที่ 3: สถาปัตยกรรมและการจัดรูปโฟลเดอร์</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+              <button @click="currentSlide = 9" class="bg-blue-500/20 text-left p-2 rounded-lg border border-blue-400/40 text-yellow-200">
+                <span class="font-bold">สไลด์ที่ 9:</span> Layered Architecture & SOC
+              </button>
+              <button @click="currentSlide = 10" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 10:</span> SSOT & Unidirectional Data Flow
+              </button>
+              <button @click="currentSlide = 11" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 11:</span> สถาปัตยกรรม MVVM ใน Compass
+              </button>
+              <button @click="currentSlide = 12" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 12:</span> Folder Structure ของแอป
+              </button>
+              <button @click="currentSlide = 13" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 13:</span> กฎการเชื่อมโยง (Rules of Engagement)
+              </button>
+              <button @click="currentSlide = 14" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 14:</span> UI Layer: Views & ViewModels
+              </button>
+              <button @click="currentSlide = 15" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2 rounded-lg border border-white/10 group col-span-1 md:col-span-2 lg:col-span-3">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 15:</span> Data Layer: Repositories & Services
+              </button>
+            </div>
+          </div>
+          <div class="bg-blue-900/40 rounded-xl p-4 border border-blue-500/20 text-xs md:text-sm text-slate-200">
+            <strong class="text-yellow-300">หลักการที่ 1: Separation of Concerns (การแยกหน้าที่ความรับผิดชอบ) [4]:</strong>
+            <p class="mt-1">
+              การเขียนโค้ดที่ดีต้องแยกความรับผิดชอบออกจากกันอย่างชัดเจน [4] โดยการแบ่งแอปพลิเคชันออกเป็น <strong class="text-yellow-200">ชั้นเลเยอร์ (Layered Architecture) [7]</strong> ซึ่งแต่ละเลเยอร์จะมีหน้าที่และขอบเขตการทำงานเฉพาะตัวที่ชัดเจน เพื่อไม่ให้ลอจิกของหน้าจอปนเปกับข้อมูลดิบ [7, 8]
+            </p>
+          </div>
+          <div class="mt-4 pt-2">
+            <span class="text-xs text-slate-400">🔗 ศึกษาหลักการสถาปัตยกรรมเพิ่มเติม:</span>
+            <a href="https://docs.flutter.dev/app-architecture/concepts" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+              https://docs.flutter.dev/app-architecture/concepts 
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 10: หลักการที่ 2: Single Source of Truth (SSOT) & Unidirectional Data Flow (UDF) -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 10">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 10 • SSOT & Unidirectional Data Flow
+              </span>
+              <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                การไหลเวียนของข้อมูลแบบทิศทางเดียว (UDF) 
+              </h2>
+              <div class="space-y-4 text-slate-200 text-xs md:text-sm leading-relaxed">
+                <p>
+                  เพื่อป้องกันไม่ให้ข้อมูลสถานะของแอปเกิดความซ้ำซ้อนหรือมีค่าไม่ตรงกัน สถาปัตยกรรมที่ถูกต้องจะต้องยึดหลักการจัดเก็บสถานะไว้ที่ <strong class="text-yellow-300">"แหล่งความจริงที่หนึ่งเดียว" (Single Source of Truth - SSOT) [9]</strong> ซึ่งสำหรับแอป Flutter แหล่งความจริงนี้จะกักเก็บอยู่ที่เลเยอร์ข้อมูล (Data Layer - Repositories) เสมอ [9]
+                </p>
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                  <h4 class="font-bold text-blue-300">🔄 วงจรการไหลของข้อมูล (UDF Lifecycle) [6]:</h4>
+                  <ol class="list-decimal list-inside space-y-1.5 text-slate-300">
+                    <li><strong class="text-yellow-200">ผู้ใช้งานกระตุ้น Event:</strong> เกิดการ swipe หรือกดปุ่มบนหน้าจอ View [6]</li>
+                    <li><strong class="text-yellow-200">ViewModel รับคำสั่ง:</strong> View เรียกคำสั่งการทำงาน (Command) ของ ViewModel [6, 10]</li>
+                    <li><strong class="text-yellow-200">Repository อัปเดตข้อมูล:</strong> ViewModel สั่งให้ Repository ดำเนินการปรับแก้ข้อมูลดิบ [6]</li>
+                    <li><strong class="text-yellow-200">ข้อมูลใหม่ไหลย้อนขึ้นมา:</strong> ข้อมูลที่อัปเดตแล้วถูกส่งกลับจากเลเยอร์ Data ไปยัง ViewModel เพื่อวาดหน้าจอ (Rebuild UI) ใหม่ด้วยสถานะที่ไม่สามารถแก้ไขค่าได้ (Immutable State) [6, 9]</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/2">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="flutter_mvvm_architecture.jpg" alt="Unidirectional Data Flow & MVVM in Flutter" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2">🔄 แผนผังแสดงการไหลเวียนของสถานะขึ้นสู่หน้าจอ และการส่ง User Events ไหลลงสู่ Repository</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 11: สถาปัตยกรรม MVVM ใน Compass App -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 11">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 11 • MVVM Pattern in Compass App
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            โครงสร้างโมเดล MVVM ของแอปพลิเคชัน Compass 
+          </h2>
+          <div class="space-y-4 text-slate-200 text-sm leading-relaxed">
+            <p>
+              แอปพลิเคชัน Compass ออกแบบตามโครงสร้าง <strong class="text-yellow-300">Model-View-ViewModel (MVVM) [1, 11]</strong> ของผู้พัฒนา Flutter เพื่อสาธิตการพัฒนาในระดับที่ใช้งานได้จริง (Production-Grade):
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h4 class="font-bold text-red-300 mb-1">🖼️ Views (UI Layer)</h4>
+                <p class="text-xs text-slate-300">
+                  คือคลาสวิดเจ็ตต่างๆ ใน Flutter (เช่น <code class="text-yellow-300">HomeScreen</code>)  ทำหน้าที่เป็นผู้รับข้อมูลแสดงผลจาก ViewModel เพียงอย่างเดียว  และเชื่อมผู้ใช้เข้ากับระบบด้วย UI ปราศจากการคำนวณทางตรรกะ 
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h4 class="font-bold text-yellow-300 mb-1">⚙️ ViewModels (UI Layer)</h4>
+                <p class="text-xs text-slate-300">
+                  คือคลาสจัดการสถานะหน้าจอ เช่น <code class="text-yellow-300">HomeViewModel</code>  คอยแปลงข้อมูลดิบจากคลังเก็บให้อยู่ในสภาพพร้อมระบายบนจอ  และเปิดคำสั่ง <strong class="text-yellow-200">"Commands"</strong> ให้กับเลเยอร์ View เรียกใช้งาน 
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h4 class="font-bold text-green-300 mb-1">📦 Model (Data Layer)</h4>
+                <p class="text-xs text-slate-300">
+                  คือคลาส <strong class="text-yellow-200">Repositories</strong> และ <strong class="text-yellow-200">Services</strong> ทำหน้าที่ดูแลฐานข้อมูลทริปการท่องเที่ยว เชื่อม API ดิบ และแปลงให้เป็นวัตถุของขอบเขตงานจริง (Domain Models) เพื่อเป็นแหล่งข้อมูลที่เชื่อถือได้แหล่งเดียว 
+                </p>
+              </div>
+            </div>
+            <div class="mt-4 pt-2">
+              <span class="text-xs text-slate-400">🔗 เจาะลึกกรณีศึกษา MVVM บนเว็บบอร์ดหลัก:</span>
+              <a href="https://docs.flutter.dev/app-architecture/case-study" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                https://docs.flutter.dev/app-architecture/case-study 
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 12: โครงสร้างโฟลเดอร์ของแอปพลิเคชัน Compass (Folder Structure) -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 12">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 12 • Folder & Package Structure
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การจัดโครงสร้างแฟ้มข้อมูลโฟลเดอร์สไตล์โปรดักชัน 
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-white/10 font-mono text-[10px] md:text-xs text-green-300 leading-relaxed overflow-x-auto">
+              <p>lib/</p>
+              <p class="pl-4 text-blue-300">├── data/ <span class="text-slate-400">// จัดระเบียบตาม "ประเภทข้อมูล" (ไม่จำกัดฟีเจอร์) </span></p>
+              <p class="pl-8 text-slate-300">├── model/ <span class="text-slate-400"># ApiClient Models (e.g. UserApiModel) </span></p>
+              <p class="pl-8 text-slate-300">├── repositories/ <span class="text-slate-400"># (e.g. booking_repository_remote.dart) </span></p>
+              <p class="pl-8 text-slate-300">└── services/ <span class="text-slate-400"># Stateless Network clients (e.g. api_client.dart) </span></p>
+              <p class="pl-4 text-purple-300">├── domain/ <span class="text-slate-400">// สำหรับประเภทข้อมูลส่วนกลางของระบบแอป </span></p>
+              <p class="pl-8 text-slate-300">└── models/ <span class="text-slate-400"># Pure Domain Models (e.g. Booking, User) </span></p>
+              <p class="pl-4 text-red-300">├── ui/ <span class="text-slate-400">// จัดระเบียบตาม "ฟีเจอร์การใช้งาน" </span></p>
+              <p class="pl-8 text-slate-300">├── core/ <span class="text-slate-400"># Shared Widgets & Brand Themes </span></p>
+              <p class="pl-8 text-slate-300">└── &lt;feature_name&gt;/ <span class="text-slate-400"># (e.g. home/ หรือ auth/) </span></p>
+              <p class="pl-12 text-slate-400">├── view_models/ <span class="text-slate-400"># (e.g. home_viewmodel.dart) </span></p>
+              <p class="pl-12 text-slate-400">└── widgets/ <span class="text-slate-400"># (e.g. home_screen.dart, logout_button.dart) </span></p>
+              <p class="pl-4 text-yellow-300">└── main.dart / main_development.dart / main_staging.dart <span class="text-slate-400"></span></p>
+            </div>
+            <div class="space-y-3 text-xs md:text-sm text-slate-200">
+              <p>
+                แอปพลิเคชันระดับใหญ่จะผสมผสานรูปแบบการจัดโครงสร้างแฟ้มข้อมูลสองประเภทเข้าด้วยกันอย่างเหมาะสม :
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li>
+                  <strong class="text-yellow-300">แบ่งตามประเภท (By Type):</strong> นำไปปรับใช้กับเลเยอร์ <code class="text-green-300">data/</code> เพราะคลังเก็บ (Repository) และ Services ต่างๆ ต้องพร้อมใช้งานแบบแบ่งปันกันข้ามไปยังหลายๆ ฟีเจอร์ทั่วแอปพลิเคชันได้ 
+                </li>
+                <li>
+                  <strong class="text-yellow-300">แบ่งตามฟีเจอร์ (By Feature):</strong> นำไปปรับใช้กับเลเยอร์ <code class="text-red-300">ui/</code> เพราะชุดแสดงผล View และตัวจัดการสถานะ ViewModel มักจะทำงานสอดรับเป็นคู่แบบจำเพาะเจาะจงกันเสมอ 
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 13: กฎการเชื่อมโยงข้อมูลระหว่างเลเยอร์ (Rules of Engagement) -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 13">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 13 • Rules of Engagement
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            กฎเหล็กการเชื่อมโยงและการสื่อสารระหว่างเลเยอร์ 
+          </h2>
+          <div class="space-y-4 text-slate-200 text-xs md:text-sm leading-relaxed">
+            <p>
+              เพื่อรักษาหลักการแยกความรับผิดชอบ (Separation of Concerns) ไม่ให้โค้ดพันกันจนส่งผลเสียต่อการตรวจสอบและการบำรุงรักษา ทุกเลเยอร์ต้องเคารพกฎความสัมพันธ์ (Rules of Engagement) อย่างเคร่งครัด:
+            </p>
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-white/10">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-white/20 text-yellow-300">
+                    <th class="py-2 pr-4 font-bold">คอมโพเนนต์</th>
+                    <th class="py-2 font-bold">กฎการเชื่อมโยงข้อมูล (Rules of Engagement) </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/10 text-slate-300">
+                  <tr>
+                    <td class="py-2.5 pr-4 font-bold text-red-300 shrink-0"> View</td>
+                    <td>จะรู้จักและติดต่อผ่านทาง <strong class="text-yellow-200">ViewModel ของตัวเองเพียงแค่ตัวเดียวเท่านั้น</strong> และต้องไม่ข้ามเลเยอร์ไปรู้จักหรือเรียกข้อมูลจาก Repository หรือ Service โดยตรงเด็ดขาด [22]</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-4 font-bold text-yellow-300 shrink-0"> ViewModel</td>
+                    <td>เชื่อมต่อและสื่อสารเข้ากับ <strong class="text-yellow-200">Repository ตั้งแต่ 1 ตัวขึ้นไป</strong> ผ่านทางคอนสตรักเตอร์ของตัวเอง แต่ตัวมันจะไม่มีวันรู้จักกับเลเยอร์ View ที่คอยอ่านสถานะของมันอยู่ [22]</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-4 font-bold text-green-300 shrink-0"> Repository</td>
+                    <td>ควบคุมและทำงานประสานกับ <strong class="text-yellow-200">Service ต่างๆ ในการแปลงข้อมูลดิบ</strong> และถูกเรียกใช้งานต่อโดย ViewModels หลายๆ ตัวได้ โดยที่ตัวมันไม่มีสิทธิ์รู้ตัวตนของ ViewModels เลย [22]</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-4 font-bold text-blue-300 shrink-0"> Service</td>
+                    <td>เป็นคลาสไร้สถานะ (Stateless) ที่มีบทบาทห่อหุ้ม API ภายนอก โดยทำงานรับใช้คลังเก็บข้อมูล และ <strong class="text-yellow-200">ไม่มีวันรับรู้ความมีอยู่ของเลเยอร์อื่นใดเลย</strong> [14, 22]</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 14: เจาะลึกเลเยอร์แสดงผล: Views & ViewModels -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 14">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 14 • Deep Dive: Presentation Layer (UI)
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            เจาะลึกเลเยอร์แสดงผล: Views & ViewModels 
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-200 text-xs md:text-sm leading-relaxed">
+            <div class="bg-white/5 p-5 rounded-2xl border border-white/10 space-y-3">
+              <h3 class="text-base font-bold text-red-300 flex items-center gap-2">
+                <span>🖼️</span> เลเยอร์ View ( Stateless UI )
+              </h3>
+              <p class="text-slate-300">
+                วิดเจ็ตในเลเยอร์นี้ (เช่น <code class="text-yellow-300">StatelessWidget</code>) จะประหยัดพลังงานหน่วยความจำ และ <strong class="text-red-200">ไม่มีลอจิกทางธุรกิจอยู่ภายในเลย</strong> [12] โดยมีหน้าที่ดึงข้อมูลสถานะจาก ViewModel มาระบายวาดลงหน้าจอผ่านทางตัวสร้างสัญญาณรีเฟรชเฉพาะส่วน <strong class="text-yellow-200">ListenableBuilder</strong> [23, 24]
+              </p>
+              <p class="text-slate-400">
+                ตรรกะที่อนุญาตให้มีได้ในหน้าจอนี้ มีเพียงแค่การสั่งเปิด-ปิดแอนิเมชัน หรือการจัดเลย์เอาต์ตามขนาดหน้าจอและทิศทางการหมุนของเครื่องโทรศัพท์เท่านั้น [12]
+              </p>
+            </div>
+            <div class="bg-white/5 p-5 rounded-2xl border border-white/10 space-y-3">
+              <h3 class="text-base font-bold text-yellow-300 flex items-center gap-2">
+                <span>⚙️</span> เลเยอร์ ViewModel ( State & Commands )
+              </h3>
+              <p class="text-slate-300">
+                เป็นคลาสจัดสรรตรรกะของหน้าจอ โดยมีการสืบทอดความสามารถมาจาก <code class="text-yellow-300">ChangeNotifier</code>  คอยประกาศฟังก์ชัน <strong class="text-yellow-200">Command Objects</strong> (เช่น <code class="text-yellow-300">Command0</code> และ <code class="text-yellow-300">Command1</code>) เพื่อให้หน้าจอ Views สั่งงานได้อย่างปลอดภัยไร้บั๊ก 
+              </p>
+              <p class="text-slate-400">
+                มีหน้าที่คอยจับตาเฝ้าดูความเปลี่ยนแปลงข้อมูลสถานะ เมื่อระบบดึงข้อมูลสำเร็จเสร็จสิ้น จะเรียกใช้คำสั่ง <code class="text-yellow-200">notifyListeners()</code> เพื่อส่งผ่านการ Rebuild ชิ้นส่วนหน้าจอโดยอัตโนมัติ 
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 pt-2 text-center">
+            <span class="text-xs text-slate-400">🔗 ศึกษารายละเอียดสถาปัตยกรรมชั้นแสดงผล UI ในเชิงปฏิบัติ:</span>
+            <a href="https://docs.flutter.dev/app-architecture/case-study/ui-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+              https://docs.flutter.dev/app-architecture/case-study/ui-layer 
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 15: เจาะลึกเลเยอร์ข้อมูลเบื้องหลัง: Repositories & Services -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 15">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 15 • Deep Dive: Data Layer
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            เจาะลึกเลเยอร์ข้อมูลเบื้องหลัง: Repositories & Services 
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-200 text-xs md:text-sm leading-relaxed">
+            <div class="bg-white/5 p-5 rounded-2xl border border-white/10 space-y-3">
+              <h3 class="text-base font-bold text-green-300 flex items-center gap-2">
+                <span>📦</span> เลเยอร์ Repository ( Single Source of Truth )
+              </h3>
+              <p class="text-slate-300">
+                คลังข้อมูลหลักที่เป็นแหล่งความจริงหนึ่งเดียวในการเก็บและแปลงข้อมูลทริปเดินทาง  มีบทบาทสำคัญในการควบคุมและจัดเก็บลอจิกการอัปเดตข้อมูล การทำ Caching ระบบการจัดสรรข้อผิดพลาด ตลอดจนการทำซ้ำคำสั่งที่ล้มเหลว (Retry Logic) [14, 15]
+              </p>
+              <p class="text-slate-400">
+                จะประมวลผลดึงค่า JSON จาก Services และขัดเกลากรองข้อมูลดิบให้กลายเป็น <strong class="text-yellow-200">"Domain Models"</strong> ที่สมบูรณ์และปลอดภัย เพื่อส่งผ่านต่อไปให้หลายๆ ViewModels ในระบบเรียกใช้งาน 
+              </p>
+            </div>
+            <div class="bg-white/5 p-5 rounded-2xl border border-white/10 space-y-3">
+              <h3 class="text-base font-bold text-blue-300 flex items-center gap-2">
+                <span>🔌</span> เลเยอร์ Service ( Stateless HTTP Client )
+              </h3>
+              <p class="text-slate-300">
+                คลาสทำงานที่เป็นศูนย์รวมชุดคำสั่ง API เชื่อมโยงข้อมูลเน็ตเวิร์ก  มีหน้าต่างรับผิดชอบเพียงขอบเขตเดียวคือการติดต่อเพื่อดึงหรือบันทึกข้อมูลดิบกลับไปยังเครื่องฐานข้อมูลปลายทาง (เช่น Django REST Framework Backend) 
+              </p>
+              <p class="text-slate-400">
+                ทำงานเป็นแบบไร้สถานะ (Stateless) และให้คลาส Repositories ปรากฏตัวในคอนสตรักเตอร์แบบเป็นส่วนตัว (Private) เพื่อส่งข้อมูลดิบกลับขึ้นไปประมวลผลต่อตามลำดับชั้นอย่างมีระบบระเบียบและปลอดภัยสูง 
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 pt-2 text-center">
+            <span class="text-xs text-slate-400">🔗 ศึกษารายละเอียดสถาปัตยกรรมเลเยอร์ข้อมูลของระบบแอปพลิเคชัน:</span>
+            <a href="https://docs.flutter.dev/app-architecture/case-study/data-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+              https://docs.flutter.dev/app-architecture/case-study/data-layer 
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- สไลด์ที่ 16: สารบัญหมวดที่ 4 (Table of Contents) -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 16">
+        <div class="text-center max-w-4xl mx-auto">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 11 • Part 4
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ปฏิบัติการตั้งค่าโปรเจกต์และเครื่องมือพัฒนา
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญหมวดที่ 4: เวิร์กชอปการติดตั้งระบบ</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+              <button @click="currentSlide = 17" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2.5 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 17:</span> ตรวจสอบระบบด้วย flutter doctor
+              </button>
+              <button @click="currentSlide = 18" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2.5 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 18:</span> สร้างโปรเจกต์ & ติดตั้งคลังไลบรารี
+              </button>
+              <button @click="currentSlide = 19" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2.5 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 19:</span> การจัดระเบียบโฟลเดอร์สไตล์ MVVM
+              </button>
+              <button @click="currentSlide = 20" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2.5 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 20:</span> ติดตั้งเครื่องมือช่วยพัฒนา AI Copilot
+              </button>
+              <button @click="currentSlide = 21" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2.5 rounded-lg border border-white/10 group">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 21:</span> การวางสเกเลตันโค้ด (Skeleton Code)
+              </button>
+              <button @click="currentSlide = 22" class="bg-white/5 hover:bg-blue-500/20 transition text-left p-2.5 rounded-lg border border-white/10 group col-span-1 md:col-span-2 lg:col-span-3">
+                <span class="text-blue-300 font-bold">สไลด์ที่ 22:</span> ทดสอบรันและเตรียมเข้าสู่สัปดาห์ที่ 2
+              </button>
+            </div>
+          </div>
+          <div class="bg-blue-900/40 rounded-xl p-4 border border-blue-500/20 text-xs md:text-sm text-slate-200">
+            <strong class="text-yellow-300">💡 คำชี้แนะภาคปฏิบัติ:</strong>
+            <p class="mt-1">
+              ในหมวดเรียนนี้จะเป็นการลงมือเขียนโค้ดและพิมพ์คำสั่งควบคุมระบบจริงแบบทีละขั้นตอน (Step-by-Step) ขอให้นักศึกษาจัดเตรียมเครื่องคอมพิวเตอร์และตรวจสอบสัญญาณอินเทอร์เน็ตให้เรียบร้อยก่อนเริ่มต้นทำตาม
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 17: ขั้นตอนที่ 1: ตรวจสอบความพร้อมของระบบด้วย `flutter doctor` -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 17">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 17 • Verifying the Environment
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ขั้นตอนที่ 1: ตรวจสอบความพร้อมด้วย flutter doctor 
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed">
+            <p>
+              ก่อนเริ่มต้นเขียนโครงสร้างโปรเจกต์ใหม่ นักศึกษาทุกคนจำเป็นต้องตรวจสอบระบบและสถานะของซอฟต์แวร์สนับสนุนบนระบบเครื่อง เพื่อให้แน่ใจว่าเครื่องมือสำหรับการรันและทดสอบระบบจำลอง (Emulators) ทำงานได้สมบูรณ์:
+            </p>
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300">
+              <p class="text-slate-400"># เปิดโปรแกรม Terminal หรือ Command Prompt แล้วพิมพ์คำสั่งด้านล่าง:</p>
+              <p class="mt-2">$ <span class="text-white">flutter doctor</span></p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+              <h4 class="font-bold text-yellow-300">🎯 สิ่งที่ควรตรวจสอบในหน้าจอผลลัพธ์:</h4>
+              <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                <li>ช่อง <span class="text-green-400">[✓] Flutter</span> ต้องแสดงรุ่นเวอร์ชันอย่างน้อย <strong class="text-white">3.9.0 หรือสูงกว่า</strong> เพื่อรองรับฟีเจอร์ AI และสถาปัตยกรรมตัวใหม่</li>
+                <li>ช่อง <span class="text-green-400">[✓] Android toolchain</span> และ <span class="text-green-400">[✓] Xcode</span> (สำหรับ macOS) ต้องแสดงสถานะสมบูรณ์</li>
+                <li>ช่อง <span class="text-green-400">[✓] VS Code</span> หรือ <span class="text-green-400">[✓] Android Studio</span> มีการติดตั้งปลั๊กอิน Flutter และ Dart เรียบร้อยแล้ว</li>
+              </ul>
+            </div>
+            <div class="pt-2 text-center">
+              <span class="text-xs text-slate-400">🔗 กรณีเกิดข้อผิดพลาดในการตรวจสอบสภาพแวดล้อม ศึกษาแนวทางแก้ไขปัญหาได้ที่:</span>
+              <a href="https://docs.flutter.dev/install/troubleshoot" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
+                https://docs.flutter.dev/install/troubleshoot 
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 18: ขั้นตอนที่ 2: สร้างโปรเจกต์และเพิ่ม Dependencies ใน `pubspec.yaml` -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 18">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 18 • Project Creation & Libraries
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ขั้นตอนที่ 2: เริ่มต้นจัดสร้างโครงร่างโปรเจกต์และนำเข้าคลังไลบรารี 
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed">
+            <p>
+              สร้างโฟลเดอร์สำหรับพัฒนาแอปพลิเคชัน Compass ของเราขึ้นมาใหม่ และติดตั้งกลุ่มไลบรารีเสริมที่จำเป็นสำหรับการเชื่อมโยงเน็ตเวิร์ก (Dio), ระบบจัดการสถานะ (Provider), และการสร้างความปลอดภัยให้โทเค็น (Secure Storage):
+            </p>
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 space-y-1">
+              <p class="text-slate-400"># สร้างโปรเจกต์ใหม่และย้ายหน้าต่างการทำงานเข้าสู่ไดเรกทอรีโปรเจกต์:</p>
+              <p>$ <span class="text-white">flutter create compass_booking_app</span></p>
+              <p>$ <span class="text-white">cd compass_booking_app</span></p>
+              <p class="text-slate-400 pt-2"># นำเข้าปลั๊กอินสำหรับเชื่อมต่อ REST API และจัดเก็บข้อมูลอย่างปลอดภัย:</p>
+              <p>$ <span class="text-white">flutter pub add dio provider flutter_secure_storage</span></p>
+            </div>
+            <div class="bg-yellow-500/10 rounded-xl p-4 border border-yellow-500/20">
+              <h4 class="font-bold text-yellow-300 mb-1">🔗 เอกสารอ้างอิงและคู่มือการติดตั้ง (สำหรับการศึกษาต่อ):</h4>
+              <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-slate-300 mt-2">
+                <li>
+                  • <strong class="text-white">Dio HTTP Client:</strong> 
+                  <a href="https://pub.dev/packages/dio" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline transition inline-block">
+                    https://pub.dev/packages/dio 
+                  </a>
+                </li>
+                <li>
+                  • <strong class="text-white">State Provider:</strong> 
+                  <a href="https://pub.dev/packages/provider" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline transition inline-block">
+                    https://pub.dev/packages/provider 
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 19: ขั้นตอนที่ 3: โครงร่างโฟลเดอร์สถาปัตยกรรม MVVM -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 19">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 19 • MVVM Directory Structuring
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ขั้นตอนที่ 3: การจัดระเบียบสารบนโฟลเดอร์สไตล์ MVVM 
+          </h2>
+          <p class="text-slate-300 text-xs md:text-sm mb-3">
+            เพื่อแยกความรับผิดชอบของโค้ดให้สอดคล้องตามข้อกำหนดของทีมผู้พัฒนา Flutter และหลักการกักเก็บความจริงหนึ่งเดียว (SSOT) ให้นักศึกษาสร้างโฟลเดอร์ย่อยภายใต้ไดเรกทอรี <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">lib/</code> ดังนี้:
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 space-y-1">
+              <p class="text-slate-400"># รันคำสั่งต่อไปนี้เพื่อสร้างโครงสร้างโฟลเดอร์พร้อมกัน:</p>
+              <p class="text-slate-400"># สำหรับระบบปฏิบัติการ Unix/macOS:</p>
+              <p>$ <span class="text-white">mkdir -p lib/data/models lib/data/repositories lib/data/services</span></p>
+              <p>$ <span class="text-white">mkdir -p lib/domain/models</span></p>
+              <p>$ <span class="text-white">mkdir -p lib/ui/core lib/ui/home/view_models lib/ui/home/widgets</span></p>
+              <p class="text-slate-400 pt-2"># สำหรับ Windows PowerShell:</p>
+              <p>$ <span class="text-white">mkdir lib\data\models, lib\data\repositories, lib\data\services</span></p>
+              <p>$ <span class="text-white">mkdir lib\domain\models</span></p>
+              <p>$ <span class="text-white">mkdir lib\ui\core, lib\ui\home\view_models, lib\ui\home\widgets</span></p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col justify-center">
+              <h4 class="font-bold text-yellow-300 mb-2">💡 เหตุผลในการแบ่งโครงสร้าง:</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li>การจัด <code class="text-green-300">data/</code> ตามชนิดช่วยให้คลาสเรียกใช้ API สามารถแชร์การทำงานกันได้ง่ายข้ามหลายส่วน</li>
+                <li>การจัด <code class="text-red-300">ui/</code> แยกตามฟีเจอร์ ช่วยลดการทำงานชนกันของโค้ดเมื่อทีมขยายใหญ่ขึ้น</li>
+              </ul>
+              <div class="mt-4 pt-2 border-t border-white/10">
+                <span class="text-[10px] text-slate-400 block">🔗 เจาะลึกกรณีศึกษาการวางโครงสร้างโปรเจกต์ระดับมาตรฐาน:</span>
+                <a href="https://docs.flutter.dev/app-architecture/case-study#package-structure" target="_blank" rel="noopener noreferrer" class="text-[11px] text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                  https://docs.flutter.dev/app-architecture/case-study#package-structure 
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 20: ขั้นตอนที่ 4: การตั้งค่า AI Coding Assistant & Flutter Agent Plugins -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 20">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 20 • AI Tooling & Plugins Setup
+              </span>
+              <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                ขั้นตอนที่ 4: ติดตั้งระบบผู้ช่วยพัฒนา AI Copilot 
+              </h2>
+              <div class="space-y-3 text-xs md:text-sm text-slate-200 leading-relaxed">
+                <p>
+                  เพื่อเพิ่มประสิทธิภาพและตรวจสอบพฤติกรรมการพิมพ์โค้ดของแอปพลิเคชันให้เป็นสากล เราจะทำการติดตั้งระบบ **Flutter Agent Plugins** และเชื่อมต่อระบบ IDE เข้ากับ **Dart and Flutter MCP Server** อย่างมีประสิทธิภาพ:
+                </p>
+                <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-green-300 text-xs">
+                  <p class="text-slate-400"># เปิดใช้งานร่วมกับ Claude Code (ผ่าน Terminal):</p>
+                  <p>$ <span class="text-white">claude plugin marketplace add flutter/agent-plugins</span></p>
+                  <p>$ <span class="text-white">claude plugin install dart-flutter@dart-flutter</span></p>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1.5">
+                  <h4 class="font-bold text-yellow-300">💡 ประโยชน์ของระบบช่วยเหลือ:</h4>
+                  <p class="text-slate-300">เครื่องมือ AI จะได้รับพิมพ์เขียวระดับสูง สามารถใช้อุปกรณ์ประมวลผลจำลองตรวจสอบข้อผิดพลาดบนหน้าจอวิดเจ็ตแบบเรียลไทม์ และช่วยหาแพ็กเกจที่ปลอดภัยจากเว็บไซต์ผับเดฟได้ทันที</p>
+                </div>
+                <div>
+                  <span class="text-xs text-slate-400">🔗 แนวทางการปรับแต่งและติดตั้งระบบช่วยเหลือแบบครบถ้วน:</span>
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs">
+                    <a href="https://docs.flutter.dev/ai/get-started" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                      คู่มือการตั้งค่าเครื่องมือ AI 
+                    </a>
+                    <a href="https://docs.flutter.dev/ai/mcp-server" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                      คู่มือการใช้งานระบบ MCP Server 
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/3">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="compass_app_mockup.jpg" alt="Developer environment setup" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[9px] text-slate-400 mt-2"> ภาพแอปพลิเคชัน Compass ใน IDE ที่ตั้งค่าโครงสร้างสถาปัตยกรรมพร้อมเขียนคำสั่งเรียบร้อยแล้ว</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 21: ขั้นตอนที่ 5: การวางสเกเลตันโค้ด (Skeleton Code) -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 21">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 21 • Building Skeleton Code
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ขั้นตอนที่ 5: การจัดวางโครงข่ายคลาสรับส่งค่าเริ่มต้น 
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed">
+            <p>
+              ให้นักศึกษาทำการสร้างไฟล์แบบจำลองประเภทข้อมูล <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">lib/domain/models/booking.dart</code> เพื่อกำหนดโครงสร้างจำลองข้อมูลของทริปสำหรับการท่องเที่ยวแบบเบื้องต้น:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-xs overflow-x-auto max-h-56 leading-relaxed">
+              <p class="text-slate-400">// lib/domain/models/booking.dart</p>
+              <p class="text-blue-400">class <span class="text-yellow-300">BookingSummary</span> {</p>
+              <p class="pl-4">final int id;</p>
+              <p class="pl-4">final String destinationName;</p>
+              <p class="pl-4">final DateTime startDate;</p>
+              <p class="pl-4">final DateTime endDate;</p>
+              <p class="pl-4">final double price;</p>
+              <p class="pl-4">BookingSummary({</p>
+              <p class="pl-8">required this.id,</p>
+              <p class="pl-8">required this.destinationName,</p>
+              <p class="pl-8">required this.startDate,</p>
+              <p class="pl-8">required this.endDate,</p>
+              <p class="pl-8">required this.price,</p>
+              <p class="pl-4">});</p>
+              <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-slate-300 space-y-1">
+              <h4 class="font-bold text-yellow-300"> กิจกรรมเพิ่มเติมสำหรับนักศึกษา:</h4>
+              <p>สร้างโครงสร้างคลาสจำลองในเลเยอร์เน็ตเวิร์กไว้ชั่วคราว เพื่อเตรียมการเชื่อมต่อและดึงข้อมูลดิบจาก API หลังบ้านตัวจริงของ Django REST Framework ในการเรียนสัปดาห์หน้า</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 22: สรุปสัปดาห์ที่ 1 และภารกิจเตรียมตัวสู่สัปดาห์ที่ 2 -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 22">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 22 • Week 11 Summary & Homework
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สรุปบทเรียนและภารกิจการเตรียมพร้อมสู่สัปดาห์ที่ 12 
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed">
+            <p>
+              ในวันนี้เราได้เข้าใจสถาปัตยกรรมแอปพลิเคชันระดับโปรดักชัน คุ้นเคยกับแนวคิด **MVVM, SSOT และ UDF** และสามารถตั้งโครงร่างแฟ้มโฟลเดอร์สำหรับพัฒนา Compass App ได้เสร็จสมบูรณ์แล้ว
+            </p>
+            <div class="bg-blue-900/30 p-5 rounded-2xl border border-blue-500/20 space-y-2">
+              <h4 class="font-bold text-yellow-300"> ภารกิจจัดเตรียมความพร้อมก่อนเข้าสู่สัปดาห์ถัดไป:</h4>
+              <ul class="list-decimal list-inside space-y-1.5 text-slate-300">
+                <li>ตรวจสอบให้แน่ใจว่าเครื่องคอมพิวเตอร์ส่วนตัวมีการลงทะเบียนซอฟต์แวร์ <strong class="text-white">Python 3.10+</strong> บนระบบเครื่องแล้ว</li>
+                <li>ศึกษาพื้นฐานคำสั่งสำหรับสร้างระบบฐานข้อมูลและการจัดการ API ของ <strong class="text-white">Django REST Framework (DRF)</strong> ล่วงหน้า</li>
+                <li>ทดลองลงมือตรวจสอบความเสถียรของแอปพลิเคชันเวอร์ชันเปล่าบนเครื่องจำลองหรือโทรศัพท์มือถือส่วนตัว</li>
+              </ul>
+            </div>
+            <div class="pt-2 text-center">
+              <span class="text-xs text-slate-400">🔗 ศึกษาคู่มือการรันสภาพแวดล้อมจำลอง (Local Development) เพิ่มเติมเพื่อความเข้าใจที่ลึกซึ้ง:</span>
+              <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
+                https://github.com/flutter/samples/tree/main/compass_app 
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
+

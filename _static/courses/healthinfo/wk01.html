@@ -230,7 +230,7 @@
               <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto mb-4">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</pre>
               
               <h3 class="text-xl font-semibold mb-2 text-yellow-300">2. ดาวน์โหลดและติดตั้ง Scoop:</h3>
-              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">irm get.scoop.sh | iex</pre>
+              <pre class="bg-black/40 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression</pre>
             </div>
             <div class="bg-yellow-400/20 text-yellow-300 text-sm py-2 px-4 rounded-lg inline-block">
               💡 <strong>ข้อแนะนำ:</strong> เมื่อติดตั้งเสร็จ ให้พิมพ์คำสั่ง <code class="font-mono text-white bg-black/40 px-2 py-0.5 rounded">scoop --version</code> เพื่อทดสอบความถูกต้อง
@@ -428,14 +428,16 @@ df.head(5) # แสดงข้อมูล 5 แถวแรก</pre>
 import json
 
 # 1. โหลดไฟล์ JSON ของเวชระเบียนผู้ป่วย
-with open('patient_fhir_demo.json', 'r') as file:
-    record = json.load(file)
+file = open('patient_fhir_demo.json', 'r', encoding='utf-8')
+records = json.load(file)
+file.close()
 
 # 2. การสืบค้นข้อมูลเชิงลึกในโครงสร้าง Dictionary แบบซ้อน (Nested Key)
-patient_name = record['resource']['name']['given']
-birth_date = record['resource']['birthDate']
+patient0 = records['entry'][0]
+patient0_name = patient0['resource']['name']['given']
+patient0_bday = patient0['resource']['birthDate']
 
-print(f"ผู้ป่วย: {patient_name} | วันเกิด: {birth_date}")</pre>
+print(f"ผู้ป่วย: {patient0_name} | วันเกิด: {patient0_bday}")</pre>
               <h4 class="font-semibold text-white/90 mb-1">💡 คำอธิบายเชิงระบบ:</h4>
               <p class="text-sm text-white/80 leading-relaxed">
                 การเข้าถึงข้อมูล JSON จำเป็นต้องอาศัยการเขียนโปรแกรมเชิงโครงสร้างดิกชันนารี (Dictionary Map) เพื่อไล่เรียงหาตำแหน่งตัวแปรที่แท้จริง 

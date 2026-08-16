@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Heallth Informatics">
+    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop in Health Informatics</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk02.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- สไลด์ที่ 1: หน้าปกและเมนูนำทางเชื่อมโยงภายใน (Interactive Title & Navigation Slide) -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8 py-4">
+          <div class="text-center max-w-4xl mx-auto">
+            <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              AMMS 302 | Week 2  
+            </span>
+            <h2 class="text-4xl font-bold mt-4 mb-4">การเชื่อมโยงข้อมูลและการรวมกลุ่มข้อมูลสุขภาพ</h2>
+            <p class="text-lg text-white/90 mb-6 leading-relaxed font-light">
+              รายวิชา ปฏิบัติการสารสนเทศด้านสุขภาพ (อจวพ ๓๐๒)<br/> หลักสูตรวิทยาศาสตรบัณฑิต สาขาวิชาวิทยาศาสตร์การแพทย์ 
+            </p>
+
+            <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6">
+              <h3 class="text-lg font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญ</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button 
+                  @click="currentSlide = 1" 
+                  class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/10 hover:border-yellow-300/50 group"
+                >
+                  <div class="text-xs text-blue-300 font-bold">ส่วนที่ 1</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">บทนำสู่การเชื่อมโยงข้อมูล</div>
+                </button>
+                <button 
+                  @click="currentSlide = 6" 
+                  class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/10 hover:border-yellow-300/50 group"
+                >
+                  <div class="text-xs text-blue-300 font-bold">ส่วนที่ 2</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">ทฤษฎีและการเชื่อมตารางข้อมูล</div>
+                </button>
+
+                <button 
+                  @click="currentSlide = 12" 
+                  class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/10 hover:border-yellow-300/50 group"
+                >
+                  <div class="text-xs text-blue-300 font-bold">ส่วนที่ 3</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การรวมกลุ่มข้อมูล</div>
+                </button>
+
+                <button 
+                  @click="currentSlide = 18" 
+                  class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/10 hover:border-yellow-300/50 group"
+                >
+                  <div class="text-xs text-blue-300 font-bold">ส่วนที่ 4</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การกรองผลลัพธ์</div>
+                </button>
+                <button 
+                  @click="currentSlide = 23" 
+                  class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/10 hover:border-yellow-300/50 group"
+                >
+                  <div class="text-xs text-blue-300 font-bold">ส่วนที่ 5</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">บทสรุปและโจทย์</div>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 1: ความสำคัญและเป้าหมายของ Data Linking ในระบบสารสนเทศสุขภาพ -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <span class="bg-yellow-400 text-black text-xs font-bold px-4 py-1.5 mb-8 rounded-full uppercase tracking-wider">
+              AMMS 302 | สัปดาห์ที่ ๒ (ส่วนที่ ๑)
+            </span>
+            <h2 class="text-4xl font-bold my-4">บทบาทเชิงกลยุทธ์ของ Data Linking ทางสาธารณสุข</h2>
+            <p class="text-lg text-white/90 mb-6 leading-relaxed">
+              ในระบบบริการสุขภาพดิจิทัล ข้อมูลประวัติคนไข้และสถิติการสั่งใช้ยามักจะถูกจัดเก็บแยกส่วน (Siloed Data) กันในระบบต่างๆ การจับคู่หรือบูรณาการระเบียนข้อมูลจึงเป็นหัวใจสำคัญอย่างยิ่ง 
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mb-6 text-sm">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+                <h3 class="text-lg font-bold text-cyan-300 mb-2">🔗 1. การบูรณาการข้อมูลคนไข้ (Patient Integration)</h3>
+                <p class="text-white/85 leading-relaxed">
+                  เชื่อมข้อมูลประวัติส่วนบุคคลผู้ป่วย (Demographics) ร่วมกับข้อมูลประวัติการสั่งใช้ยาสะสม เพื่อสนับสนุนให้เกิดความปลอดภัย ลดความเสี่ยงในการสั่งใช้ยาซ้ำซ้อน และเพิ่มคุณภาพในการดูแลรักษาที่ต่อเนื่อง 
+                </p>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+                <h3 class="text-lg font-bold text-cyan-300 mb-2">📊 2. การสร้างตัวชี้วัดและจัดกลุ่ม (Cohort Analysis)</h3>
+                <p class="text-white/85 leading-relaxed">
+                  ช่วยให้นักศึกษาและแพทย์สามารถคัดกรอง วิจัย จัดลำดับความสำคัญผู้ป่วย (Clinical Prioritization) เพื่อแก้ไขปัญหาสาธารณสุขระดับประเทศได้อย่างเป็นระบบ [9]
+                </p>
+              </div>
+            </div>
+
+            <!-- แหล่งอ้างอิงเชิงลึกพร้อมลิงก์ข้ามระบบภายนอก (Clickable Reference Link) -->
+            <div class="bg-black/30 rounded-xl p-4 text-xs text-white/90 border border-white/5 mb-6 text-left">
+              📖 <strong>อ้างอิงทางวิชาการร่วม:</strong> คาบเรียนนี้ดึงแนวคิดกระบวนการจัดลำดับและประเมินผลกลุ่มผู้ป่วยเบาหวาน (Diabetic Patient Prioritization)  และปรับปรุงข้อมูลการวิเคราะห์เชิงระบบอิงตามมาตรฐาน [9]. <br>
+              👉 <a href="https://doi.org/10.4103/sjmms.sjmms_394_22" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+                คลิกอ่านรายงานวิจัยสถิติผู้ป่วยเบาหวานในคลังข้อมูล Springer / Wolters Kluwer Medknow (DOI: 10.4103/sjmms.sjmms_394_22) [9]
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 2: ตรรกะของ Inner Join และ Left Join ด้วย pandas (Join Logic & Group By in Action) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-4 text-yellow-300">ตรรกะการเชื่อมตาราง: Inner Join vs. Left Join</h2>
+            <p class="text-base text-white/90 mb-4 leading-relaxed">
+              ในการเขียนโค้ดวิเคราะห์ข้อมูลสุขภาพ การเลือกประเภทการ Join จะส่งผลโดยตรงต่อความครบถ้วนของประวัติคนไข้ 
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mb-4 text-xs">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">🤝 INNER JOIN (เลือกเฉพาะที่จับคู่ได้)</h3>
+                <p class="text-white/80 leading-relaxed mb-2">
+                  ข้อมูลจากตารางฝั่งซ้ายและขวาต้องมีคีย์ร่วม (<code class="font-mono bg-black/40 px-1 rounded">practice_code</code>) ตรงกันเท่านั้น หากสถานพยาบาลใดไม่มีข้อมูลในทะเบียนจะถูกตัดทิ้งทันที 
+                </p>
+                <pre class="bg-black/40 text-green-400 p-2 rounded font-mono text-[10px] overflow-x-auto">
+# โค้ดเชื่อมตารางแบบคัดเฉพาะที่มีคู่ตรงกัน
+pd.merge(df_prescriptions, df_practices, 
+on='practice_code', how='inner')</pre>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-cyan-300 text-sm mb-1.5">👈 LEFT JOIN (เน้นรักษาฐานระเบียนหลัก)</h3>
+                <p class="text-white/80 leading-relaxed mb-2">
+                  เก็บประวัติการจ่ายยาสะสมทั้งหมดในฝั่งซ้ายไว้เป็นหลัก แม้รหัสคลินิกนั้นจะไม่มีข้อมูลลงทะเบียนในฝั่งขวาก็ตาม (โดยระบบจะแทนที่ค่าที่หายไปด้วย <code class="font-mono bg-black/40 px-1 rounded">NaN</code>) 
+                </p>
+                <pre class="bg-black/40 text-green-400 p-2 rounded font-mono text-[10px] overflow-x-auto">
+# โค้ดเชื่อมตารางแบบเก็บระเบียนหลักไว้ครบถ้วน
+pd.merge(df_prescriptions, df_practices, 
+on='practice_code', how='left')</pre>
+              </div>
+            </div>
+
+            <!-- แหล่งอ้างอิงเรื่องความครบถ้วนของข้อมูลเวชระเบียนและความปลอดภัย (Clickable Reference Link) -->
+            <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+              💡 <strong>หลักจริยธรรมและการทวนสอบ (Validity Check):</strong> การเลือกเชื่อมข้อมูลแบบอ้อมอาจก่อให้เกิดระเบียนที่ว่างเปล่า ซึ่งนักศึกษาต้องเรียนรู้วิธีการทำความสะอาดและตรวจสอบคุณภาพข้อมูลตามระเบียบสถิติสากล . <br>
+              👉 <a href="https://doi.org/10.1186/s12912-025-03195-6" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+                สืบค้นดัชนีคุณภาพความปลอดภัยและการทบทวนการวิเคราะห์ระบบข้อมูล ICU ในวารสาร Monash University (DOI: 10.1186/s12912-025-03195-6) [15]
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 3: แหล่งคลังข้อมูลวิจัยทางคลินิกระดับโลก (Global Open Clinical Repositories) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-4 text-yellow-300">แหล่งคลังข้อมูลสุขภาพเปิดระดับโลก (Open Datasets)</h2>
+            <p class="text-base text-white/90 mb-4 leading-relaxed">
+              ในการเรียนการสอนวิชา อจวพ ๓๐๒ และวิจัยวิทยาศาสตร์การแพทย์ เราจะเลือกใช้ชุดข้อมูลที่ลบระบุตัวตน (De-identified) ที่ได้รับมาตรฐานความปลอดภัยทางการแพทย์ระดับสากล 
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-4 text-xs">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">🏥 PhysioNet</h3>
+                <p class="text-white/80 leading-relaxed mb-3">
+                  คลังทรัพยากรกลางระดับสากล สนับสนุนโดยสถาบันเทคโนโลยี MIT เป็นฐานข้อมูลที่ได้รับความไว้วางใจสูงสุดในการวิจัยและการพัฒนาแบบจำลอง AI ทางการแพทย์ 
+                </p>
+                <a href="https://physioNet.org/" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                  เปิดระบบหลัก PhysioNet →
+                </a>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">🗄️ MIMIC Database</h3>
+                <p class="text-white/80 leading-relaxed mb-3">
+                  เวชระเบียนสุขภาพผู้ป่วยวิกฤต (ICU) จริงนับหมื่นราย ทั้งสัญญาณชีพ การตรวจวัด ยา และวันเวลาเข้ารักษา เพื่อวิเคราะห์ผลลัพธ์และความโปร่งใสเชิงข้อมูล 
+                </p>
+                <div class="space-y-1">
+                  <a href="https://doi.org/10.13026/C2XW26" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200 block">
+                    ศึกษา MIMIC-III (v1.4) [20] →
+                  </a>
+                  <a href="https://doi.org/10.13026/kpb9-mt58" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200 block">
+                    ศึกษา MIMIC-IV (v3.1) [22] →
+                  </a>
+                </div>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">⌚ Zenodo Sensors</h3>
+                <p class="text-white/80 leading-relaxed mb-3">
+                  คลังเก็บข้อมูลสัญญาณชีพดิบแบบอนุกรมเวลา (Timeseries) และข้อมูลเซ็นเซอร์สวมใส่ของผู้ใช้งาน เช่น ออกซิเจนในเลือด (SpO2) และระดับความเครียด 
+                </p>
+                <a href="https://doi.org/10.5281/zenodo.18199486" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                  ดาวน์โหลดชุดข้อมูล Zenodo →
+                </a>
+              </div>
+            </div>
+
+            <div class="bg-black/20 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+              ℹ️ <strong>ข้อพึงทราบก่อนใช้งาน:</strong> การสืบค้นระเบียนข้อมูลของ PhysioNet/MIMIC นักศึกษาจำเป็นต้องลงทะเบียนและผ่านการฝึกอบรมจริยธรรมคุ้มครองผู้ป่วย (เช่น CITI Program) ตลอดจนตกลงในใบสัญญารักษาความลับของข้อมูลก่อนดาวน์โหลดเสมอ .
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 4: ข้อมูลผู้ป่วยจำลองเพื่อความปลอดภัยเชิงสิทธิ์: Synthea & FHIR JSON -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-4 text-yellow-300">ข้อมูลผู้ป่วยจำลอง: Synthea & มาตรฐาน FHIR JSON</h2>
+            <p class="text-base text-white/90 mb-4 leading-relaxed">
+              ภายใต้ข้อจำกัดทางกฎหมายด้านการคุ้มครองข้อมูลส่วนบุคคล (PDPA และ HIPAA)  การเรียนรู้ผ่าน ข้อมูลจำลองผู้ป่วยสุขภาพ (Synthetic Patient Data) จึงเป็นมาตรฐานอุตสาหกรรมยุคใหม่ 
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mb-4 text-xs">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+                <h3 class="text-base font-bold text-yellow-300 mb-2">⚙️ 1. Synthea Patient Generator</h3>
+                <p class="text-white/85 leading-relaxed mb-3">
+                  เครื่องมือยอดนิยมระดับโลกที่สามารถสังเคราะห์ระเบียนและเวชระเบียนคนไข้จำลองตั้งแต่แรกเกิดจนถึงสภาวะโรคจำลองต่างๆ อย่างสมจริงสูงสุดแต่ไม่ขัดต่อข้อมูลผู้ป่วยจริง 
+                </p>
+                <div class="flex flex-col w-full">
+                  <div class="flex space-x-3">
+                    <span>Python</span>
+                    <a href="https://github.com/TIET-AI/tietai-synthea" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                      หน้าโปรเจกต์ GitHub →
+                    </a>
+                  </div>
+                  <div class="flex space-x-3">
+                    <span>Java</span>
+                    <a href="https://github.com/synthetichealth/synthea" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                      หน้าโปรเจกต์ GitHub [29] →
+                    </a>
+                    <a href="https://synthetichealth.github.io/module-builder/" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                      ตัวช่วยสร้างโมเดล Visual [30] →
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+                <h3 class="text-base font-bold text-yellow-300 mb-2">🔥 2. HL7 FHIR (Interoperability Standard)</h3>
+                <p class="text-white/85 leading-relaxed mb-3">
+                  ข้อมูลที่ Synthea สังเคราะห์ออกมาจะได้รับการบันทึกและถ่ายโอนด้วยฟอร์แมต JSON ภายใต้มาตรฐาน FHIR สากล เพื่อให้ระบบสารสนเทศสุขภาพทั่วโลกพร้อมคุยภาษาเดียวกันได้อย่างมั่นคงปลอดภัย 
+                </p>
+                <div class="flex space-x-3">
+                  <a href="https://nih-odss.github.io/fhir-for-research/modules/synthea-overview" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                    ศึกษา Synthea Overview [28] →
+                  </a>
+                  <a href="https://app.himssconference.com/event/himss-2026/plannings/RXZlbnRWaWV3XzEyMjUyNjE=" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                    เอกสารมาตรฐาน HIMSS [32] →
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+              💡 <strong>การใช้ประโยชน์เชิงปฏิบัติการ:</strong> แฟ้มข้อมูล JSON มีการซ้อนทับข้อมูลของกิ่งก้าน (Nested Structure) ซึ่งในแล็บคาบเรียนถัดๆ ไป (คาบ ๑๑-๑๓) นักศึกษาจะได้หัดเขียนสคริปต์ Python ในการ Normalize คลี่ระเบียน JSON ให้กลายเป็นตาราง DataFrame สำหรับสร้างโมเดล AI .
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 5: แหล่งเรียนรู้อ้างอิงและช่องทางสนับสนุนการเรียนการสอน (Suggested References & Contacts) -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <div class="text-center max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-4 text-yellow-300">แหล่งข้อมูลเรียนรู้ด้วยตนเองและการอ้างอิงของวิชา</h2>
+            <p class="text-base text-white/90 mb-4 leading-relaxed">
+              รายวิชา อจวพ ๓๐๒ ส่งเสริมและสนับสนุนกลยุทธ์การศึกษาแบบเชิงรุก (Active & Self-paced Learning) เพื่อให้นักศึกษาสามารถทบทวนความรู้ล่วงหน้าได้ตลอดเวลา 
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-4 text-xs">
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">🎓 MUx MOOC</h3>
+                <p class="text-white/80 leading-relaxed mb-3">
+                  วิชา "เทคโนโลยีดิจิทัลและสารสนเทศทางสุขภาพ" ของมหาวิทยาลัยมหิดล ครอบคลุมหลักการจัดการฐานข้อมูล กฎหมายข้อมูลและจริยธรรมสุขภาพยุคดิจิทัล .
+                </p>
+                <a href="https://mux.mahidol.ac.th/courses/course-v1:MU-NS+MOOC66-05+MOOC66-05/about" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                  สมัครเรียนบนระบบ MUx →
+                </a>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">📘 หนังสืออ้างอิงหลัก</h3>
+                <p class="text-white/80 leading-relaxed mb-3">
+                  "ความรอบรู้ด้านสุขภาพ: ขั้นพื้นฐาน ปฏิสัมพันธ์ วิจารณญาณ" โดย ผศ.ดร.ขวัญเมือง แก้วดำเกิง สมาคมวิชาชีพสุขศึกษา เพื่อพฤติกรรมและการตัดสินใจในระบบสุขภาพ .
+                </p>
+                <a href="http://www.naiin.com" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                  ดูรายละเอียดที่ศูนย์หนังสือจุฬาฯ →
+                </a>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <h3 class="font-bold text-yellow-300 text-sm mb-1.5">🎥 สไลด์และวิดีโอ</h3>
+                <p class="text-white/80 leading-relaxed mb-3">
+                  รวบรวมชุดการบรรยายวิชาการเรื่อง "Health Informatics for Health Service Systems" โดย ดร.นพ.นวนรรน ธีระอัมพรพันธุ์ ผู้แทนจากสมาคมเวชสารสนเทศไทย (TMI) .
+                </p>
+                <a href="http://www.SlideShare.net/Nawanan" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200">
+                  ดาวน์โหลดสไลด์ ดร.นวนรรน →
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 6: ปกส่วนที่ 2 - สารบัญปฏิสัมพันธ์และเมนูนำทาง (Interactive Navigation for Part 2) -->
+<div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8 py-4">
+    <div class="text-center max-w-4xl mx-auto">
+      <span class="bg-yellow-400 text-black text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+        AMMS 302 | สัปดาห์ที่ ๒ (ส่วนที่ ๒)
+      </span>
+      <h2 class="text-4xl font-bold mt-4 mb-4">ปฏิบัติการเชื่อมโยงและจัดกลุ่มสถิติสารสนเทศสุขภาพ</h2>
+      <p class="text-lg text-white/90 mb-6 leading-relaxed font-light">
+        การประยุกต์ใช้ไลบรารี Pandas ในการคำนวณและวิเคราะห์ดัชนีชี้วัดเพื่อตอบสนองวัตถุประสงค์ระดับรายวิชา CLO2 
+      </p>
+
+      <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+        <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 ปฏิบัติการสัปดาห์ที่ ๒ (ส่วนย่อย - คลิกเพื่อข้ามไปเรียนรู้)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <button @click="currentSlide = 7" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 7</span>
+            <span class="font-semibold group-hover:text-yellow-200">การเชื่อมตาราง pd.merge()</span>
+          </button>
+          <button @click="currentSlide = 8" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 8</span>
+            <span class="font-semibold group-hover:text-yellow-200">สถิติกลุ่มด้วย .groupby()</span>
+          </button>
+          <button @click="currentSlide = 9" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 9</span>
+            <span class="font-semibold group-hover:text-yellow-200">ตรรกะกรองกลุ่ม Having</span>
+          </button>
+          <button @click="currentSlide = 10" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 10</span>
+            <span class="font-semibold group-hover:text-yellow-200">สืบค้นคลังเวชระเบียน</span>
+          </button>
+          <button @click="currentSlide = 11" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 11</span>
+            <span class="font-semibold group-hover:text-yellow-200">โจทย์และเกณฑ์ประเมิน</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 7: การเขียนโค้ดและวิเคราะห์การเชื่อมตารางข้อมูล (Mastering pd.merge() in Pandas) -->
+<div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">การเขียนชุดคำสั่งเชื่อมโยงข้อมูลสุขภาพด้วย Python</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        ในฐานข้อมูลระบบเวชระเบียนอิเล็กทรอนิกส์ (EHRs) เรามักใช้รหัสอ้างอิงร่วม (เช่น รหัสยา หรือ รหัสคลินิก) เพื่อนำตารางข้อมูลมารวมกันผ่านฟังก์ชัน <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">pd.merge()</code> 
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-sm mb-2">💻 ชุดคำสั่งภาษา Python ในการทำ Left Join (รักษาประวัติจ่ายยาหลัก):</h3>
+        <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed mb-3">
+# 1. อ่านข้อมูลระเบียนสั่งยา และ ทะเบียนที่ตั้งคลินิก
+df_prescriptions = pd.read_csv('prescriptions.csv')
+df_practices = pd.read_csv('practices_registry.csv')
+
+# 2. เชื่อมข้อมูลผ่านรหัสสถานพยาบาล (practice_code)
+df_linked = pd.merge(
+    df_prescriptions,
+    df_practices,
+    on='practice_code',
+    how='left',
+    suffixes=('_rx', '_reg')
+)</pre>
+        <p class="text-white/80 leading-relaxed">
+          💡 <strong>คำอธิบายพารามิเตอร์สำคัญ:</strong> อาร์กิวเมนต์ <code class="font-mono bg-black/30 px-1 rounded text-yellow-200">suffixes</code> มีความจำเป็นอย่างยิ่งในระบบสารสนเทศสุขภาพ เพื่อช่วยแยกคอลัมน์ชื่อซ้ำกัน เช่น วันที่บันทึกของใบสั่งยา (<code class="font-mono">date_rx</code>) และวันที่ขึ้นทะเบียนของคลินิก (<code class="font-mono">date_reg</code>) ป้องกันการสับสนเชิงโครงสร้างข้อมูล
+        </p>
+      </div>
+
+      <!-- แหล่งอ้างอิงเชิงลึกพร้อมลิงก์ข้ามระบบภายนอก (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>อ้างอิงสากล:</strong> ศึกษาและทบทวนตรรกะความสัมพันธ์และการประมวลผลข้อมูล EHR ความปลอดภัยสูง เพิ่มเติมได้จากคู่มือเชิงปฏิบัติการของสถาบัน MIT. <br>
+        👉 <a href="https://mimic.mit.edu/tutorials/intro-to-mimic-iii-bq/" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลิงก์คู่มือสอนใช้ฐานข้อมูลเวชระเบียนร่วมกับ BigQuery บน MIT MIMIC-III Portal
+        </a> 
+      </div>
+
+      <div class="flex justify-between text-xs text-white/60 w-full max-w-2xl mx-auto">
+        <button @click="currentSlide = 6" class="hover:text-white transition">🏠 กลับเมนูหลัก</button>
+        <span>สัปดาห์ที่ 2: การทำ Data Merging</span>
+        <button @click="currentSlide = 8" class="hover:text-white transition">แผ่นถัดไป →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 8: การจัดกลุ่มเพื่อสร้างตัวชี้วัด (Data Aggregation & Group By) -->
+<div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">การวิเคราะห์กลุ่มผู้ป่วยและตัวชี้วัดด้วย Group By</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        การวิเคราะห์สถิติด้านระบาดวิทยาคลินิกและการบริหารจัดการ (KPIs) จะมุ่งใช้คำสั่ง <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">.groupby()</code> เพื่อสรุปภาพรวมรายกลุ่มประชากร 
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-sm mb-2">💻 โค้ดคำนวณยอดเงินและรายการรวมสะสมรายสถานพยาบาล (Data Aggregation):</h3>
+        <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed mb-3">
+# รวมกลุ่มข้อมูลด้วยรายชื่อสถานพยาบาล และประมวลผลสถิติสะสมหลายมิติ
+practice_stats = df_linked.groupby('practice_name').agg(
+    total_spend=('actual_cost', 'sum'),        # ยอดใช้จ่ายยาในระบบรวม 
+    average_price=('actual_cost', 'mean'),      # ราคายาเฉลี่ยต่อระเบียนสั่งใช้ยา 
+    total_prescriptions=('items', 'count')      # ผลรวมจำนวนรายการใบสั่งยา 
+).reset_index()
+
+practice_stats.head()</pre>
+        <p class="text-white/80 leading-relaxed">
+          🔍 <strong>กระบวนการ Split-Apply-Combine:</strong> โค้ดด้านบนจะทำการแยกกลุ่มตามรายชื่อคลินิก (Split) สั่งให้ประมวลผลตามฟังก์ชันที่กำหนดในแต่ละคอลัมน์ (Apply) และยุบตารางกลับมาแสดงผลเป็นค่าสถิติวินิจฉัยเปรียบเทียบในรูปตารางสรุปที่มีขนาดกระชับ (Combine)
+        </p>
+      </div>
+
+      <!-- แหล่งอ้างอิงเชิงลึกพร้อมลิงก์ข้ามระบบภายนอก (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>อ้างอิงทฤษฎีการจัดการทรัพยากร:</strong> สามารถสืบค้นตัวอย่างงานวิจัยและดัชนีชี้วัดความปลอดภัยจากการสั่งจ่ายยาเวชปฏิบัติทั่วไปเพิ่มเติมได้จากฐานข้อมูลเปิด. <br>
+        👉 <a href="https://doi.org/10.1186/s12912-025-03195-6" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          เข้าสู่รายงานสถิติและความปลอดภัยในระบบจัดการข้อมูลเวชระเบียนสากล (Monash University / DOI: 10.1186/s12912-025-03195-6)
+        </a> 
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 9: ตรรกะการกรองข้อมูลหลังการจัดกลุ่ม (Pandas HAVING emulation) -->
+<div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">ตรรกะการกรองระดับกลุ่ม (HAVING Concept in Pandas)</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        ในการกรองข้อมูลระดับแถวทั่วไปเราจะใช้เงื่อนไข WHERE แต่ในระบบฐานข้อมูลขนาดใหญ่ เมื่อทำการจัดกลุ่มแล้วเราต้องใช้เงื่อนไข **HAVING** เพื่อคัดเลือกกลุ่มข้อมูลเป้าหมาย 
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-sm mb-2">💻 โค้ดกรองหาเฉพาะสถานพยาบาลที่มียอดสั่งจ่ายยาหนาแน่นสะสมสูงกว่าเกณฑ์:</h3>
+        <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-xs overflow-x-auto leading-relaxed mb-3">
+# กรองตารางสรุปโดยเลือกเฉพาะสถานพยาบาลที่มีใบสั่งยาสะสม > 1,000 ใบ (HAVING)
+high_volume_practices = practice_stats[
+    practice_stats['total_prescriptions'] > 1000
+]
+
+# เรียงลำดับจากสถานพยาบาลที่มียอดมูลค่ารายจ่ายสะสมสูงสุดลงมาตรวจเช็ค
+high_volume_practices = high_volume_practices.sort_values(
+    by='total_spend',
+    ascending=False
+)
+  </pre>
+        <p class="text-white/80 leading-relaxed">
+          🚨 <strong>ข้อห้ามเชิงระบบ:</strong> ห้ามกรองเงื่อนไขผลรวมสะสม (เช่น <code class="font-mono bg-black/40 text-yellow-200 px-1 rounded">cost.sum() > 1000</code>) ในขั้นตอน WHERE ตั้งแต่แรก เพราะ ณ จุดนั้นคอมพิวเตอร์ยังไม่ได้ประมวลผลจัดกลุ่ม จะทำให้เกิดความบกพร่องทางตรรกะการคำนวณทันที
+        </p>
+      </div>
+
+      <!-- แหล่งอ้างอิงเชิงลึกพร้อมลิงก์ข้ามระบบภายนอก (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>อ้างอิงการจัดลำดับลำดับสิทธิ์ผู้ป่วย:</strong> ศึกษาทฤษฎีการประยุกต์ใช้แบบจำลองวิเคราะห์ข้อมูลเพื่อลดการติดขัด (backlog) และจัดสรรทรัพยากรสุขภาพได้ตามคู่มือ. <br>
+        👉 <a href="https://doi.org/10.4103/sjmms.sjmms_394_22" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          เข้าสู่งานวิจัยการประเมินสิทธิ์และการจัดลำดับการดูแลคลินิกเบาหวาน (DOI: 10.4103/sjmms.sjmms_394_22)
+        </a> 
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 10: แหล่งสืบค้นข้อมูลเวชระเบียนระดับโลก (Clinical Databases Discovery) -->
+<div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">แนะนำแหล่งคลังข้อมูลเวชระเบียนระดับสากล</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        ในการทำโครงงานกลุ่มวิชานี้ (สัดส่วนคะแนนสะสมร้อยละ ๓๐) และการทำงานวิจัยวิทยาศาสตร์การแพทย์  นักศึกษาควรทำความรู้จักและสืบค้นฐานข้อมูลทางการแพทย์ที่เป็นระบบเปิดในระดับสากลดังนี้ครับ:
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-4 text-xs">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <h4 class="font-bold text-yellow-300 text-sm mb-1.5 text-center">🏥 PhysioNet คลังวิจัย</h4>
+          <p class="text-white/85 leading-relaxed mb-3">
+            แพลตฟอร์มหลักระดับโลก สนับสนุนโดย MIT รวบรวมข้อมูลสัญญาณชีพและเวชระเบียนดิจิทัลสำหรับงานวิจัย AI .
+          </p>
+          <a href="https://physionet.org/" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200 block text-center">
+            ไปที่เว็บไซต์หลัก PhysioNet →
+          </a> [20]
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <h4 class="font-bold text-yellow-300 text-sm mb-1.5 text-center">🗄️ ฐานข้อมูลสากล MIMIC</h4>
+          <p class="text-white/85 leading-relaxed mb-3">
+            ฐานข้อมูลผู้ป่วยภาวะวิกฤต (ICU) แบบลบตัวตน เพื่อศึกษาอัตราการรอดชีวิตและการวิเคราะห์ประวัติทางคลินิก .
+          </p>
+          <div class="space-y-1 text-center">
+            <a href="https://doi.org/10.13026/C2XW26" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200 block text-xs">
+              MIMIC-III (v1.4) DOI →
+            </a> [10]
+            <a href="https://doi.org/10.13026/kpb9-mt58" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200 block text-xs">
+              MIMIC-IV (v3.1) DOI →
+            </a> [24]
+          </div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <h4 class="font-bold text-yellow-300 text-sm mb-1.5 text-center">📊 UCI Machine Learning</h4>
+          <p class="text-white/85 leading-relaxed mb-3">
+            แหล่งรวบรวมชุดข้อมูลมาตรฐานสำหรับการทดสอบแบบจำลองทางสถิติและ Machine Learning ทั่วไป ครอบคลุมโรคเบาหวานและโรคเรื้อรัง .
+          </p>
+          <a href="https://archive.ics.uci.edu/" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline font-semibold hover:text-cyan-200 block text-center">
+            ไปที่ระบบฐานข้อมูล UCI →
+          </a> [25]
+        </div>
+      </div>
+
+      <div class="bg-black/20 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        💡 <strong>ข้อตระหนักเชิงระบบ:</strong> แหล่งข้อมูลเวชระเบียนจริงของคนไข้ (เช่น MIMIC-III และ MIMIC-IV) มีนโยบายจำกัดการเข้าถึง โดยกำหนดให้เฉพาะนักวิจัยที่ผ่านการฝึกอบรมและผ่านการทดสอบมาตรฐานจริยธรรมข้อมูล เช่น การรับรองหลักสูตร **CITI Program** จึงจะได้รับสิทธิ์ในการดาวน์โหลดและนำข้อมูลไปประมวลผลวิจัยต่อได้ .
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 11: โจทย์ปฏิบัติการประจำสัปดาห์ที่ 2 และการจัดเก็บคะแนน (Homework 2 Criteria) -->
+<div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-red-300">โจทย์ปฏิบัติการและการบ้าน ๒ (Homework 2)</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        การประเมินเพื่อตัดสินผลการเรียนรู้ของรายวิชา (Summative Assessment) ตามกรอบแผนการสอน มม.๓ 
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mb-4 text-xs">
+        <!-- บล็อคที่ 1: รายละเอียดคำสั่ง -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+          <h3 class="font-bold text-yellow-300 text-sm mb-2">📋 โจทย์สำหรับฝึกทักษะ (รายบุคคล):</h3>
+          <ul class="list-decimal list-inside space-y-1.5 leading-relaxed text-white/95">
+            <li>ดาวน์โหลดตารางข้อมูลสั่งจ่ายยา <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">prescriptions.csv</code> และแฟ้มทะเบียน <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">practices_registry.csv</code></li>
+            <li>ใช้ Jupyter Notebook ทำการเชื่อมตารางแบบ **Left Join** ตามรหัส <code class="font-mono">practice_code</code></li>
+            <li>ใช้ฟังก์ชัน **Group By** เพื่อคำนวณหาค่าเฉลี่ยสถิติราคายา และจำนวนรายการใบสั่งรวมแยกเป็นรายคลินิก</li>
+            <li>ทำตัวกรองแบบ **Having** เลือกดึงเฉพาะคลินิกในเขตชนบท (Rural) ที่มียอดรวมการจ่ายยามากกว่า 500 ใบสั่งยา</li>
+            <li>บันทึกไฟล์ส่งออกเป็น CSV ในรูปแบบ <code class="font-mono bg-black/40 text-green-300 px-1 rounded">student_id_homework2.csv</code> และส่งตัวโค้ด <code class="font-mono bg-black/40 px-1 rounded">.ipynb</code></li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 12: ปกส่วนที่ 3 - สารบัญนำทางและระบบปฏิกิริยา (Interactive Title & Navigation Slide for Part 3) -->
+<div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8 py-4">
+    <div class="text-center max-w-4xl mx-auto">
+      <span class="bg-yellow-400 text-black text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+        AMMS 302 | สัปดาห์ที่ ๒ (ส่วนที่ ๓)
+      </span>
+      <h2 class="text-4xl font-bold mt-4 mb-4">การประยุกต์ใช้การผูกข้อมูลและการสร้างตัวชี้วัดระบบสุขภาพ</h2>
+      <p class="text-lg text-white/90 mb-6 leading-relaxed font-light">
+        เจาะลึกกระบวนการตรวจสอบคุณภาพข้อมูล (Post-Merge Audit), การหาอัตราครองเตียงเฉลี่ย (ICU LOS), และการวิเคราะห์ความเหลื่อมล้ำภูมิศาสตร์สาธารณสุข [2, 3]
+      </p>
+
+      <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+        <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 หัวข้อเรียนรู้ด้วยตนเองในส่วนที่ ๓ (คลิกเพื่อข้ามไปยังสไลด์)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <button @click="currentSlide = 13" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 13</span>
+            <span class="font-semibold group-hover:text-yellow-200">ตรวจสอบหลังผูกตาราง (Post-Merge)</span>
+          </button>
+          <button @click="currentSlide = 14" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 14</span>
+            <span class="font-semibold group-hover:text-yellow-200">สกัดดัชนี ICU & Vitals</span>
+          </button>
+          <button @click="currentSlide = 15" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 15</span>
+            <span class="font-semibold group-hover:text-yellow-200">ผูกแผนที่วิเคราะห์สิทธิ์ยา</span>
+          </button>
+          <button @click="currentSlide = 16" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 16</span>
+            <span class="font-semibold group-hover:text-yellow-200">การคุมทรัพยากร RAM</span>
+          </button>
+          <button @click="currentSlide = 17" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 17</span>
+            <span class="font-semibold group-hover:text-yellow-200">สรุปแนวการส่ง Homework 2</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 13: ขั้นตอนการตรวจสอบและทวนสอบความถูกต้องหลังผูกตาราง (Post-Merge Audit & Integrity Verification) -->
+<div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">กระบวนการตรวจสอบคุณภาพระเบียนหลังการเชื่อมตาราง</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        ในวิทยาการข้อมูลสุขภาพ ขั้นตอนที่สำคัญที่สุดหลังจากทำการเชื่อมตาราง (Data Merging) คือ <strong>การทวนสอบ (Post-Merge Quality Audit)</strong> [4] เพื่อตรวจสอบว่ามีระเบียนคนไข้ตกหล่น หรือคีย์หลุดเกิดเป็นค่าสูญหายอันตรายขึ้นหรือไม่
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-sm mb-2">💻 ชุดคำสั่งตรวจสอบความครบถ้วนของมิติข้อมูลใน Jupyter Notebook:</h3>
+        <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto leading-relaxed mb-3">
+# 1. ตรวจสอบมิติ (Shape) ว่าระเบียนหลักของใบสั่งยาฝั่งซ้ายไม่ลดลงอย่างผิดปกติ
+print(f"ขนาดตารางก่อนเชื่อม: {df_prescriptions.shape} แถว")
+print(f"ขนาดตารางหลังเชื่อม: {df_linked.shape} แถว")
+
+# 2. ค้นหารายชื่อสถานพยาบาลที่ไม่ตรงกับระบบทะเบียน (Orphan Keys)
+unmatched_practices = df_linked[df_linked['practice_name'].isnull()]['practice_code'].unique()
+print(f"รหัสคลินิกที่ไม่มีชื่อขึ้นทะเบียน: {unmatched_practices}")
+
+# 3. สรุปภาพรวมโครงสร้างคอลัมน์และประเภทตัวแปรใหม่ทั้งหมด
+df_linked.info()</pre>
+        <p class="text-white/80 leading-relaxed">
+          🔒 <strong>ความสำคัญของการตรวจสอบ:</strong> หากนักศึกษาเลือกเชื่อมตารางด้วย <code class="font-mono bg-black/40 text-yellow-200 px-1 rounded">Inner Join</code> แล้วไม่ตรวจสอบให้ดี ข้อมูลผู้ป่วยที่ไม่มีคีย์จับคู่ฝั่งขวาจะถูกลบทิ้งไปอย่างเงียบๆ ส่งผลให้อัตราความชุกของโรคหรือรายงานทางการคลังมีความบกพร่องทันที
+        </p>
+      </div>
+
+      <!-- ลิงก์อ้างอิงมาตรฐานคุณภาพข้อมูลและการทวนสอบ (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>อ้างอิงเชิงระบบ:</strong> เทคนิคการลดความเสี่ยงและความผิดพลาดจากการดึงระเบียนเวชระเบียนอิงตามมาตรฐานความโปร่งใสของสถาบันเวชสารสนเทศสากล [4]. <br>
+        👉 <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8120677/pdf/phim0018-0001f.pdf" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          อ่านรายละเอียดโครงงานวิจัยการลดความผิดพลาดข้อมูล EHR ของ National Center for Biotechnology Information (NCBI)
+        </a>
+      </div>
+
+      <div class="flex justify-between text-xs text-white/60 w-full max-w-2xl mx-auto">
+        <button @click="currentSlide = 12" class="hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+        <span>สัปดาห์ที่ 2: Post-Merge Validation Methods</span>
+        <button @click="currentSlide = 14" class="hover:text-white transition">แผ่นถัดไป →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 14: ปฏิบัติการหาตัวชี้วัดความปลอดภัยและการครองเตียง (Hospital Performance KPIs: Length of Stay & Vitals) -->
+<div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">การสกัดตัวชี้วัดความปลอดภัยและการครองเตียง (KPIs)</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        เรานำทักษะการ Group By มารวมกับการวิเคราะห์มิติเชิงเวลาเพื่อคำนวณ <strong>ระยะเวลาครองเตียงรักษาเฉลี่ย (Length of Stay: LOS)</strong> และอัตราความรุนแรงของคนไข้ระดับโรงพยาบาล [5, 6]
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-sm mb-2">💻 โค้ดสรุปค่าวันนอนเฉลี่ย และสัญญาณชีพวิกฤตเฉลี่ยรายโรงพยาบาล:</h3>
+        <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto leading-relaxed mb-3">
+# 1. คำนวณระยะวันนอนรักษา (Length of Stay) จากวันที่เข้าและจำหน่ายผู้ป่วย
+df_linked['LOS'] = (pd.to_datetime(df_linked['discharge_date']) - pd.to_datetime(df_linked['admission_date'])).dt.days
+
+# 2. ยุบตารางหาค่าเฉลี่ยวันครองเตียง (LOS) และความดันวิกฤตต่ำสุดรายห้อง ICU
+hospital_kpis = df_linked.groupby('hospital_name').agg(
+    average_stay=('LOS', 'mean'),
+    min_systolic_bp=('systolic_bp', 'min'),
+    total_patients=('patient_id', 'count')
+).reset_index()
+
+hospital_kpis.head()</pre>
+        <p class="text-white/80 leading-relaxed">
+          🔬 <strong>การแปรผลลัพธ์เชิงสารสนเทศ:</strong> ตารางสรุปนี้จะช่วยให้ผู้บริหารระบบสุขภาพสามารถวินิจฉัยเพื่อจัดสรรกำลังบุคลากรพยาบาล และระบุพิกัดหอผู้ป่วยวิกฤตที่มีแนวโน้มรับภาระงานคนไข้หนาแน่นเกินความจุ (ICU Congestion) ได้อย่างมีประสิทธิภาพ [5, 6]
+        </p>
+      </div>
+
+      <!-- ลิงก์ดาวน์โหลดระเบียนสัญญาณชีพและข้อมูล ICU ขนาดใหญ่ระดับโลก (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>แหล่งสถิติความปลอดภัย ICU สากล:</strong> ดัชนีวันนอนเฉลี่ย (Hospital LOS) และอัตราครองเตียงเป็นตัวชี้วัดความโปร่งใสในระบบสาธารณสุขยุคดิจิทัล [5-7]. <br>
+        👉 <a href="https://doi.org/10.1186/s12912-025-03195-6" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          สืบค้นรายงานวิเคราะห์ข้อมูลและตัวชี้วัดความปลอดภัยในแผนกผู้ป่วยวิกฤตสากล (Monash University Review / DOI: 10.1186/s12912-025-03195-6)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 15: วิธีเชื่อมโยงข้อมูลทะเบียนพิกัดแผนที่และการประเมินความเหลื่อมล้ำทางสุขภาพ (Geographic Data Linking & Health Equity Analysis) -->
+<div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">ข้อมูลเชิงภูมิศาสตร์สุขภาพ และการลดความเหลื่อมล้ำ</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        การยกระดับคุณภาพบริการสาธารณสุขชุมชน ต้องพิจารณาความเท่าเทียมในการเข้าถึงยาและนวัตกรรม [3, 8] เราจึงนำระเบียนการรักษามาผูกเชื่อมต่อกับ <strong>ข้อมูลที่ตั้งทางภูมิศาสตร์ (Geographic Metadata)</strong> 
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs mb-4">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <h3 class="font-bold text-yellow-300 text-sm mb-1.5">🗺️ เชื่อมโยงข้อมูลเพื่อหาพฤติกรรม Rural vs Urban:</h3>
+          <p class="text-white/80 leading-relaxed mb-3">
+            การเชื่อมข้อมูลด้วยรหัสพื้นที่ช่วยจำแนกพฤติกรรมการจ่ายยาสมุนไพรและยาแผนปัจจุบันของคลินิกในเขตเมืองและเขตห่างไกลชนบท เพื่อจัดลำดับสิทธิ์การดูแลและงบประมาณสำรองฉุกเฉิน [3, 8]
+          </p>
+          <pre class="bg-black/40 text-green-400 p-2.5 rounded-lg font-mono text-[10px] overflow-x-auto">
+# วิเคราะห์เปรียบเทียบมูลค่ารวมค่ายาระหว่างสองเขตพิกัด
+equity_analysis = df_linked.groupby('area_type').agg(
+    total_drug_cost=('actual_cost', 'sum'),
+    prescribing_clinics=('practice_code', 'nunique')
+).reset_index()</pre>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <h3 class="font-bold text-cyan-300 text-sm mb-1.5">🏥 แนวคิดและบทสรุปจากตำราเรียนวิชาสารสนเทศ:</h3>
+          <p class="text-white/80 leading-relaxed mb-2">
+            ตามที่ระบุในหนังสืออ้างอิง ความรอบรู้ด้านสุขภาพ (Health Literacy) ความสามารถของประชาชนในการเข้าถึงระบบส่งเสริมสุขภาพจำเป็นต้องพึ่งระบบข้อมูลที่โปร่งใส การประสานชุดข้อมูลที่มีภูมิศาสตร์ร่วมจะช่วยขจัดความเหลื่อมล้ำทางสุขภาพได้อย่างแท้จริง [3, 9]
+          </p>
+          <hr class="border-white/15 my-2">
+          <p class="text-[10px] text-white/70">
+            <strong>ทรัพยากรอ้างอิงหลักสูตร:</strong> ใช้หลักการจัดการระเบียนเพื่อศึกษาการจัดกลุ่มโรคเชิงกายภาพและการประเมินนโยบายสุขภาพ [10]
+          </p>
+        </div>
+      </div>
+
+      <!-- ลิงก์เข้าสู่หนังสือความรอบรู้ด้านสุขภาพและคอร์สทบทวนบทเรียนของมหาวิทยาลัยมหิดล (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>ทรัพยากรเรียนรู้ด้วยตนเอง:</strong> นักศึกษาสามารถทบทวนความรู้กฎหมายและจรรยาบรรณวิเคราะห์พื้นที่ข้อมูลสุขภาพระดับเมือง-ชนบทได้ผ่านตำราสุขศึกษาและการประเมินสิทธิ์ระดับองค์กร [9-11]. <br>
+        👉 <a href="https://mux.mahidol.ac.th/courses/course-v1:MU-NS+MOOC66-05+MOOC66-05/about" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลงทะเบียนเรียนทบทวนบทเรียนล่วงหน้าได้ที่รายวิชาออนไลน์ "เทคโนโลยีดิจิทัลและสารสนเทศทางสุขภาพ" บนระบบ MUx MOOC มหาวิทยาลัยมหิดล
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 16: การควบคุมการใช้พื้นที่หน่วยความจำคอมพิวเตอร์และขีดความสามารถระบบประมวลผล (Memory Efficiency & Chunking in Large Databases) -->
+<div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">การบริหารหน่วยความจำ (RAM) เมื่อผูกข้อมูลขนาดใหญ่</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        เนื่องจากฐานข้อมูลเวชระเบียนจริง เช่น <strong>MIMIC-IV</strong> บรรจุข้อมูลสัญญาณชีพคนไข้นับล้านแถว [12, 13] การดึงไฟล์ดิบทั้งหมดเข้ามาผูกร่วมกันจะส่งผลให้ระบบประมวลผลหยุดทำงาน (Out of Memory Error)
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-red-300 text-sm mb-2">🚫 ปัญหาการโหลดข้อมูลล้น RAM และทางเลือกในการเขียนโค้ดที่ถูกต้อง:</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <span class="font-semibold text-yellow-200 block mb-1">✅ 1. เลือกโหลดเฉพาะคอลัมน์ที่จำเป็น (Usecols):</span>
+            <p class="text-white/80 leading-relaxed mb-2">
+              ลดการจองพื้นที่ RAM โดยคัดกรองเฉพาะคอลัมน์คีย์หลักร่วมและตัวชี้วัดที่เราจะวิเคราะห์สรุปผลสถิติตั้งแต่ตอนดึงเข้าสู่ Pandas
+            </p>
+            <pre class="bg-black/40 text-green-400 p-2 rounded font-mono text-[10px] overflow-x-auto">
+# โหลดเฉพาะคอลัมน์รหัสคลินิกและค่ายาเท่านั้น
+cols = ['practice_code', 'actual_cost']
+df_rx_thin = pd.read_csv('prescriptions.csv', usecols=cols)</pre>
+          </div>
+          <div>
+            <span class="font-semibold text-yellow-200 block mb-1">✅ 2. การกำหนดประเภทข้อมูลประหยัดสเปค (Downcasting):</span>
+            <p class="text-white/80 leading-relaxed mb-2">
+              ตามสเปคท่อส่งข้อมูลการแพทย์สมัยใหม่ [14] การแปลงชนิดข้อมูลจำนวนเต็มหรือชนิดเลขทศนิยมให้มีขนาดเล็กลงช่วยประหยัดหน่วยความจำได้เกินร้อยละ ๕๐
+            </p>
+            <pre class="bg-black/40 text-green-400 p-2 rounded font-mono text-[10px] overflow-x-auto">
+# แปลงค่าน้ำหนักเพื่อความเบาของหน่วยประมวลผล
+df_linked['Age'] = pd.to_numeric(df_linked['Age'], downcast='integer')</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ลิงก์ขยายความสู่แหล่งเรียนรู้ระบบข้อมูลสุขภาพและคลังความปลอดภัย MIT (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        💡 <strong>แนวปฏิบัติระดับสากล:</strong> การจัดการข้อมูลเวชระเบียนขนาดใหญ่ในสภาวะที่มีทรัพยากรจำกัด สามารถศึกษาเทคนิคและแนวทางการแบ่งกลุ่ม (Chunking) เพิ่มเติมได้จากเอกสารของ MIT [13-15]. <br>
+        👉 <a href="https://mimic.mit.edu/tutorials/intro-to-mimic-iii-bq/" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          เปิดประตูสู่การใช้งาน BigQuery และท่อส่งข้อมูลประมวลผลประสิทธิภาพสูงของฐานข้อมูล MIMIC ทางคลินิก (MIT MIMIC Portal)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 17: สรุปปฏิบัติการสัปดาห์ที่ ๒ และขั้นตอนความสำเร็จการบ้าน Homework 2 (Week 2 Summary & Student Deliverables Checklist) -->
+<div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">คู่มือและแนวทางปฏิบัติสู่ความสำเร็จสัปดาห์ที่ ๒</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        นักศึกษาสามารถนำความรู้และทักษะทั้ง ๓ ส่วนย่อยในสัปดาห์นี้ ไปประยุกต์เขียนรหัสคอมพิวเตอร์เพื่อทำใบงานสะสมคะแนน <strong>Homework 2 (ร้อยละ ๒๐)</strong> [16] ให้ถูกต้องสมบูรณ์แบบ
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-yellow-300 text-sm mb-2 text-center">📋 แผนงานตรวจสอบคุณภาพสำหรับส่ง Homework 2 (CLO2 Evaluation) [17]</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="bg-black/20 rounded-xl p-3 border border-white/5">
+            <h4 class="font-bold text-cyan-200 mb-1">🏁 1. ขั้นตอนเชื่อมตาราง (Data Linkage)</h4>
+            <ul class="list-disc list-inside space-y-1 text-white/80">
+              <li>ใช้คำสั่ง <code class="font-mono bg-black/30 rounded px-1 text-yellow-200">pd.merge()</code> แบบ Left Join เท่านั้น</li>
+              <li>ตรวจสอบจำนวนแถวหลังเชื่อมโยงระเบียน</li>
+            </ul>
+          </div>
+          <div class="bg-black/20 rounded-xl p-3 border border-white/5">
+            <h4 class="font-bold text-cyan-200 mb-1">📊 2. ขั้นสรุปกลุ่มสถิติ (Group By)</h4>
+            <ul class="list-disc list-inside space-y-1 text-white/80">
+              <li>ยุบกลุ่มตารางรายชื่อคลินิก ค้นหารายจ่ายค่ายาสะสมรวม และอัตราเฉลี่ย</li>
+              <li>รันคำสั่งรีเซ็ตดัชนีคอลัมน์ให้แบนราบ</li>
+            </ul>
+          </div>
+          <div class="bg-black/20 rounded-xl p-3 border border-white/5">
+            <h4 class="font-bold text-cyan-200 mb-1">🧹 3. ขั้นกรองผลลัพธ์ (Having)</h4>
+            <ul class="list-disc list-inside space-y-1 text-white/80">
+              <li>คัดกรองเฉพาะกลุ่ม Rural ที่จ่ายยามากกว่า 500 ใบสั่งยาขึ้นไป</li>
+              <li>ส่งออกเป็นไฟล์ CSV ปลอดภัยโดยไม่ฝังดัชนีคีย์หลัก</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- แหล่งสืบค้นชุดข้อมูลเพิ่มเติมสำหรับการบ้านและการทดลองด้วยตนเอง (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        💡 <strong>ทรัพยากรจัดเตรียมข้อมูลการเรียนรู้เพิ่มเติม:</strong> สำหรับนักศึกษาที่ต้องการศึกษาและดาวน์โหลดชุดข้อมูลเวชระเบียนคนไข้และตารางอัตราการรักษาโรคเรื้อรังระดับเปิดสากลเพื่อการทวนสอบ (Self-practice) [18, 19]. <br>
+        👉 <a href="https://archive.ics.uci.edu/datasets" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          สืบค้นคลังดาวน์โหลดชุดข้อมูลและแบบจำลองการทำนายเวชระเบียนทางการแพทย์ทั้งหมดใน UCI Machine Learning Repository
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- สไลด์ที่ 18: ปกส่วนที่ 4 - สารบัญนำทางและระบบปฏิกิริยา (Interactive Title & Navigation Slide for Part 4) -->
+<div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8 py-4">
+    <div class="text-center max-w-4xl mx-auto">
+      <span class="bg-yellow-400 text-black text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+        AMMS 302 | สัปดาห์ที่ ๒ (ส่วนที่ ๔)
+      </span>
+      <h2 class="text-4xl font-bold mt-4 mb-4">การแปลงและเชื่อมโยงระเบียนข้อมูลเวชระเบียนสากล (HL7 FHIR JSON)</h2>
+      <p class="text-lg text-white/90 mb-6 leading-relaxed font-light">
+        ปฏิบัติการเรียนรู้เชิงลึกด้านการคลี่โครงสร้างซับซ้อน (Nested JSON Data normalization), การสกัดคุณลักษณะ (Feature Extraction) และมาตรฐานการคุ้มครองข้อมูลอ่อนไหวทางการแพทย์
+      </p>
+
+      <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+        <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญบทเรียนย่อยส่วนที่ ๔ (คลิกเพื่อข้ามไปยังสไลด์)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <button @click="currentSlide = 19" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 19</span>
+            <span class="font-semibold group-hover:text-yellow-200">ทฤษฎีมาตรฐาน HL7 FHIR</span>
+          </button>
+          <button @click="currentSlide = 20" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 20</span>
+            <span class="font-semibold group-hover:text-yellow-200">การคลี่ตารางด้วย Pandas</span>
+          </button>
+          <button @click="currentSlide = 21" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 21</span>
+            <span class="font-semibold group-hover:text-yellow-200">ปฏิบัติการดึงเวชระเบียน</span>
+          </button>
+          <button @click="currentSlide = 22" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 22</span>
+            <span class="font-semibold group-hover:text-yellow-200">จริยธรรม & กฎหมายคุ้มครอง</span>
+          </button>
+          <button @click="currentSlide = 23" class="bg-white/5 hover:bg-white/20 transition text-left p-3 rounded-xl border border-white/5 hover:border-yellow-300/40 group">
+            <span class="text-blue-300 font-bold block">แผ่นที่ 23</span>
+            <span class="font-semibold group-hover:text-yellow-200">บทสรุป & เกณฑ์การให้คะแนน</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 19: ทฤษฎีมาตรฐาน HL7 FHIR และความสำคัญเชิงระบบ (Interoperability with HL7 FHIR Standard) -->
+<div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">มาตรฐาน HL7 FHIR และการแลกเปลี่ยนข้อมูลสุขภาพ</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        ข้อมูลสารสนเทศสุขภาพในอดีตมักจัดเก็บในรูปแบบกระจัดกระจายและไร้ทิศทาง ทำให้เกิดปัญหาการเชื่อมต่อข้ามโรงพยาบาล มาตรฐาน <strong>HL7 FHIR (Fast Healthcare Interoperability Resources)</strong> [3] จึงถูกพัฒนาขึ้นเพื่อกำหนดรูปแบบการสื่อสารเวชระเบียนสากลในลักษณะของโครงสร้างข้อมูลกึ่งมีโครงสร้าง (Semi-structured XML/JSON) [3-5]
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs mb-4">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+          <h3 class="font-bold text-cyan-300 text-sm mb-2">🔥 โครงสร้างหลักภายในระบบระเบียบ FHIR:</h3>
+          <ul class="list-disc list-inside space-y-1.5 leading-relaxed text-white/90">
+            <li><strong>Resources:</strong> หน่วยข้อมูลขั้นพื้นฐานที่จับต้องได้ทางการแพทย์ เช่น ทะเบียนประวัติ (<code class="font-mono">Patient</code>) [4], บันทึกอาการโรค (<code class="font-mono">Condition</code>) [5], และข้อมูลสัญญาณชีพ/ผลการตรวจแล็บ (<code class="font-mono">Observation</code>) [5]</li>
+            <li><strong>Bundle Structure:</strong> โครงสร้างรวบรวมระเบียนข้อมูล (Transaction Container) ที่ใช้บรรจุเวชระเบียนผู้ป่วยจำลองเพื่อส่งออกและประมวลผลพร้อมกันในคราวเดียว [5, 6]</li>
+          </ul>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+          <h3 class="font-bold text-cyan-300 text-sm mb-2">🏥 คุณลักษณะแบบจำลองจำลองเพื่อความปลอดภัย:</h3>
+          <p class="leading-relaxed mb-2 text-white/85">
+            เนื่องจากมาตรฐาน FHIR ในระบบข้อมูลสุขภาพขนาดใหญ่มักเป็นโครงสร้างเชิงสัมพันธ์ (Relational) การใช้ระบบสังเคราะห์ประวัติผู้ป่วยเสมือนจริง เช่น <strong>Synthea</strong> [3] ร่วมกับมาตรฐาน FHIR ทำให้นักศึกษาสามารถจำลองกรณีศึกษาการรักษาโรคเบาหวานหรือโรคเรื้อรังได้โดยไม่ล่วงละเมิดสิทธิผู้ป่วยจริง [3, 7]
+          </p>
+          <hr class="border-white/15 my-2">
+          <p class="text-[10px] text-white/70">
+            <strong>ทิศทางสำคัญ:</strong> อิงตามเอกสารแนะนำ "Health Informatics for Health Service Systems" ในแผนหลักสูตรรายวิชา [8]
+          </p>
+        </div>
+      </div>
+
+      <!-- ลิงก์อ้างอิงภายนอกของแท้สำหรับมาตรฐาน FHIR (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>เรียนรู้ข้ามระบบด้วยตนเอง:</strong> ศึกษารายละเอียดภาพรวมข้อมูลสังเคราะห์และมาตรฐาน FHIR สำหรับทำงานวิจัยสากลได้จาก MITRE/NIH Portal [3]. <br>
+        👉 <a href="https://nih-odss.github.io/fhir-for-research/modules/synthea-overview" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลิงก์เข้าสู่หน้าเว็บคู่มือมาตรฐานสากล Synthea Synthetic Data Overview - FHIR® for Research
+        </a>
+      </div>
+
+      <div class="flex justify-between text-xs text-white/60 w-full max-w-2xl mx-auto">
+        <button @click="currentSlide = 18" class="hover:text-white transition">🏠 กลับหน้าสารบัญย่อย</button>
+        <span>สัปดาห์ที่ 2: HL7 FHIR Interoperability Foundations [1, 3]</span>
+        <button @click="currentSlide = 20" class="hover:text-white transition">แผ่นถัดไป →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 20: ปฏิบัติการคลี่และแปลง JSON ด้วย pd.json_normalize() (Parsing Nested JSON Dataframes in Pandas) -->
+<div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">การเขียนสคริปต์คลี่ตารางข้อมูลซ้อน (Nested JSON Normalization)</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        เนื่องจากเวชระเบียนสากลแบบ FHIR บันทึกในฟอร์แมต JSON ที่ซับซ้อนและมีการซ้อนทับกันหลายกิ่งก้าน (Nested Properties) [4, 5] เราจำเป็นต้องใช้ฟังก์ชัน <code class="font-mono bg-black/40 text-yellow-300 px-1 rounded">pd.json_normalize()</code> ของ Pandas เพื่อจัดรูปแบบให้อยู่ในตารางแบนราบ (Flat Table)
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left text-xs mb-4 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-sm mb-2">💻 ชุดคำสั่งคลี่ตารางข้อมูลผู้ป่วยจากโครงสร้าง FHIR Bundle JSON:</h3>
+        <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto leading-relaxed mb-3">
+import json
+import pandas as pd
+
+# 1. โหลดระเบียนผู้ป่วยและแปลงข้อความดิบเป็นอ็อบเจกต์ Python
+with open('patient_fhir_demo.json') as f:
+    fhir_data = json.load(f)
+
+# 2. คลี่โครงสร้างซับซ้อน (Nested path) ภายใต้คีย์ 'entry' ให้ออกมาเป็นระนาบตารางแบนราบ
+df_flat = pd.json_normalize(
+    fhir_data, 
+    record_path=['entry'], 
+    meta=['id', 'resourceType']
+)
+df_flat.head(5)</pre>
+        <p class="text-white/80 leading-relaxed">
+          💡 <strong>เทคนิคที่ต้องเข้าใจ:</strong> พารามิเตอร์ <code class="font-mono bg-black/30 px-1 rounded text-yellow-200">record_path</code> บังคับระบุพิกัดกิ่งก้านเป้าหมายที่เราต้องการสกัดแตกออกเป็นแถว ส่วนตัวแปร <code class="font-mono bg-black/30 px-1 rounded text-yellow-200">meta</code> ช่วยดึงคุณลักษณะคีย์หลักด้านบน (Root Keys) ติดลงมาในตารางสรุปใหม่ เพื่อใช้ในการเชื่อมโยงตารางข้อมูลต่อยอดได้สะดวก
+        </p>
+      </div>
+
+      <!-- ลิงก์เข้าสู่ GitHub ของ Synthea และคลังข้อมูลศึกษา (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>ฝึกทดลองเขียนโค้ดและส่งผลงานร่วมพัฒนา:</strong> ค้นหาและเรียนรู้แนวคิดสถาปัตยกรรมแบบจำลองสถานะจำกัดสำหรับการจำลองข้อมูลเพิ่มเติมได้จากกลุ่มผู้พัฒนา [9]. <br>
+        👉 <a href="https://github.com/synthetichealth/synthea" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลิงก์เข้าสู่หน้าโครงการสากล Synthea Open Source Codebase on GitHub
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 21: ปฏิบัติการระดับก้าวหน้า - การสกัดคุณลักษณะสำหรับการวิเคราะห์กลุ่มและการทำนายผลการรักษา (Clinical Feature Extraction Pipeline) -->
+<div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">การสร้างท่อส่งข้อมูลสกัดลักษณะคุณลักษณะทางคลินิก</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        ในการพัฒนาโมเดลปัญญาประดิษฐ์ทางการแพทย์ขั้นสูง (เช่น การทำนายการกลับเข้ารักษาซ้ำภายใน 30 วัน หรือ 30-day Readmission Prediction) เราต้องเขียนโค้ดเพื่อสกัดคุณลักษณะเด่น (Feature Extraction) จากแฟ้ม FHIR JSON Bundle [6]
+      </p>
+
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-left text-xs mb-3 border border-white/10">
+        <h3 class="font-bold text-cyan-300 text-xs mb-1.5">💻 สถาปัตยกรรมการดึงค่าประวัติ วันครองเตียง และสัญญาณชีพ (Feature Extractor Pipeline):</h3>
+        <pre class="bg-black/40 text-green-400 p-2.5 rounded-xl font-mono text-[10px] overflow-x-auto leading-relaxed mb-2">
+# คำนวณหาอายุจริงและระยะเวลานอนรักษาในโรงพยาบาล (Length of Stay: LOS)
+start_date = pd.to_datetime(df_flat['resource.period.start'])
+end_date = pd.to_datetime(df_flat['resource.period.end'])
+df_flat['los_days'] = (end_date - start_date).dt.days
+
+# ดึงค่าผลตรวจห้องปฏิบัติการ เช่น ระดับน้ำตาลสะสม (LOINC code: 4548-4 เป็น HbA1c) [5, 6]
+df_flat['hba1c_level'] = df_flat.apply(
+    lambda r: r['resource.valueQuantity.value'] 
+    if r['resource.code.coding']['code'] == '4548-4' else None, 
+    axis=1
+)</pre>
+        <p class="text-white/80 leading-relaxed text-[11px]">
+          🔬 <strong>การเชื่อมโยงระบบ:</strong> วิธีนี้ช่วยดึงข้อมูลสัญญาณชีพในระบบบันทึกเวลาจริง (Timeseries) และข้อมูลจากอุปกรณ์สวมใส่ [10] มาร้อยเรียงสรุปผลสถิติในระดับผู้ป่วยรายบุคคลเพื่อการดูแลรักษาแบบแม่นยำ (Precision Medicine) [11]
+        </p>
+      </div>
+
+      <!-- แหล่งสืบค้นและดาวน์โหลดโมดูลจำลองโรคเบาหวาน (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-2.5 text-xs text-white/90 border border-white/5 mb-3 text-left">
+        📚 <strong>เครื่องมือสร้างจำลองพยาธิวิทยา:</strong> สามารถใช้โปรแกรมจำลองภายนอกในการแก้ไขและควบคุมการสร้างพฤติกรรมและการกระจายตัวของผู้ป่วยเบาหวานและโรคเรื้อรังได้เพิ่มเติม [12]. <br>
+        👉 <a href="https://synthetichealth.github.io/module-builder/" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลิงก์เข้าสู่ระบบออกแบบโมเดลโรคผู้ป่วยจำลองสากล (Synthea Generic Module Builder Portal)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 22: จริยธรรม กฎหมายคุ้มครอง และความปลอดภัยในการใช้งาน (Clinical Data Ethics, HIPAA & PDPA B.E. 2562) -->
+<div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-yellow-300">กฎหมายคุ้มครองสิทธิ์และความปลอดภัยข้อมูลสุขภาพ</h2>
+      <p class="text-base text-white/90 mb-4 leading-relaxed">
+        เนื่องจากข้อมูลระเบียนผู้ป่วย (EHR) ถือเป็นข้อมูลส่วนบุคคลที่มีความอ่อนไหวสูงมาก (Sensitive Personal Identifiable Information: PII) [1] การจัดสรรและเชื่อมโยงตารางข้อมูลจึงต้องอยู่ภายใต้เกณฑ์จริยธรรมข้อมูลสารสนเทศสุขภาพอย่างเคร่งครัด [8, 13]
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs mb-4">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+          <h3 class="font-bold text-yellow-300 text-sm mb-2">⚖️ กฎหมายควบคุมระดับสากลและในประเทศไทย:</h3>
+          <ul class="list-disc list-inside space-y-1.5 leading-relaxed text-white/90">
+            <li><strong>PDPA พ.ศ. 2562 (ประเทศไทย):</strong> พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล กำหนดสิทธิและการขอความยินยอมในการดึงระเบียนคนไข้ไปศึกษาต่อยอด [8, 14]</li>
+            <li><strong>HIPAA Act (ระดับสากล):</strong> มาตรฐานสากลว่าด้วยการรักษาสิทธิ์ความปลอดภัยและความลับของเวชระเบียนทางการแพทย์ [15]</li>
+            <li><strong>จรรยาบรรณวิชาชีพ:</strong> นักวิจัยและแพทย์ต้องลงนาม Data Use Agreement และผ่าน CITI Program ก่อนเข้าใช้ฐานข้อมูลเปิด [16, 17]</li>
+          </ul>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+          <h3 class="font-bold text-cyan-300 text-sm mb-2">🛡️ ยุทธศาสตร์เทคโนโลยีรักษาความลับเชิงนโยบาย:</h3>
+          <p class="leading-relaxed mb-2 text-white/85">
+            สมาคมเวชสารสนเทศไทย (TMI) และนโยบายคลาวด์กลางภาครัฐ [1] แนะนำให้ใช้กระบวนการเข้ารหัส (Encryption) [18] และการปิดบังตัวตนผู้ป่วยระดับลึก (Anonymization) เช่น การคัดทิ้งและจำกัดข้อมูลอายุผู้ป่วยเพื่อป้องกันภัยการสืบหาตัวตนย้อนกลับ (Re-identification) 
+          </p>
+          <hr class="border-white/15 my-2">
+          <p class="text-[10px] text-white/70">
+            <strong>เป้าหมาย CLO3:</strong> ตระหนักและสามารถอธิบายเกณฑ์กฎหมายและจริยธรรมข้อมูลได้ [19]
+          </p>
+        </div>
+      </div>
+
+      <!-- ลิงก์อ้างอิงของแท้นโยบายคุ้มครองข้อมูลละเอียดอ่อนระดับโลก (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        📚 <strong>กฎบัตรและการคุ้มครองสิทธิ์สากล:</strong> ศึกษารายละเอียดแนวปฏิบัติการเข้าสืบค้นและนโยบายความคุ้มครองข้อมูลสุขภาพระดับประเทศที่เข้มงวดเพิ่มเติมได้จากคลังสนับสนุนการวิจัย. <br>
+        👉 <a href="https://support.researchallofus.org/hc/en-us/articles/37782066797716-All-of-Us-Data-and-Research-Center-Policy-on-Sensitive-U-S-Data-Protection" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลิงก์อ้างอิงเอกสารข้อบังคับสัญญารักษาความลับและสิทธิ์ข้อมูลสากล (All of Us Data Protection Policy Hub)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- สไลด์ที่ 23: ปกหลัง สรุปแผนปฏิบัติการประจำสัปดาห์ และข้อมูลการติดต่อทีมผู้สอน (Week 2 Summary, HW2 & Contacts) -->
+<div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+  <div class="text-center max-w-4xl mx-auto px-8 py-4">
+    <div class="text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold mb-3 text-red-300">สรุปปฏิบัติการและการบ้านสัปดาห์ที่ ๒ (Homework 2)</h2>
+      <p class="text-base text-white/90 mb-4">
+        เกณฑ์ตัดสินและผลลัพธ์เพื่อประเมินความสามารถการเขียนโปรแกรมและการรวมกลุ่มข้อมูลขนาดใหญ่สะสมร้อยละ ๒๐ [19]
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs mb-4">
+        <!-- บล็อคที่ 1: ขั้นตอนทวนสอบ Homework 2 -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+          <h3 class="font-bold text-yellow-300 text-sm mb-2 text-center">🏁 รายการสรุปขั้นตอนปฏิบัติสู่ความสำเร็จ:</h3>
+          <ol class="list-decimal list-inside space-y-1.5 leading-relaxed text-white/95">
+            <li>ดาวน์โหลดข้อมูลจำลองและเชื่อมโยงตารางผ่านรหัส <code class="font-mono text-yellow-200 bg-black/40 px-1 rounded">practice_code</code> ด้วย Left Join [1]</li>
+            <li>ใช้คำสั่งสรุปกลุ่มสถิติรวมยอดรายจ่ายและอัตราค่ารักษาเฉลี่ยรายประเภท</li>
+            <li>กรองข้อมูลหลังประมวลผลกลุ่ม (Having) เลือกเฉพาะพิกัดเขตภูมิศาสตร์ชนบทและคลินิกยอดสะสมการรักษาหนาแน่น [1]</li>
+            <li>ส่งออกไฟล์ผลงานผ่านเครื่องคอมพิวเตอร์ออฟไลน์ และส่งก่อนเข้าเรียนปฏิบัติการสัปดาห์ถัดไป</li>
+          </ol>
+        </div>
+
+        <!-- บล็อคที่ 2: ข้อมูลติดต่อและอ้างอิงตำราวิชาการ -->
+      </div>
+
+      <!-- ลิงก์ดาวน์โหลดระเบียนข้อมูลสัญญาณชีพเพื่อฝึกด้วยตนเอง (Clickable Reference Link) -->
+      <div class="bg-black/30 rounded-xl p-3 text-xs text-white/90 border border-white/5 mb-4 text-left">
+        💡 <strong>ขยายมิติข้อมูลวิจัยด้วยตนเอง:</strong> นักศึกษาสามารถเข้าไปสืบค้นและดาวน์โหลดสัญญาณชีพจากอุปกรณ์สวมใส่เชิงอนุกรมเวลาเพื่อทดสอบการจัดกลุ่มได้เพิ่มเติม [20]. <br>
+        👉 <a href="https://doi.org/10.5281/zenodo.18199486" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline hover:text-yellow-200 font-semibold inline-block mt-1">
+          ลิงก์สืบค้นและเข้าดาวน์โหลดชุดข้อมูลสัญญาณชีพสากล (Zenodo Open Access: Wearable Sensor Health and Activity Dataset)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
+

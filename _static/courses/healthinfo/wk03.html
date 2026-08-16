@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Heallth Informatics">
+    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop in Health Informatics</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk03.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- สไลด์สัปดาห์ที่ 3 ส่วนที่ 1: การนำเข้าและสำรวจข้อมูลสุขภาพเบื้องต้นด้วย pandas -->
+      <div class="slides-container relative w-full h-[600px] overflow-hidden rounded-3xl bg-slate-950 font-sans shadow-2xl">
+
+        <!-- SLIDE 0: หน้าแรกและสารบัญนำทาง -->
+        <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 0">
+          <div class="text-center max-w-4xl mx-auto">
+            <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              AMMS 302 | Week 3 • Part 1
+            </span>
+            <h2 class="text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-teal-200">
+              การค้นหาข้อมูลเชิงลึกทางสุขภาพด้วย pandas
+            </h2>
+            <p class="text-md text-white/80 mb-6 leading-relaxed font-light">
+              รายวิชา ปฏิบัติการสารสนเทศด้านสุขภาพ (อจวพ ๓๐๒) [1]<br/>
+              หลักสูตรวิทยาศาสตรบัณฑิต สาขาวิชาวิทยาศาสตร์การแพทย์ [1]
+            </p>
+
+            <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+              <h3 class="text-base font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญและขั้นตอนการเรียนรู้ด้วยตนเอง</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button @click="currentSlide = 1" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 1</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">ทำไมต้อง pandas ในเวชสารสนเทศ?</div>
+                </button>
+                <button @click="currentSlide = 2" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 2</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">เตรียมเครื่องมือ & Dataset</div>
+                </button>
+                <button @click="currentSlide = 3" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 3</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">Series vs DataFrame</div>
+                </button>
+                <button @click="currentSlide = 4" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 4</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การ Import ข้อมูลสุขภาพ (.read_csv)</div>
+                </button>
+                <button @click="currentSlide = 5" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 5</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การตรวจสอบคุณภาพข้อมูลเบื้องต้น</div>
+                </button>
+                <button @click="currentSlide = 6" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 6</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">สรุปแนวทางปฏิบัติ & แหล่งเรียนรู้</div>
+                </button>
+              </div>
+            </div>
+            <div class="text-xs text-slate-400">💡 คำชี้แนะ: นักศึกษาสามารถคลิกปุ่มด้านบนเพื่อข้ามไปยังสไลด์ที่ต้องการศึกษา หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ตามเนื้อหา</div>
+          </div>
+        </div>
+
+        <!-- SLIDE 1: ทำไมต้อง pandas ในงานเวชสารสนเทศ -->
+        <div :class="{ 'active': currentSlide === 1 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 1">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-blue-400 text-xs font-bold tracking-wider">01. บทนำสู่ pandas ในระบบสุขภาพ</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-teal-300">ทำไมต้องใช้ pandas ในข้อมูลเวชระเบียนระบาดวิทยา?</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="space-y-4">
+                  <p class="text-sm text-slate-300 leading-relaxed">
+                    ข้อมูลสุขภาพทางคลินิก (EHR) เป็นข้อมูลที่ซับซ้อน มักไม่มีโครงสร้างที่แน่นอน และเต็มไปด้วยข้อมูลที่ขาดหายหรือพิมพ์ผิด (Messy & High-Stakes) [2] 
+                  </p>
+                  <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                    <h4 class="text-sm font-bold text-yellow-300 mb-2">📊 ความสำคัญของ Data ใน Medical AI</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                      การสร้างแบบจำลอง AI หรือ Machine Learning ด้านการแพทย์ที่มีความปลอดภัยและไม่มีอคติ (Bias) ต้องเริ่มต้นจาก <strong>"ข้อมูลที่สะอาดและได้รับการจัดการอย่างดี"</strong> ไม่ใช่จากอัลกอริทึม [2, 3]
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-sm font-bold text-blue-300 mb-2">🎯 ประโยชน์หลักของ pandas:</h4>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                      <li>รองรับชุดข้อมูลขนาดใหญ่และประมวลผลเร็ว [4]</li>
+                      <li>แปลงและบูรณาการข้อมูลต่างมิติ (Multimodal Integration) [5]</li>
+                      <li>มีชุดฟังก์ชันจัดการข้อมูลสูญหาย (Missing Values) อย่างเป็นระบบ [6]</li>
+                      <li>ทำงานร่วมกับ Jupyter Notebook ได้อย่างราบรื่น [7]</li>
+                    </ul>
+                  </div>
+
+                  <!-- แหล่งเรียนรู้เพิ่มเติมภายนอกแบบคลิกได้ -->
+                  <div class="mt-4 pt-3 border-t border-slate-800">
+                    <a href="https://tiet.ai/blog/py-synthea/" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 อ่านวิจัย: ทำไมข้อมูลสังเคราะห์จึงสำคัญใน Python Stack? [8, 9]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 0" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 2" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: การเตรียมเครื่องมือและการระบุเส้นทางไฟล์ข้อมูลในระบบปฏิบัติการ -->
+        <div :class="{ 'active': currentSlide === 2 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 2">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-blue-400 text-xs font-bold tracking-wider">02. การเตรียมเครื่องมือปฏิบัติการ</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-teal-300">จัดเตรียม Jupyter Notebook และชุดข้อมูลฝึกปฏิบัติ</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-3">
+                  <p class="text-xs text-slate-300">
+                    ในการปฏิบัติงานสัปดาห์นี้ เราจะใช้เครื่องมือ <strong>Jupyter Notebook (Python 3)</strong> ซึ่งติดตั้งอยู่ในระบบของรายวิชาแล้ว [10, 11]
+                  </p>
+                  <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                    <h4 class="text-xs font-bold text-yellow-300 mb-1">📁 ตรวจสอบไฟล์ข้อมูลในระบบของคุณ:</h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                      เราได้จัดเตรียมไฟล์ข้อมูลการจ่ายยาเพื่อนำไปทดลองค้นหาข้อมูลเชิงลึก (Insights) ไว้เรียบร้อยแล้ว ได้แก่:
+                    </p>
+                    <ul class="text-[11px] text-slate-300 mt-1 space-y-1 list-disc list-inside">
+                      <li><code class="text-blue-300">prescriptions.csv</code> (ข้อมูลหลักการจ่ายยาในคลินิก)</li>
+                      <li><code class="text-blue-300">practices_registry.csv</code> (ทะเบียนรายชื่อคลินิกแพทย์ทั่วไป)</li>
+                    </ul>
+                  </div>
+                  <div class="bg-blue-950/40 p-3 rounded-lg border border-blue-900/50">
+                    <p class="text-[11px] text-blue-200">
+                      💡 <strong>เคล็ดลับความปลอดภัยข้อมูล:</strong> การปฏิบัติงานใน Sandbox ช่วยให้เราทดลองวิเคราะห์ข้อมูลได้โดยไม่ต้องเสี่ยงกับการทำข้อมูลผู้ป่วยจริงรั่วไหล และสอดคล้องกับมาตรฐานความปลอดภัยสากล เช่น HIPAA และกฎหมายไทย PDPA [7, 12, 13]
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2">⚡ คำสั่งเปิดการใช้งาน pandas ใน Jupyter Cell:</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 mb-3">
+                      <span class="text-slate-500"># นำเข้าไลบรารีจัดการข้อมูลในไพทอน</span><br/>
+                      import pandas as pd<br/><br/>
+                      <span class="text-slate-500"># ตรวจสอบเวอร์ชันที่ใช้อยู่ในระบบ</span><br/>
+                      print(pd.__version__)
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://support.researchallofus.org/hc/en-us/articles/360039690191-JupyterLab-Notebooks-and-programming" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 คู่มือการใช้คลาวด์และสภาพแวดล้อม Jupyter Notebook [10]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 1" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 3" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: โครงสร้างข้อมูล Series vs DataFrame -->
+        <div :class="{ 'active': currentSlide === 3 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 3">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-blue-400 text-xs font-bold tracking-wider">03. โครงสร้างข้อมูลพื้นฐานของ pandas</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-teal-300">ทำความเข้าใจโครงสร้างข้อมูลสุขภาพในหน่วยความจำ</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                    <h4 class="text-sm font-bold text-yellow-300 mb-2">1. Series (แถวลำดับ 1 มิติ)</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                      เปรียบเสมือนคอลัมน์เดี่ยวที่มีดัชนีกำกับ (Index) เช่น ข้อมูลความดันโลหิตหรืออุณหภูมิร่างกายของผู้ป่วยรายบุคคลตามช่วงเวลาอย่างต่อเนื่อง (Time-series) [14]
+                    </p>
+                  </div>
+                  <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                    <h4 class="text-sm font-bold text-blue-300 mb-2">2. DataFrame (ตารางโครงสร้างข้อมูล 2 มิติ)</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                      เป็นรูปแบบตาราง (Tabular) มีแถวและคอลัมน์ชัดเจน มีโครงสร้างดัชนีทั้งแนวตั้งและแนวนอน เหมาะสำหรับการบันทึกประวัติการรักษาผู้ป่วยและบันทึกใบสั่งยา (EHR Data) [15, 16]
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div class="text-center py-6 border border-dashed border-slate-700 rounded-lg bg-slate-900">
+                    <span class="text-xs text-slate-400">💡 แผนภาพโครงสร้างข้อมูลทางเวชระเบียน</span>
+                    <div class="flex justify-around items-center mt-4">
+                      <div class="bg-blue-600/30 text-blue-200 border border-blue-500 text-xs p-2 rounded-lg">
+                        [1 มิติ]<br/><strong>Series</strong><br/><span class="text-[10px]">เช่น อายุ</span>
+                      </div>
+                      <span class="text-slate-500 font-mono text-xl">⮕</span>
+                      <div class="bg-teal-600/30 text-teal-200 border border-teal-500 text-xs p-2 rounded-lg">
+                        [2 มิติ]<br/><strong>DataFrame</strong><br/><span class="text-[10px]">เช่น อายุ + เพศ + ยา</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://archive.ics.uci.edu/datasets" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 แหล่งข้อมูลอ้างอิง: เรียนรู้โครงสร้างตารางข้อมูลคลินิกจากคลังวิจัย UCI ML Repository [17]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 2" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 4" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: นำเข้าข้อมูลด้วย pd.read_csv() -->
+        <div :class="{ 'active': currentSlide === 4 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 4">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-blue-400 text-xs font-bold tracking-wider">04. การโหลดข้อมูลเข้าสู่ความจำ (Data Ingestion)</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-teal-300">นำเข้าไฟล์ prescriptions.csv ด้วย pandas</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    เราจะนำเข้าข้อมูลด้วยฟังก์ชัน <code class="bg-slate-800 text-blue-300 px-1 py-0.5 rounded font-mono">read_csv()</code> ซึ่งจะทำการแปลงไฟล์ข้อมูลให้กลายเป็นวัตถุ DataFrame โดยอัตโนมัติ [18]
+                  </p>
+                  <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                    <h4 class="text-xs font-bold text-yellow-300 mb-1">📝 ทิปการโหลดข้อมูลเชิงเทคนิค:</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                      ในระบบปฏิบัติการทั่วไป หากไฟล์ไม่อยู่ในโฟลเดอร์เดียวกัน คุณจำเป็นต้องกำหนด Path สัมบูรณ์ (Absolute Path) หรือพารามิเตอร์เพิ่มเติมเพื่อให้ pandas ทราบตำแหน่งไฟล์และวิธีการถอดรหัสของอักขระ (Encoding) [18]
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2">💻 ลองพิมพ์คำสั่งเหล่านี้ลงในเซลล์ Jupyter:</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      import pandas as pd<br/><br/>
+                      <span class="text-slate-500"># โหลดไฟล์ข้อมูลผู้ป่วยและการจ่ายยา</span><br/>
+                      df = pd.read_csv('prescriptions.csv')<br/><br/>
+                      <span class="text-slate-500"># แสดงผลแถวข้อมูลเริ่มต้น 5 ลำดับแรก</span><br/>
+                      df.head()
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://physionet.org/about/database/" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 แหล่งข้อมูลอ้างอิง: คลังคัดสรรฐานข้อมูลด้านสรีรวิทยาคลินิกขนาดใหญ่ PhysioNet [19, 20]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 3" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 5" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: การตรวจสอบข้อมูลและสำรวจเบื้องต้น -->
+        <div :class="{ 'active': currentSlide === 5 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 5">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-blue-400 text-xs font-bold tracking-wider">05. การสำรวจวิเคราะห์ข้อมูลขั้นต้น (EDA)</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-teal-300">ตรวจสอบโครงสร้าง มิติข้อมูล และข้อมูลสูญหาย (Missing Data)</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    หลังการนำเข้าข้อมูล สิ่งสำคัญที่สุดก่อนนำข้อมูลไปประมวลผลคือการทำความสะอาดและตรวจสอบคุณภาพความถูกต้องเพื่อไม่ให้เกิดข้อผิดพลาดด้านสุขภาพและการวิเคราะห์ (Garbage In, Garbage Out) [21, 22]
+                  </p>
+                  <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+                    <h4 class="text-xs font-bold text-yellow-300 mb-2">⭐ ฟังก์ชันสำคัญที่ห้ามลืม:</h4>
+                    <ul class="text-[11px] text-slate-300 space-y-1.5">
+                      <li><strong class="text-teal-300">.info()</strong>: ตรวจสอบประเภทตัวแปรและข้อมูลสูญหายทั้งหมด [15]</li>
+                      <li><strong class="text-teal-300">.shape</strong>: ตรวจสอบจำนวนแถวและคอลัมน์ (มิติของข้อมูล) [5]</li>
+                      <li><strong class="text-teal-300">.describe()</strong>: สรุปค่าสถิติพื้นฐานของข้อมูลเชิงตัวเลข (เช่น ยอดรวม ค่าเฉลี่ย ส่วนเบี่ยงเบนมาตรฐาน) [23]</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2">💻 พิมพ์คำสั่งสำรวจข้อมูลทางสถิติลงในเซลล์:</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      import pandas as pd<br/>
+                      df = pd.read_csv('prescriptions.csv')<br/><br/>
+                      <span class="text-slate-500"># ตรวจสอบภาพรวมของแถวคอลัมน์และชนิดตัวแปร</span><br/>
+                      df.info()<br/><br/>
+                      <span class="text-slate-500"># ตรวจสอบหาผลรวมข้อมูลสูญหาย (Null Values) ในแต่ละคอลัมน์</span><br/>
+                      print(df.isnull().sum())
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://github.com/healthylaife/MIMIC-IV-Data-Pipeline" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 แหล่งข้อมูลอ้างอิง: ศึกษาท่อบูรณาการข้อมูลคลินิกหลายมิติ MIMIC-IV Data Pipeline [24]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 4" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 6" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: บทสรุป ส่วนนำเข้าข้อมูล และแหล่งเรียนรู้เพิ่มเติม -->
+        <div :class="{ 'active': currentSlide === 6 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 6">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-blue-400 text-xs font-bold tracking-wider">06. บทสรุป และ Handoff สู่ภาคปฏิบัติ</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-teal-300">ความสำเร็จของส่วนที่ 1 และก้าวต่อไปของคุณ!</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-3">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ในสไลด์บทเรียนส่วนที่ 1 นี้ นักศึกษาได้เรียนรู้วิธีการกำหนดโครงสร้างข้อมูล Series และ DataFrame รวมถึงสามารถพิมพ์โค้ดภาษาไพทอนด้วยคำสั่ง <code class="bg-slate-800 text-teal-300 px-1 py-0.5 rounded font-mono">read_csv()</code> เพื่อโหลดฐานข้อมูลการจ่ายยาสาธารณสุขจริงเข้ามาวิเคราะห์ข้อมูลสูญหายเบื้องต้นได้เรียบร้อยแล้ว [15, 18, 25]
+                  </p>
+                  <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                    <h4 class="text-xs font-bold text-yellow-300 mb-1">🔗 แหล่งศึกษาเพิ่มเติมระดับสากลทางสุขภาพ:</h4>
+                    <ul class="text-[11px] text-slate-300 mt-1 space-y-1 list-disc list-inside">
+                      <li>
+                        <a href="https://support.researchallofus.org/hc/en-us/articles/22346942074132-Data-Access-Framework" target="_blank" class="text-teal-300 hover:text-teal-100 underline transition">
+                          นโยบายการควบคุมและปกป้องความเป็นส่วนตัวข้อมูลประชากร All of Us [26]
+                        </a>
+                      </li>
+                      <li>
+                        <a href="https://pandas.pydata.org/docs/" target="_blank" class="text-teal-300 hover:text-teal-100 underline transition">
+                          คลังคู่มือผู้ใช้งานและ API อ้างอิงของไลบรารี pandas อย่างเป็นทางการ
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div class="bg-blue-950/30 p-3 rounded-lg border border-blue-900/50">
+                    <h4 class="text-xs font-bold text-blue-300 mb-1">🚀 ขั้นตอนถัดไป:</h4>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                      เมื่อนักศึกษาเข้าใจส่วนที่ 1 นี้เรียบร้อยแล้ว ให้เริ่มเปิด Jupyter Notebook ในคอมพิวเตอร์แล็บเพื่อทดลองพิมพ์และรันโค้ด หรือข้ามไปศึกษา <strong>"ส่วนที่ 2: การกรองผลลัพธ์ข้อมูลอย่างมีเงื่อนไข"</strong> เพื่อหาข้อค้นพบเชิงลึก (Insights) ของยารักษาโรคเบาหวานและยาทั่วไปได้เลยครับ! [25]
+                    </p>
+                  </div>
+
+                  <div class="text-center py-2 bg-slate-900 rounded border border-slate-800 mt-4">
+                    <span class="text-xs text-slate-400">📝 Lab Activity ของคุณพร้อมใช้งานในระบบแล้ว!</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 5" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 0" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">เสร็จสิ้นบทเรียน (กลับหน้าแรก) ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- สไลด์สัปดาห์ที่ 3 ส่วนที่ 2: การกรองเงื่อนไขและการสืบค้นทางระบาดวิทยาด้วย pandas -->
+      <div class="slides-container relative w-full h-[600px] overflow-hidden rounded-3xl bg-slate-950 font-sans shadow-2xl">
+
+        <!-- SLIDE 0: หน้าแรกและสารบัญนำทางส่วนที่ 2 -->
+        <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 7">
+          <div class="text-center max-w-4xl mx-auto">
+            <span class="bg-teal-500/30 text-teal-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              AMMS 302 | Week 3 • Part 2
+            </span>
+            <h2 class="text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-emerald-200">
+              การกรองเงื่อนไขและการสืบค้นทางคลินิกด้วย pandas
+            </h2>
+            <p class="text-md text-white/80 mb-6 leading-relaxed font-light">
+              รายวิชา ปฏิบัติการสารสนเทศด้านสุขภาพ (อจวพ ๓๐๒)<br/>
+              หลักสูตรวิทยาศาสตรบัณฑิต สาขาวิชาวิทยาศาสตร์การแพทย์ [1, 2]
+            </p>
+
+            <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+              <h3 class="text-base font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญการเรียนรู้เชิงลึก (Insights Querying)</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button @click="currentSlide = 1" class="bg-white/5 hover:bg-teal-500/20 hover:border-teal-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-teal-300 font-bold">สไลด์ที่ 1</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">พื้นฐาน Boolean Indexing & .loc</div>
+                </button>
+                <button @click="currentSlide = 2" class="bg-white/5 hover:bg-teal-500/20 hover:border-teal-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-teal-300 font-bold">สไลด์ที่ 2</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การกรองแบบหลายเงื่อนไข (&, |, ~)</div>
+                </button>
+                <button @click="currentSlide = 3" class="bg-white/5 hover:bg-teal-500/20 hover:border-teal-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-teal-300 font-bold">สไลด์ที่ 3</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การสืบค้นผู้ป่วย (Cohort Selection)</div>
+                </button>
+                <button @click="currentSlide = 4" class="bg-white/5 hover:bg-teal-500/20 hover:border-teal-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-teal-300 font-bold">สไลด์ที่ 4</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การคัดกรองข้อมูลสูญหายทางคลินิก</div>
+                </button>
+                <button @click="currentSlide = 5" class="bg-white/5 hover:bg-teal-500/20 hover:border-teal-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-teal-300 font-bold">สไลด์ที่ 5</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">การกรองข้อมูลที่ขัดแย้ง (Validation)</div>
+                </button>
+                <button @click="currentSlide = 6" class="bg-white/5 hover:bg-teal-500/20 hover:border-teal-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                  <div class="text-xs text-teal-300 font-bold">สไลด์ที่ 6</div>
+                  <div class="text-sm font-semibold group-hover:text-yellow-200">สรุปแนวคิด & ทรัพยากรศึกษาต่อ</div>
+                </button>
+              </div>
+            </div>
+            <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกปุ่มเมนูเพื่อเริ่มฝึกสืบค้นและทำความสะอาดข้อมูลทางคลินิกจริงด้วยตนเอง</div>
+          </div>
+        </div>
+
+        <!-- SLIDE 1: พื้นฐาน Boolean Indexing & .loc -->
+        <div :class="{ 'active': currentSlide === 8 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 8">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-teal-400 text-xs font-bold tracking-wider">01. Boolean Indexing ทางเวชสารสนเทศ</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-emerald-300">การกรองแถวข้อมูลด้วยดัชนีตรรกะ (Boolean Masking)</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    หัวใจหลักของการกรองข้อมูลใน <strong>pandas DataFrame</strong> คือการระบุเงื่อนไขตรรกะ (True/False) ลงไปในแถวข้อมูลของคอลัมน์ เพื่อเลือกเฉพาะผู้ป่วยที่เข้าเกณฑ์ตามหลักเกณฑ์ระบาดวิทยา [4, 5]
+                  </p>
+                  <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                    <h4 class="font-bold text-yellow-300 mb-1">📌 การกรองแบบดั้งเดิม vs .loc:</h4>
+                    <ul class="text-[11px] text-slate-300 space-y-1.5 list-disc list-inside">
+                      <li>การครอบด้วยวงเล็บเหลี่ยม: <code class="text-teal-200">df[df['AGE'] >= 18]</code></li>
+                      <li>การกรองด้วย <code class="text-teal-200">.loc[]</code>: ยืดหยุ่นกว่าเนื่องจากช่วยให้เราเข้าถึงได้ทั้ง <strong>"แถว" และ "คอลัมน์เป้าหมาย"</strong> พร้อมกันได้อย่างปลอดภัยในหน่วยความจำ</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2 font-mono">💻 โค้ดตัวอย่าง: คัดกรองยา Metformin</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      import pandas as pd<br/>
+                      df = pd.read_csv('prescriptions.csv')<br/><br/>
+                      <span class="text-slate-500"># สร้างหน้ากากตรรกะสำหรับยารักษาเบาหวาน</span><br/>
+                      metformin_mask = df['DRUG'] == 'METFORMIN'<br/><br/>
+                      <span class="text-slate-500"># กรองแถวข้อมูลโดยเลือกเฉพาะผู้ป่วยที่ได้ยาตัวนี้</span><br/>
+                      diabetic_patients = df.loc[metformin_mask]<br/>
+                      diabetic_patients.head()
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://pandas.pydata.org/docs/user_guide/indexing.html" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 ลิงก์อ้างอิง: คู่มือและมาตรฐานสากลเรื่องการทำ Indexing และ Selection ของ pandas
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 0" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 2" class="bg-teal-600 hover:bg-teal-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: การกรองแบบหลายเงื่อนไข (&, |, ~) -->
+        <div :class="{ 'active': currentSlide === 9 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 9">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-teal-400 text-xs font-bold tracking-wider">02. การประยุกต์ใช้ตรรกศาสตร์ทางเวชสารสนเทศ</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-emerald-300">การกรองข้อมูลแบบผสมผสานเงื่อนไขซับซ้อน (Multi-Criteria Filtering)</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ในระบบสาธารณสุขจริง แพทย์และนักวิจัยต้องการศึกษาผู้ป่วยเฉพาะกลุ่มที่มีโรคร่วมหรืออาการแสดงที่ซับซ้อน จึงต้องใช้ตัวดำเนินการตรรกะในการวิเคราะห์ [6, 7]
+                  </p>
+                  <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                    <h4 class="font-bold text-yellow-300 mb-2">⚠️ กฎเหล็กของ pandas Logical Operators:</h4>
+                    <ul class="text-[11px] text-slate-300 space-y-1.5">
+                      <li>ใช้ตัวดำเนินการแบบบิต: <strong class="text-teal-300">&</strong> (AND), <strong class="text-teal-300">|</strong> (OR), <strong class="text-teal-300">~</strong> (NOT) [7]</li>
+                      <li><strong>"ต้องครอบวงเล็บ"</strong> ในแต่ละเงื่อนไขตรรกะย่อยเสมอ มิฉะนั้นระบบจะเกิดข้อผิดพลาดด้านการคำนวณลำดับความสำคัญ (Operator Precedence)</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2 font-mono">💻 คัดกรองผู้ป่วยหญิงสูงวัยที่เป็นโรคเบาหวานประเภทที่ 2 [8]</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      <span class="text-slate-500"># กรองผู้หญิงอายุมากกว่า 60 ปี ที่มียอดระดับ HbA1c สูงกว่าเกณฑ์ปกติ</span><br/>
+                      high_risk = df[<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;(df['gender'] == 'female') &<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;(df['age'] >= 60) &<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;(df['hba1c'] > 7.0)<br/>
+                      ]<br/>
+                      print(f"จำนวนผู้ป่วยกลุ่มเสี่ยงสูง: {len(high_risk)} ราย")
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://github.com/synthetichealth/synthea/wiki" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 ลิงก์วิจัย: ศึกษาโครงสร้างและตรรกะแบบจำลองสเตตโรคเบาหวานของ Synthea [8]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 1" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 3" class="bg-teal-600 hover:bg-teal-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: การสืบค้นผู้ป่วย (Cohort Selection) -->
+        <div :class="{ 'active': currentSlide === 10 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 10">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-teal-400 text-xs font-bold tracking-wider">03. การจัดการประชากรผู้ป่วยเชิงรุก (Cohort Selection)</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-emerald-300">การกรองและจัดกลุ่มผู้ป่วยเป้าหมาย (Cohort Selection) ด้วยรหัสโรคสากล</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ในขั้นตอนวิศวกรรมข้อมูลทางการแพทย์ (Medical Data Engineering) ขั้นตอนสำคัญคือการสกัดกลุ่มประชากร (Cohort) ตามมาตรฐานรหัสโรคเช่น ICD-9 หรือ ICD-10 [9-11]
+                  </p>
+                  <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                    <h4 class="font-bold text-yellow-300 mb-1.5">🔬 การใช้คำสั่ง .isin() และ .str.startswith():</h4>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                      ช่วยคัดกรองกลุ่มรหัสโรคแบบเป็นกลุ่ม เช่น รหัสที่ขึ้นต้นด้วย <strong>E11</strong> (กลุ่มโรคเบาหวานชนิดที่ 2) โดยใช้เครื่องมือจัดการข้อความของ pandas
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2 font-mono">💻 ตัวอย่างการกรอง Cohort ผู้ป่วยโรคหัวใจและหลอดเลือด</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      <span class="text-slate-500"># สืบค้นผู้ป่วยตามรหัสโรคหัวใจเต้นผิดจังหวะ (Atrial Fibrillation) [12]</span><br/>
+                      af_cohort = df[df['icd_code'] == 'I48']<br/><br/>
+                      <span class="text-slate-500"># สืบค้นโดยใช้กลุ่มรายชื่อรหัสยาที่สนใจ</span><br/>
+                      target_drugs = ['METFORMIN', 'INSULIN', 'GLIPIZIDE']<br/>
+                      diabetic_meds = df[df['DRUG'].isin(target_drugs)]
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://support.researchallofus.org/hc/en-us/articles/22346942074132-Data-Access-Framework" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 แหล่งศึกษาเพิ่มเติม: นโยบายและระเบียบการคัดกรองประชากร (Cohort) ของโครงการวิจัยระดับชาติ All of Us [13, 14]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 2" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 4" class="bg-teal-600 hover:bg-teal-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: การคัดกรองข้อมูลสูญหายทางคลินิก -->
+        <div :class="{ 'active': currentSlide === 11 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 11">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-teal-400 text-xs font-bold tracking-wider">04. การเตรียมความพร้อมข้อมูลทางการแพทย์</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-emerald-300">การกรองและการแทนที่ข้อมูลสูญหาย (Missing Data Filter & Imputation)</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ในระบบประมวลผลข้อมูลเวชระเบียนแบบบูรณาการ (เช่น ข้อมูลสัญญาณชีพหรือผลแล็บ) การมีอยู่ของข้อมูลที่ไม่สมบูรณ์เป็นเรื่องปกติ [15, 16] นักศึกษากระบวนวิชานี้ต้องเรียนรู้กลวิธีการคัดแยกและบำบัดข้อมูลเหล่านี้
+                  </p>
+                  <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                    <h4 class="font-bold text-yellow-300 mb-2">🛠️ ชุดฟังก์ชันรับมือข้อมูล Null ของ pandas:</h4>
+                    <ul class="text-[11px] text-slate-300 space-y-1.5">
+                      <li><code class="text-teal-200">.isnull()</code>: ตรวจหาเซลล์ข้อมูลที่เป็นช่องว่าง [15]</li>
+                      <li><code class="text-teal-200">.notnull()</code>: คัดเลือกเฉพาะแถวที่มีข้อมูลครบถ้วนสมบูรณ์ [15]</li>
+                      <li><code class="text-teal-200">.fillna()</code>: แทนที่ข้อมูลที่สูญหายด้วยค่าสถิติ (เช่น ค่าเฉลี่ย หรือใช้วิธี Forward Fill) [15]</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2 font-mono">💻 ตัวอย่างการแทนที่ระดับค่าน้ำตาลในเลือด (HbA1c)</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      <span class="text-slate-500"># เลือกเฉพาะแถวที่มีผลแล็บ HbA1c ครบถ้วน</span><br/>
+                      valid_labs = df[df['hba1c'].notnull()]<br/><br/>
+                      <span class="text-slate-500"># แทนที่ข้อมูลช่องว่างด้วยค่าเฉลี่ยของประชากร [15]</span><br/>
+                      mean_value = df['hba1c'].mean()<br/>
+                      df['hba1c_imputed'] = df['hba1c'].fillna(mean_value)
+                    </div>
+                  </div>
+
+                  <div class="mt-4 pt-2 border-t border-slate-800">
+                    <a href="https://physionet.org/" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                      🔗 แหล่งข้อมูลศึกษาเพิ่มเติม: เรียนรู้วิธีจัดการข้อมูลสัญญาณชีพคลินิกไอซียูผ่านทางฐานข้อมูล PhysioNet [17, 18]
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ส่วนควบคุมสไลด์ -->
+            <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+              <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+              <div class="space-x-2">
+                <button @click="currentSlide = 3" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+                <button @click="currentSlide = 5" class="bg-teal-600 hover:bg-teal-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: การกรองข้อมูลที่ขัดแย้ง (Validation) -->
+        <div :class="{ 'active': currentSlide === 12 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 12">
+          <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <span class="text-teal-400 text-xs font-bold tracking-wider">05. การควบคุมความสอดคล้องเชิงตรรกะของข้อมูล</span>
+                <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+              </div>
+
+              <h3 class="text-2xl font-bold mt-4 text-emerald-300">การสืบค้นเพื่อตรวจสอบหาข้อมูลผิดพลาด (Clinical Logical & Consistency Validation)</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="space-y-4">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ก่อนการนำข้อมูลสุขภาพจาก EHR ไปพัฒนาระบบปัญญาประดิษฐ์ทางการแพทย์ จำเป็นต้องสืบค้นหาจุดผิดปกติของวันเวลาและค่าข้อมูลการตรวจวัดที่ขัดแย้งต่อสภาพความจริง [19]
+                  </p>
+                  <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                    <h4 class="font-bold text-yellow-300 mb-1.5">🔍 กรณีศึกษาความคลาดเคลื่อนเชิงระบบ (Systematic Error Case):</h4>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                      ตัวอย่าง เช่น <strong>"วันจำหน่ายผู้ป่วย (Discharge Date) บันทึกไว้ก่อนวันลงทะเบียนรับเข้าพยาบาล (Admission Date)"</strong> [19] หรือข้อมูลสัญญาณชีพที่มีค่าผิดเพี้ยนรวดเร็วเกินไป (เช่น น้ำหนักเปลี่ยนแปลง 20 กก. ในครึ่งวัน) [19]
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-blue-300 mb-2 font-mono">💻 เขียนคำสั่งตรวจสอบหาแถวที่บันทึกข้อมูลเวลาขัดแย้งกัน:</h4>
+                    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                      <span class="text-slate-500"># แปลงคอลัมน์วันที่เป็น datetime object ของภาษาไพทอน</span><br/>
+                      df['admittime'] = pd.to_datetime(df['admittime'])<br/>
+                      df['dischtime'] = pd.to_datetime(df['dischtime'])<br/><br/>
+                      <span class="text-slate-500"># ค้นหาแถวข้อมูลที่ขัดแย้งทางตรรกะเวลา [19]</span><br/>
+                      invalid_dates = df.loc[df['dischtime'] < df['admittime']]<br/>
+                      print(f"จำนวนแถวข้อมูลเวลาคลาดเคลื่อน: {len(invalid_dates)} ราย")
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-t border-slate-800">
+                  <a href="https://tiet.ai/blog/py-synthea/" target="_blank" class="inline-flex items-center text-xs text-teal-300 hover:text-teal-100 underline decoration-dotted transition">
+                    🔗 ลิงก์สืบค้น: ศึกษามาตรฐานการจำลองเวลาของผู้ป่วยเชิงสถิติ (Temporal Coherence Pipeline)
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ส่วนควบคุมสไลด์ -->
+          <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+            <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+            <div class="space-x-2">
+              <button @click="currentSlide = 4" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+              <button @click="currentSlide = 6" class="bg-teal-600 hover:bg-teal-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">ถัดไป ▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: สรุปส่วนที่ 2 และแหล่งเรียนรู้เพิ่มเติมสากล -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 13">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-teal-400 text-xs font-bold tracking-wider">06. บทสรุป และ Handoff สู่ภาคปฏิบัติ 3 ชั่วโมง</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-emerald-300">สรุปความก้าวหน้าและการสืบค้นทางระบาดวิทยาขั้นสูงด้วย pandas</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div class="space-y-3">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  การสืบค้นหาข้อค้นพบ (Finding Insights) และคัดกรองประชากรเป้าหมายด้วยคำสั่ง pandas ในสัปดาห์นี้ เป็นรากฐานที่สำคัญที่จะนำไปสู่การประมวลผลข้อมูลสุขภาพระดับภูมิภาค (Data Lake) และการทำงานร่วมกับระบบฐานข้อมูลขนาดใหญ่ (SQL / BigQuery) ในสัปดาห์ถัดไป [3]
+                </p>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                  <h4 class="text-xs font-bold text-yellow-300 mb-1">🔗 แหล่งเรียนรู้และคลังข้อมูลฝึกฝนเพื่อการต่อยอด:</h4>
+                  <ul class="text-[11px] text-slate-300 mt-1 space-y-1 list-disc list-inside">
+                    <li>
+                      <a href="https://archive.ics.uci.edu/datasets" target="_blank" class="text-teal-300 hover:text-teal-100 underline transition">
+                        UCI Machine Learning Repository: ค้นหาโจทย์และชุดข้อมูลวิจัยเพื่อการฝึกฝนวิเคราะห์ [20, 21]
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://support.researchallofus.org/" target="_blank" class="text-teal-300 hover:text-teal-100 underline transition">
+                        คู่มือการบริหารจัดการสิ่งส่งตรวจและคลังข้อมูลคลาวด์ All of Us [13, 14]
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div class="bg-teal-950/30 p-3 rounded-lg border border-teal-900/50">
+                  <h4 class="text-xs font-bold text-teal-300 mb-1">🚀 ก้าวต่อไปของคุณในสัปดาห์ที่ 3 ส่วนที่ 3:</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    ขอให้นักศึกษาเปิด Jupyter Notebook จากคอมพิวเตอร์ประจำตัวขึ้นมา [3] นำเข้าชุดข้อมูลใบสั่งยา <code class="text-teal-200">prescriptions.csv</code> [3] แล้วสืบค้นหากลุ่มผู้ป่วยโรคเบาหวานประเภทที่ 2 [8] ตามแบบฝึกหัดประเมินผลสัมฤทธิ์ทางการเรียนประจำสัปดาห์ (CLO2: 18%) ของทางคณะสหเวชศาสตร์ได้เลยครับ! [22, 23]
+                  </p>
+                </div>
+
+                <div class="text-center py-2 bg-slate-900 rounded border border-slate-800 mt-4">
+                  <span class="text-xs text-slate-400">📝 นักศึกษาสามารถทบทวนความรู้และพิมพ์คำสั่งตามสไลด์นี้ได้เลยครับ!</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ส่วนควบคุมสไลด์ -->
+          <div class="flex justify-between items-center border-t border-slate-800 pt-3 mt-4">
+            <button @click="currentSlide = 0" class="text-xs text-slate-400 hover:text-white transition">🏠 กลับหน้าสารบัญ</button>
+            <div class="space-x-2">
+              <button @click="currentSlide = 5" class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-xs transition">◀ ก่อนหน้า</button>
+              <button @click="currentSlide = 0" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold transition">เสร็จสิ้นบทเรียน (กลับหน้าแรก) ▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- สไลด์สัปดาห์ที่ 3 ส่วนที่ 3: การจัดกลุ่มและการหาข้อคำนวณทางสถิติคลินิกด้วย pandas -->
+    <div class="slides-container relative w-full h-[600px] overflow-hidden rounded-3xl bg-slate-950 font-sans shadow-2xl">
+
+      <!-- SLIDE 0: หน้าแรกและสารบัญนำทางส่วนที่ 3 -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 14">
+        <div class="text-center max-w-4xl mx-auto">
+          <span class="bg-emerald-500/30 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            AMMS 302 | Week 3 • Part 3
+          </span>
+          <h2 class="text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-200">
+            การจัดกลุ่มและการสรุปผลสถิติข้อมูลสุขภาพ (Data Aggregation)
+          </h2>
+          <p class="text-md text-white/80 mb-6 leading-relaxed font-light">
+            รายวิชา ปฏิบัติการสารสนเทศด้านสุขภาพ (อจวพ ๓๐๒)<br/>
+            หลักสูตรวิทยาศาสตรบัณฑิต สาขาวิชาวิทยาศาสตร์การแพทย์ [1]
+          </p>
+
+          <!-- เมนูนำทางแบบอินเตอร์แอคทีฟ (Internal Topic Links) -->
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10">
+            <h3 class="text-sm font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญและหัวข้อแล็บปฏิบัติ 3 ชั่วโมง [1]</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <button @click="currentSlide = 1" class="bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-emerald-300 font-bold">สไลด์ที่ 1</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ตรรกะ Split-Apply-Combine</div>
+              </button>
+              <button @click="currentSlide = 2" class="bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-emerald-300 font-bold">สไลด์ที่ 2</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">วิเคราะห์สรุปผลแล็บ HbA1c</div>
+              </button>
+              <button @click="currentSlide = 3" class="bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-emerald-300 font-bold">สไลด์ที่ 3</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">การนับอุบัติการณ์รหัสโรค</div>
+              </button>
+              <button @click="currentSlide = 4" class="bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-emerald-300 font-bold">สไลด์ที่ 4</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">จัดตารางสถิติตามกลุ่มประชากร</div>
+              </button>
+              <button @click="currentSlide = 5" class="bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-emerald-300 font-bold">สไลด์ที่ 5</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">การคำนวณ .agg() หลายสถิติ</div>
+              </button>
+              <button @click="currentSlide = 6" class="bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-emerald-300 font-bold">สไลด์ที่ 6</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">แนวทางสอบสัมฤทธิ์ CLO2</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: ตรรกะ Split-Apply-Combine -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 15">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-emerald-400 text-xs font-bold tracking-wider">01. ทฤษฎีการจัดกลุ่มเชิงสถิติทางการแพทย์</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-cyan-300">ตรรกะแบบแยก-คำนวณ-รวมกลุ่ม (Split-Apply-Combine Pattern)</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div class="space-y-4">
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  เมื่อต้องทำโครงงานหรือวิจัยข้อมูลเวชระเบียนขนาดใหญ่ [2, 3] (เช่น ข้อมูลสัญญาณชีพหรือยา) วิธีวิเคราะห์สถิติมูลฐานคือกระบวนการ <strong>Split-Apply-Combine</strong>:
+                </p>
+                <div class="bg-slate-850 p-4 rounded-xl border border-slate-700">
+                  <ul class="text-xs text-slate-300 space-y-2 list-none">
+                    <li>🟢 <strong>Split</strong>: แยกข้อมูลตามกลุ่มลักษณะ (เช่น กลุ่มตามรหัสโรคหรือเพศ) [4]</li>
+                    <li>🔵 <strong>Apply</strong>: คำนวณหาค่าสถิติในกลุ่มย่อยนั้น (เช่น คำนวณหาค่าเฉลี่ย, มัธยฐาน, หรือนับยอดรวม) [4, 5]</li>
+                    <li>🟡 <strong>Combine</strong>: นำผลลัพธ์ที่หาเสร็จแล้วมารวมกลับเข้าไปเป็นตารางสรุปใหม่</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-yellow-300 mb-2">🎯 ประโยชน์ในการบริหารจัดการคลินิก:</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ช่วยตอบโจทย์เช่น: "ผู้ป่วยที่เข้ารับการรักษาด้วยการผ่าตัดไส้ติ่งมีระยะเวลาพักฟื้นเฉลี่ยต่างกันอย่างไรระหว่างผู้ชายและผู้หญิง?" หรือ "ยอดการเบิกจ่ายยาโดยเฉลี่ยของแต่ละสาขาคลินิกมีแนวโน้มอย่างไร?" [4, 6]
+                  </p>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-800">
+                  <a href="https://pandas.pydata.org/docs/user_guide/groupby.html" target="_blank" class="inline-flex items-center text-xs text-cyan-300 hover:text-cyan-100 underline decoration-dotted transition">
+                    🔗 ลิงก์อ้างอิง: ทฤษฎี GroupBy: Split-Apply-Combine อย่างเป็นทางการจากผู้ผลิต
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: วิเคราะห์สรุปผลแล็บ HbA1c -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 16">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-emerald-400 text-xs font-bold tracking-wider">02. การคำนวณสรุปค่าแล็บทางคลินิก</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-cyan-300">การหาค่าเฉลี่ยระดับค่าน้ำตาลสะสม (HbA1c) ของผู้ป่วยรายบุคคล</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div class="space-y-3">
+                <p class="text-xs text-slate-300">
+                  ผู้ป่วยโรคเบาหวานชนิดที่ 2 มักมีการเจาะเลือดตรวจหาค่าน้ำตาลสะสม (HbA1c - LOINC 4548-4) หลายครั้งตลอดช่วงระยะเวลาการรักษา [7, 8] เพื่อประเมินผลการดูแลรักษาระยะยาว [8, 9]
+                </p>
+                <div class="bg-blue-950/40 p-3 rounded-lg border border-blue-900/50">
+                  <p class="text-[11px] text-blue-200">
+                    💡 <strong>โจทย์จริงในเวชระเบียน:</strong> เราจะจัดกลุ่มข้อมูลตาม <code class="text-emerald-300 font-mono">patient_id</code> และหาค่าเฉลี่ยค่าน้ำตาลสะสมในประวัติการตรวจทั้งหมดของผู้ป่วยแต่ละคนเพื่อแยกความรุนแรงของโรค [5, 8]
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-emerald-300 mb-2 font-mono">💻 ลองพิมพ์โค้ดคำสั่งใน Jupyter Notebook:</h4>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                    import pandas as pd<br/>
+                    df = pd.read_csv('prescriptions.csv')<br/><br/>
+                    <span class="text-slate-500"># จัดกลุ่มตามผู้ป่วย และคำนวณหา HbA1c เฉลี่ย</span><br/>
+                    patient_hba1c = df.groupby('patient_id')['hba1c'].mean()<br/><br/>
+                    <span class="text-slate-500"># แสดงสถิติผู้ป่วยที่มี HbA1c เฉลี่ยสูงสุด 5 คนแรก</span><br/>
+                    print(patient_hba1c.nlargest(5))
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-t border-slate-800">
+                  <a href="https://loinc.org/4548-4/" target="_blank" class="inline-flex items-center text-xs text-cyan-300 hover:text-cyan-100 underline decoration-dotted transition">
+                    🔗 ลิงก์มาตรฐาน: ศึกษาโครงสร้างและการอ้างอิงรหัส LOINC: 4548-4 (HbA1c)
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: การนับอุบัติการณ์รหัสโรค -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 17">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-emerald-400 text-xs font-bold tracking-wider">03. งานระบาดวิทยาเชิงรุก (Epidemiology Counts)</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-cyan-300">การคำนวณหาจำนวนความชุกของโรคด้วยรหัส SNOMED-CT / ICD-10</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div class="space-y-4">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  ในทางวิทยาศาสตร์สุขภาพ เราจำเป็นต้องนับจำนวนประชากรที่ได้รับการวินิจฉัยโรคตามมาตรฐานสากล เช่น โรคเบาหวานชนิดที่ 2 (SNOMED: 44054006) เพื่อสร้างอัตราส่วนความชุกในแต่ละพื้นที่ [8, 10]
+                </p>
+                <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                  <h4 class="font-bold text-yellow-300 mb-1.5">🔬 การนับแบบจำแนกจำนวนเฉพาะตัว (Uniqueness count):</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    การใช้คำสั่ง <code class="text-emerald-300">value_counts()</code> และ <code class="text-emerald-300">nunique()</code> ของ pandas ช่วยคัดแยกรายชื่อผู้ป่วยที่ซ้ำกันออกจากการสรุปสถิติจำนวนรายเคสที่จำหน่ายจริงได้โดยง่าย [11, 12]
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-emerald-300 mb-2 font-mono">💻 วิเคราะห์สถิติจำนวนการสั่งยาของแพทย์:</h4>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                    <span class="text-slate-500"># นับจำนวนครั้งของการสั่งจ่ายยาในแต่ละรหัสยา (RxNorm)</span><br/>
+                    drug_counts = df['DRUG'].value_counts()<br/>
+                    print("สถิติตัวยาที่มีการสั่งใช้บ่อยที่สุด:")<br/>
+                    print(drug_counts.head(3))<br/><br/>
+                    <span class="text-slate-500"># นับจำนวนผู้ป่วยที่มีประวัติไม่ซ้ำกันตามคลินิกต้นสังกัด</span><br/>
+                    unique_patients = df.groupby('practice_code')['patient_id'].nunique()
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-t border-slate-800">
+                  <a href="https://www.snomed.org/" target="_blank" class="inline-flex items-center text-xs text-cyan-300 hover:text-cyan-100 underline decoration-dotted transition">
+                    🔗 ลิงก์มาตรฐาน: เว็บไซต์และองค์กรดูแลมาตรฐานรหัสคลินิก SNOMED International
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: จัดตารางสถิติตามกลุ่มประชากร -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 18">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-emerald-400 text-xs font-bold tracking-wider">04. การวิเคราะห์แบบหลายตัวแปร (Multi-variable Grouping)</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-cyan-300">การวิเคราะห์กลุ่มประชากรตามปัจจัย เพศ-ช่วงอายุ (Demographic Analysis)</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div class="space-y-4">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  การศึกษาสุขภาพประชากร จำเป็นต้องแบ่งกลุ่มประเมินเพื่อหาความเหลื่อมล้ำและโอกาสในการเข้าถึงยาของกลุ่มประชากรที่มีความหลากหลาย ทั้งในด้านเพศ วัย และเชื้อชาติ [4, 13]
+                </p>
+                <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                  <h4 class="font-bold text-yellow-300 mb-2">🛠️ การส่งผ่านคีย์จัดกลุ่มแบบหลายคอลัมน์:</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    เราสามารถส่งค่าคีย์จัดกลุ่มไปเป็นลิสต์ข้อมูล <code class="text-emerald-300">['gender', 'age_group']</code> เพื่อประมวลสถิติเชิงลึกหลายลำดับชั้นในตารางเดียวกันได้อย่างแม่นยำ [4, 5]
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-emerald-300 mb-2 font-mono">💻 โค้ดวิเคราะห์ข้อมูลการเบิกจ่ายยาแบ่งตามเพศและวัย:</h4>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                    <span class="text-slate-500"># รวมกลุ่มประเมินระยะเวลาการนอนพักโรงพยาบาลเฉลี่ย (LOS)</span><br/>
+                    demographic_analysis = df.groupby(<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;['gender', 'age']<br/>
+                    )['los_days'].mean()<br/><br/>
+                    print(demographic_analysis.head(5))
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-t border-slate-800">
+                  <a href="https://wonder.cdc.gov/" target="_blank" class="inline-flex items-center text-xs text-cyan-300 hover:text-cyan-100 underline decoration-dotted transition">
+                    🔗 คลังข้อมูล: ศึกษาเครื่องมือและการจัดแบ่งตารางสถิติตามลักษณะประชากร CDC WONDER
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: การคำนวณ .agg() หลายสถิติพร้อมกัน -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 19">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-emerald-400 text-xs font-bold tracking-wider">05. การจัดการสถิติระดับวิชาชีพ</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-cyan-300">การใช้เมธอด .agg() เพื่อประมวลหลายชุดสถิติพร้อมกันในระดับโรงพยาบาล</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div class="space-y-4">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  สำหรับโรงพยาบาลหรือเขตสุขภาพขนาดใหญ่ การวิเคราะห์เฉลี่ยเพียงอย่างเดียวอาจบิดเบือนข้อเท็จจริงเนื่องจากค่าผิดปกติ (Outliers) การคำนวณหาค่าความแปรปรวน มิน-แมกซ์ และผลรวมจึงมีความสำคัญ [14, 15]
+                </p>
+                <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-xs">
+                  <h4 class="font-bold text-yellow-300 mb-1.5">📈 การส่งพจนานุกรม (Dictionary) เข้าไปที่ .agg():</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    เป็นโครงสร้างที่ทรงพลังมากที่สุดของ pandas เนื่องจากสามารถกำหนดสูตรสถิติต่างฟังก์ชันกันให้กับคอลัมน์ข้อมูลแต่ละคอลัมน์พร้อมกันได้ในรอบประมวลผลเดียว
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-xs font-bold text-emerald-300 mb-2 font-mono">💻 เขียนคำสั่ง .agg() เพื่อประเมินผลแล็บ HbA1c:</h4>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 font-mono text-[11px] text-teal-200 leading-relaxed">
+                    <span class="text-slate-500"># หาค่า Min, Max และ Mean ของค่าน้ำตาลสะสม</span><br/>
+                    hba1c_summary = df.groupby('practice_code')['hba1c'].agg(<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;['min', 'max', 'mean', 'count']<br/>
+                    )<br/><br/>
+                    print(hba1c_summary.head(3))
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-t border-slate-800">
+                  <a href="https://mimic.mit.edu/docs/iv/" target="_blank" class="inline-flex items-center text-xs text-cyan-300 hover:text-cyan-100 underline decoration-dotted transition">
+                    🔗 ลิงก์อ้างอิง: เรียนรู้โครงสร้างสถิติและแบบจำลองข้อมูลไอซียูมาตรฐาน MIMIC-IV
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: สรุปส่วนที่ 3 และแนวปฏิบัติสะสมคะแนน -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide bg-slate-900 text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 20">
+        <div class="max-w-4xl mx-auto flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+              <span class="text-emerald-400 text-xs font-bold tracking-wider">06. บทสรุป และภารกิจสะสมคะแนน CLO2</span>
+              <span class="text-xs bg-slate-800 px-3 py-1 rounded text-slate-300">AMMS 302 | Week 3</span>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-4 text-cyan-300">สิ้นสุดบทเรียนส่วนที่ 3: สรุปทักษะการค้นหา Insights</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div class="space-y-3">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  ยินดีด้วยครับ! นักศึกษาได้บรรลุเป้าหมายการจัดกลุ่ม (Data Aggregation) ทั้งการใช้คำสั่งสรุปผล คัดกรองรหัสโรค นำสถิติตามลักษณะประชากร และการประมวลผลหลายสถิติตามมาตรฐานการควบคุมข้อมูลสุขภาพ [2, 3]
+                </p>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                  <h4 class="text-xs font-bold text-yellow-300 mb-1">🔗 แหล่งศึกษาและเครื่องมือเสริมระดับสากล:</h4>
+                  <ul class="text-[11px] text-slate-300 mt-1 space-y-1 list-disc list-inside">
+                    <li>
+                      <a href="https://synthetichealth.github.io/module-builder/" target="_blank" class="text-cyan-300 hover:text-cyan-100 underline transition">
+                        โปรแกรมสร้างแบบจำลองสเตตผู้ป่วยจำลอง: Synthea Module Builder
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://he03.tci-thaijo.org/index.php/jtmi" target="_blank" class="text-cyan-300 hover:text-cyan-100 underline transition">
+                        คลังวารสารเวชสารสนเทศ: วารสารสมาคมเวชสารสนเทศไทย (JTMI)
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div class="bg-emerald-950/30 p-3 rounded-lg border border-emerald-900/50">
+                  <h4 class="text-xs font-bold text-emerald-300 mb-1">🚀 ภารกิจส่งท้ายสัปดาห์ที่ 3 (สะสมคะแนน 18%):</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    ขอให้นักศึกษาทุกคนเปิดไฟล์ <strong>Lab Manual สัปดาห์ที่ 3</strong> นำเข้าข้อมูลใบสั่งยา <code class="text-emerald-300">prescriptions.csv</code> [3] และรันโค้ดหาจำนวนความชุกและ HbA1c เฉลี่ยของผู้ป่วยแต่ละคลินิก [5, 8] ส่งผลลัพธ์ลงในระบบประเมินเพื่อทวนสอบมาตรฐานผลการเรียนรู้ของหลักสูตรต่อไปครับ! [16, 17]
+                  </p>
+                </div>
+
+                <div class="text-center py-2 bg-slate-900 rounded border border-slate-800 mt-4">
+                  <span class="text-xs text-slate-400">💻 เปิด Jupyter Notebook และเริ่มเขียนโค้ดทักษะ CLO2 กันได้เลยครับ!</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
+
