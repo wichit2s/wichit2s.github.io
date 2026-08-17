@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Heallth Informatics">
+    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Development</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/mobiledev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk14.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- สไลด์ที่ 0: สารบัญสัปดาห์ที่ 4 หมวดที่ 1 และ 2 (Table of Contents) -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 0">
+        <div class="text-center max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 4 • Parts 1 & 2
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สัปดาห์ที่ 4: ฟอร์มและการรับค่าข้อมูล (Forms & Input Validation)
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญโครงสร้างเนื้อหาหมวดปฏิบัติการที่ 1 และ 2</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-blue-300 block border-b border-white/10 pb-1">⌨️ หมวดที่ 1: การรับค่าและควบคุมวิดเจ็ตข้อความ</span>
+                <button @click="currentSlide = 1" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 1: TextField vs. TextFormField</button>
+                <button @click="currentSlide = 2" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 2: การใช้ TextEditingController</button>
+                <button @click="currentSlide = 3" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 3: จัดการลำดับคีย์บอร์ดด้วย FocusNode</button>
+              </div>
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-green-300 block border-b border-white/10 pb-1">🛡️ หมวดที่ 2: ระบบฟอร์มและการตรวจสอบความถูกต้อง</span>
+                <button @click="currentSlide = 4" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 4: โครงสร้างวิดเจ็ต Form และ GlobalKey</button>
+                <button @click="currentSlide = 5" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 5: การเขียนฟังก์ชันเงื่อนไขตรวจสอบ (Validator)</button>
+                <button @click="currentSlide = 6" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 6: การสั่งรันตรวจสอบคำร้องด้วย validate()</button>
+                <button @click="currentSlide = 7" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 7: ปฏิบัติการฟอร์มลงทะเบียนสมัครสมาชิก</button>
+                <button @click="currentSlide = 8" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 8: การตรวจดักพฤติกรรมเรียลไทม์ (onChanged)</button>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกหัวข้อบนสารบัญเพื่อข้ามไปยังหน้านั้นโดยตรง หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูตามลำดับการสอน</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 1: การเปรียบเทียบวิดเจ็ตรับข้อมูล: TextField vs TextFormField -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 1">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 1 • Input Widgets Comparison
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การเปรียบเทียบวิดเจ็ตรับข้อมูล: TextField vs. TextFormField ⚔️
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs md:text-sm leading-relaxed">
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-400"></span>
+                <h3 class="font-bold text-blue-300 text-base">TextField (ระดับพื้นฐาน)</h3>
+              </div>
+              <p class="text-slate-300 text-xs">
+                เป็นวิดเจ็ตอิสระสำหรับรับข้อมูลตัวอักษรเดี่ยวจากแป้นพิมพ์ เหมาะสำหรับการรับข้อมูลทั่วไปโดยไม่ต้องคำนึงถึงความสัมพันธ์กับตัวควบคุมภายนอก [1].
+              </p>
+              <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
+                <li>ดึงค่าทำงานผ่านการผูก Listener หรือตรวจเช็ค onChanged [2].</li>
+                <li><strong>ข้อจำกัด:</strong> ไม่มีระบบตรวจสอบสิทธิ์และพ่นข้อความ Error สีแดงให้ในตัว (ต้องเขียนเงื่อนไขควบคุม UI เอง).</li>
+              </ul>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-green-400"></span>
+                <h3 class="font-bold text-green-300 text-base">TextFormField (ระดับมืออาชีพ)</h3>
+              </div>
+              <p class="text-slate-300 text-xs">
+                เป็นวิดเจ็ตพิเศษที่สืบทอดความสามารถมาจาก <code class="bg-white/10 px-1 py-0.5 rounded text-green-200">FormField</code> ถูกออกแบบให้ทำงานร่วมกับวิดเจ็ต <code class="bg-white/10 px-1 py-0.5 rounded text-green-200">Form</code> ด้านบน [1].
+              </p>
+              <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
+                <li>รองรับคุณสมบัติ <strong class="text-yellow-300">validator</strong> สำหรับรันตรวจสอบค่าและคายค่าคำแจ้งเตือนได้ทันที [3].</li>
+                <li>มีคุณสมบัติ <strong class="text-yellow-300">onSaved</strong> ใช้สั่งบันทึกสถานะลงโมเดลเมื่อรันฟอร์มผ่านเกณฑ์สำเร็จ.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-6 p-3 bg-blue-900/30 rounded-xl border border-blue-500/20 text-xs">
+            <span class="text-slate-400 block mb-1">🔗 เอกสารสอนติดตั้งและสไตล์กล่องป้อนข้อความระดับมาตรฐาน (Flutter Cookbook):</span>
+            <a href="https://docs.flutter.dev/cookbook/forms/text-input" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+              https://docs.flutter.dev/cookbook/forms/text-input 🚀
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 2: การสืบค้นและควบคุมค่าข้อความผ่าน TextEditingController -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 2">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 2 • Controlling Inputs with controllers
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การจัดการและล้างข้อมูลข้อความด้วย TextEditingController 🎮
+          </h2>
+          <div class="space-y-3 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              <strong class="text-yellow-300">`TextEditingController`</strong> คือกลไกเชื่อมโยงหน้าจอ View และโค้ดหลังบ้าน เพื่อเรียกอ่านค่าข้อความ (Read) เปลี่ยนแปลงเนื้อหา (Update) และล้างกล่องข้อความทิ้งเมื่อกดยืนยันสำเร็จ [2]:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-56 leading-relaxed">
+              <p class="text-slate-400">// 1. การประกาศสร้างอินสแตนซ์และผูกควบคุมวิดเจ็ต</p>
+              <p class="text-blue-300">class <span class="text-yellow-300">_MyFormState</span> extends State&lt;MyForm&gt; {</p>
+              <p class="pl-4">final <span class="text-yellow-300">_usernameController</span> = TextEditingController();</p>
+              <p class="pl-4 mt-1.5 text-slate-400">// ⚠️ กฎเหล็ก: ต้องทำลายล้าง Controller ใน dispose เสมอเพื่อเลี่ยงหน่วยความจำรั่วไหล (Memory Leaks)</p>
+              <p class="pl-4">@override</p>
+              <p class="pl-4">void <span class="text-yellow-300">dispose</span>() {</p>
+              <p class="pl-8">_usernameController.dispose();</p>
+              <p class="pl-8">super.dispose();</p>
+              <p class="pl-4">}</p>
+              <p class="pl-4 mt-1.5">@override</p>
+              <p class="pl-4">Widget <span class="text-yellow-300">build</span>(BuildContext context) {</p>
+              <p class="pl-8">return TextFormField(</p>
+              <p class="pl-12">controller: _usernameController,</p>
+              <p class="pl-12">decoration: const InputDecoration(labelText: <span class="text-red-300">'ชื่อผู้ใช้'</span>),</p>
+              <p class="pl-8">);</p>
+              <p class="pl-4">}</p>
+              <p class="text-blue-300">}</p>
+            </div>
+            <div class="pt-2 border-t border-white/10 flex justify-between flex-wrap gap-2 text-xs">
+              <a href="https://docs.flutter.dev/cookbook/forms/retrieve-input" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                🔗 บทเรียนดึงข้อความจาก TextField (Retrieve value) 🚀
+              </a>
+              <a href="https://docs.flutter.dev/cookbook/forms/text-field-changes" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                🔗 บทเรียนตรวจดักฟังพฤติกรรมเปลี่ยนค่าพิมพ์ (Handle changes) 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 3: การควบคุมพฤติกรรมแป้นพิมพ์และการจัดการ Focus ด้วย FocusNode -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 3">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 3 • Keyboard & Focus Management
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การควบคุมแป้นพิมพ์และการโยกย้าย Focus ด้วย FocusNode ⌨️
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center leading-relaxed">
+            <div class="space-y-3 text-xs md:text-sm text-slate-200">
+              <p>
+                ในการพิมพ์ข้อมูลบนแบบฟอร์มที่มีหลายๆ ช่องกรอก ยอดแย่ที่สุดคือการบีบให้ผู้เรียนต้องเอานิ้วกดจิ้มเปลี่ยนช่องกรอกด้วยตนเอง เราจึงใช้ <strong class="text-yellow-300">`FocusNode`</strong> เข้ามาควบคุมระบบโฟกัสและทิศทางแป้นพิมพ์:
+              </p>
+              <div class="bg-slate-900/80 p-3.5 rounded-xl border border-white/10 space-y-2">
+                <p class="text-xs">
+                  เมื่อพิมพ์ชื่อผู้ใช้เสร็จเรียบร้อยและกดยืนยันปุ่มส่งบนแป้นพิมพ์ (เช่น <code class="text-blue-300">textInputAction: TextInputAction.next</code>) เราสามารถเขียนรหัสย้ายโฟกัสข้ามพาสไปหาช่องรหัสผ่านได้ทันทีดังนี้:
+                </p>
+                <div class="font-mono text-[10px] md:text-xs text-green-300 bg-slate-950 p-2.5 rounded">
+                  FocusScope.of(context).requestFocus(_passwordFocusNode);
+                </div>
+              </div>
+            </div>
+            <!-- Inline SVG Diagram representing keyboard shift focus -->
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col justify-center items-center">
+              <h4 class="font-bold text-yellow-300 text-xs mb-3 text-center">🎯 แผนภาพจำลองการส่งต่อโฟกัสแบบอัตโนมัติ</h4>
+              <svg viewBox="0 0 350 160" class="w-full h-auto max-w-xs">
+                <!-- Text field 1 -->
+                <rect x="10" y="10" width="140" height="40" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="2" />
+                <text x="80" y="34" fill="#fff" font-size="10" text-anchor="middle" font-weight="bold">Username Field</text>
+                <circle x="25" y="30" r="6" fill="#3b82f6" />
+                <text x="25" y="33" fill="#fff" font-size="8" text-anchor="middle" font-weight="bold">I</text>
+
+                <!-- Focus shift path -->
+                <path d="M 150 30 L 220 30 L 220 90 L 160 90" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="3,3" />
+                <polygon points="160,90 165,87 165,93" fill="#10b981" />
+                <text x="235" y="60" fill="#10b981" font-size="9" text-anchor="middle" font-weight="bold">Next Action ⌨️</text>
+
+                <!-- Text field 2 -->
+                <rect x="10" y="100" width="140" height="40" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5" />
+                <text x="80" y="124" fill="#94a3b8" font-size="10" text-anchor="middle">Password Field</text>
+              </svg>
+              <div class="mt-4 pt-2 text-center border-t border-white/10 w-full text-xs">
+                <span class="text-slate-400 block mb-0.5">🔗 คู่มือและชุดคำสั่งควบคุม Focus ในช่องรับข้อความ:</span>
+                <a href="https://docs.flutter.dev/cookbook/forms/focus" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                  https://docs.flutter.dev/cookbook/forms/focus 🚀
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 4: สารบัญหมวดที่ 2 & โครงสร้างของวิดเจ็ต Form และคีย์อ้างอิง GlobalKey -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 4">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 4 • Form Widget & GlobalKeys
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            โครงสร้างหลักของ Form และการใช้ตัวนำทาง GlobalKey 🏗️
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center leading-relaxed">
+            <div class="space-y-3 text-xs md:text-sm text-slate-200">
+              <p>
+                ในการสร้างแบบฟอร์มตรวจสอบคุณค่าข้อมูล เราจะใช้ตัวห่อหุ้มชั้นนอกสุดชื่อวิดเจ็ต <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">Form</code> เพื่อประสานความสัมพันธ์และควบคุมตรวจสอบความปลอดภัยของทุกๆ กล่อง TextFormField ภายใต้ร่มเงาเดียวกัน [1].
+              </p>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
+                <h4 class="font-bold text-yellow-300">🛡️ GlobalKey&lt;FormState&gt; คืออะไร?</h4>
+                <p class="text-slate-300">
+                  คือคีย์ลับสากลเฉพาะตัวที่สร้างขึ้นมาเพื่อผูกติดกับ Form และมอบอำนาจให้เราสามารถสั่งรันประมวลผลคำสั่งตรวจสอบความถูกต้องข้อมูลผ่าน State จากภายนอกวิดเจ็ตได้โดยตรง [3].
+                </p>
+              </div>
+            </div>
+            <!-- Inline SVG displaying Form node tree structure -->
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col justify-center items-center">
+              <h4 class="font-bold text-yellow-300 text-xs mb-3 text-center">🎯 โครงสร้างความสัมพันธ์ของโหนด Form ต้นไม้</h4>
+              <svg viewBox="0 0 320 160" class="w-full h-auto max-w-xs">
+                <!-- Root Form with Key -->
+                <rect x="80" y="10" width="160" height="35" rx="6" fill="#312e81" stroke="#4f46e5" stroke-width="2" />
+                <text x="160" y="27" fill="#fff" font-size="10" text-anchor="middle" font-weight="bold">Form (key: _formKey)</text>
+
+                <!-- Lines -->
+                <line x1="160" y1="45" x2="80" y2="100" stroke="#4f46e5" stroke-width="1.5" />
+                <line x1="160" y1="45" x2="240" y2="100" stroke="#4f46e5" stroke-width="1.5" />
+
+                <!-- Child TextFormField 1 -->
+                <rect x="10" y="100" width="130" height="30" rx="5" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5" />
+                <text x="75" y="118" fill="#fff" font-size="8" text-anchor="middle">TextFormField (Email)</text>
+
+                <!-- Child TextFormField 2 -->
+                <rect x="180" y="100" width="130" height="30" rx="5" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5" />
+                <text x="245" y="118" fill="#fff" font-size="8" text-anchor="middle">TextFormField (Pass)</text>
+              </svg>
+              <div class="mt-4 pt-2 text-center border-t border-white/10 w-full text-xs">
+                <span class="text-slate-400 block mb-0.5">🔗 อ่านคู่มือทางการโครงสร้าง Form และการตั้งค่าคีย์ตรวจสอบสิทธิ์:</span>
+                <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                  https://docs.flutter.dev/cookbook/forms/validation 🚀
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 5: การเขียนฟังก์ชันตรวจสอบข้อมูลดิบด้วยคุณสมบัติ validator -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 5">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 5 • Form Validation Logic
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การออกแบบเงื่อนไขคัดกรองข้อมูลด้วยคุณสมบัติ validator 🧪
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              ฟังก์ชัน <strong class="text-yellow-300">`validator`</strong> จะทำงานดักตรวจสอบสายตัวอักษรดิบที่ผู้ใช้งานพิมพ์เข้าสู่กล่องกรอก หากข้อมูลถูกต้องครบถ้วนตามกฎระบบ ฟังก์ชันจะต้องคืนค่ากลับเป็น <code class="text-green-300">null</code> แต่หากตรวจพบค่าผิดกฎ ให้พ่นส่งกลับเป็นข้อความ <code class="text-red-300">String ผลลัพธ์เตือนภัย</code> ทันที [3]:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+              <p class="text-slate-400">// การเขียนเงื่อนไขคัดกรองความมั่นคงของกล่องอีเมล (Email Validator)</p>
+              <p class="text-blue-400">TextFormField(</p>
+              <p class="pl-4">decoration: const InputDecoration(labelText: <span class="text-red-300">'อีเมลแอดเดรส'</span>),</p>
+              <p class="pl-4 text-yellow-300">validator: (value) {</p>
+              <p class="pl-8 text-slate-400">// 1. ตรวจช่องว่างข้อมูล</p>
+              <p class="pl-8">if (value == null || value.isEmpty) {</p>
+              <p class="pl-12">return <span class="text-red-300">'กรุณากรอกอีเมลสะกดจริง'</span>;</p>
+              <p class="pl-8">}</p>
+              <p class="pl-8 text-slate-400">// 2. ตรวจสอบเงื่อนไขรูปแบบอีเมลด้วยนิพจน์ Regular Expression (Regex)</p>
+              <p class="pl-8">if (!RegExp(r<span class="text-red-300">'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'</span>).hasMatch(value)) {</p>
+              <p class="pl-12">return <span class="text-red-300">'รูปแบบโครงสร้างอีเมลไม่ถูกต้อง'</span>;</p>
+              <p class="pl-8">}</p>
+              <p class="pl-8">return null; <span class="text-slate-500">// 🟢 ข้อมูลผ่านเกณฑ์อย่างไร้กังวล</span></p>
+              <p class="pl-4">},</p>
+              <p class="text-blue-400">);</p>
+            </div>
+            <div class="pt-1">
+              <span class="text-xs text-slate-400">🔗 ดูโครงร่างคู่มือการทำแบบฟอร์มตรวจสอบสิทธิ์ทั้งหมด (Flutter Cookbook):</span>
+              <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5 truncate">
+                https://docs.flutter.dev/cookbook/forms/validation 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 6: การสั่งรันคำสั่งตรวจสอบสิทธิ์ผ่าน _formKey.currentState!.validate() -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 6">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 6 • Triggering Form Validation
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การทริกเกอร์ตรวจสอบความเสถียรข้อมูลผ่าน validate() ⚡
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              เมื่อผู้ใช้งานกดปุ่มล็อกอินหรือยืนยันคำขอสมัครสมาชิก เราจะเขียนโค้ดเพื่อควบคุมการสั่งการคีย์อ้างอิงสากล <code class="bg-white/10 px-1.5 py-0.5 rounded text-yellow-300">_formKey.currentState!.validate()</code> เพื่อสั่งให้ตรวจสอบความถูกต้องทันที [3]:
+            </p>
+            <!-- Diagram showing form validation flow steps -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-[10px] md:text-xs">
+              <div class="bg-slate-900/90 p-3 rounded-lg border border-white/10 text-center">
+                <span class="text-blue-400 font-bold block mb-1">1. User Presses Button 🖱️</span>
+                ยิงกระตุ้นลอจิก <code class="text-yellow-300">onPressed</code> ของปุ่มยืนยัน
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-lg border border-white/10 text-center">
+                <span class="text-blue-400 font-bold block mb-1">2. Run validate() ⚡</span>
+                ระบบเรียกตรวจสอบฟังก์ชัน <code class="text-green-300">validator</code> ทุกช่องกรอก
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-lg border border-white/10 text-center">
+                <span class="text-blue-400 font-bold block mb-1">3. Evaluate Outcome 🚦</span>
+                หากถูกต้อง (<code class="text-green-300">true</code>) ดึงโค้ดยิง API หากผิดปล่อย Error แสดง UI
+              </div>
+            </div>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+              <p class="text-blue-400">ElevatedButton(</p>
+              <p class="pl-4">onPressed: () {</p>
+              <p class="pl-8 text-slate-400">// รันตรวจเช็คฟอร์มประมวลผล หากข้อมูลผ่านเกณฑ์ทั้งหมด</p>
+              <p class="pl-8">if (<span class="text-yellow-300">_formKey.currentState!.validate()</span>) {</p>
+              <p class="pl-12 text-slate-400">// 🟢 เรียกส่งลอจิก ViewModel ดึงค่าไปรันประมวลผลเซิร์ฟเวอร์ต่อ</p>
+              <p class="pl-12">ScaffoldMessenger.of(context).showSnackBar(</p>
+              <p class="pl-16">const SnackBar(content: Text(<span class="text-red-300">'กำลังประมวลผลข้อมูลลงทะเบียน...'</span>)),</p>
+              <p class="pl-12">);</p>
+              <p class="pl-8">}</p>
+              <p class="pl-4">},</p>
+              <p class="pl-4">child: const Text(<span class="text-red-300">'สมัครสมาชิก'</span>),</p>
+              <p class="text-blue-400">);</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 7: ปฏิบัติการขั้นที่ 1: พัฒนาระบบสมัครสมาชิก (Registration Form) -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 7">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 7 • Registration Form Laboratory Work
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ใบงานปฏิบัติการประจำคาบเรียน: พัฒนาระบบลงทะเบียนสมัครสมาชิก 📱🧪
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p class="text-slate-300">
+              ลงมือปฏิบัติด้วยตัวนักศึกษาเอง โดยนำความรู้คริปโทกราฟีของคู่คีย์ และการรับข้อมูลฟอร์ม มาร่วมกันเขียนสเกเลตันแบบฟอร์มลงทะเบียนสมาชิกที่ปลอดภัย มีเสถียรภาพ และสอดคล้องกับพอร์ตทางทฤษฎี:
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                <h4 class="font-bold text-yellow-300 text-xs">📋 ความต้องการของระบบ (Form Specifications)</h4>
+                <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-300">
+                  <li><strong>กล่องชื่อบัญชี (Username):</strong> ห้ามเป็นช่องว่างข้อมูลดิบเด็ดขาด [3]</li>
+                  <li><strong>กล่องอีเมล (Email):</strong> ตรวจรูปแบบสระและเครื่องหมาย @ ของสากลให้ถูกต้อง [3]</li>
+                  <li><strong>กล่องรหัสผ่าน (Password):</strong> ต้องระบุความยาวขั้นต่ำอย่างน้อย 8 ตัวอักษรเพื่อความปลอดภัย [3]</li>
+                </ul>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col justify-center space-y-3">
+                <h4 class="font-bold text-blue-300 text-xs">🧪 คำชี้ชวนการทดสอบปฏิบัติภารกิจ</h4>
+                <p class="text-xs text-slate-300">
+                  ทดสอบรันผลลัพธ์ผ่านตัวเครื่องโทรศัพท์พกพาจำลอง และป้อนข้อมูลที่ผิดพลาดเพื่อเช็คสัญญาณพ่น Error UI สีแดงใต้กรอบทำงานอย่างลื่นไหล
+                </p>
+                <div class="border-t border-white/10 pt-2 text-[11px]">
+                  <span class="text-slate-400 block mb-0.5">🔗 ดูรายละเอียดโปรเจกต์และเปรียบเทียบชุดเทสจากโปรเจกต์ต้นแบบ Compass:</span>
+                  <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                    https://github.com/flutter/samples/tree/main/compass_app 🚀
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 8: การตรวจดักฟังพฤติกรรมการพิมพ์แบบเรียลไทม์ (Real-time Validation) -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 8">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 8 • Real-time Input Validation
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การดักสแกนพฤติกรรมความถูกต้องแบบเรียลไทม์ (onChanged) 📡
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              คุณลักษณะ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">onChanged</code> จะประมวลและรันลอจิกความถูกต้องทันทีที่ปลายนิ้วสัมผัสอักษรใดๆ บนแป้นพิมพ์ ซึ่งมีพฤติกรรมและแนวปฏิบัติเทียบกับระบบจัดเก็บคีย์บอร์ด Controller ดังนี้ [2]:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1.5">
+                <h4 class="font-bold text-blue-300">📡 การสแกนผ่าน onChanged (ระดับพื้นฐาน)</h4>
+                <p class="text-xs text-slate-300">
+                  ยิงลอจิกตรวจสอบสถานะและวาดหน้าจอ Rebuild UI ซ้ำๆ แบบเบาตัว เหมาะกับการใช้ทำระบบกรองค้นหาทริปท่องเที่ยวแบบทันท่วงที (Live Filtering)
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1.5">
+                <h4 class="font-bold text-green-300">💾 การผูก Controller Listeners (ระดับโปรดักชัน)</h4>
+                <p class="text-xs text-slate-300">
+                  นำเสนอการติดตั้ง Listener ดักสแกนพจนานุกรมในคลาส State เพื่อควบคุมและล็อกอินประเมินรูปแบบการกรอกได้ละเอียดและปลอดภัยสูง
+                </p>
+              </div>
+            </div>
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+              💡 <strong>คำแนะนำจาก OWASP:</strong> การตรวจสอบฝั่งไคลเอนต์หน้าแอป Flutter (Client-Side Validation) ช่วยเพื่อความลื่นไหลของแอปพกพาเป็นสำคัญ แต่ห้ามลืมเขียนตรวจสอบสิทธิ์ร่วมกันฝั่งเซิร์ฟเวอร์หลังบ้าน Django (Server-Side Validation) เพื่อสกัดการลักลอบบันทึกรหัสแปลกปลอมเข้าฐานข้อมูลเด็ดขาด [3].
+            </div>
+          </div>
+        </div>
+      </div> 
+
+      <!-- สไลด์ที่ 9: สารบัญสัปดาห์ที่ 4 หมวดที่ 3 และ 4 (Table of Contents) -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 9">
+        <div class="text-center max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 4 • Parts 3 & 4
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สัปดาห์ที่ 4: ฟอร์มและการรับค่าข้อมูล (Forms & Input Validation)
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญโครงสร้างเนื้อหาหมวดปฏิบัติการที่ 3 และ 4</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-blue-300 block border-b border-white/10 pb-1">🎨 หมวดที่ 3: การจัดรูปแบบและยกระดับประสบการณ์ผู้ใช้งานฟอร์ม (UX)</span>
+                <button @click="currentSlide = 10" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 10: การตกแต่งช่องกรอกข้อมูลด้วย InputDecoration</button>
+                <button @click="currentSlide = 11" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 11: การแสดงผลข้อความแจ้งเตือนด้วย SnackBar</button>
+                <button @click="currentSlide = 12" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 12: การปิดแป้นพิมพ์โดยการ unfocus()</button>
+                <button @click="currentSlide = 13" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 13: ฟอร์มล็อกอินสลับเปิด-ปิดตาดูรหัสผ่าน</button>
+              </div>
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-green-300 block border-b border-white/10 pb-1">🏗️ หมวดที่ 4: การเชื่อมโยงข้อมูลฟอร์มสู่สถาปัตยกรรมแอปพลิเคชัน (MVVM)</span>
+                <button @click="currentSlide = 14" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 14: การเชื่อมข้อมูลจากฟอร์มเข้าควบคุม ViewModel</button>
+                <button @click="currentSlide = 15" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 15: การรับมือข้อผิดพลาดทางเทคนิคจาก REST API</button>
+                <button @click="currentSlide = 16" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 16: วิดเจ็ตเลือกรับข้อมูลชนิดอื่นในระบบฟอร์ม</button>
+                <button @click="currentSlide = 17" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 17: ใบงานปฏิบัติการฟอร์มเพิ่มข้อมูลทริปการท่องเที่ยว</button>
+                <button @click="currentSlide = 18" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 18: สรุปบทเรียนสัปดาห์ที่ 4 และแนวทางสู่สัปดาห์ที่ 5</button>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกหัวข้อบนสารบัญเพื่อข้ามไปยังหน้านั้นโดยตรง หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูตามลำดับการสอน</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 10: การตกแต่งช่องกรอกข้อมูลให้สวยงามด้วย InputDecoration -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 10">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 10 • Input Aesthetics & InputDecoration
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ยกระดับความสวยงามของฟอร์มด้วย InputDecoration 🎨
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              การจัดรูปแบบที่ดีช่วยสร้างประสบการณ์ผู้ใช้งาน (UX) ที่ราบรื่น โดยการเพิ่มคำแนะนำ (Hint) ป้ายกำกับ (Label) ไอคอนนำหน้า/ต่อท้าย (Prefix/Suffix) และเส้นขอบเมื่ออยู่ในสถานะปกติ โฟกัส หรือเกิดข้อผิดพลาด:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-60 leading-relaxed">
+              <p class="text-blue-400">TextFormField(</p>
+              <p class="pl-4">decoration: InputDecoration(</p>
+              <p class="pl-8 text-slate-400">// ป้ายกำกับแบบลอยตัวและไอคอนนำหน้า</p>
+              <p class="pl-8">labelText: <span class="text-red-300">'อีเมลผู้ใช้'</span>,</p>
+              <p class="pl-8">hintText: <span class="text-red-300">'example@email.com'</span>,</p>
+              <p class="pl-8">prefixIcon: const Icon(Icons.email_outlined),</p>
+              <p class="pl-8 text-slate-400">// การตกแต่งเส้นขอบสไตล์กล่องมน (OutlineInputBorder)</p>
+              <p class="pl-8">border: const OutlineInputBorder(</p>
+              <p class="pl-12">borderRadius: BorderRadius.all(Radius.circular(12.0)),</p>
+              <p class="pl-8">),</p>
+              <p class="pl-8">focusedBorder: OutlineInputBorder(</p>
+              <p class="pl-12">borderSide: BorderSide(color: Colors.blue.shade400, width: 2.0),</p>
+              <p class="pl-12">borderRadius: const BorderRadius.all(Radius.circular(12.0)),</p>
+              <p class="pl-8">),</p>
+              <p class="pl-4">),</p>
+              <p class="text-blue-400">);</p>
+            </div>
+            <div class="pt-1 text-center">
+              <span class="text-xs text-slate-400">🔗 ดูรูปแบบและการตกแต่งกล่องข้อความระดับมาตรฐานเพิ่มเติม (Flutter Documentation):</span>
+              <a href="https://docs.flutter.dev/cookbook/forms/text-input" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5 truncate">
+                https://docs.flutter.dev/cookbook/forms/text-input 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 11: ปฏิบัติการขั้นที่ 2: การแสดงผลการทำงานสำเร็จด้วย SnackBar -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 11">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 11 • Form Feedback with SnackBar
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การแสดงผลการทำงานและแจ้งเตือนผู้ใช้ด้วย SnackBar 💬
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              เมื่อแบบฟอร์มผ่านเกณฑ์การตรวจสอบ (Validation) เรียบร้อยแล้ว การรายงานสถานะหรือผลลัพธ์เป็นสิ่งจำเป็นอย่างยิ่ง โดยทีมงานวิศวกร Flutter แนะนำให้แจ้งข้อมูลแบบไม่ขัดจังหวะสายตาผู้ใช้ด้วยการเรียก **`ScaffoldMessenger`** เพื่อวาด SnackBar:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+              <p class="text-slate-400">// แนวทางรันข้อความด่วนแบบ SnackBar ระดับสากล</p>
+              <p class="text-blue-400">void <span class="text-yellow-300">_showSuccessFeedback</span>(BuildContext context) {</p>
+              <p class="pl-4">ScaffoldMessenger.of(context).showSnackBar(</p>
+              <p class="pl-8">SnackBar(</p>
+              <p class="pl-12">content: const Text(<span class="text-red-300">'บันทึกข้อมูลเรียบร้อยแล้ว!'</span>),</p>
+              <p class="pl-12">backgroundColor: Colors.green.shade600,</p>
+              <p class="pl-12">duration: const Duration(seconds: 3),</p>
+              <p class="pl-12">action: SnackBarAction(</p>
+              <p class="pl-16">label: <span class="text-red-300">'ตกลง'</span>,</p>
+              <p class="pl-16">textColor: Colors.white,</p>
+              <p class="pl-16">onPressed: () {},</p>
+              <p class="pl-12">),</p>
+              <p class="pl-8">),</p>
+              <p class="pl-4">);</p>
+              <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500/20 text-xs">
+              💡 <strong>ข้อสังเกตความเสถียร:</strong> การใช้ <code class="text-yellow-300">ScaffoldMessenger.of(context)</code> เป็นกลไกใหม่ที่ทำงานแยกอิสระจากสิทธิ์ควบคุม State ของ Scaffold เดิม ส่งผลให้ระบบทำงานได้อย่างต่อเนื่องแม้ผู้ใช้กดปิดหน้าจอดังกล่าวไปแล้ว.
+            </div>
+            <div class="pt-1 text-center">
+              <span class="text-xs text-slate-400">🔗 ดูรายละเอียดคู่มือสอนแสดงข้อความความสำเร็จผ่าน SnackBar (Flutter Cookbook):</span>
+              <a href="https://docs.flutter.dev/cookbook/design/snackbars" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5">
+                https://docs.flutter.dev/cookbook/design/snackbars 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 12: การปิดคีย์บอร์ดเมื่อผู้ใช้สัมผัสพื้นที่ว่างด้วย GestureDetector -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 12">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 12 • Keyboard Dismissal & GestureDetector
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การปิดแป้นพิมพ์คีย์บอร์ดเมื่อสัมผัสพื้นที่ว่างด้วย GestureDetector ⌨️❌
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              ปัญหา UX ยอดนิยมในระบบมือถือคือ แป้นคีย์บอร์ดไม่ยอมยุบตัวลงเมื่อพิมพ์ข้อมูลเสร็จ วิธีแก้ปัญหาระดับโปรคือการหุ้มหน้าจอหลัก (`Scaffold`) ด้วยวิดเจ็ต **`GestureDetector`** เพื่อคอยดักตรวจจับสิทธิ์สัมผัส แล้วเรียกคืนโฟกัสผ่านคำสั่ง **`unfocus()`**:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+              <p class="text-slate-400">// ห่อหุ้ม Scaffold ชั้นนอกสุดเพื่อดักล้าง โฟกัส (Focus Clear)</p>
+              <p class="text-blue-400">@override</p>
+              <p class="text-blue-400">Widget build(BuildContext context) {</p>
+              <p class="pl-4">return GestureDetector(</p>
+              <p class="pl-8 text-yellow-300">onTap: () {</p>
+              <p class="pl-12 text-slate-400">// ตรวจสอบและยกเลิกสถานะโฟกัสของคีย์บอร์ด</p>
+              <p class="pl-12">FocusScopeNode currentFocus = FocusScope.of(context);</p>
+              <p class="pl-12">if (!currentFocus.hasPrimaryFocus) {</p>
+              <p class="pl-16">currentFocus.unfocus();</p>
+              <p class="pl-12">}</p>
+              <p class="pl-8">},</p>
+              <p class="pl-8">child: Scaffold(</p>
+              <p class="pl-12">appBar: AppBar(title: const Text(<span class="text-red-300">'สมัครสมาชิก'</span>)),</p>
+              <p class="pl-12">body: const MyRegistrationForm(),</p>
+              <p class="pl-8">),</p>
+              <p class="pl-4">);</p>
+              <p class="text-blue-400">}</p>
+            </div>
+            <div class="pt-1 text-center">
+              <span class="text-xs text-slate-400 block mb-0.5">🔗 อ่านรายละเอียดเกี่ยวกับการจัดสรรพฤติกรรมและการดักรับค่าสัมผัส (Flutter Interactivity):</span>
+              <a href="https://docs.flutter.dev/ui/interactivity/gestures" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                https://docs.flutter.dev/ui/interactivity/gestures 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 13: ปฏิบัติการขั้นที่ 3: พัฒนาฟอร์มล็อกอินสลับเปิด-ปิดตาดูรหัสผ่าน -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 13">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-6">
+            <div class="flex-1 space-y-3 text-xs md:text-sm text-slate-200 leading-relaxed">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 13 • Obscure Password Toggle
+              </span>
+              <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                สลับซ่อน/แสดงรหัสผ่าน (Obscure Text Toggle) 👁️🔒
+              </h2>
+              <p>
+                เพื่อความปลอดภัยขั้นพื้นฐานและสอดคล้องกับมาตรฐานความปลอดภัยสากล การส่งรหัสผ่านต้องปิดบังอักษรดิบด้วยคุณลักษณะ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">obscureText: true</code> และ open ช่องทางให้ผู้ใช้สลับมองรหัสผ่านได้ผ่านการคลิกไอคอนรูปดวงตา:
+              </p>
+              <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-52 leading-relaxed">
+                <p class="text-slate-400">// สร้างตัวแปร boolean เพื่อสับเปลี่ยน State</p>
+                <p class="text-blue-300">bool _obscurePassword = true;</p>
+                <p class="text-slate-400">// พอร์ตโครงสร้างวิดเจ็ตใน InputDecoration</p>
+                <p class="text-blue-300">TextFormField(</p>
+                <p class="pl-4">obscureText: _obscurePassword,</p>
+                <p class="pl-4">decoration: InputDecoration(</p>
+                <p class="pl-8">labelText: <span class="text-red-300">'รหัสผ่าน'</span>,</p>
+                <p class="pl-8">suffixIcon: IconButton(</p>
+                <p class="pl-12">icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),</p>
+                <p class="pl-12">onPressed: () {</p>
+                <p class="pl-16">setState(() {</p>
+                <p class="pl-20">_obscurePassword = !_obscurePassword;</p>
+                <p class="pl-16">});</p>
+                <p class="pl-12">},</p>
+                <p class="pl-8">),</p>
+                <p class="pl-4">),</p>
+                <p class="text-blue-300">);</p>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/3 text-center">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="compass_app_mockup.jpg" alt="Compass App Mockup View" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2">📱 แผนภาพตัวอย่างหน้าจอเข้ายืนยันสิทธิ์ที่มีการสลับปุ่มเปิด/ปิดตาของรหัสผ่านเพื่อความมั่นใจ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 14: การเชื่อมโยงข้อมูลฟอร์มสู่สถาปัตยกรรมแอปพลิเคชัน (Architecture Integration - MVVM Binding) -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 14">
+        <div class="max-w-5xl mx-auto w-full">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="flex-1 space-y-4 text-xs md:text-sm text-slate-200 leading-relaxed">
+              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                Slide 14 • MVVM Form Integration
+              </span>
+              <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+                การส่งข้อมูลฟอร์มสู่เลเยอร์ ViewModel (MVVM Binding) 🏗️
+              </h2>
+              <p>
+                ตามคู่มือสากลของสถาปัตยกรรมแอปพลิเคชัน Flutter แบบ MVVM ชั้นหน้าจอ View จะต้องไม่ส่งค่าไปคุยกับเครือข่ายตรงๆ [1] แต่จะรวบรวมค่าข้อมูลดิบผ่านคำสั่ง <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">onSaved</code> หรือดึงสดผ่าน <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">TextEditingController</code> แล้วส่งต่อสิทธิ์ให้ **ChangeNotifier ViewModel** เป็นผู้ประสานงานหลัก [2, 3]:
+              </p>
+              <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-56 leading-relaxed">
+                <p class="text-slate-400">// 1. View เรียกคำสั่งเมื่อ Validation ผ่านฉลุย</p>
+                <p class="text-blue-400">if (_formKey.currentState!.validate()) {</p>
+                <p class="pl-4">_formKey.currentState!.onSaved();</p>
+                <p class="pl-4 text-slate-400">// เรียก ViewModel ประมวลผลคำขอล็อกอินผ่านคลัง Provider</p>
+                <p class="pl-4">context.read&lt;LoginViewModel&gt;().submitLogin(</p>
+                <p class="pl-8">email: _emailValue,</p>
+                <p class="pl-8">password: _passwordValue,</p>
+                <p class="pl-4">);</p>
+                <p class="text-blue-400">}</p>
+              </div>
+              <div class="pt-1">
+                <span class="text-xs text-slate-400 block mb-0.5">🔗 เจาะลึกการจัดทำระบบการประมวลผลคำสั่งแบบปลอดภัยผ่านเลเยอร์ (UI Layer Case Study):</span>
+                <a href="https://docs.flutter.dev/app-architecture/case-study/ui-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                  https://docs.flutter.dev/app-architecture/case-study/ui-layer 🚀
+                </a>
+              </div>
+            </div>
+            <div class="w-full lg:w-1/3">
+              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <img src="flutter_mvvm_architecture.jpg" alt="MVVM Architecture Flow" class="w-full h-auto rounded-xl object-cover" />
+                <div class="text-center text-[10px] text-slate-400 mt-2">📊 ความสัมพันธ์ในแอปพลิเคชัน Compass: ฟอร์มใน View รวบรวมส่งต่อหา ViewModel เพื่อเตรียมส่งลงสู่ชั้น Repository เลเยอร์ล่างตามลำดับแบบทางเดียว (UDF) [4, 5]</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 15: การรับมือเมื่อส่งข้อมูลแล้วเกิดข้อผิดพลาดทางเทคนิคจาก REST API (Server-Side Validation Errors) -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 15">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 15 • Server-Side Validation Errors
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            การจัดการข้อผิดพลาดข้อมูลจากฝั่ง REST API หลังบ้าน 📡🚨
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              แม้ว่าข้อมูลจะผ่านการดักกรองจากโค้ดเครื่องหน้าบ้าน (Client-Side Validation) สำเร็จ แต่อาจเกิดข้อผิดพลาดในการประมวลผลฝั่งเซิร์ฟเวอร์หลังบ้าน เช่น **"อีเมลซ้ำซ้อน" (Email Already Exists)** หรือ **"รหัสผ่านไม่ผ่านเกณฑ์วิเคราะห์จริง"** ในรูปโครงสร้างข้อมูล JSON:
+            </p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+              <p class="text-slate-400">// ปรับปรุง ViewModel ให้อัปเดต UI เมื่อได้รับข้อผิดพลาดรหัส HTTP 400 จาก Django</p>
+              <p class="text-blue-400">class <span class="text-yellow-300">LoginViewModel</span> extends ChangeNotifier {</p>
+              <p class="pl-4">String? _serverErrorMessage;</p>
+              <p class="pl-4">String? get serverErrorMessage =&gt; _serverErrorMessage;</p>
+              <p class="pl-4 mt-2">Future&lt;void&gt; submitLogin(String email, String password) async {</p>
+              <p class="pl-8">final result = await _authRepo.login(email, password);</p>
+              <p class="pl-8">if (result is Error) {</p>
+              <p class="pl-12">_serverErrorMessage = result.error.message; <span class="text-slate-400">// ดึงข้อความล้มเหลวจากเซิร์ฟเวอร์ [6]</span></p>
+              <p class="pl-12">notifyListeners(); <span class="text-slate-400">// สั่งสแกนและพ่นสีแดงเตือนบนหน้าจอ View [7]</span></p>
+              <p class="pl-8">}</p>
+              <p class="pl-4">}</p>
+              <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-xs">
+              ⚠️ <strong>กฎเหล็กความปลอดภัย:</strong> นักศึกษาต้องเขียนสคริปต์ให้ดักเช็คค่าตอบรับ <code class="text-yellow-300">result.serverErrorMessage</code> หากไม่เป็นว่างเปล่า (Null) ให้ดึงไปแสดงผลแบบกล่องเตือน หรือพ่นลงป้ายกำกับข้อผิดพลาดของช่องนั้นๆ โดยด่วน.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 16: วิดเจ็ตเลือกรับข้อมูลชนิดอื่นในระบบฟอร์ม (Selection Inputs) -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 16">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 16 • Diverse Form Input Fields
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            วิดเจ็ตกรอกแบบฟอร์มประเภทจำกัดตัวเลือก (Selection Inputs) 🗳️
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              นอกจากการพิมพ์ข้อความทั่วไป ระบบแอปพลิเคชัน Compass ยังรองรับกล่องรับข้อมูลประเภทกำหนดสิทธิ์การตรวจสอบและการติ๊กเลือกชนิดต่างๆ ภายใต้วิดเจ็ตตระกูล **`FormField`** สำหรับควบคุมความต่อเนื่องในกล่องเดียวกัน [8, 9]:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                <span class="text-blue-300 font-bold text-xs block border-b border-white/10 pb-1">🔽 DropdownButtonFormField</span>
+                <p class="text-[11px] text-slate-300">
+                  จำกัดขอบเขตข้อมูลที่นักท่องเที่ยวสามารถจองได้ (เช่น เลือกจุดหมายปลายทาง ทริปเมืองโตเกียว ลอนดอน) สามารถแนบฟังก์ชันตรวจสอบคุณค่า <code class="text-yellow-200">validator</code> ได้เหมือนช่องพิมพ์ทั่วไป.
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                <span class="text-green-300 font-bold text-xs block border-b border-white/10 pb-1">☑️ CheckboxListTile</span>
+                <p class="text-[11px] text-slate-300">
+                  ให้ยืนยันเงื่อนไขความสอดคล้องหรือความประสงค์พิเศษเพิ่มเติม (เช่น ต้องการไกด์นำเดินทางผู้เชี่ยวชาญภาษาไทย) บันทึกและควบคุมเป็นพารามิเตอร์ประเภท boolean ในระบบ View.
+                </p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                <span class="text-purple-300 font-bold text-xs block border-b border-white/10 pb-1">🔛 SwitchListTile</span>
+                <p class="text-[11px] text-slate-300">
+                  สวิตช์สำหรับเปิด/ปิดฟังก์ชันการทำงานบางอย่างแบบทันที เช่น เปิดปิดสิทธิ์การรับรายงานด่วนทริปลดราคาพิเศษผ่านกลไกระบบ Notification ในอุปกรณ์เคลื่อนที่.
+                </p>
+              </div>
+            </div>
+            <div class="pt-1 text-center">
+              <span class="text-xs text-slate-400">🔗 ดูรูปแบบคู่มือประยุกต์จัดทำ Form ยืนยันสิทธิ์ชนิดต่างๆ (Flutter Cookbook):</span>
+              <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition inline-block ml-1">
+                https://docs.flutter.dev/cookbook/forms/validation 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 17: แนะนำกิจกรรมปฏิบัติการและใบงานประจำสัปดาห์ที่ 4 (Week 4 Workshop) -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 17">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 17 • Week 4 Laboratory Assignment
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ใบงานปฏิบัติการ: พัฒนาฟอร์มเพิ่มข้อมูลทริปเดินทางใหม่ 🧭🧪
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p class="text-slate-300">
+              นักศึกษาแต่ละกลุ่มจะต้องลงมือพัฒนาหน้าจอส่งต่อข้อมูลสลับจองทริปเดินทางใหม่ **`Create Booking Form`** ภายใต้โครงร่างสถาปัตยกรรมของโครงการ Compass ให้ใช้งานและรันงานได้สมบูรณ์ [10]:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
+                <h4 class="font-bold text-yellow-300 text-xs">🔥 เกณฑ์ปฏิบัติและข้อตกลงการทดสอบ (Specifications):</h4>
+                <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-300">
+                  <li>สร้างแบบฟอร์มรองรับคีย์บอร์ด Unfocus และแสดง SnackBar คล่องตัวเมื่อสำเร็จ</li>
+                  <li><strong>ช่องจุดหมาย (Destination):</strong> ใช้ DropdownFormField และห้ามปล่อยว่าง</li>
+                  <li><strong>ช่องงบประมาณ (Price):</strong> ตรวจสอบว่าต้องพิมพ์ระบุเป็นตัวเลขจำนวนเต็มบวกเท่านั้น</li>
+                  <li>จัดส่งข้อมูลเข้าสู่ ViewModel เพื่อเตรียมพร้อมส่งต่อไปยัง REST API หลังบ้านจริง</li>
+                </ul>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col justify-center space-y-3">
+                <h4 class="font-bold text-blue-300 text-xs text-center">🎯 ทิศทางการเรียนรู้นอกเหนือชั่วโมง</h4>
+                <p class="text-xs text-slate-300 text-center">
+                  นักศึกษาสามารถตรวจสอบชุดคำสั่งและเทมเพลตฟอร์มรับส่งข้อมูลของโครงการตัวอย่างทางการบนกิธฮับ [4]:
+                </p>
+                <div class="text-center pt-2">
+                  <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                    samples/compass_app on GitHub 🚀
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 18: บทสรุปการเรียนรู้สัปดาห์ที่ 4 และปูทางสู่สัปดาห์ที่ 5 -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 18">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 18 • Week 4 Summary & Preview
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สรุปบทเรียนสัปดาห์ที่ 4 และปูทางสู่ปฏิบัติการสัปดาห์ที่ 5 🏁
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              วันนี้เราได้เรียนรู้การขัดเกลาอินเทอร์เฟซรับข้อมูลอย่างประณีตผ่าน InputDecoration, แสดง SnackBar [8], ปิดคีย์บอร์ดอัตโนมัติ, สร้างปุ่มสลับซ่อนรหัสผ่าน และทำการผูกส่งข้อมูลอย่างมั่นคงปลอดภัยเข้าสู่เลเยอร์ ViewModel (MVVM) ได้เสร็จสิ้นเรียบร้อยแล้ว [2]
+            </p>
+            <div class="bg-blue-900/30 p-5 rounded-2xl border border-blue-500/20 space-y-2">
+              <h4 class="font-bold text-yellow-300">🚀 ปูทางสู่ สัปดาห์ที่ 5: Dependency Injection & Controlled Testing</h4>
+              <ul class="list-disc list-inside space-y-1.5 text-slate-300 text-xs">
+                <li><strong>Dependency Injection (DI):</strong> ถอดเปลี่ยนคลังเก็บข้อมูลข้ามสภาพแวดล้อมด้วย <code class="text-blue-300">package:provider</code> ทั่วทั้งแอป [11, 12]</li>
+                <li><strong>Controlled Testing:</strong> เขียนคำสั่งและกระบวนการจำลองข้อมูลเพื่อทำ Unit Test บนเลเยอร์ ViewModel โดยปราศจากเงื่อนไขเครือข่ายเน็ตเวิร์ก [13, 14]</li>
+                <li><strong>Widget Testing:</strong> เขียนโปรแกรมวาดและทดสอบสกรีน UI เพื่อทดลองคลิกสุ่มตรวจสอบการสะท้อนสถานะ (State) โดยอัตโนมัติ [13, 14]</li>
+              </ul>
+            </div>
+            <div class="pt-2 text-center">
+              <span class="text-xs text-slate-400 block mb-0.5">🔗 คู่มือประเมินความปลอดภัยและการบริหารค่า Dependency ในสถาปัตยกรรม Flutter ล่วงหน้า:</span>
+              <a href="https://docs.flutter.dev/app-architecture/case-study/dependency-injection" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                https://docs.flutter.dev/app-architecture/case-study/dependency-injection 🚀
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Heallth Informatics">
+    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Development</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/mobiledev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk15.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- สไลด์ที่ 0: หน้าสารบัญ (currentSlide === 0) -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 0">
+        <div class="text-center max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 5 • Part 1
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สัปดาห์ที่ 5: ระบบ Dependency Injection (DI) & การต่อวงจรรวมระบบ
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญโครงสร้างเนื้อหาหมวดปฏิบัติการที่ 1 (DI Assembly)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm">
+              <!-- หัวข้อที่ 1 -->
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-blue-300 block border-b border-white/10 pb-1">⚙️ แนวคิดและการต่อสาย</span>
+                <button @click="currentSlide = 1" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 1: แนวคิด DI & Rules of Engagement</button>
+              </div>
+              <!-- หัวข้อที่ 2 -->
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-green-300 block border-b border-white/10 pb-1">⛓️ เลเยอร์ระดับบน (Root)</span>
+                <button @click="currentSlide = 2" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 2: ผูก Dependency ด้วย MultiProvider</button>
+              </div>
+              <!-- หัวข้อที่ 3 -->
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-purple-300 block border-b border-white/10 pb-1">🛡️ เลเยอร์นำเสนอ (UI)</span>
+                <button @click="currentSlide = 3" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 3: ฉีดข้อมูลเข้าสู่ ViewModel & เราเตอร์</button>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกหัวข้อบนสารบัญเพื่อข้ามไปยังหน้านั้นโดยตรง หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูตามลำดับการสอน</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 1: แนวคิด DI & Rules of Engagement (currentSlide === 1) -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 1">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 1
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: DI Concepts</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-100">
+            แนวคิด Dependency Injection และกฎข้อตกลงการติดต่อ (Rules of Engagement)
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- ทฤษฎีและเนื้อหา -->
+            <div class="space-y-4 text-sm md:text-base text-slate-200">
+              <p>
+                <strong>Dependency Injection (DI)</strong> คือวิธีการส่งมอบวัตถุที่คลาสต้องการ (Dependencies) ผ่านทางคอนสตรักเตอร์ (Constructor Injection) แทนที่จะให้คลาสนั้นสร้างขึ้นเอง <span class="text-blue-300">ตัวอย่างเช่น การฉีด Service เข้าสู่ Repository</span> ซึ่งช่วยให้การจำลองเทส (Mocking) ทำได้ง่ายขึ้นมาก
+              </p>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2">
+                <span class="text-yellow-300 font-semibold block text-sm">💡 กฎการเข้าถึงเลเยอร์ (Rules of Engagement)</span>
+                <ul class="list-disc pl-5 space-y-1 text-xs">
+                  <li><strong>View</strong> จะต้องมองเห็นและรู้จักแค่ <strong>ViewModel</strong> ของตนเองตัวเดียวเท่านั้น</li>
+                  <li><strong>ViewModel</strong> รับ <strong>Repositories</strong> ผ่านคอนสตรักเตอร์ (โดยไม่รู้จัก View)</li>
+                  <li><strong>Repository</strong> รับ <strong>Services</strong> เข้ามาทางคอนสตรักเตอร์เพื่อดึงข้อมูลดิบ</li>
+                  <li><strong>Service</strong> ทำงานเป็นเครื่องมือ Stateless API Client และไม่รู้จักใครข้างบน</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- ภาพประกอบแบบอินเตอร์แอคทีฟ (Tailwind-designed Diagram) -->
+            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-5 flex flex-col justify-center space-y-4 shadow-xl">
+              <span class="text-xs text-yellow-300 font-semibold text-center uppercase tracking-wider block">ผังลำดับการจัดส่งและฉีดใช้งาน (Dependency Injection Flow)</span>
+
+              <div class="space-y-2 text-center text-xs">
+                <!-- Service Layer -->
+                <div class="bg-blue-600/30 border border-blue-500 rounded-lg p-2 font-mono">
+                  <span class="font-bold text-blue-300">Stateless Service</span> (e.g., ApiClient)
+                </div>
+                <!-- Arrow -->
+                <div class="text-blue-400 text-sm">⬇️ Injected into</div>
+
+                <!-- Repository Layer -->
+                <div class="bg-green-600/30 border border-green-500 rounded-lg p-2 font-mono">
+                  <span class="font-bold text-green-300">Repository</span> (e.g., BookingRepositoryRemote)
+                </div>
+                <!-- Arrow -->
+                <div class="text-green-400 text-sm">⬇️ Injected into</div>
+
+                <!-- ViewModel Layer -->
+                <div class="bg-purple-600/30 border border-purple-500 rounded-lg p-2 font-mono">
+                  <span class="font-bold text-purple-300">ViewModel</span> (e.g., HomeViewModel)
+                </div>
+                <!-- Arrow -->
+                <div class="text-purple-400 text-sm">⬇️ Provided to</div>
+
+                <!-- View Layer -->
+                <div class="bg-yellow-600/20 border border-yellow-500/50 rounded-lg p-2 font-mono">
+                  <span class="font-bold text-yellow-300">View (UI)</span> (e.g., HomeScreen Screen)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 2: MultiProvider เลเยอร์สูงสุด (currentSlide === 2) -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 2">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 2
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: Root-level DI</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-100">
+            การผูก Dependency เลเยอร์สูงสุดด้วย MultiProvider
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- ทฤษฎีอธิบาย -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                ทีมงานของ Google แนะนำให้ใช้แพ็กเกจ <span class="text-yellow-300 font-bold">provider</span> ในการทำระบบ Dependency Injection ในระดับโครงสร้างโปรเจกต์ของ Flutter
+              </p>
+              <p class="text-xs md:text-sm">
+                วัตถุจากเลเยอร์จัดเก็บข้อมูล (Services และ Repositories) ทั้งหมดจะถูกผูกขึ้นระดับบนสุดของแอปด้วย <code class="bg-slate-800 px-1 py-0.5 rounded text-yellow-300">MultiProvider</code> เพื่อให้สามารถเข้าถึงและฉีดส่งกันผ่าน <code class="bg-slate-800 px-1 py-0.5 rounded text-blue-300">BuildContext.read()</code> ได้อย่างสะดวกรวดเร็ว
+              </p>
+
+              <!-- การอ้างอิงคลิกได้ -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 แหล่งข้อมูลศึกษาเพิ่มเติม:</span>
+                <a href="https://pub.dev/packages/provider" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://pub.dev/packages/provider
+                </a>
+              </div>
+            </div>
+
+            <!-- โค้ดตัวอย่าง -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl overflow-x-auto text-[10px] md:text-xs font-mono text-slate-300 leading-relaxed">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-2">
+                <span class="text-slate-400 text-xs">📄 main.dart / dependencies.dart</span>
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              </div>
+              <pre><code class="language-dart"><span class="text-purple-400">runApp</span>(
+                <span class="text-blue-400">MultiProvider</span>(
+                <span class="text-slate-400">providers:</span> [
+                <span class="text-blue-400">Provider</span>(create: (context) =&gt; <span class="text-green-400">ApiClient</span>()),
+                <span class="text-blue-400">ChangeNotifierProvider</span>(
+                create: (context) =&gt; <span class="text-green-400">AuthRepositoryRemote</span>(
+                <span class="text-slate-400">apiClient:</span> context.<span class="text-purple-400">read</span>(), <span class="text-slate-400">// ฉีด API Client เข้าไป</span>
+                ) <span class="text-purple-400">as</span> AuthRepository,
+                ),
+                <span class="text-blue-400">Provider</span>(
+                create: (context) =&gt; <span class="text-green-400">BookingRepositoryRemote</span>(
+                <span class="text-slate-400">apiClient:</span> context.<span class="text-purple-400">read</span>(),
+                ) <span class="text-purple-400">as</span> BookingRepository,
+                ),
+                ],
+                <span class="text-slate-400">child:</span> <span class="text-purple-400">const</span> <span class="text-blue-400">MainApp</span>(),
+                ),
+                );</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 3: Screen-level DI ในเราเตอร์ & Private Variable (currentSlide === 3) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 3">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-purple-500/30 text-purple-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 3
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: Screen-level DI & Security</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-fuchsia-100">
+            การฉีดข้อมูลระดับเราเตอร์ & การซ่อนคุณสมบัติเป็น Private
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- ทฤษฎีอธิบาย -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                ในการเปิดหน้าจอระบบ (Screen routes) การฉีดข้อมูลจะทำในเลเยอร์การนำทาง (Routing) เช่นในคลาสตั้งค่าเราเตอร์ <code class="bg-slate-800 px-1 py-0.5 rounded text-yellow-300">go_router</code>
+              </p>
+              <p class="text-xs md:text-sm">
+                <strong>🔒 หลักการจัดเก็บข้อมูลให้ปลอดภัย:</strong> 
+                การส่งผ่าน Repository เข้าสู่ ViewModel จะเก็บไว้เป็นตัวแปรแบบส่วนตัว (Private ตัวอย่างเช่น <code class="bg-slate-800 px-1 text-red-300">_bookingRepository</code>) เพื่อป้องกันไม่ให้เลเยอร์ View เข้ามาดักใช้งานคลังข้อมูลและจัดการเปลี่ยนแปลงสถานะระบบโดยตรง
+              </p>
+
+              <!-- การอ้างอิงคลิกได้ -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-[10px] md:text-xs space-y-1">
+                <span class="text-slate-400 block">🔗 แหล่งข้อมูลอ้างอิงและโค้ดตัวอย่าง:</span>
+                <div>
+                  <span class="text-slate-400">เราเตอร์แพ็กเกจ:</span>
+                  <a href="https://pub.dev/packages/go_router" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline font-mono">
+                    https://pub.dev/packages/go_router
+                  </a>
+                </div>
+                <div>
+                  <span class="text-slate-400">โค้ดหลักแอปพลิเคชัน:</span>
+                  <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline font-mono break-all">
+                    https://github.com/flutter/samples/tree/main/compass_app
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- ตัวอย่างโค้ดในเราเตอร์ และ ViewModel -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl overflow-x-auto text-[10px] md:text-xs font-mono text-slate-300 leading-relaxed space-y-3">
+              <!-- บล็อกที่ 1 -->
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-1 mb-1 text-slate-400 text-xs">
+                  <span>📄 router.dart (ฉีด Repository เข้าสู่หน้าจอ)</span>
+                </div>
+                <pre><code class="language-dart"><span class="text-blue-400">GoRoute</span>(
+                  <span class="text-slate-400">path:</span> Routes.home,
+                  <span class="text-slate-400">builder:</span> (context, state) {
+                  <span class="text-purple-400">return</span> <span class="text-blue-400">HomeScreen</span>(
+                  <span class="text-slate-400">viewModel:</span> <span class="text-blue-400">HomeViewModel</span>(
+                  <span class="text-slate-400">bookingRepository:</span> context.<span class="text-purple-400">read</span>(), <span class="text-slate-400">// ดึงจากด้านบน</span>
+                  ),
+                  );
+                  },
+                  );</code></pre>
+              </div>
+
+              <!-- บล็อกที่ 2 -->
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-1 mb-1 text-slate-400 text-xs">
+                  <span>📄 home_viewmodel.dart (ซ่อนเป็น Private)</span>
+                </div>
+                <pre><code class="language-dart"><span class="text-purple-400">class</span> <span class="text-blue-400">HomeViewModel</span> <span class="text-purple-400">extends</span> <span class="text-blue-400">ChangeNotifier</span> {
+                  <span class="text-blue-400">HomeViewModel</span>({<span class="text-purple-400">required</span> <span class="text-blue-400">BookingRepository</span> bookingRepository})
+                  : <span class="text-slate-400">_bookingRepository</span> = bookingRepository; <span class="text-slate-400">// Private Assign</span>
+
+                  <span class="text-purple-400">final</span> <span class="text-blue-400">BookingRepository</span> <span class="text-red-300">_bookingRepository</span>; <span class="text-slate-400">// ซ่อนตัวแปร</span>
+                  }</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 4: บทนำสู่การทดสอบแบบแยกเลเยอร์ (currentSlide === 4) -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 4">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 4
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: Testability in MVVM</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-100">
+            สถาปัตยกรรมที่ทดสอบง่าย (Testability) และแนวคิดการแยกทดสอบแต่ละเลเยอร์
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- อธิบายแนวคิด -->
+            <div class="space-y-4 text-sm md:text-base text-slate-200">
+              <p>
+                จุดเด่นที่สำคัญที่สุดอย่างหนึ่งของการจัดโครงสร้างแอปแบบ <strong>MVVM (Model-View-ViewModel)</strong> คือการเพิ่มขีดความสามารถในการทดสอบระบบได้อย่างมีคุณภาพ (<span class="text-yellow-300">Testability</span>) 
+              </p>
+              <p class="text-xs md:text-sm">
+                การแยกตรรกะทางธุรกิจ (Business Logic) ออกจากวิดเจ็ตแสดงผล (View) ช่วยให้เราสามารถจำลองสิ่งแวดล้อมเพื่อเขียนคำสั่งตรวจสอบความถูกต้อง (Unit Test) บน ViewModel ได้โดยตรงโดยไม่ต้องเปิดหน้าจอ UI หรือเชื่อมต่ออินเทอร์เน็ตจริง 
+              </p>
+
+              <!-- อ้างอิงลิงก์ -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 เอกสารศึกษาแนวทางการทดสอบแอป:</span>
+                <a href="https://docs.flutter.dev/app-architecture/case-study/testing" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://docs.flutter.dev/app-architecture/case-study/testing
+                </a>
+              </div>
+            </div>
+
+            <!-- แผนผังเปรียบเทียบข้อดีของการแยกเลเยอร์ทดสอบ (Tailwind Diagram) -->
+            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-5 space-y-4 shadow-xl">
+              <span class="text-xs text-yellow-300 font-semibold text-center uppercase tracking-wider block">การทดสอบแบบแยกส่วน (Isolated Testing)</span>
+
+              <div class="space-y-3 text-xs">
+                <!-- ViewModel Isolation -->
+                <div class="bg-purple-600/20 border border-purple-500/50 rounded-lg p-3">
+                  <span class="font-bold text-purple-300 block mb-1">⚙️ ViewModel Unit Test</span>
+                  <p class="text-[11px] text-slate-300">ทดสอบตรรกะและการเปลี่ยนสถานะข้อมูลผ่านคลาสจำลอง (Fakes) โดยไม่ต้องต่อ Backend จริง </p>
+                </div>
+
+                <!-- View / Widget Isolation -->
+                <div class="bg-yellow-600/20 border border-yellow-500/50 rounded-lg p-3">
+                  <span class="font-bold text-yellow-300 block mb-1">🖼️ View Widget Test</span>
+                  <p class="text-[11px] text-slate-300">ทดสอบการวาดส่วนแสดงผลและการโต้ตอบปุ่มต่าง ๆ บนหน้าจอผ่านการป้อนข้อมูลจำลอง </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 5: การพัฒนา Fake Repository สำหรับทดสอบ (currentSlide === 5) -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 5">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 5
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: Fake Repository</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-100">
+            การสร้างและใช้งาน Fake Repository เพื่อทดสอบข้อมูลจำลอง
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- อธิบาย Fake vs Mock -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                ใน Data Layer ของ Compass App มีการสืบทอดคลาส <code class="bg-slate-800 px-1 text-green-300 rounded">BookingRepository</code> เป็นแบบ <code class="bg-slate-800 px-1 text-yellow-300 rounded">BookingRepositoryRemote</code> สำหรับใช้งานจริง และมีคลาสย่อยจำลองสำหรับการพัฒนาและเขียนเทส 
+              </p>
+              <p class="text-xs md:text-sm">
+                <strong>คลาส Fake (Fake Repository):</strong> ทำงานเหมือนของจริงทุกประการแต่เก็บข้อมูลชั่วคราวอยู่ในหน่วยความจำ (In-memory List) แทนการส่งคำขอดึงข้อมูลผ่านเน็ตเวิร์กจริง ทำให้ทดสอบระบบได้เสถียรและเร็วขึ้นมาก 
+              </p>
+
+              <!-- ลิงก์ซอร์สโค้ดอ้างอิงบน GitHub -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 คลาส Fake ตัวอย่างบน GitHub Repository:</span>
+                <a href="https://github.com/flutter/samples/blob/main/compass_app/app/testing/fakes/repositories/fake_booking_repository.dart" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://github.com/flutter/samples/blob/main/compass_app/.../fake_booking_repository.dart
+                </a>
+              </div>
+            </div>
+
+            <!-- แผนผังจำลองการไหลข้อมูลทางด้านการเทส (In-Memory Testing Flow) -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl overflow-x-auto text-[10px] md:text-xs font-mono text-slate-300 leading-relaxed">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-2 text-slate-400">
+                <span>🎯 แผนภาพการทำซ้ำ (Testing flow with Fake)</span>
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+
+              <div class="space-y-4 p-2 text-center">
+                <div class="bg-blue-600/20 border border-blue-500 rounded p-2">
+                  <strong>1. คลาสการทดสอบ (Test File)</strong>
+                  <div class="text-[10px] text-slate-400">ป้อนข้อมูลจำลอง kBooking ไปที่คลังข้อมูลปลอม</div>
+                </div>
+                <div class="text-blue-400 text-xs">⬇️ เรียกใช้งานฟังก์ชัน</div>
+                <div class="bg-yellow-600/20 border border-yellow-500 rounded p-2">
+                  <strong>2. FakeBookingRepository (In-Memory)</strong>
+                  <div class="text-[10px] text-slate-400">เก็บรวบรวมข้อมูลลงใน List&lt;Booking&gt; _bookings ภายในแรม</div>
+                </div>
+                <div class="text-yellow-400 text-xs">⬇️ ฉีดส่งให้</div>
+                <div class="bg-purple-600/20 border border-purple-500 rounded p-2">
+                  <strong>3. HomeViewModel (System Under Test)</strong>
+                  <div class="text-[10px] text-slate-400">ดึงข้อมูลมาประมวลผล เพื่อตรวจสอบการเปลี่ยนสถานะของ UI </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 6: การเขียนยูนิตเทส ViewModel (currentSlide === 6) -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 6">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-purple-500/30 text-purple-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 6
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: ViewModel Unit Test</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-fuchsia-100">
+            ปฏิบัติการเขียน Unit Test ของ ViewModel ร่วมกับ Fake Repository
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- อธิบายโค้ดและขั้นตอน -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                ในการทดสอบ <span class="text-yellow-300 font-bold">HomeViewModel</span> เราจะเขียนกลุ่มทดสอบ (Group test) เพื่อทดสอบการโหลดรายการจองข้อมูลสำเร็จ 
+              </p>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3 space-y-2 text-xs">
+                <span class="text-blue-300 font-semibold block">📋 ลำดับการทำงานในเทสเคส (Test Case Sequence):</span>
+                <ul class="list-decimal pl-5 space-y-1">
+                  <li>สร้างข้อมูลปลอมขึ้นมาด้วย <code class="text-green-300">FakeBookingRepository()</code> และใส่ข้อมูลตั้งต้นด้วย <code class="text-green-300">..createBooking(kBooking)</code> </li>
+                  <li>ส่งคลังปลอมและ <code class="text-green-300">FakeUserRepository()</code> เข้าสู่ ViewModel ผ่านคอนสตรักเตอร์ </li>
+                  <li>ตรวจสอบและยืนยันผลการโหลดด้วยคำสั่ง <code class="text-yellow-300">expect(viewModel.bookings.isNotEmpty, true)</code> เพื่อยืนยันว่า ViewModel ทำการประมวลผลข้อมูลถูกต้องทันที </li>
+                </ul>
+              </div>
+
+              <!-- แหล่งข้อมูลศึกษาเพิ่มเติม -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 ศึกษา Unit Test เพิ่มเติมได้ที่:</span>
+                <a href="https://docs.flutter.dev/app-architecture/case-study/testing#testing-the-ui-layer" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://docs.flutter.dev/app-architecture/case-study/testing#testing-the-ui-layer
+                </a>
+              </div>
+            </div>
+
+            <!-- โค้ดตัวอย่างการเขียนเทสจริง -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl overflow-x-auto text-[10px] md:text-xs font-mono text-slate-300 leading-relaxed">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-2 text-slate-400">
+                <span>📄 home_screen_test.dart (Unit Test)</span>
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              </div>
+              <pre><code class="language-dart"><span class="text-purple-400">void</span> <span class="text-blue-400">main</span>() {
+                <span class="text-purple-400">group</span>(<span class="text-yellow-300">'HomeViewModel tests'</span>, () {
+                <span class="text-purple-400">test</span>(<span class="text-yellow-300">'Load bookings'</span>, () {
+                <span class="text-slate-400">// 1. จัดเตรียมคลาสจำลองและส่งเข้า ViewModel</span>
+                <span class="text-purple-400">final</span> viewModel = <span class="text-blue-400">HomeViewModel</span>(
+                <span class="text-slate-400">bookingRepository:</span> <span class="text-blue-400">FakeBookingRepository</span>()
+                ..<span class="text-purple-400">createBooking</span>(kBooking),
+                <span class="text-slate-400">userRepository:</span> <span class="text-blue-400">FakeUserRepository</span>(),
+                );
+
+                <span class="text-slate-400">// 2. ยืนยันว่าข้อมูลได้รับการดึงเข้า ViewModel สำเร็จ</span>
+                <span class="text-purple-400">expect</span>(viewModel.bookings.isNotEmpty, <span class="text-blue-400">true</span>);
+                });
+                });
+                }</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 7: การเขียนวิจิทเทสและจำลองเราเตอร์ (currentSlide === 7) -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 7">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-pink-500/30 text-pink-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 7
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: View Widget Test</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-rose-100">
+            การตรวจสอบสิทธิ์หน้าจอด้วย Widget Test และการจำลองเราเตอร์
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- อธิบายวิจิทเทสและเราเตอร์ -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                ในการทดสอบหน้าจอ <code class="bg-slate-800 px-1 text-yellow-300 rounded">HomeScreen</code> (Widget Test) เราต้องแน่ใจว่าหน้าจอสามารถโหลดข้อมูลขึ้นมาแสดงผลได้ถูกต้องและปุ่มนำทางสามารถทำงานได้ครบถ้วน 
+              </p>
+              <p class="text-xs md:text-sm">
+                <strong>💡 การจัดส่งคลังข้อมูลระดับวิดเจ็ต:</strong>
+                เราจะใช้ระบบส่งผ่านข้อมูลในฟังก์ชันช่วยเหลือ <code class="bg-slate-800 px-1 text-green-300 rounded">loadWidget</code> โดยจำลองเราเตอร์ <code class="bg-slate-800 px-1 text-pink-300 rounded">MockGoRouter</code> ผ่านโมดูล <code class="bg-slate-800 px-1 text-blue-300 rounded">mocktail</code> ร่วมกับการผูก provider คลาสปลอม เพื่อตรวจจับการเคลื่อนย้ายหน้าจอของผู้เรียน 
+              </p>
+
+              <!-- แหล่งข้อมูลศึกษาเพิ่มเติม -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 วิธีเขียน Mock & Fakes เพิ่มเติมได้ที่:</span>
+                <a href="https://docs.flutter.dev/testing/overview" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://docs.flutter.dev/testing/overview
+                </a>
+              </div>
+            </div>
+
+            <!-- โค้ดตัวอย่าง loadWidget และ setUp -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl overflow-x-auto text-[10px] md:text-xs font-mono text-slate-300 leading-relaxed space-y-3">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-1 mb-1 text-slate-400 text-xs">
+                  <span>📄 home_screen_test.dart (Widget Test Setup)</span>
+                </div>
+                <pre><code class="language-dart"><span class="text-purple-400">void</span> <span class="text-blue-400">loadWidget</span>(<span class="text-blue-400">WidgetTester</span> tester) <span class="text-purple-400">async</span> {
+                  <span class="text-purple-400">await</span> <span class="text-purple-400">testApp</span>(
+                  tester,
+                  <span class="text-blue-400">ChangeNotifierProvider</span>.value(
+                  <span class="text-slate-400">value:</span> <span class="text-blue-400">FakeAuthRepository</span>() <span class="text-purple-400">as</span> <span class="text-blue-400">AuthRepository</span>,
+                  <span class="text-slate-400">child:</span> <span class="text-blue-400">Provider</span>.value(
+                  <span class="text-slate-400">value:</span> <span class="text-blue-400">FakeItineraryConfigRepository</span>() <span class="text-purple-400">as</span> <span class="text-blue-400">ItineraryConfigRepository</span>,
+                  <span class="text-slate-400">child:</span> <span class="text-blue-400">HomeScreen</span>(<span class="text-slate-400">viewModel:</span> viewModel), <span class="text-slate-400">// วาด HomeScreen</span>
+                  ),
+                  ),
+                  <span class="text-slate-400">goRouter:</span> goRouter, <span class="text-slate-400">// ใช้เราเตอร์จำลอง</span>
+                  );
+                  }</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- สไลด์ที่ 8: หน้าสารบัญหมวดที่ 3 (currentSlide === 8) -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 8">
+        <div class="text-center max-w-4xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Flutter Mobile Dev | Week 5 • Part 3
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            สัปดาห์ที่ 5: นำเสนอโครงงาน และบทสรุปสถาปัตยกรรม MVVM
+          </h2>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญโครงสร้างเนื้อหาหมวดนำเสนอและบทสรุป (Module 3)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm">
+              <!-- หัวข้อที่ 1 -->
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-blue-300 block border-b border-white/10 pb-1">📢 นำเสนอโครงงาน</span>
+                <button @click="currentSlide = 9" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 9: แนวทางการนำเสนอและสาธิตการเชื่อมต่อจริง</button>
+              </div>
+              <!-- หัวข้อที่ 2 -->
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-green-300 block border-b border-white/10 pb-1">🕵️ การวิเคราะห์สถาปัตยกรรม</span>
+                <button @click="currentSlide = 10" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 10: การวิเคราะห์และวิพากษ์เชิงลึกในกลุ่มเรียน</button>
+              </div>
+              <!-- หัวข้อที่ 3 -->
+              <div class="bg-white/5 p-3 rounded-lg border border-white/5 space-y-1.5">
+                <span class="font-bold text-purple-300 block border-b border-white/10 pb-1">🏛️ สรุปบทเรียน</span>
+                <button @click="currentSlide = 11" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 11: สรุปหัวใจและประโยชน์ของ MVVM ในทางปฏิบัติ</button>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกหัวข้อบนสารบัญเพื่อข้ามไปยังหน้านั้นโดยตรง หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูตามลำดับการสอน</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 9: แนวทางการนำเสนอและสาธิตจริง (currentSlide === 9) -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 9">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 9
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: Project Demo</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-100">
+            การนำเสนอโครงงานและการสาธิตระบบการเชื่อมต่อแบบสด (Live Demo)
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- ข้อมูลเกณฑ์และกระบวนการนำเสนอ -->
+            <div class="space-y-4 text-sm md:text-base text-slate-200">
+              <p>
+                ในการสาธิตระบบ (Live Demo) ผู้เรียนต้องทำการรัน **Flutter Frontend** ร่วมกับการดึงข้อมูลผ่านเครือข่ายจริงจาก **Django REST Framework (DRF) Backend** 
+              </p>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2">
+                <span class="text-yellow-300 font-semibold block text-sm">📋 สิ่งสำคัญที่ต้องสาธิตในการตรวจผลงาน (Key Features to Demo)</span>
+                <ul class="list-disc pl-5 space-y-1.5 text-xs">
+                  <li><strong>Authentication Flow:</strong> การตรวจสอบรหัสผ่านและการรับส่งคีย์ยืนยันสิทธิ์แบบไร้สถานะ (Stateless JWT Authentication) </li>
+                  <li><strong>Data Integrity:</strong> การเรียกแสดงรายการจองทริป และการจัดเตรียมโครงสร้างข้อมูลอย่างรวดเร็ว </li>
+                  <li><strong>State Completion:</strong> การสั่งลบข้อมูล Booking (เช่นการปัดสไลด์ Dismissible) และการทำงานของคำสั่ง notifyListeners ในระบบ </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- แผนผังเครือข่ายระบบแบบจำลอง (Tailwind Handshake Diagram) -->
+            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-5 space-y-4 shadow-xl text-center">
+              <span class="text-xs text-yellow-300 font-semibold uppercase tracking-wider block">สถาปัตยกรรมการสื่อสารร่วมกัน (Client-Server Communication)</span>
+
+              <div class="flex justify-around items-center space-x-2 text-xs py-4">
+                <!-- Client Card -->
+                <div class="bg-blue-600/20 border border-blue-500 rounded-lg p-3 w-5/12 font-mono">
+                  <span class="font-bold text-blue-300 block mb-1">📱 Flutter Client</span>
+                  <span class="text-[10px] text-slate-400">ApiClient (Dio) & JWT Secure Storage</span> 
+                </div>
+
+                <!-- Communication Arrows -->
+                <div class="flex flex-col items-center justify-center text-yellow-400 font-mono text-[10px] w-2/12">
+                  <span>HTTP GET/POST</span>
+                  <span>➡️</span>
+                  <span class="text-[9px] text-slate-400">Bearer Token</span> 
+                  <span>⬅️</span>
+                  <span>JSON Result</span> 
+                </div>
+
+                <!-- Server Card -->
+                <div class="bg-green-600/20 border border-green-500 rounded-lg p-3 w-5/12 font-mono">
+                  <span class="font-bold text-green-300 block mb-1">🐍 DRF Backend</span>
+                  <span class="text-[10px] text-slate-400">Django Simple-JWT, SQLite DB</span> 
+                </div>
+              </div>
+
+              <!-- แหล่งข้อมูลศึกษาเพิ่มเติม -->
+              <div class="bg-slate-900/80 p-2.5 rounded-lg border border-white/5 text-left text-xs">
+                <span class="text-slate-400 block mb-1">🔗 ซอร์สโค้ดต้นแบบในการศึกษาและทดสอบ:</span>
+                <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://github.com/flutter/samples/tree/main/compass_app
+                </a> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 10: การวิเคราะห์และวิพากษ์ในกลุ่มเรียน (currentSlide === 10) -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 10">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 10
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: Peer Critique</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-100">
+            การวิเคราะห์วิพากษ์ระบบ และเกณฑ์การประเมินคุณภาพซอฟต์แวร์
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- ทฤษฎีวิชาการแยกเลเยอร์และการวิพากษ์ -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                การจัดทำเกณฑ์การวิพากษ์แนวทางการแก้ปัญหาทางสถาปัตยกรรม (Architectural Peer Critique) ช่วยกระตุ้นให้ผู้เรียนเข้าใจลึกซึ้งถึงหลักการ **Separation of Concerns** 
+              </p>
+              <p class="text-xs md:text-sm">
+                ผู้เรียนจะร่วมกันวิเคราะห์และตั้งคำถามว่า เลเยอร์นำเสนอ (View) มีตรรกะทางธุรกิจปะปนอยู่หรือไม่? หรือตัวแปรสำคัญภายในระบบจำพวกการเปลี่ยนแปลงสถานะถูกจัดเก็บและเข้าถึงอย่างรัดกุมปลอดภัยหรือไม่? 
+              </p>
+
+              <!-- ข้อมูลลิงก์กรณีศึกษา -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 เอกสารแนวทางการสื่อสารระหว่างเลเยอร์อย่างเป็นทางการ:</span>
+                <a href="https://docs.flutter.dev/app-architecture/case-study/dependency-injection" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://docs.flutter.dev/app-architecture/case-study/dependency-injection
+                </a> 
+              </div>
+            </div>
+
+            <!-- รายการตรวจสอบคุณภาพซอฟต์แวร์ (Tailwind Checklist Card) -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
+              <span class="text-xs text-yellow-300 font-semibold text-center uppercase tracking-wider block">🛡️ ดัชนีชี้วัดคุณภาพทางสถาปัตยกรรม (Code Cleanliness Checklist)</span>
+
+              <div class="space-y-2.5 text-xs">
+                <!-- Item 1 -->
+                <div class="flex items-start space-x-2">
+                  <span class="text-green-400 font-bold">✓</span>
+                  <p><strong class="text-slate-100">View Isolation:</strong> วิดเจ็ตหน้าจอไม่มีการเรียกเชื่อมต่อเครือข่ายหรือเรียกใช้ Service โดยตรงโดยไม่ผ่าน ViewModel </p>
+                </div>
+                <!-- Item 2 -->
+                <div class="flex items-start space-x-2">
+                  <span class="text-green-400 font-bold">✓</span>
+                  <p><strong class="text-slate-100">Encapsulation (Private Members):</strong> คลังข้อมูลและออบเจ็กต์สำคัญต่าง ๆ ถูกซ่อนไว้เป็นตัวแปรแบบ Private เพื่อไม่ให้ View เข้าถึงโดยตรง </p>
+                </div>
+                <!-- Item 3 -->
+                <div class="flex items-start space-x-2">
+                  <span class="text-green-400 font-bold">✓</span>
+                  <p><strong class="text-slate-100">Error Safety:</strong> มีการจัดการข้อผิดพลาดผ่านคลาสครอบคลุมผลลัพธ์ (Result Class) อย่างเป็นระบบในเลเยอร์ข้อมูล </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 11: สรุปและประโยชน์ของ MVVM (currentSlide === 11) -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 11">
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="flex justify-between items-center mb-4">
+            <span class="bg-purple-500/30 text-purple-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+              Week 5 • Slide 11
+            </span>
+            <span class="text-xs text-slate-400">หัวข้อ: MVVM Conclusion</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-fuchsia-100">
+            สรุปหัวใจหลักและคุณประโยชน์ของสถาปัตยกรรม MVVM
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- บทสรุปหัวข้อหลัก -->
+            <div class="space-y-3 text-sm md:text-base text-slate-200">
+              <p>
+                สถาปัตยกรรม **MVVM (Model-View-ViewModel)** ของ Google ไม่ใช่เพียงกฎเกณฑ์ในการวางระเบียบไฟล์ แต่ช่วยแก้ปัญหาระยะยาวในการทำแอปพลิเคชันเชิงพานิชย์อย่างแท้จริง 
+              </p>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3 space-y-2 text-xs">
+                <span class="text-blue-300 font-semibold block">🌟 ประโยชน์หลัก 3 ด้านในการนำไปประยุกต์ใช้จริง:</span>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li><strong>บำรุงรักษาง่าย (Maintainability):</strong> แก้ไขโค้ดตรรกะระบบได้โดยไม่ต้องรื้อวาดหน้าจอ UI ใหม่ทั้งหมด </li>
+                  <li><strong>ความสามารถในการขยายระบบ (Extensibility):</strong> การเพิ่มหน้าจอ UI ใหม่หรือการเปลี่ยน ViewModel จะไม่ส่งผลต่อตรรกะเดิมของ Data Layer </li>
+                  <li><strong>ความเสถียรและความน่าเชื่อถือ (Testability):</strong> แยกเขียน Unit Test ปลอมสภาพแวดล้อมได้เร็วขึ้นถึง 10 เท่า </li>
+                </ul>
+              </div>
+
+              <!-- แหล่งข้อมูลศึกษาเพิ่มเติม -->
+              <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs">
+                <span class="text-slate-400 block mb-1">🔗 คู่มือสถาปัตยกรรมแอปพลิเคชันอย่างเป็นทางการ:</span>
+                <a href="https://docs.flutter.dev/app-architecture" target="_blank" class="text-blue-300 hover:text-blue-100 transition underline break-all font-mono">
+                  https://docs.flutter.dev/app-architecture
+                </a> 
+              </div>
+            </div>
+
+            <!-- รูปแผนภาพความเชื่อมโยงข้อมูลทิศทางเดียว (Unidirectional Data Flow Diagram) -->
+            <div class="bg-slate-900 border border-white/10 rounded-2xl p-5 shadow-xl flex flex-col justify-center items-center text-center">
+              <span class="text-xs text-yellow-300 font-semibold uppercase tracking-wider block mb-4">การไหลของข้อมูลในทิศทางเดียว (Unidirectional Data Flow)</span>
+
+              <div class="w-full space-y-2 text-xs font-mono">
+                <!-- Step 1 -->
+                <div class="bg-blue-600/30 border border-blue-500 rounded p-1.5">
+                  <strong>1. View (UI)</strong>
+                  <div class="text-[10px] text-slate-400">ส่งต่อการกระทำผู้ใช้ (User Event) ผ่านคำสั่ง Command</div> 
+                </div>
+                <!-- Line -->
+                <div class="text-slate-500">⬇️</div>
+                <!-- Step 2 -->
+                <div class="bg-purple-600/30 border border-purple-500 rounded p-1.5">
+                  <strong>2. ViewModel (State Management)</strong>
+                  <div class="text-[10px] text-slate-400">จัดการกระบวนการทำงานและคุยกับคลังข้อมูล</div> 
+                </div>
+                <!-- Line -->
+                <div class="text-slate-500">⬇️</div>
+                <!-- Step 3 -->
+                <div class="bg-green-600/30 border border-green-500 rounded p-1.5">
+                  <strong>3. Repository (Data Layer)</strong>
+                  <div class="text-[10px] text-slate-400">ดึง จัดเก็บ และส่งคืนข้อมูลจริงกลับสู่ ViewModel</div> 
+                </div>
+                <!-- Line -->
+                <div class="text-slate-500">⬇️ (notifyListeners) </div>
+                <!-- Step 4 -->
+                <div class="bg-yellow-600/20 border border-yellow-500/50 rounded p-1.5">
+                  <strong>4. UI Re-renders via ListenableBuilder</strong>
+                  <div class="text-[10px] text-slate-400">หน้าจอตรวจพบการเปลี่ยนแปลงและรีเฟรชเฉพาะจุด</div> 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
+

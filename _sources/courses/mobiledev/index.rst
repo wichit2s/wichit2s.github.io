@@ -59,6 +59,8 @@
      - https://docs.flutter.dev/app-architecture/case-study 
    * - 12
      - การพัฒนา Backend
+
+       * `สไลด์ <../../_static/courses/mobiledev/wk12.html>`_
      - REST API Backend with Django REST Framework & JWT Authentication
      - https://www.django-rest-framework.org/
 
@@ -67,14 +69,20 @@
        https://www.geeksforgeeks.org/python/jwt-authentication-with-django-rest-framework/ 
    * - 13
      - การพัฒนา Flutter Data Layer
+
+       * `สไลด์ <../../_static/courses/mobiledev/wk13.html>`_
      - Data Layer (Services & Repositories)
      - 
    * - 14
      - การพัฒนา Flutter UI Layer 
+
+       * `สไลด์ <../../_static/courses/mobiledev/wk14.html>`_
      - UI Layer (ViewModels, Views & Command Pattern)
      - 
    * - 15
      - Dependency Injection & Testing
+
+       * `สไลด์ <../../_static/courses/mobiledev/wk15.html>`_
      - การพึ่งพากันผ่านระบบและการทดสอบ
      - 
    * - 16
