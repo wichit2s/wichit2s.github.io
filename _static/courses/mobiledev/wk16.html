@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Mobile Development Week 16: Course Project Assignment — real mobile app on branch 'project', README-driven run instructions, video demo with OIDC authentication, and grading rubric">
+    <meta name="keywords" content="Flutter, Course Project, OIDC, django-oidc-provider, README, Rubric">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Dev • Week 16 — Course Project</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/mobiledev/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk16.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+      <!-- สไลด์ที่ 0: หน้าปกและสารบัญ -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 0">
+        <div class="text-center max-w-4xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Course Project Assignment | Week 16
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            โปรเจกต์รายวิชา: สร้างแอปมือถือจริงบน Branch <code class="font-mono">project</code>
+          </h2>
+          <p class="text-sm text-slate-300 mb-4">ส่งมอบ 3 ชิ้น: Repository + README • แอปที่รันได้จริง (OIDC Auth + ฟีเจอร์) • วิดีโอสาธิต</p>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-4 border border-white/10 text-left">
+            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญเนื้อหาและเกณฑ์การประเมิน</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+              <div class="bg-white/5 p-3 rounded-xl border border-white/5 space-y-1.5">
+                <span class="font-bold text-blue-300 block border-b border-white/10 pb-1">📦 ข้อกำหนดโปรเจกต์</span>
+                <button @click="currentSlide = 1" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 1: ภาพรวมโปรเจกต์และสิ่งที่ต้องส่ง</button>
+                <button @click="currentSlide = 2" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 2: Repository และ Branch <code>project</code></button>
+                <button @click="currentSlide = 3" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 3: README.md ที่ต้องมี</button>
+                <button @click="currentSlide = 4" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 4: ข้อกำหนดแอป — สถาปัตยกรรม + OIDC Auth</button>
+                <button @click="currentSlide = 5" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 5: ฟีเจอร์หลัก vs. Extra Features</button>
+              </div>
+              <div class="bg-white/5 p-3 rounded-xl border border-white/5 space-y-1.5">
+                <span class="font-bold text-green-300 block border-b border-white/10 pb-1">🎬 วิดีโอและเกณฑ์ให้คะแนน</span>
+                <button @click="currentSlide = 6" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 6: สตอรีบอร์ดวิดีโอที่ต้องส่ง</button>
+                <button @click="currentSlide = 7" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 7: เทคนิคถ่ายวิดีโอให้ได้คะแนนเต็ม</button>
+                <button @click="currentSlide = 8" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 8: 📊 ตารางคะแนนหลัก (100 คะแนน)</button>
+                <button @click="currentSlide = 9" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 9: 📊 เกณฑ์รายละเอียดและข้อหักคะแนน</button>
+                <button @click="currentSlide = 10" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 10: ✅ Checklist ก่อนส่ง + ข้อผิดพลาดที่พบบ่อย</button>
+                <button @click="currentSlide = 11" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 11: สรุปและช่องทางสอบถาม</button>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 อ่านข้อกำหนดทุกข้อให้ครบก่อนเริ่มทำ โดยเฉพาะตารางคะแนน (สไลด์ที่ 8–9)</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 1: ภาพรวมโปรเจกต์ -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 1">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 1 • Project Overview & Deliverables
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            ภาพรวมโปรเจกต์: สร้างแอปจริง ส่งของจริง 🚀
+          </h2>
+          <div class="space-y-3 text-xs md:text-sm leading-relaxed text-slate-200">
+            <p>
+              นักศึกษาจะพัฒนา <strong class="text-yellow-300">แอปพลิเคชันมือถือจริง 1 โปรเจกต์</strong> โดยนำทุกอย่างที่เรียนมาทั้งภาคมาใช้ — Flutter (MVVM, Data Layer, Forms) คู่กับ Backend ยืนยันตัวตนมาตรฐาน OAuth2/OpenID Connect — แล้วส่งมอบผ่าน Git และวิดีโอสาธิต:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white/5 p-4 rounded-xl border border-blue-400/30 space-y-1.5">
+                <span class="text-2xl">🗂️</span>
+                <h4 class="font-bold text-blue-300 text-sm">ชิ้นที่ 1: Repository</h4>
+                <p class="text-[11px] text-slate-300">โปรเจกต์อยู่ใน <strong>repository หลักของนักศึกษาเอง</strong> ภายใต้ branch ชื่อ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">project</code> พร้อม README.md ที่อธิบายโปรเจกต์และวิธีรันครบถ้วน</p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-green-400/30 space-y-1.5">
+                <span class="text-2xl">📱</span>
+                <h4 class="font-bold text-green-300 text-sm">ชิ้นที่ 2: แอปที่รันได้จริง</h4>
+                <p class="text-[11px] text-slate-300">แอป Flutter ที่ล็อกอินผ่าน <strong class="text-yellow-200">OIDC Server</strong> ได้จริง มีฟีเจอร์หลักครบ + Extra Features ที่เลือกเอง — อาจารย์จะ clone แล้วรันซ้ำตาม README</p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-purple-400/30 space-y-1.5">
+                <span class="text-2xl">🎬</span>
+                <h4 class="font-bold text-purple-300 text-sm">ชิ้นที่ 3: วิดีโอสาธิต</h4>
+                <p class="text-[11px] text-slate-300">วิดีโอหนึ่งคลิปพิสูจน์ 3 เรื่อง: <strong class="text-yellow-200">รันตาม README ได้ไม่มี error</strong>, Authentication ทำงาน, และฟีเจอร์หลัก+พิเศษครบ</p>
+              </div>
+            </div>
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs flex flex-wrap gap-x-6 gap-y-1">
+              <span>👥 <strong>ส่งเดี่ยวหรือกลุ่ม:</strong> ตามประกาศของอาจารย์ผู้สอน</span>
+              <span>📅 <strong>กำหนดส่ง:</strong> ตามวันนำเสนอโปรเจกต์ในสัปดาห์สุดท้าย</span>
+              <span>🔗 <strong>ลิงก์วิดีโอ:</strong> วางไว้ใน README.md (หมวด Demo Video)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 2: Repository และ Branch project -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 2">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 2 • Repository &amp; Branch Rules
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            จัดเก็บโค้ดบน Branch <code class="font-mono">project</code> ของ Repo หลัก 🌿
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div class="space-y-3 text-xs md:text-sm text-slate-200 leading-relaxed">
+              <ul class="space-y-2 text-slate-300">
+                <li>📌 โปรเจกต์ทั้งหมด (frontend + backend config + README) ต้องอยู่ใน branch ที่ชื่อ <code class="bg-white/10 px-1.5 py-0.5 rounded text-yellow-300 font-mono">project</code> — <strong class="text-red-300">ตัวพิมพ์เล็กทั้งหมด ห้ามต่าง!</strong></li>
+                <li>📌 ใช้ repository หลักของนักศึกษาเอง (repo เดียวกับที่ใช้เรียนทั้งภาค) ไม่กระทบ branch อื่น เช่น <code class="bg-white/10 px-1 py-0.5 rounded">main</code> ที่เก็บใบงานรายสัปดาห์</li>
+                <li>📌 Commit ล่าสุดก่อนกำหนดส่ง คือ <strong class="text-yellow-300">สถานะที่อาจารย์ใช้ตรวจคะแนน</strong> — push ให้เสร็จก่อน deadline</li>
+                <li>📌 Backend (Django + django-oidc-provider) ให้แนบ settings/urls/requirements (<code class="bg-white/10 px-1 py-0.5 rounded">pyproject.toml</code>/<code class="bg-white/10 px-1 py-0.5 rounded">uv.lock</code>) ไว้ใน repo ด้วย ในโฟลเดอร์ <code class="bg-white/10 px-1 py-0.5 rounded">backend/</code></li>
+                <li>🚫 <strong class="text-red-300">ห้าม</strong> commit โฟลเดอร์ <code class="bg-white/10 px-1 py-0.5 rounded">.venv/</code>, <code class="bg-white/10 px-1 py-0.5 rounded">build/</code> หรือ secret/key ใดๆ (ใช้ <code class="bg-white/10 px-1 py-0.5 rounded">.gitignore</code>)</li>
+              </ul>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+                <p>$ <span class="text-white">git checkout -b project</span></p>
+                <p>$ <span class="text-white">git add . &amp;&amp; git commit -m "feat: course project"</span></p>
+                <p>$ <span class="text-white">git push origin project</span></p>
+                <p class="text-slate-400"># ตรวจชื่อ branch ก่อนส่งทุกครั้ง:</p>
+                <p>$ <span class="text-white">git branch --show-current</span>  <span class="text-slate-500"># ต้องได้ project</span></p>
+              </div>
+            </div>
+            <!-- Git Branch Diagram -->
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+              <h4 class="font-bold text-yellow-300 text-xs mb-2 text-center">🌿 โครงสร้าง Branch ใน Repository ของนักศึกษา</h4>
+              <svg viewBox="0 0 420 160" class="w-full h-auto">
+                <line x1="20" y1="45" x2="400" y2="45" stroke="#64748b" stroke-width="2.5"/>
+                <circle cx="50" cy="45" r="7" fill="#94a3b8"/>
+                <circle cx="130" cy="45" r="7" fill="#94a3b8"/>
+                <circle cx="210" cy="45" r="7" fill="#94a3b8"/>
+                <text x="28" y="28" fill="#cbd5e1" font-size="11" font-weight="bold">main (ใบงานรายสัปดาห์)</text>
+                <path d="M 210 45 C 240 45 240 105 270 105" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+                <line x1="270" y1="105" x2="400" y2="105" stroke="#2dd4bf" stroke-width="2.5"/>
+                <circle cx="290" cy="105" r="7" fill="#2dd4bf"/>
+                <circle cx="330" cy="105" r="7" fill="#2dd4bf"/>
+                <circle cx="370" cy="105" r="9" fill="#fbbf24" stroke="#fff" stroke-width="2"/>
+                <text x="278" y="88" fill="#5eead4" font-size="11" font-weight="bold">project (โปรเจกต์รายวิชา)</text>
+                <text x="352" y="135" fill="#fbbf24" font-size="9" font-weight="bold" text-anchor="middle">HEAD = จุดที่ตรวจคะแนน</text>
+                <rect x="255" y="118" width="90" height="16" rx="4" fill="#134e4a" opacity="0.6"/>
+                <text x="300" y="130" fill="#99f6e4" font-size="8" text-anchor="middle">backend/ + README.md</text>
+              </svg>
+              <div class="mt-2 pt-2 border-t border-white/10 text-[11px] text-slate-400 text-center">
+                💡 ทุก commit ควรมีข้อความสื่อความหมาย — ประวัติการทำงานสม่ำเสมอเป็นผลบวกต่อคะแนน Code Quality
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 3: README.md ที่ต้องมี -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 3">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 3 • README.md Specification
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            README.md: ใบเบิกทางที่ต้อง "รันได้จริง" 📄
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <p class="text-xs md:text-sm text-slate-200">
+                อาจารย์จะเปิด README → พิมพ์คำสั่งตาม → แอปต้องขึ้น โดยไม่ต้องถามนักศึกษาแม้แต่ข้อเดียว หัวข้อที่<strong class="text-yellow-300">ต้องมีครบ</strong>:
+              </p>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1.5 text-xs">
+                <p>① <strong class="text-blue-300">ชื่อโปรเจกต์ + คำอธิบาย:</strong> แก้ปัญหาอะไร ให้ใครใช้</p>
+                <p>② <strong class="text-blue-300">Features:</strong> รายการฟีเจอร์หลักและ Extra Features (✅ ครบตามที่โชว์ในวิดีโอ)</p>
+                <p>③ <strong class="text-blue-300">Tech Stack:</strong> Flutter version, Django, django-oidc-provider, uv</p>
+                <p>④ <strong class="text-blue-300">Prerequisites:</strong> สิ่งที่ต้องติดตั้งก่อน (พร้อมลิงก์ดาวน์โหลด)</p>
+                <p>⑤ <strong class="text-blue-300">How to Run:</strong> คำสั่งทีละบรรทัด ตามลำดับ terminal จริง</p>
+                <p>⑥ <strong class="text-blue-300">Demo Account:</strong> username/password ทดสอบของ OIDC</p>
+                <p>⑦ <strong class="text-blue-300">Screenshots:</strong> ภาพหน้าจอสำคัญอย่างน้อย 2 ภาพ</p>
+                <p>⑧ <strong class="text-blue-300">🎬 Demo Video:</strong> ลิงก์วิดีโอส่งท้ายโปรเจกต์</p>
+              </div>
+              <div class="bg-yellow-500/10 p-3 rounded-xl border border-yellow-500/20 text-xs">
+                ⚠️ <strong>ทดสอบด้วยตัวเองก่อนส่ง:</strong> clone ใหม่ในโฟลเดอร์เปล่า (หรือเครื่องเพื่อน) แล้วพิมพ์ตาม README ทีละบรรทัด — ทุกคำสั่งต้องผ่านโดยไม่ต้องแก้ anything
+              </div>
+            </div>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] overflow-y-auto max-h-[420px] leading-relaxed">
+              <p class="text-slate-400"># โครง README.md ตัวอย่าง (วางไว้ที่ root ของ branch project)</p>
+              <p class="text-yellow-300 mt-1"># 🧭 TripMate — แอปจองทริปท่องเที่ยว</p>
+              <p class="text-white">แอป Flutter จองทริป เข้าสู่ระบบผ่าน OIDC (django-oidc-provider)</p>
+              <p class="text-yellow-300 pt-1">## ✨ Features</p>
+              <p>- OIDC Login/Logout 🔐 (Extra: Dark Mode 🌙)</p>
+              <p>- CRUD รายการจองทริป / ค้นหา / รายการโปรด</p>
+              <p class="text-yellow-300 pt-1">## 🧰 Prerequisites</p>
+              <p>- [Flutter SDK](https://docs.flutter.dev/get-started/install)</p>
+              <p>- [uv](https://docs.astral.sh/uv/) , Google Chrome</p>
+              <p class="text-yellow-300 pt-1">## ▶️ How to Run</p>
+              <p class="text-slate-400"># Terminal 1 — Backend (OIDC Server)</p>
+              <p>$ <span class="text-white">cd backend</span></p>
+              <p>$ <span class="text-white">uv sync</span></p>
+              <p>$ <span class="text-white">uv run manage.py migrate</span></p>
+              <p>$ <span class="text-white">uv run manage.py runserver</span></p>
+              <p class="text-slate-400"># Terminal 2 — Flutter Web App</p>
+              <p>$ <span class="text-white">flutter pub get</span></p>
+              <p>$ <span class="text-white">flutter run -d chrome --web-port 50000</span></p>
+              <p class="pt-1 text-slate-400"># Demo account: student01 / test1234</p>
+              <p class="text-yellow-300 pt-1">## 🎬 Demo Video</p>
+              <p>[YouTube link — unlisted]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 4: ข้อกำหนดแอป: สถาปัตยกรรม + OIDC Auth -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 4">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 4 • App Requirements: Architecture &amp; Authentication
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            แอปต้องมีสถาปัตยกรรมจริง + ล็อกอินผ่าน OIDC จริง 🏗️🔐
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div class="space-y-3">
+              <h4 class="font-bold text-blue-300 text-sm">🏗️ สถาปัตยกรรม (ตามที่เรียนสัปดาห์ 13–15)</h4>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col gap-1.5 font-mono text-[10px] md:text-[11px]">
+                <div class="bg-yellow-600/20 border border-yellow-500/50 rounded-lg p-2 text-center"><strong class="text-yellow-300">View (UI)</strong> — หน้าจอ, Forms, Widgets</div>
+                <div class="text-center text-slate-500">⬇️ Command / ⬆️ notifyListeners</div>
+                <div class="bg-purple-600/20 border border-purple-500/50 rounded-lg p-2 text-center"><strong class="text-purple-300">ViewModel</strong> — State + Business Logic</div>
+                <div class="text-center text-slate-500">⬇️ injects</div>
+                <div class="bg-green-600/20 border border-green-500/50 rounded-lg p-2 text-center"><strong class="text-green-300">Repository</strong> — Domain Models, SSOT</div>
+                <div class="text-center text-slate-500">⬇️ calls</div>
+                <div class="bg-blue-600/20 border border-blue-500/50 rounded-lg p-2 text-center"><strong class="text-blue-300">Service</strong> — ApiClient(dio), SecureStorage, openid_client</div>
+              </div>
+              <p class="text-[11px] text-slate-400">✔ View ห้ามคุยกับ Service ตรงๆ • ✔ Dependency Injection ด้วย provider • ✔ Result Pattern กับข้อผิดพลาด</p>
+            </div>
+            <div class="space-y-3">
+              <h4 class="font-bold text-green-300 text-sm">🔐 Authentication (หัวใจที่ห้ามขาด)</h4>
+              <ul class="space-y-2 text-xs text-slate-300">
+                <li>✅ ล็อกอินผ่าน <strong class="text-yellow-300">Authorization Code Flow</strong> ไปยัง OIDC Server (django-oidc-provider) — ห้าม hard-code รหัสผ่านในแอป</li>
+                <li>✅ หน้าจอเนื้อหาทุกหน้าต้อง <strong class="text-yellow-300">เข้าถึงได้หลังล็อกอินเท่านั้น</strong> (Route Guard)</li>
+                <li>✅ เก็บ token ใน flutter_secure_storage — ปิดแอปแล้วเปิดใหม่ยังล็อกอินอยู่</li>
+                <li>✅ มีปุ่ม Logout ที่ล้าง session/token จริง</li>
+                <li>✅ Backend รันด้วย <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">uv run manage.py runserver</code> ตาม README</li>
+              </ul>
+              <div class="bg-slate-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between gap-1 font-mono text-[9px] md:text-[10px] text-center">
+                <span class="bg-blue-500/20 border border-blue-400/40 rounded px-1.5 py-1">📱 App<br/>localhost:50000</span>
+                <span class="text-slate-400">①②③<br/>authorize<br/>redirect</span>
+                <span class="bg-purple-500/20 border border-purple-400/40 rounded px-1.5 py-1">🔐 OIDC Server<br/>localhost:8000</span>
+                <span class="text-slate-400">④⑤⑥<br/>token<br/>userinfo</span>
+                <span class="bg-green-500/20 border border-green-400/40 rounded px-1.5 py-1">🔓 Protected<br/>Screens</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 5: ฟีเจอร์หลัก vs Extra Features -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 5">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 5 • Core Functions vs Extra Features
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            ฟีเจอร์หลักให้ครบ — Extra Features ให้โชว์ฝีมือ ⭐
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white/5 p-4 rounded-xl border border-blue-400/30 space-y-2">
+              <h4 class="font-bold text-blue-300 text-sm">🎯 ฟีเจอร์หลัก (ต้องมีทุกข้อ — 20 คะแนน)</h4>
+              <ul class="space-y-1.5 text-xs text-slate-300">
+                <li>① <strong>Authentication:</strong> Login/Logout ผ่าน OIDC ครบวงจร</li>
+                <li>② <strong>Create:</strong> บันทึกข้อมูลใหม่ลง backend ผ่านฟอร์ม + validation</li>
+                <li>③ <strong>Read:</strong> ดึงและแสดงรายการข้อมูลจาก API (List + Detail view)</li>
+                <li>④ <strong>Update/Delete:</strong> แก้ไขหรือลบข้อมูลของผู้ใช้ที่ล็อกอินอยู่</li>
+                <li>⑤ <strong>Error Handling:</strong> แสดงข้อความผิดพลาดอย่างมีน้ำใจ (SnackBar/dialog) เมื่อเน็ตหลุดหรือ API fail</li>
+              </ul>
+              <p class="text-[11px] text-slate-400 pt-1 border-t border-white/10">💡 ธีมแอปเลือกได้ตามใจ เช่น จองทริป, จัดการค่าใช้จ่าย, ตารางนัดหมายคลินิก, ร้านค้า, บันทึกพืชผักสวนครัว</p>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-purple-400/30 space-y-2">
+              <h4 class="font-bold text-purple-300 text-sm">✨ Extra Features (เลือกทำอย่างน้อย 1–2 ข้อ — 10 คะแนน)</h4>
+              <ul class="space-y-1.5 text-xs text-slate-300">
+                <li>🌙 Dark Mode สลับได้ + จดจำค่า preference</li>
+                <li>🔍 ค้นหา/กรองแบบเรียลไทม์ + เรียงลำดับ</li>
+                <li>🌐 สลับภาษาไทย/อังกฤษ (i18n)</li>
+                <li>📊 สรุปสถิติด้วยกราฟ (charts)</li>
+                <li>📴 Offline cache — เปิดดูข้อมูลเดิมได้เมื่อเน็ตหลุด</li>
+                <li>🔔 แจ้งเตือนในแอป, 🖼️ อัปโหลดรูป, 👥 แชร์ข้อมูลระหว่างผู้ใช้</li>
+              </ul>
+              <p class="text-[11px] text-slate-400 pt-1 border-t border-white/10">🚀 ความคิดสร้างสรรค์อื่นๆ ยินดีรับ — อธิบายเหตุผลและโชว์ในวิดีโอให้ชัดเจน</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 6: สตอรีบอร์ดวิดีโอ -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 6">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 6 • Video Storyboard (แนะนำ 5–8 นาที)
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            วิดีโอ 1 คลิป พิสูจน์ 3 เรื่องตามลำดับนี้ 🎬
+          </h2>
+          <div class="space-y-2.5">
+            <div class="flex items-stretch gap-3">
+              <span class="bg-blue-500/30 border border-blue-400/40 text-blue-200 font-mono text-[10px] md:text-xs rounded-lg px-2.5 flex items-center whitespace-nowrap">0:00–0:30</span>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2.5 flex-1 text-xs text-slate-200"><strong class="text-blue-300">① แนะนำโปรเจกต์ + Repo:</strong> ชื่อแอป/ทีม → เปิด GitHub หน้า branch <code class="text-yellow-200">project</code> → เลื่อนดู README สั้นๆ</div>
+            </div>
+            <div class="flex items-stretch gap-3">
+              <span class="bg-blue-500/30 border border-blue-400/40 text-blue-200 font-mono text-[10px] md:text-xs rounded-lg px-2.5 flex items-center whitespace-nowrap">0:30–2:30</span>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2.5 flex-1 text-xs text-slate-200"><strong class="text-blue-300">② Zero-Error Setup:</strong> clone ใหม่ในโฟลเดอร์เปล่า → พิมพ์ทุกคำสั่งตาม README <strong class="text-yellow-300">เรียงตามลำดับเป๊ะ</strong> จนแอปขึ้นบน Chrome — ห้ามตัดต่อลบ error! <em>(2 terminals: uv backend + flutter)</em></div>
+            </div>
+            <div class="flex items-stretch gap-3">
+              <span class="bg-purple-500/30 border border-purple-400/40 text-purple-200 font-mono text-[10px] md:text-xs rounded-lg px-2.5 flex items-center whitespace-nowrap">2:30–3:30</span>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2.5 flex-1 text-xs text-slate-200"><strong class="text-purple-300">③ Authentication:</strong> กด Login → หน้าล็อกอินของ Django OIDC → ใส่ demo account → Consent → กลับแอปแสดงชื่อผู้ใช้ → ปิดเปิดแอปใหม่ยังล็อกอินอยู่ → Logout ได้จริง</div>
+            </div>
+            <div class="flex items-stretch gap-3">
+              <span class="bg-green-500/30 border border-green-400/40 text-green-200 font-mono text-[10px] md:text-xs rounded-lg px-2.5 flex items-center whitespace-nowrap">3:30–5:30</span>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2.5 flex-1 text-xs text-slate-200"><strong class="text-green-300">④ Main Functions ครบทุกข้อ:</strong> Create → Read → Update → Delete ทีละฟีเจอร์ พร้อมโชว์ Error Handling อย่างน้อย 1 สถานการณ์ (เช่น ปิด backend แล้วลองโหลด)</div>
+            </div>
+            <div class="flex items-stretch gap-3">
+              <span class="bg-amber-500/30 border border-amber-400/40 text-amber-200 font-mono text-[10px] md:text-xs rounded-lg px-2.5 flex items-center whitespace-nowrap">5:30–ท้าย</span>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2.5 flex-1 text-xs text-slate-200"><strong class="text-amber-300">⑤ Extra Features + สรุป:</strong> โชว์ทีละฟีเจอร์พร้อมอธิบายว่าทำอะไร ยากตรงไหน → ปิดท้ายสรุปสิ่งที่ภูมิใจ</div>
+            </div>
+          </div>
+          <div class="mt-3 bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+            📍 <strong>ส่งที่ไหน:</strong> อัปโหลด YouTube เป็น <em>Unlisted</em> (หรือระบบ LMS ตามประกาศ) แล้ววางลิงก์ในหัวข้อ 🎬 Demo Video ของ README.md
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 7: เทคนิคถ่ายวิดีโอ -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 7">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 7 • Recording Tips for Full Marks
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            ถ่ายวิดีโออย่างไรให้ตรวจง่าย คะแนนไม่หล่น 🎥
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1.5">
+              <h4 class="font-bold text-green-300 text-xs">✅ สิ่งที่ต้องมี</h4>
+              <ul class="list-disc list-inside space-y-1 text-xs text-slate-300">
+                <li><strong>เสียงพูดอธิบาย</strong> ทุกตอนที่ทำอะไรอยู่ (ไม่ต้องตัดต่อสวย ขอชัดและครบ)</li>
+                <li>ขยายหน้าจอ/ฟอนต์ให้ <strong>เห็นคำสั่งและ output ชัด</strong> (zoom 120%+)</li>
+                <li>เห็น <strong>URL/address bar</strong> ตอน redirect ไปหน้าล็อกอิน OIDC</li>
+                <li>แสดง terminal ทั้ง 2 บาน (backend + flutter) ในขั้นตอน setup</li>
+                <li>รัน <code class="text-yellow-200">git branch --show-current</code> ให้เห็นคำว่า project หนึ่งครั้ง</li>
+              </ul>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1.5">
+              <h4 class="font-bold text-red-300 text-xs">❌ สิ่งที่ทำให้เสียคะแนน</h4>
+              <ul class="list-disc list-inside space-y-1 text-xs text-slate-300">
+                <li>ตัดต่อซ่อน error ระหว่าง setup — ถ้าพบ ให้แก้ README แล้วถ่ายใหม่ทั้งคลิป</li>
+                <li>รันแอปจากโปรเจกต์ที่เคย build ค้างไว้ (ต้องเห็น process สดจาก clone ใหม่)</li>
+                <li>วิดีโอไม่มีเสียง หรือหน้าจอเบลอจนอ่านคำสั่งไม่ออก</li>
+                <li>โชว์ฟีเจอร์แบบข้ามๆ เร็วเกินไปจนตรวจไม่ทัน</li>
+                <li>ลิงก์วิดีโอใน README เข้าไม่ได้ (permission ติด private)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-3 bg-yellow-500/10 p-3 rounded-xl border border-yellow-500/20 text-xs">
+            💡 <strong>เคล็ดลับ:</strong> ซ้อมพูดจาก storyboard 1 รอบก่อนกด record — คลิปเดียวจบ ไม่ต้องตัด ยกเว้นช่วงรอ install ยาวๆ (speed up ได้ แต่ห้ามตัดทิ้ง)
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 8: ตารางคะแนนหลัก -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 8">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-emerald-500/30 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 8 • Grading Rubric — 100 Points
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">
+            📊 เกณฑ์การให้คะแนนโปรเจกต์ (รวม 100 คะแนน)
+          </h2>
+          <table class="w-full text-left border-collapse text-[11px] md:text-xs bg-white/5 rounded-xl overflow-hidden">
+            <thead>
+              <tr class="border-b border-white/20 text-yellow-300 font-bold">
+                <th class="py-2 px-2 w-8">#</th>
+                <th class="py-2 px-2">เกณฑ์การประเมิน</th>
+                <th class="py-2 px-2">สิ่งที่ผู้ตรวจดู</th>
+                <th class="py-2 px-2 text-center w-16">คะแนน</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10 text-slate-300">
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">1</td><td class="py-1.5 px-2 font-semibold text-white">🗂️ Repository &amp; Branch</td><td class="py-1.5 px-2">อยู่ใน repo ตนเอง บน branch <code class="text-yellow-200">project</code> ถูกต้อง โครงสร้างไฟล์สะอาด ไม่มี .venv/build/secrets</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">10</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">2</td><td class="py-1.5 px-2 font-semibold text-white">📄 README.md</td><td class="py-1.5 px-2">ครบ 8 หัวข้อ อธิบายชัด คำสั่งรันถูกลำดับ มี demo account + screenshots + ลิงก์วิดีโอ</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">10</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">3</td><td class="py-1.5 px-2 font-semibold text-white">🎬 วิดีโอ: Zero-Error Setup</td><td class="py-1.5 px-2">วิดีโอแสดงการรันตาม README จาก clone ใหม่จนแอปขึ้น โดย<strong>ไม่มี error และไม่มีการแก้นอก README</strong></td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">20</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">4</td><td class="py-1.5 px-2 font-semibold text-white">🎬 วิดีโอ: OIDC Authentication</td><td class="py-1.5 px-2">Login/Logout ผ่าน OIDC Server ทำงานจริง Session อยู่รอดหลังปิดเปิดแอป Route Guard ปกป้องหน้าจอ</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">20</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">5</td><td class="py-1.5 px-2 font-semibold text-white">🎬 วิดีโอ: Main Functions</td><td class="py-1.5 px-2">CRUD ครบทำงานสมบูรณ์ พร้อม Error Handling อย่างน้อย 1 สถานการณ์</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">15</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">6</td><td class="py-1.5 px-2 font-semibold text-white">✨ Extra Features</td><td class="py-1.5 px-2">ความยาก ความสมบูรณ์ และประโยชน์ของฟีเจอร์เสริม (โชว์ในวิดีโอครบตามที่เขียนใน README)</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">10</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">7</td><td class="py-1.5 px-2 font-semibold text-white">🏗️ Code Quality &amp; Architecture</td><td class="py-1.5 px-2">แยกเลเยอร์ MVVM ถูกต้อง DI ผ่าน provider ตั้งชื่อตัวแปรดี commit message สื่อความ</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">10</td></tr>
+              <tr><td class="py-1.5 px-2 text-center font-bold text-white">8</td><td class="py-1.5 px-2 font-semibold text-white">🎥 คุณภาพการนำเสนอ</td><td class="py-1.5 px-2">เสียงชัด ภาพอ่านง่าย เวลาพอดี ลำดับเนื้อหาตรง storyboard</td><td class="py-1.5 px-2 text-center font-bold text-yellow-300">5</td></tr>
+              <tr class="bg-yellow-500/10"><td class="py-2 px-2"></td><td class="py-2 px-2 font-bold text-yellow-300" colspan="2">รวมทั้งสิ้น</td><td class="py-2 px-2 text-center font-bold text-yellow-300 text-base">100</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 9: เกณฑ์รายละเอียดและข้อหักคะแนน -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 9">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-emerald-500/30 text-emerald-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 9 • Detailed Criteria &amp; Penalties
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">
+            ระดับคะแนนย่อยและข้อหักที่ต้องระวัง ⚖️
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2 text-xs">
+                <h4 class="font-bold text-blue-300">🔍 ระดับคุณภาพของแต่ละเกณฑ์ (ตัวอย่างเกณฑ์ข้อ 4 — Auth 20 คะแนน)</h4>
+                <p><strong class="text-green-300">เต็ม 17–20:</strong> Flow สมบูรณ์ PKCE/public client, session อยู่รอด, route guard ทั้งแอป, logout สะอาด</p>
+                <p><strong class="text-yellow-300">กลาง 12–16:</strong> Login/Logout ใช้ได้ แต่ขาด route guard หรือ session หลุดหลังรีเฟรช</p>
+                <p><strong class="text-red-300">ต่ำ 0–11:</strong> ล็อกอินแบบ hard-code ไม่ผ่าน OIDC จริง / ทำงานบางส่วน / crash</p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1.5 text-xs">
+                <h4 class="font-bold text-blue-300">🧪 การตรวจซ้ำโดยผู้สอน</h4>
+                <p class="text-slate-300">อาจารย์จะ <strong class="text-yellow-300">clone และรันซ้ำจริง</strong> จาก README ของกลุ่มที่สุ่มตรวจ — หากรันไม่ผ่านตามวิดีโอ จะถูกเรียกสอบปากเปล่าโค้ด</p>
+              </div>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-red-400/30 space-y-2 text-xs">
+              <h4 class="font-bold text-red-300">⚠️ ข้อหักคะแนน</h4>
+              <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                <li>branch ผิด/ไม่มี (เช่น ใช้ <code class="text-yellow-200">Project</code> หรือ push บน main) — หัก <strong class="text-red-300">5 คะแนน</strong> + ผู้ตรวจจะมองหา branch ที่ใกล้เคียงเท่านั้น</li>
+                <li>README ไม่มี demo account ทำให้ตรวจ auth ไม่ได้ — หักตามเกณฑ์ข้อ 4</li>
+                <li>ส่งล่าช้า — หัก <strong class="text-red-300">10%</strong> ของคะแนนที่ได้ ต่อวัน (เกิน 3 วันไม่รับ)</li>
+                <li>วิดีโอตัดต่อซ่อน error ในขั้น setup — ถือว่าเกณฑ์ข้อ 3 ได้ 0 คะแนน</li>
+                <li>ลอกโค้ด/ใช้ผลงานผู้อื่นโดยไม่อ้างอิง — ดำเนินการตามระเบียบว่าด้วยความซื่อสัตย์ทางวิชาการ</li>
+              </ul>
+              <p class="text-[10px] text-slate-400 pt-1 border-t border-white/10">* ตัวเลขข้อหักอาจปรับตามประกาศของอาจารย์ผู้สอนในแต่ละภาคการศึกษา</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 10: Checklist ก่อนส่ง + ข้อผิดพลาดที่พบบ่อย -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 10">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 10 • Pre-submission Checklist
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            เช็คลิสต์ก่อนกดส่ง ✅
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white/5 p-4 rounded-xl border border-green-400/30">
+              <h4 class="font-bold text-green-300 text-xs mb-2">📋 ตรวจทั้ง 8 ข้อนี้ให้ครบ</h4>
+              <ul class="space-y-1.5 text-xs text-slate-300">
+                <li>☐ <code class="text-yellow-200">git branch --show-current</code> = <code class="text-yellow-200">project</code> และ push ล่าสุดแล้ว</li>
+                <li>☐ ทดสอบ clone ใหม่ในโฟลเดอร์เปล่า → รันตาม README ผ่านทุกคำสั่ง</li>
+                <li>☐ .gitignore กัน .venv/, build/, *.db, secret เรียบร้อย</li>
+                <li>☐ README ครบ 8 หัวข้อ มี demo account ที่ login ได้จริง</li>
+                <li>☐ วิดีโอครบ 5 ช่วงตาม storyboard เสียงชัด ลิงก์เข้าได้ (unlisted)</li>
+                <li>☐ ฟีเจอร์ในวิดีโอ == ฟีเจอร์ที่เขียนใน README (ตรงกัน 100%)</li>
+                <li>☐ ลบ console.log/debug print ที่ไม่จำเป็นออกจากโค้ด</li>
+                <li>☐ สมาชิกทุกคนในกลุ่มเข้าใจโค้ดทั้งหมด (พร้อมสอบปากเปล่า)</li>
+              </ul>
+            </div>
+            <div class="bg-white/5 p-4 rounded-xl border border-red-400/30 space-y-2">
+              <h4 class="font-bold text-red-300 text-xs">🔥 5 อันดับข้อผิดพลาดที่พบบ่อยจากรุ่นพี่</h4>
+              <ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-300">
+                <li>README รันได้บน "เครื่องตัวเอง" เพราะมี path/env ติดตั้งค้างไว้ — เครื่องอื่นพังทันที</li>
+                <li>ลืมบอกใน README ว่าต้องรัน <code class="text-yellow-200">migrate</code> / <code class="text-yellow-200">creatersakey</code> ก่อน</li>
+                <li>port ใน redirect_uris ของ OIDC client ไม่ตรงกับ --web-port ใน README</li>
+                <li>commit database ไฟล์ (*.db) พร้อม password hash ขึ้น GitHub</li>
+                <li>วิดีโอโชว์แต่ฟีเจอร์สวยๆ แต่ไม่โชว์ error handling ที่โจทย์ขอ</li>
+              </ol>
+              <div class="bg-slate-900/80 p-2.5 rounded-lg font-mono text-[10px] text-green-300">
+                <p class="text-slate-400"># จำลองการตรวจของอาจารย์ด้วยตัวเอง:</p>
+                <p>$ <span class="text-white">cd /tmp &amp;&amp; git clone -b project &lt;your-repo-url&gt;</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 11: สรุปปิดท้าย -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 11">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="bg-amber-500/30 text-amber-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 11 • Summary &amp; Support
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+            สรุป: แผนที่นำทางสู่โปรเจกต์ 100 คะแนน 🗺️
+          </h2>
+          <div class="space-y-4 text-xs md:text-sm text-slate-200">
+            <div class="bg-blue-900/30 p-5 rounded-2xl border border-blue-500/20 space-y-2">
+              <h4 class="font-bold text-yellow-300">🚀 ลำดับการลงมือที่แนะนำ</h4>
+              <ol class="list-decimal list-inside space-y-1.5 text-slate-300 text-xs">
+                <li><strong>เลือกธีมแอป + ร่างฟีเจอร์หลัก/Extra</strong> → คุยกับอาจารย์ให้ชัวร์ก่อนลงมือ</li>
+                <li><strong>สร้าง branch project</strong> แล้วย้ายโค้ดจากใบงานที่เกี่ยวข้อง (weeks 12–15 เป็นฐานที่แข็งแรงแล้ว)</li>
+                <li><strong>ทำ Auth ให้จบก่อน</strong> — เป็นคะแนนก้อนใหญ่ (20) และฟีเจอร์อื่นต้องใช้</li>
+                <li><strong>ทำ CRUD หลักให้ solid</strong> แล้วค่อยเพิ่ม Extra Features ทีละอย่าง (commit บ่อยๆ)</li>
+                <li><strong>เขียน README ควบคู่กันไป</strong> — อย่ารอทำทีหลัง แล้วทดสอบ clone ใหม่ทุกสัปดาห์</li>
+                <li><strong>ถ่ายวิดีโอตาม storyboard</strong> → เช็คลิสต์ 8 ข้อ → ส่งก่อนกำหนด</li>
+              </ol>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+                ❓ <strong>ติดตรงไหน:</strong> ถามในห้องเรียน/GitHub Issues ของ repo รายวิชา — อาจารย์ตอบคำถามเชิงแนวทาง ไม่แก้โค้ดให้
+              </div>
+              <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+                📚 <strong>อ้างอิง:</strong> สไลด์สัปดาห์ที่ 12–15 ทุกแผ่น + <a href="https://docs.flutter.dev/app-architecture" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Flutter App Architecture</a>
+              </div>
+            </div>
+            <p class="text-center text-sm text-yellow-300 font-semibold pt-2">ขอให้ทุกทีมสนุกกับการสร้างแอปของตัวเอง — เจอกันวันนำเสนอ! 🎉</p>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          // นับจำนวนสไลด์ทั้งหมด
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          
+          // เพิ่ม event listeners
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -2,11 +2,11 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Workshop in Heallth Informatics">
-    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="description" content="Mobile Development Week 13: Flutter Data Layer (Services & Repositories) with dio, connecting to the Django OIDC backend">
+    <meta name="keywords" content="Flutter, Data Layer, Repository, dio, OAuth2, OpenID Connect">
     <meta name="author" content="Wichit Sombat, PhD.,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Development</title>
+    <title>Mobile Dev • Week 13 — Flutter Data Layer</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../css/greenish.css" rel="stylesheet" />
@@ -197,6 +197,12 @@
                 </p>
               </div>
             </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed space-y-1">
+              <p class="text-slate-400"># Terminal 2 — เริ่ม Backend ที่สร้างไว้ในสัปดาห์ที่ 12 (ต้องรันคู่กันเสมอ)</p>
+              <p>$ <span class="text-white">cd oidc-backend &amp;&amp; uv run manage.py runserver</span></p>
+              <p class="text-slate-400 pt-1"># ตรวจความพร้อมของ CORS + endpoints ด้วย HTTPie ก่อนเขียนแอป</p>
+              <p>$ <span class="text-white">http :8000/.well-known/openid-configuration</span></p>
+            </div>
             <div class="bg-yellow-500/10 rounded-xl p-4 border border-yellow-500/20">
               <h4 class="font-bold text-yellow-300 mb-1">🔗 ศึกษากลไกความรอบคอบ CORS บนเว็บ (MDN):</h4>
               <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
@@ -317,6 +323,10 @@
               <p class="pl-4">}</p>
               <p class="text-blue-400">}</p>
             </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-yellow-300 text-[10px] md:text-[11px] leading-relaxed">
+              <p class="text-slate-400"># 🧪 ทดสอบ endpoint เดียวกันด้วย HTTPie ก่อนเขียนโค้ด Dart</p>
+              <p class="text-white">$ http :8000/api/bookings/ "Authorization: Bearer &lt;access_token&gt;"</p>
+            </div>
             <div class="bg-blue-900/40 rounded-xl p-3 border border-blue-500/20 text-xs">
               💡 <strong>คำแนะนำเชิงปฏิบัติ:</strong> การประมวลผลดึงค่า JSON จะตอบกลับสถานะเรียบร้อยผ่านทางรหัส <strong>HTTP 200 OK</strong> สกัดชุดโครงร่างมาห่อไว้ในกล่อง <code class="text-green-300">Result.ok</code> ทันที [10].
             </div>
@@ -351,6 +361,10 @@
               <p class="pl-8">return Result.error(e);</p>
               <p class="pl-4">}</p>
               <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-yellow-300 text-[10px] md:text-[11px] leading-relaxed">
+              <p class="text-slate-400"># 🧪 ทดสอบคำสั่งลบด้วย HTTPie (ต้องได้กลับมา 200 หรือ 204 No Content)</p>
+              <p class="text-white">$ http DELETE :8000/api/bookings/1/ "Authorization: Bearer &lt;access_token&gt;"</p>
             </div>
             <div class="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-xs">
               ⚠️ <strong>คำชี้แจง:</strong> การลบทริปจะเดินทางเริ่มจากการสไลด์หน้าจอปัดทิ้ง (Dismissible Widget Event) ฝั่ง UI แล้วส่งพาสมาให้เลเยอร์ข้อมูลเพื่อส่งคำสั่งไปทำลายสถิติฝั่ง Backend ของ Django และรายงานสถานะกลับ [9, 11].
@@ -596,6 +610,12 @@
             <p>
               การจัดเก็บ Token ยืนยันสิทธิ์ลงในเครื่องพกพา หากเก็บแบบลักไก่ผ่านระบบธรรมดา เช่น `SharedPreferences` (บน Android) หรือคุกกี้ทั่วไป จะเสี่ยงต่อการโดนฉกชิงถอนรหัสลับความปลอดภัยได้โดยง่ายจากการเจาะช่องโหว่ (เช่น Rooting หรือ XSS):
             </p>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 font-mono text-[10px] md:text-[11px] flex flex-wrap gap-2 justify-center items-center">
+              <span class="text-slate-400">🔑 คีย์ที่เราจะเก็บ (ได้จาก OIDC Server สัปดาห์ที่ 12):</span>
+              <span class="bg-purple-500/20 border border-purple-400/30 rounded-full px-3 py-1">🪪 id_token</span>
+              <span class="bg-blue-500/20 border border-blue-400/30 rounded-full px-3 py-1">🎫 access_token</span>
+              <span class="bg-green-500/20 border border-green-400/30 rounded-full px-3 py-1">♻️ refresh_token</span>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                 <h4 class="font-bold text-red-300">❌ ระบบจัดเก็บที่ไม่ปลอดภัย</h4>
@@ -716,9 +736,9 @@
               <p class="pl-4">if (err.response?.statusCode == 401) {</p>
               <p class="pl-8">final refreshToken = await _storage.read(<span class="text-red-300">'refresh_token'</span>);</p>
               <p class="pl-8">if (refreshToken != null) {</p>
-              <p class="pl-12 text-slate-400">// ยิง API ไปขอ Access Token ใบรับรองสิทธิ์ตัวล่าสุดข้ามเซิร์ฟเวอร์</p>
-              <p class="pl-12">final refreshResponse = await _refreshDio.post(<span class="text-red-300">'/token/refresh/'</span>, data: {<span class="text-red-300">'refresh'</span>: refreshToken});</p>
-              <p class="pl-12">final newAccess = refreshResponse.data[<span class="text-red-300">'access'</span>];</p>
+              <p class="pl-12 text-slate-400">// ยิงไปที่ OIDC Token Endpoint ของ django-oidc-provider (สัปดาห์ที่ 12)</p>
+              <p class="pl-12">final refreshResponse = await _refreshDio.post(<span class="text-red-300">'http://localhost:8000/token/'</span>, data: {<span class="text-red-300">'grant_type'</span>: <span class="text-red-300">'refresh_token'</span>, <span class="text-red-300">'refresh_token'</span>: refreshToken, <span class="text-red-300">'client_id'</span>: <span class="text-red-300">'flutter-web-app'</span>});</p>
+              <p class="pl-12">final newAccess = refreshResponse.data[<span class="text-red-300">'access_token'</span>];</p>
               <p class="pl-12">await _storage.write(<span class="text-red-300">'access_token'</span>, newAccess);</p>
               <p class="pl-12 text-slate-400">// แนบตัวเข้าถึงตัวใหม่ และสั่งยิงคำขอดั้งเดิมออกไปซ่อมรอบสองทันที</p>
               <p class="pl-12">err.requestOptions.headers[<span class="text-red-300">'Authorization'</span>] = <span class="text-red-300">'Bearer $newAccess'</span>;</p>
@@ -728,6 +748,9 @@
               <p class="pl-4">}</p>
               <p class="pl-4">return handler.next(err);</p>
               <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-xs">
+              🔁 <strong>อัปเดตจากสัปดาห์ที่ 12:</strong> endpoint กู้คืนสิทธิ์คือ OIDC Token Endpoint <code class="text-yellow-300">POST /token/</code> ของ django-oidc-provider (grant_type=refresh_token) — ไม่ใช่ /api/token/refresh/ แบบ Simple JWT อีกต่อไป
             </div>
             <div class="pt-1 text-center">
               <span class="text-xs text-slate-400 block">🔗 เจาะลึกวงจรการกู้สิทธิ์ Token ที่ตรวจพบจากระบบทดสอบของจริงในโครงการ Compass:</span>

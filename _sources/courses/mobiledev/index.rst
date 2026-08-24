@@ -56,37 +56,40 @@
 
        * `สไลด์ <../../_static/courses/mobiledev/wk11.html>`_
      - Flutter Review & Compass Application
-     - https://docs.flutter.dev/app-architecture/case-study 
+     - https://docs.flutter.dev/app-architecture/case-study
    * - 12
      - การพัฒนา Backend
 
        * `สไลด์ <../../_static/courses/mobiledev/wk12.html>`_
-     - REST API Backend with Django REST Framework & JWT Authentication
+     - REST API Backend with Django REST Framework, JWT Authentication & OAuth2/OpenID Connect Server (Lab: django-oidc-provider + Flutter Web)
      - https://www.django-rest-framework.org/
 
-       https://django-rest-framework-simplejwt.readthedocs.io/en/latest/ 
+       https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
 
-       https://www.geeksforgeeks.org/python/jwt-authentication-with-django-rest-framework/ 
+       https://django-oidc-provider.readthedocs.io/en/latest/
+
+       https://pub.dev/packages/openid_client
    * - 13
      - การพัฒนา Flutter Data Layer
 
        * `สไลด์ <../../_static/courses/mobiledev/wk13.html>`_
      - Data Layer (Services & Repositories)
-     - 
+     -
    * - 14
-     - การพัฒนา Flutter UI Layer 
+     - การพัฒนา Flutter UI Layer
 
        * `สไลด์ <../../_static/courses/mobiledev/wk14.html>`_
      - UI Layer (ViewModels, Views & Command Pattern)
-     - 
+     -
    * - 15
      - Dependency Injection & Testing
 
        * `สไลด์ <../../_static/courses/mobiledev/wk15.html>`_
      - การพึ่งพากันผ่านระบบและการทดสอบ
-     - 
+     -
    * - 16
      - นำเสนอโปรเจกต์
-     - นำเสนอผลงาน และรับข้อเสนอแนะ
-     - -
 
+       * `สไลด์ <../../_static/courses/mobiledev/wk16.html>`_
+     - Course Project: real mobile app on branch ``project`` + README + video demo (OIDC authentication, main functions & extra features)
+     - เกณฑ์การให้คะแนน (Rubric) อยู่ในสไลด์

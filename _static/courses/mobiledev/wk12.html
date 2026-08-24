@@ -2,11 +2,11 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Workshop in Heallth Informatics">
-    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="description" content="Mobile Development Week 12: DRF Backend, JWT, OAuth2/OpenID Connect Lab with django-oidc-provider and Flutter Web">
+    <meta name="keywords" content="Flutter, Django REST Framework, JWT, OAuth2, OpenID Connect, django-oidc-provider">
     <meta name="author" content="Wichit Sombat, PhD.,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Development</title>
+    <title>Mobile Dev • Week 12 — Backend & OIDC</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../css/greenish.css" rel="stylesheet" />
@@ -264,16 +264,18 @@
           </h2>
           <div class="space-y-4 text-xs md:text-sm leading-relaxed">
             <p>
-              ก่อนเริ่มต้นเขียนระบบฐานข้อมูลหลังบ้าน เรามาตรวจสอบเครื่องมือและสร้างสภาพแวดล้อมจำลอง (Virtual Environment) สำหรับพัฒนาโปรเจกต์ Django ของเราให้เรียบร้อยกันก่อน:
+              ก่อนเริ่มต้นเขียนระบบฐานข้อมูลหลังบ้าน เราจะใช้ <strong class="text-yellow-300">uv</strong> ตัวจัดการแพ็กเกจ Python ความเร็วสูงยุคใหม่ ที่ทำงานแทนคู่หู pip + venv ได้ครบวงจร (จัดการ interpreter, dependencies และ lockfile ให้อัตโนมัติ):
             </p>
             <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 space-y-1">
-              <p class="text-slate-400"># 1. ตรวจสอบเวอร์ชัน Python (ต้องการ 3.8+)</p>
-              <p>$ <span class="text-white">python --version</span></p>
-              <p class="text-slate-400 pt-2"># 2. สร้าง Virtual Environment และเปิดใช้งาน</p>
-              <p>$ <span class="text-white">python -m venv venv</span></p>
-              <p>$ <span class="text-white">source venv/bin/activate</span> <span class="text-slate-500"># สำหรับ Windows: venv\Scripts\activate</span></p>
-              <p class="text-slate-400 pt-2"># 3. ติดตั้ง Django, DRF, djangorestframework-simplejwt, และ CORS-headers</p>
-              <p>$ <span class="text-white">pip install django djangorestframework djangorestframework-simplejwt django-cors-headers</span></p>
+              <p class="text-slate-400"># 1. ติดตั้ง uv (macOS/Linux)</p>
+              <p>$ <span class="text-white">curl -LsSf https://astral.sh/uv/install.sh | sh</span></p>
+              <p class="text-slate-500 pl-8"># Windows (PowerShell): irm https://astral.sh/uv/install.ps1 | iex</p>
+              <p class="text-slate-400 pt-2"># 2. สร้างโปรเจกต์และติดตั้ง dependencies (uv สร้าง .venv + uv.lock ให้อัตโนมัติ)</p>
+              <p>$ <span class="text-white">uv init wk12-backend &amp;&amp; cd wk12-backend</span></p>
+              <p>$ <span class="text-white">uv add django djangorestframework djangorestframework-simplejwt django-cors-headers django-oidc-provider</span></p>
+              <p class="text-slate-400 pt-2"># 3. สร้างโปรเจกต์ Django และรันเซิร์ฟเวอร์ (ไม่ต้อง activate venv เอง)</p>
+              <p>$ <span class="text-white">uv run django-admin startproject config .</span></p>
+              <p>$ <span class="text-white">uv run manage.py runserver</span></p>
             </div>
             <div class="pt-2">
               <span class="text-xs text-slate-400 block mb-1">🔗 เอกสารอ้างอิงและคู่มือการสร้างโปรเจกต์ DRF (PythonTutorials):</span>
@@ -363,7 +365,7 @@
         </div>
       </div>
 
-      <!-- สไลด์ที่ 31: ปฏิบัติการขั้นที่ 1: พัฒนา Protected API View และทดสอบด้วย cURL / Postman -->
+      <!-- สไลด์ที่ 8: ปฏิบัติการขั้นที่ 1: พัฒนา Protected API View และทดสอบด้วย HTTPie -->
       <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 8">
         <div class="max-w-4xl mx-auto w-full">
           <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
@@ -391,10 +393,12 @@
                 <p class="pl-8">return Response(content)</p>
               </div>
               <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-yellow-300 text-[10px] leading-relaxed overflow-x-auto space-y-2">
-                <p class="text-slate-400"># 🧪 ทดสอบยิง API เพื่อขอรับคู่ Token</p>
-                <p class="text-white">$ curl -X POST -H "Content-Type: application/json" -d '{"username":"student", "password":"password123"}' http://localhost:8000/api/token/</p>
-                <p class="text-slate-400 pt-2"># 🧪 ทดสอบดึงข้อมูลทริปการท่องเที่ยว (ส่ง Token)</p>
-                <p class="text-white">$ curl -H "Authorization: Bearer &lt;access_token&gt;" http://localhost:8000/api/bookings/</p>
+                <p class="text-slate-400"># 🧪 ติดตั้ง HTTPie ครั้งแรกด้วย uv (เครื่องมือทดสอบ API ที่ใช้ง่ายกว่า curl)</p>
+                <p class="text-white">$ uv tool install httpie</p>
+                <p class="text-slate-400 pt-2"># 🧪 ขอรับคู่ Token — httpie แปลง key=value เป็น JSON ให้อัตโนมัติ</p>
+                <p class="text-white">$ http POST :8000/api/token/ username=student password=password123</p>
+                <p class="text-slate-400 pt-2"># 🧪 ดึงข้อมูลทริปการท่องเที่ยวโดยแนบ Access Token ใน Header</p>
+                <p class="text-white">$ http :8000/api/bookings/ "Authorization: Bearer &lt;access_token&gt;"</p>
               </div>
             </div>
             <div class="pt-1">
@@ -780,252 +784,511 @@
         </div>
       </div>
 
-      <!-- สไลด์ที่ 18: สารบัญสัปดาห์ที่ 2 หมวดที่ 5 (Table of Contents) -->
+      <!-- สไลด์ที่ 18: สารบัญหมวดที่ 5: OAuth 2.0 & OpenID Connect -->
       <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 18">
         <div class="text-center max-w-4xl mx-auto w-full">
           <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
-            Flutter Mobile Dev | Week 2 • Part 5
+            OAuth 2.0 &amp; OpenID Connect | Week 12 • Part 5
           </span>
           <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-            หมวดที่ 5: การจัดการสถานะ Widget และแนวคิด Declarative UI
+            หมวดที่ 5: มาตรฐานการยืนยันตัวตนยุคใหม่ OAuth 2.0 และ OpenID Connect
           </h2>
-          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left">
-            <h3 class="text-base font-semibold text-yellow-300 mb-3 text-center">🎯 สารบัญโครงสร้างเนื้อหาบทปฏิบัติการ</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
-              <div class="bg-white/5 p-4 rounded-xl border border-white/5 space-y-2">
-                <span class="font-bold text-blue-300 block border-b border-white/10 pb-1">📐 แนวคิดและสถาปัตยกรรม UI</span>
-                <button @click="currentSlide = 19" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 19: Declarative UI & f(State) = UI</button>
-                <button @click="currentSlide = 20" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 20: เจาะลึก Stateless vs. Stateful Widget</button>
-                <button @click="currentSlide = 21" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 21: วงจรชีวิตของ StatefulWidget (Lifecycle)</button>
-              </div>
-              <div class="bg-white/5 p-4 rounded-xl border border-white/5 space-y-2">
-                <span class="font-bold text-green-300 block border-b border-white/10 pb-1">💻 ปฏิบัติการและการส่งต่อระบบ</span>
-                <button @click="currentSlide = 22" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 22: ลงมือสร้าง Interactive Counter ด้วย setState</button>
-                <button @click="currentSlide = 23" class="w-full hover:text-yellow-200 text-left transition py-0.5">• สไลด์ที่ 23: สรุปบทเรียน & ทิศทางสู่สัปดาห์ที่ 3 (Navigation)</button>
-              </div>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+            <h3 class="text-base font-semibold text-yellow-300 mb-4 text-center">🎯 สารบัญโครงสร้างเนื้อหาหมวดที่ 5</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <button @click="currentSlide = 19" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 19</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">บทบาททั้ง 4 ของ OAuth2 และ OIDC</div>
+              </button>
+              <button @click="currentSlide = 20" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 20</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">Authorization Code Flow + PKCE</div>
+              </button>
+              <button @click="currentSlide = 21" class="bg-white/5 hover:bg-blue-500/20 hover:border-blue-400 transition text-left p-4 rounded-xl border border-white/10 group">
+                <div class="text-xs text-blue-300 font-bold">สไลด์ที่ 21</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ID Token, Discovery &amp; django-oidc-provider</div>
+              </button>
             </div>
           </div>
-          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกที่รายการเมนูหัวข้อด้านบนเพื่อข้ามไปยังหน้าสไลด์ที่สนใจ หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูตามลำดับ</div>
+          <div class="text-xs text-slate-400">💡 คำชี้แนะ: คลิกที่เมนูเพื่อเลือกศึกษาแต่ละสไลด์ หรือใช้ปุ่มควบคุมด้านล่างเพื่อไล่ดูเนื้อหาทีละหน้า</div>
         </div>
       </div>
 
-      <!-- สไลด์ที่ 19: แนวคิด Declarative UI: UI คือผลลัพธ์ของ State -->
+      <!-- สไลด์ที่ 19: บทบาทของ OAuth2/OIDC และชนิดของ Token -->
       <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 19">
         <div class="max-w-5xl mx-auto w-full">
-          <div class="flex flex-col lg:flex-row items-center gap-8">
-            <div class="flex-1 space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
-              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
-                Slide 19 • Declarative UI Architecture
-              </span>
-              <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-                แนวคิด Declarative UI: UI คือฟังก์ชันของสถานะ 
-              </h2>
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 19 • OAuth2 Roles &amp; OIDC Tokens
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            บทบาททั้ง 4 ของ OAuth 2.0 และชนิด Token ของ OIDC 🎭
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div class="space-y-3 text-xs md:text-sm text-slate-200 leading-relaxed">
               <p>
-                ในแพลตฟอร์มยุคก่อนหน้า (Imperative UI) เรามักเขียนโค้ดเพื่อคอยปรับเปลี่ยนหน้าจอทีละส่วน เช่น <code class="bg-white/10 px-1 py-0.5 rounded text-red-300">view.setText()</code> แต่ใน Flutter เราใช้สถาปัตยกรรมแบบ **Declarative UI** ซึ่งหมายความว่า **UI หน้าจอจะถูกวาดขึ้นมาใหม่ทั้งหมดจากข้อมูลสถานะ (State) ล่าสุด** เสมอ [1]:
+                <strong class="text-yellow-300">OAuth 2.0</strong> (RFC 6749) คือมาตรฐานการ "มอบสิทธิ์เข้าถึง" (Authorization) โดยไม่ต้องส่งรหัสผ่านให้แอป ส่วน <strong class="text-yellow-300">OpenID Connect (OIDC)</strong> เป็นชั้นข้อมูลตัวตน (Identity Layer) ที่วางทับบน OAuth2 เพื่อบอกว่า "ผู้ใช้คนนี้เป็นใคร":
               </p>
-              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-3">
-                <h4 class="font-bold text-yellow-300 text-sm">🧩 สมการหัวใจสำคัญ: <code class="text-green-300 text-base font-mono">f(State) = UI</code></h4>
-                <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-300">
-                  <li><strong>State (สถานะ):</strong> ข้อมูลดิบที่กำลังใช้งานในปัจจุบัน เช่น ข้อมูลผู้ใช้ หรือจำนวนยอดคลิกบนหน้าจอ [1]</li>
-                  <li><strong>f (ฟังก์ชัน):</strong> วิดเจ็ตที่เราเขียนขึ้น (Build Method) เพื่อระบุโครงสร้างการจัดวาง</li>
-                  <li><strong>UI (การแสดงผล):</strong> ผลลัพธ์ที่ปรากฏแก่สายตาผู้ใช้บนหน้าจอสมาร์ตโฟนโดยอัตโนมัติ [1]</li>
-                </ul>
-              </div>
-              <div class="pt-2">
-                <span class="text-xs text-slate-400 block mb-0.5">🔗 เจาะลึกแนวคิด Declarative UI ทางการจากทีมงานผู้พัฒนา Flutter:</span>
-                <a href="https://docs.flutter.dev/app-architecture/concepts#ui-is-a-function-of-immutable-state" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
-                  https://docs.flutter.dev/app-architecture/concepts#ui-is-a-function-of-immutable-state 
-                </a>
-              </div>
+              <ul class="space-y-1.5 text-slate-300 text-xs">
+                <li>🧑‍💻 <strong>Resource Owner:</strong> ผู้ใช้ปลายทาง เจ้าของข้อมูลและรหัสผ่าน</li>
+                <li>📱 <strong>Client:</strong> แอปของเรา (Flutter Web App) ที่ขอสิทธิ์เข้าถึง</li>
+                <li>🔐 <strong>Authorization Server (OP):</strong> เซิร์ฟเวอร์ยืนยันตัวตนที่ออก Token</li>
+                <li>💾 <strong>Resource Server:</strong> REST API ที่รับ Access Token เพื่อส่งข้อมูล</li>
+              </ul>
+              <table class="w-full text-left border-collapse text-[11px] md:text-xs bg-white/5 rounded-xl overflow-hidden">
+                <thead>
+                  <tr class="border-b border-white/20 text-yellow-300 font-bold">
+                    <th class="p-2">Token</th>
+                    <th class="p-2">หน้าที่</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/10 text-slate-300">
+                  <tr><td class="p-2 font-bold text-white">🪪 ID Token</td><td class="p-2">JWT ที่พิสูจน์ตัวตนผู้ใช้ (claims เช่น name, email)</td></tr>
+                  <tr><td class="p-2 font-bold text-white">🎫 Access Token</td><td class="p-2">กุญแจสำหรับเรียก API / userinfo</td></tr>
+                  <tr><td class="p-2 font-bold text-white">♻️ Refresh Token</td><td class="p-2">ใช้ขอ Access Token ชุดใหม่เมื่อหมดอายุ</td></tr>
+                </tbody>
+              </table>
             </div>
-            <div class="w-full lg:w-1/2">
-              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
-                <img src="ui_function_of_state.jpg" alt="UI is a function of State" class="w-full h-auto rounded-xl object-cover" />
-                <div class="text-center text-[10px] text-slate-400 mt-2">📊 แผนผัง f(State) = UI แสดงขั้นตอนการป้อนโครงร่าง State เข้าสู่ฟังก์ชันประมวลผลเพื่อพ่นผลลัพธ์ UI ข้ามไปวาดบนหน้าจอ</div>
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+              <h4 class="font-bold text-yellow-300 text-xs mb-3 text-center">📊 แผนผังบทบาทในระบบ OAuth2/OIDC</h4>
+              <div class="flex flex-col gap-1 font-mono text-[10px] md:text-[11px]">
+                <div class="border border-amber-400/40 p-2 rounded text-center bg-amber-900/20">🧑‍💻 Resource Owner (ผู้ใช้)</div>
+                <div class="text-center text-slate-400">① ขอใช้งานผ่านแอป</div>
+                <div class="border border-blue-400/40 p-2 rounded text-center bg-blue-900/20">📱 Client — Flutter Web App (localhost:50000)</div>
+                <div class="text-center text-slate-400">② ขอ code → แลก tokens</div>
+                <div class="border border-purple-400/40 p-2 rounded text-center bg-purple-900/20">🔐 Authorization Server — Django OIDC Provider (localhost:8000)</div>
+                <div class="text-center text-slate-400">③ นำ Access Token ไปเรียก API</div>
+                <div class="border border-green-400/40 p-2 rounded text-center bg-green-900/20">💾 Resource Server — REST API / Database</div>
+              </div>
+              <div class="mt-3 pt-2 border-t border-white/10 text-center text-[11px]">
+                <span class="text-slate-400 block mb-0.5">🔗 อ่านสเปคฉบับเต็ม:</span>
+                <a href="https://openid.net/specs/openid-connect-core-1_0.html" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                  OpenID Connect Core 1.0 
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- สไลด์ที่ 20: เจาะลึกความแตกต่าง: Stateless Widget vs. Stateful Widget -->
+      <!-- สไลด์ที่ 20: Authorization Code Flow + PKCE -->
       <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 20">
         <div class="max-w-5xl mx-auto w-full">
-          <div class="flex flex-col lg:flex-row items-center gap-8">
-            <div class="w-full lg:w-1/2">
-              <div class="bg-white/5 p-3 rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
-                <img src="stateless_vs_stateful.jpg" alt="Stateless vs Stateful Widget" class="w-full h-auto rounded-xl object-cover" />
-                <div class="text-center text-[10px] text-slate-400 mt-2">🧩 แผนภาพเปรียบเทียบวงโครงสร้างภายในของ Stateless Widget (คงที่ไร้การเปลี่ยนแปลง) สลับกับ Stateful Widget (ผันแปรตาม Event กระตุ้น)</div>
-              </div>
-            </div>
-            <div class="flex-1 space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
-              <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
-                Slide 20 • Stateless vs Stateful Basics
-              </span>
-              <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-                วิดเจ็ตสองตระกูลหลัก: Stateless vs. Stateful Widget 
-              </h2>
-              <p>
-                ในการเรียนรู้สัปดาห์ที่ 2 นักศึกษาจะต้องทำความเข้าใจข้อแตกต่างและขีดความสามารถการจัดวางโครงข่ายสถานะระหว่างสองวิดเจ็ตหลักดังต่อไปนี้ [2]:
-              </p>
-              <div class="space-y-3">
-                <div class="bg-white/5 p-3 rounded-xl border border-white/10">
-                  <h4 class="font-bold text-blue-300 text-xs md:text-sm">🔲 1. Stateless Widget (วิดเจ็ตไร้สถานะภายใน)</h4>
-                  <p class="text-[11px] md:text-xs text-slate-300 mt-1">
-                    วิดเจ็ตประเภท **Immutable** ที่ข้อมูลคุณสมบัติคงที่ ไม่สามารถเปลี่ยนแปลงค่าได้ในตัวเองหลังจากสร้างขึ้นแล้ว เหมาะสำหรับทำหน้าปก ป้ายข้อความทั่วไป หรือปุ่มกดที่ไม่ต้องการสลับสถานะ [2]
-                  </p>
-                </div>
-                <div class="bg-white/5 p-3 rounded-xl border border-white/10">
-                  <h4 class="font-bold text-yellow-300 text-xs md:text-sm">🔄 2. Stateful Widget (วิดเจ็ตแบบมีสถานะผันแปร)</h4>
-                  <p class="text-[11px] md:text-xs text-slate-300 mt-1">
-                    วิดเจ็ตพิเศษที่สามารถ **จดจำและอัปเดตสถานะของตัวเอง** ตลอดช่วงเวลาที่ปรากฏบนหน้าจอได้ ทำงานร่วมกับคลาสคู่หูคือ `State` ในการสั่งระบายสีวาดหน้าจอใหม่เมื่อตรวจพบว่าข้อมูลเกิดการเปลี่ยนสลับไปจากเดิม [2]
-                  </p>
-                </div>
-              </div>
-              <div class="pt-1">
-                <span class="text-xs text-slate-400 block mb-0.5">🔗 อ่านคู่มือสอนใช้งานและเปรียบเทียบวิดเจ็ตสองตระกูลสากล:</span>
-                <a href="https://docs.flutter.dev/development/ui/widgets" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
-                  docs.flutter.dev: Introduction to Widgets 
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- สไลด์ที่ 21: วงจรชีวิตของ StatefulWidget (StatefulWidget Lifecycle) -->
-      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 21">
-        <div class="max-w-4xl mx-auto w-full">
           <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
-            Slide 21 • StatefulWidget Lifecycle
+            Slide 20 • Authorization Code Flow + PKCE
           </span>
           <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-            วงจรชีวิตของวิดเจ็ตแบบมีสถานะ (StatefulWidget Lifecycle) 
+            Authorization Code Flow พร้อม PKCE 🔄
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center leading-relaxed">
-            <div class="space-y-3 text-xs md:text-sm text-slate-200">
-              <p>
-                การเขียนวิดเจ็ตที่มีการเชื่อมโยงระบบหลังบ้านหรือกล้องถ่ายภาพ นักศึกษาจำเป็นต้องจดจำ **วงจรชีวิต (Lifecycle)** ของวิดเจ็ตให้ดี เพื่อให้สามารถเรียกอ่านหรือทำลายล้างหน่วยความจำได้อย่างปลอดภัยสูงสุด:
-              </p>
-              <ul class="space-y-2 text-xs md:text-sm text-slate-300">
-                <li>✨ <strong class="text-yellow-300">initState():</strong> ทำงานเพียง **ครั้งเดียว** เมื่อวิดเจ็ตตื่นตัวขึ้นมาแรกสุด เหมาะสำหรับกำหนดค่าเริ่มต้นให้กับ Controller ในเครื่อง</li>
-                <li>🖌️ <strong class="text-blue-300">build():</strong> วาดและเรนเดอร์ UI ซ้ำบ่อยครั้งตามสัญญาณการ Rebuild ทั่วแอป</li>
-                <li>🗑️ <strong class="text-red-400">dispose():</strong> ทำงานสุดท้ายเมื่อวิดเจ็ตกำลังจะหายไปจากหน้าจอ ทำหน้าที่สั่งปิดพอร์ต ทำลาย Controller เพื่อเลี่ยงหน่วยความจำรั่ว</li>
-              </ul>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start leading-relaxed">
+            <div class="space-y-2 text-xs md:text-sm">
+              <div class="flex items-start gap-2"><span class="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span><p class="text-slate-200">📱 Flutter เปิดเบราว์เซอร์ไปที่ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">GET /authorize/?response_type=code&amp;code_challenge=…&amp;scope=openid</code></p></div>
+              <div class="flex items-start gap-2"><span class="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span><p class="text-slate-200">👤 ผู้ใช้ล็อกอินที่หน้าเว็บ Django แล้วกดยืนยัน (Consent)</p></div>
+              <div class="flex items-start gap-2"><span class="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span><p class="text-slate-200">🔐 Redirect กลับ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">redirect_uri?code=abc123</code> — code ใช้ได้ครั้งเดียว อายุสั้น</p></div>
+              <div class="flex items-start gap-2"><span class="bg-blue-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px] shrink-0 mt-0.5">4</span><p class="text-slate-200">📱 แอปส่ง <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">POST /token/</code> พร้อม code + <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">code_verifier</code></p></div>
+              <div class="flex items-start gap-2"><span class="bg-green-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px] shrink-0 mt-0.5">5</span><p class="text-slate-200">🔐 ตรวจ verifier กับ challenge สำเร็จ → ออก ID Token + Access Token (+ Refresh)</p></div>
+              <div class="flex items-start gap-2"><span class="bg-green-500 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center text-[10px] shrink-0 mt-0.5">6</span><p class="text-slate-200">📱 ถอดรหัส ID Token เพื่อรู้จักผู้ใช้ และเก็บ Access Token ไว้เรียก API</p></div>
+              <div class="mt-2 p-3 bg-blue-900/30 rounded-xl border border-blue-500/20 text-[11px] text-slate-200">
+                💡 <strong>ทำไมต้อง PKCE?</strong> แอปมือถือ/เว็บ SPA เป็น <em>public client</em> (เก็บ client_secret ไม่ได้) PKCE จึงใช้คู่ code_verifier/code_challenge แทน secret ป้องกันผู้ดักฟังขโมย code ไปแลก Token (RFC 7636)
+                <a href="https://datatracker.ietf.org/doc/html/rfc7636" target="_blank" rel="noopener noreferrer" class="block text-blue-400 hover:text-blue-300 underline font-semibold mt-1">🔗 RFC 7636: Proof Key for Code Exchange</a>
+              </div>
             </div>
-            <!-- Inline SVG Lifecycle Diagram -->
-            <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col justify-center items-center">
-              <h4 class="font-bold text-yellow-300 text-xs mb-3 text-center">⚙️ แผนภูมิขั้นตอนวงจรทำงาน (Stateful Lifecycle Steps)</h4>
-              <svg viewBox="0 0 350 200" class="w-full h-auto max-w-xs">
-                <!-- Step 1: Create State -->
-                <rect x="10" y="10" width="80" height="30" rx="5" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" stroke-width="1.5" />
-                <text x="50" y="28" fill="#fff" font-size="9" text-anchor="middle" font-weight="bold">createState()</text>
-
-                <line x1="90" y1="25" x2="130" y2="25" stroke="#3b82f6" stroke-width="1.5" />
-                <polygon points="130,25 125,22 125,28" fill="#3b82f6" />
-
-                <!-- Step 2: Init State -->
-                <rect x="130" y="10" width="80" height="30" rx="5" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" stroke-width="1.5" />
-                <text x="170" y="28" fill="#fff" font-size="9" text-anchor="middle" font-weight="bold">initState()</text>
-
-                <line x1="210" y1="25" x2="250" y2="25" stroke="#f59e0b" stroke-width="1.5" />
-                <polygon points="250,25 245,22 245,28" fill="#f59e0b" />
-
-                <!-- Step 3: Build UI -->
-                <rect x="250" y="10" width="80" height="30" rx="5" fill="#10b981" opacity="0.3" stroke="#10b981" stroke-width="1.5" />
-                <text x="290" y="28" fill="#fff" font-size="9" text-anchor="middle" font-weight="bold">build()</text>
-
-                <!-- Cycle path for setState -->
-                <path d="M 290 40 L 290 100 L 170 100 L 170 40" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="2,2" />
-                <polygon points="170,40 167,45 173,45" fill="#10b981" />
-                <text x="230" y="94" fill="#10b981" font-size="8" text-anchor="middle" font-weight="bold">🔄 setState() Rebuild Cycle</text>
-
-                <!-- Path to dispose -->
-                <line x1="290" y1="40" x2="290" y2="130" stroke="#ef4444" stroke-width="1.5" />
-                <polygon points="290,130 287,125 293,125" fill="#ef4444" />
-
-                <!-- Step 4: Dispose -->
-                <rect x="250" y="130" width="80" height="30" rx="5" fill="#ef4444" opacity="0.3" stroke="#ef4444" stroke-width="1.5" />
-                <text x="290" y="148" fill="#fff" font-size="9" text-anchor="middle" font-weight="bold">dispose()</text>
+            <!-- SVG Sequence Diagram -->
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+              <h4 class="font-bold text-yellow-300 text-xs mb-2 text-center">📊 แผนภาพลำดับเหตุการณ์ (Sequence Diagram)</h4>
+              <svg viewBox="0 0 380 320" class="w-full h-auto max-w-md mx-auto">
+                <rect x="15" y="8" width="90" height="26" rx="6" fill="#3b82f6" opacity="0.35" stroke="#60a5fa"/>
+                <text x="60" y="25" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">📱 Flutter App</text>
+                <rect x="145" y="8" width="80" height="26" rx="6" fill="#f59e0b" opacity="0.35" stroke="#fbbf24"/>
+                <text x="185" y="25" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">👤 User</text>
+                <rect x="270" y="8" width="95" height="26" rx="6" fill="#a855f7" opacity="0.35" stroke="#c084fc"/>
+                <text x="317" y="25" fill="#fff" font-size="11" text-anchor="middle" font-weight="bold">🔐 Django OP</text>
+                <line x1="60" y1="34" x2="60" y2="310" stroke="#60a5fa" stroke-dasharray="3,3" opacity="0.5"/>
+                <line x1="185" y1="34" x2="185" y2="310" stroke="#fbbf24" stroke-dasharray="3,3" opacity="0.5"/>
+                <line x1="317" y1="34" x2="317" y2="310" stroke="#c084fc" stroke-dasharray="3,3" opacity="0.5"/>
+                <line x1="62" y1="62" x2="315" y2="62" stroke="#93c5fd" stroke-width="1.5"/><polygon points="315,62 309,59 309,65" fill="#93c5fd"/>
+                <text x="188" y="56" fill="#bfdbfe" font-size="8" text-anchor="middle">① GET /authorize/ + code_challenge</text>
+                <line x1="315" y1="96" x2="187" y2="96" stroke="#fcd34d" stroke-width="1.5"/><polygon points="187,96 193,93 193,99" fill="#fcd34d"/>
+                <text x="250" y="90" fill="#fde68a" font-size="8" text-anchor="middle">② หน้า Login + Consent</text>
+                <line x1="187" y1="130" x2="315" y2="130" stroke="#fcd34d" stroke-width="1.5"/><polygon points="315,130 309,127 309,133" fill="#fcd34d"/>
+                <text x="250" y="124" fill="#fde68a" font-size="8" text-anchor="middle">③ username / password ✓</text>
+                <line x1="315" y1="164" x2="62" y2="164" stroke="#93c5fd" stroke-width="1.5"/><polygon points="62,164 68,161 68,167" fill="#93c5fd"/>
+                <text x="188" y="158" fill="#bfdbfe" font-size="8" text-anchor="middle">④ redirect_uri?code=abc123</text>
+                <line x1="62" y1="198" x2="315" y2="198" stroke="#93c5fd" stroke-width="1.5"/><polygon points="315,198 309,195 309,201" fill="#93c5fd"/>
+                <text x="188" y="192" fill="#bfdbfe" font-size="8" text-anchor="middle">⑤ POST /token/ + code + verifier</text>
+                <line x1="315" y1="232" x2="62" y2="232" stroke="#4ade80" stroke-width="1.8"/><polygon points="62,232 68,229 68,235" fill="#4ade80"/>
+                <text x="188" y="226" fill="#86efac" font-size="8" text-anchor="middle">⑥ ID Token + Access Token (+Refresh)</text>
+                <rect x="40" y="256" width="295" height="44" rx="8" fill="#10b981" opacity="0.15" stroke="#10b981"/>
+                <text x="188" y="274" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">🔓 สำเร็จ! แอปรู้จักผู้ใช้แล้ว</text>
+                <text x="188" y="290" fill="#a7f3d0" font-size="8" text-anchor="middle">getUserInfo() → name, email | เรียก API ด้วย Access Token</text>
               </svg>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- สไลด์ที่ 22: ภาคปฏิบัติ: สร้างปุ่มกดนับเลขด้วย setState -->
-      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 22">
-        <div class="max-w-4xl mx-auto w-full">
+      <!-- สไลด์ที่ 21: ID Token, Discovery และ django-oidc-provider -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 21">
+        <div class="max-w-5xl mx-auto w-full">
           <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
-            Slide 22 • Interactive Counter Hands-on
+            Slide 21 • ID Token, Discovery &amp; django-oidc-provider
           </span>
-          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-            ขั้นตอนปฏิบัติ: เขียนโค้ดปุ่มกดนับเลข (setState in Action) 
+          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            เชื่อมโยงความรู้ JWT สู่การสร้าง OIDC Server ของเราเอง 🔗
           </h2>
-          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
-            <p class="text-xs">
-              เปิดระบบและพิมพ์โค้ดวิดเจ็ตแบบมีสถานะ (StatefulWidget) ต่อไปนี้ เพื่อทดลองสั่งเรียกใช้งานคำสั่งล้ำค่า <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">setState()</code> ในการบังคับให้เฟรมเวิร์กวาดภาพหน้าจอใหม่เมื่อเกิดการคลิก [2]:
-            </p>
-            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-56 leading-relaxed">
-              <p class="text-slate-400">// lib/counter_widget.dart</p>
-              <p class="text-blue-400">class <span class="text-yellow-300">MyCounter</span> extends StatefulWidget {</p>
-              <p class="pl-4">const MyCounter({super.key});</p>
-              <p class="pl-4">@override</p>
-              <p class="pl-4">State&lt;MyCounter&gt; createState() =&gt; _MyCounterState();</p>
-              <p class="text-blue-400">}</p>
-              <p class="text-blue-400">class <span class="text-yellow-300">_MyCounterState</span> extends State&lt;MyCounter&gt; {</p>
-              <p class="pl-4 text-yellow-300">int _count = 0; <span class="text-slate-400">// ตัวแปรสถานะภายในแอป</span></p>
-              <p class="pl-4">@override</p>
-              <p class="pl-4">Widget build(BuildContext context) {</p>
-              <p class="pl-8">return Column(</p>
-              <p class="pl-12">children: [</p>
-              <p class="pl-16">Text(<span class="text-red-300">'กดไปแล้ว: $_count ครั้ง'</span>, style: const TextStyle(fontSize: 20)),</p>
-              <p class="pl-16">ElevatedButton(</p>
-              <p class="pl-20">onPressed: () {</p>
-              <p class="pl-24 text-yellow-300">setState(() {</p>
-              <p class="pl-28">_count++; <span class="text-slate-400">// เพิ่มจำนวนพร้อมสั่งระบายสีหน้าจอใหม่ทั้งหมด</span></p>
-              <p class="pl-24">});</p>
-              <p class="pl-20">},</p>
-              <p class="pl-20">child: const Text(<span class="text-red-300">'บวกจำนวนนับ'</span>),</p>
-              <p class="pl-16">),</p>
-              <p class="pl-12">],</p>
-              <p class="pl-8">);</p>
-              <p class="pl-4">}</p>
-              <p class="text-blue-400">}</p>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 leading-relaxed">
+            <div class="space-y-3 text-xs md:text-sm text-slate-200">
+              <h4 class="font-bold text-yellow-300 text-sm">🧩 ทุกอย่างที่เรียนมาแล้ววนกลับมาอีกครั้ง:</h4>
+              <ul class="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
+                <li><strong>ID Token ก็คือ JWT</strong> 3 ส่วน Header.Payload.Signature (สไลด์ที่ 10)</li>
+                <li>Claims <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">iss sub aud exp iat</code> ตาม RFC 7519 (สไลด์ที่ 11)</li>
+                <li>เซ็นด้วย <strong class="text-yellow-300">RS256</strong> — ใครก็ตรวจได้ด้วยกุญแจสาธารณะจาก <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">/jwks/</code> (สไลด์ที่ 12)</li>
+              </ul>
+              <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+                <h5 class="font-bold text-blue-300">📡 OIDC Discovery Document</h5>
+                <p class="text-slate-300 mt-1">Endpoint มาตรฐาน <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">/.well-known/openid-configuration</code> จะบอก URL ของ authorize/token/userinfo/jwks ทั้งหมด — ไลบรารีฝั่งแอปใช้ URL นี้ตั้งค่าอัตโนมัติ ไม่ต้อง hard-code</p>
+              </div>
             </div>
-            <div class="bg-blue-900/40 p-3 rounded-xl border border-blue-500/20 text-xs">
-              💡 <strong>เป้าหมายการทดสอบ:</strong> พิมพ์โค้ดและรันจำลองบน Emulator จากนั้นแตะสัมผัสปุ่มกดเพื่อประเมินความลื่นไหลของการอัปเดตและระบายสถิติตัวแปรทันที
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-3">
+              <h4 class="font-bold text-green-300 text-sm">🚀 แนะนำ django-oidc-provider</h4>
+              <p class="text-xs text-slate-300">
+                Django app สำเร็จรูปที่เปลี่ยนโปรเจกต์ของเราเป็น <strong class="text-yellow-300">OpenID Provider (OP)</strong> ได้ในไม่กี่บรรทัด — เป็นตัว <em>Authorization Server</em> ในภาพสไลด์ที่ 19:
+              </p>
+              <ul class="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
+                <li>Endpoints ครบ: <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">/authorize/ /token/ /userinfo/ /jwks/</code> + discovery</li>
+                <li>สร้าง/จัดการ Client (RP) ผ่าน Django Admin UI</li>
+                <li>ออก ID Token เซ็น RS256 (<code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">creatersakey</code>)</li>
+                <li>รองรับ PKCE สำหรับ public client (RFC 7636) ✓</li>
+                <li>Django 3.2–5.x, Python 3.13 ✓ — ใช้กับ uv ได้ทันที</li>
+              </ul>
+              <div class="pt-1 flex flex-wrap gap-x-4 gap-y-1 text-[11px]">
+                <a href="https://django-oidc-provider.readthedocs.io/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold">📚 คู่มือ django-oidc-provider</a>
+                <a href="https://github.com/juanifioren/django-oidc-provider" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold">💻 GitHub</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- สไลด์ที่ 23: สรุปหัวข้อสัปดาห์ที่ 2 และการเตรียมตัวสู่สัปดาห์ที่ 3 -->
-      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 23">
-        <div class="max-w-4xl mx-auto w-full">
-          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
-            Slide 23 • Week 2 Summary & Future Roadmap
+      <!-- สไลด์ที่ 22: สารบัญหมวดที่ 6: ปฏิบัติการ OIDC Lab -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 22">
+        <div class="text-center max-w-4xl mx-auto w-full">
+          <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Hands-on Lab | Week 12 • Part 6
           </span>
-          <h2 class="text-3xl font-bold mt-4 mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-            สรุปบทปฏิบัติการสัปดาห์ที่ 2 และทิศทางถัดไป 
+          <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-200">
+            หมวดที่ 6: ปฏิบัติการ — OIDC Server ด้วย Django + เชื่อมต่อจาก Flutter Web
           </h2>
-          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
-            <p>
-              สุดยอดมากครับ! ในวันนี้นักศึกษาทุกคนได้เรียนรู้และลงมือรันเขียนโปรแกรมจัดการโฟกัสความสัมพันธ์เชิง Layout, เปรียบเทียบ Stateless/Stateful Widgets และใช้งานคำสั่ง <code class="text-yellow-300">setState()</code> ควบคุมการวาดโครงสร้างหน้าจอดั่งใจคิดได้เรียบร้อยแล้ว [2]
-            </p>
-            <div class="bg-blue-900/30 p-5 rounded-2xl border border-blue-500/20 space-y-2">
-              <h4 class="font-bold text-yellow-300">🚀 แผนที่เนื้อหาเตรียมต้อนรับ สัปดาห์ที่ 3: Navigation & Routing</h4>
-              <ul class="list-disc list-inside space-y-1.5 text-slate-300 text-xs">
-                <li><strong>Navigation Concepts:</strong> การสลับเปิดย้ายเปลี่ยนหน้าต่างแสดงผลจากปุ่มควบคุม [2]</li>
-                <li><strong>ส่งมอบพารามิเตอร์ข้ามหน้าจอ (Passing Data):</strong> ส่งสถิติคีย์และสถานะข้อมูลระหว่าง Route ของแอปพกพา</li>
-                <li><strong>จัดวางคลังจัดเก็บระบบ (GoRouter Intro):</strong> ออกแบบเส้นทางเปิดปิดและควบคุมประตูด่านความมั่นคงผ่าน Route เครือข่ายสากล</li>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 border border-white/10">
+            <h3 class="text-base font-semibold text-yellow-300 mb-4 text-center">🧪 สารบัญขั้นตอนปฏิบัติการ (ทำตามลำดับ)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <button @click="currentSlide = 23" class="bg-white/5 hover:bg-green-500/20 hover:border-green-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-green-300 font-bold">สไลด์ที่ 23 • Step 0</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ภาพรวมสถาปัตยกรรมระบบ</div>
+              </button>
+              <button @click="currentSlide = 24" class="bg-white/5 hover:bg-green-500/20 hover:border-green-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-green-300 font-bold">สไลด์ที่ 24 • Step 1</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">สร้าง Backend ด้วย uv + django-oidc-provider</div>
+              </button>
+              <button @click="currentSlide = 25" class="bg-white/5 hover:bg-green-500/20 hover:border-green-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-green-300 font-bold">สไลด์ที่ 25 • Step 2</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ลงทะเบียน Client และผู้ใช้ทดสอบใน Admin</div>
+              </button>
+              <button @click="currentSlide = 26" class="bg-white/5 hover:bg-green-500/20 hover:border-green-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-green-300 font-bold">สไลด์ที่ 26 • Step 3</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">เขียน Flutter Web App เชื่อมต่อ OIDC</div>
+              </button>
+              <button @click="currentSlide = 27" class="bg-white/5 hover:bg-green-500/20 hover:border-green-400 transition text-left p-3 rounded-xl border border-white/10 group">
+                <div class="text-xs text-green-300 font-bold">สไลด์ที่ 27 • Step 4</div>
+                <div class="text-sm font-semibold group-hover:text-yellow-200">ทดสอบด้วย HTTPie + แก้ปัญหาที่พบบ่อย</div>
+              </button>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400">💡 เตรียมเครื่องมือให้พร้อม: uv, Flutter SDK และ Google Chrome แล้วไล่ทำตามทีละ Step</div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 23: Lab Step 0 — ภาพรวมสถาปัตยกรรม -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 23">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Step 0 • System Architecture Overview
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-200">
+            ภาพรวมระบบที่เรากำลังจะสร้างร่วมกัน 🗺️
+          </h2>
+          <!-- Architecture Diagram -->
+          <div class="bg-white/5 p-4 rounded-2xl border border-white/10 mb-4">
+            <div class="grid grid-cols-1 lg:grid-cols-7 gap-2 items-center font-mono text-[10px] md:text-[11px]">
+              <div class="lg:col-span-2 border border-blue-400/50 p-3 rounded-xl bg-blue-900/20 text-center space-y-1">
+                <div class="font-bold text-white text-xs">🖥️ Chrome Browser</div>
+                <div class="text-blue-200">Flutter Web App<br>(localhost:50000)<br>openid_client package</div>
+              </div>
+              <div class="lg:col-span-3 border border-purple-400/50 p-3 rounded-xl bg-purple-900/20 text-center space-y-1">
+                <div class="font-bold text-white text-xs">🔐 Django + django-oidc-provider</div>
+                <div class="text-purple-200">(localhost:8000)<br>/authorize/ • /token/ • /userinfo/<br>/jwks/ • /.well-known/openid-configuration<br>+ Admin จัดการ Users &amp; Clients</div>
+              </div>
+              <div class="lg:col-span-2 border border-green-400/50 p-3 rounded-xl bg-green-900/20 text-center space-y-1">
+                <div class="font-bold text-white text-xs">💾 SQLite Database</div>
+                <div class="text-green-200">Users (student01)<br>Clients (flutter-web-app)<br>RS256 Signing Keys<br>+ REST API (สัปดาห์ถัดไป)</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-5 gap-2 mt-2 text-center text-[9px] md:text-[10px] text-slate-300 font-mono">
+              <div class="bg-blue-500/20 rounded-lg py-1.5 px-1">① Discover<br>.well-known</div>
+              <div class="bg-blue-500/20 rounded-lg py-1.5 px-1">② Authorize<br>+ Login</div>
+              <div class="bg-purple-500/20 rounded-lg py-1.5 px-1">③ Redirect<br>?code=…</div>
+              <div class="bg-purple-500/20 rounded-lg py-1.5 px-1">④ POST /token/<br>→ ID+Access</div>
+              <div class="bg-green-500/20 rounded-lg py-1.5 px-1">⑤ getUserInfo()<br>แสดงชื่อ/อีเมล</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+              <h4 class="font-bold text-yellow-300 text-sm mb-2">✅ เกณฑ์ความสำเร็จของ Lab นี้</h4>
+              <ul class="space-y-1 text-xs text-slate-300">
+                <li>☐ ล็อกอินผ่านหน้า Login ของ Django ได้</li>
+                <li>☐ กลับมาที่แอป Flutter พร้อมแสดงชื่อ/อีเมลผู้ใช้</li>
+                <li>☐ นำ ID Token ไปวางบน jwt.io แล้วเห็น claims</li>
               </ul>
             </div>
-            <div class="pt-2 text-center">
-              <span class="text-xs text-slate-400 block mb-0.5">🔗 คู่มือเตรียมตัวและสารัตถะวิชาในสัปดาห์ถัดไปเกี่ยวกับการสลับหน้าจอ (Navigation & Routing):</span>
-              <a href="https://docs.flutter.dev/ui/navigation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
-                https://docs.flutter.dev/ui/navigation 
-              </a>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+              <h4 class="font-bold text-blue-300 text-sm mb-2">🧰 เครื่องมือที่ต้องมี</h4>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <span class="bg-blue-500/20 border border-blue-400/30 rounded-full px-3 py-1">uv</span>
+                <span class="bg-blue-500/20 border border-blue-400/30 rounded-full px-3 py-1">Flutter SDK</span>
+                <span class="bg-blue-500/20 border border-blue-400/30 rounded-full px-3 py-1">Google Chrome</span>
+                <span class="bg-blue-500/20 border border-blue-400/30 rounded-full px-3 py-1">HTTPie (uv tool install)</span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-2">⚠️ เครื่องต้องรันทั้ง backend (:8000) และ flutter (:50000) พร้อมกัน — เปิด 2 terminal</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 24: Lab Step 1 — สร้าง Backend ด้วย uv + django-oidc-provider -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 24">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Step 1 • Build the OIDC Backend with uv
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-200">
+            Step 1: สร้างโปรเจกต์ Backend ด้วย uv 🏗️
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed">
+                <p class="text-slate-400"># Terminal 1 — สร้างโปรเจกต์และติดตั้ง dependencies</p>
+                <p>$ <span class="text-white">uv init oidc-backend &amp;&amp; cd oidc-backend</span></p>
+                <p>$ <span class="text-white">uv add django django-oidc-provider django-cors-headers</span></p>
+                <p>$ <span class="text-white">uv run django-admin startproject config .</span></p>
+                <p class="text-slate-400 pt-2"># สร้างตารางฐานข้อมูล + กุญแจ RS256 + บัญชี admin</p>
+                <p>$ <span class="text-white">uv run manage.py migrate</span></p>
+                <p>$ <span class="text-white">uv run manage.py creatersakey</span></p>
+                <p>$ <span class="text-white">uv run manage.py createsuperuser</span></p>
+                <p class="text-slate-400 pt-2"># เริ่มเซิร์ฟเวอร์ที่ http://localhost:8000</p>
+                <p>$ <span class="text-white">uv run manage.py runserver</span></p>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed">
+                <p class="text-slate-400"># config/urls.py — เปิด endpoints ของ OIDC provider</p>
+                <p class="text-blue-400">from <span class="text-white">django.urls</span> import <span class="text-yellow-300">path, include</span></p>
+                <p class="text-white">urlpatterns = [</p>
+                <p class="pl-4">path(<span class="text-red-300">'admin/'</span>, admin.site.urls),</p>
+                <p class="pl-4">path(<span class="text-red-300">''</span>, include(<span class="text-red-300">'oidc_provider.urls'</span>,</p>
+                <p class="pl-8">namespace=<span class="text-red-300">'oidc_provider'</span>)),</p>
+                <p class="text-white">]</p>
+              </div>
+            </div>
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed">
+              <p class="text-slate-400"># config/settings.py — เพิ่ม 4 จุดนี้</p>
+              <p class="pt-2 text-slate-400"># 1) ลงทะเบียน apps</p>
+              <p class="text-white">INSTALLED_APPS = [</p>
+              <p class="pl-4"><span class="text-red-300">'django.contrib.sites'</span>,  <span class="text-slate-400"># ← เพิ่ม</span></p>
+              <p class="pl-4"><span class="text-red-300">'corsheaders'</span>,           <span class="text-slate-400"># ← เพิ่ม</span></p>
+              <p class="pl-4"><span class="text-red-300">'oidc_provider'</span>,          <span class="text-slate-400"># ← เพิ่ม</span></p>
+              <p class="pl-4"><span class="text-slate-500">...apps เดิมของ Django...</span></p>
+              <p class="text-white">]</p>
+              <p class="pt-2 text-slate-400"># 2) ตั้งค่าที่จำเป็น</p>
+              <p class="text-white">SITE_ID = <span class="text-yellow-300">1</span></p>
+              <p class="text-white">LOGIN_URL = <span class="text-red-300">'/admin/login/'</span>  <span class="text-slate-400"># ใช้หน้า login ของ admin</span></p>
+              <p class="pt-2 text-slate-400"># 3) CORS — อนุญาตให้ Flutter Web เรียกได้ (DEV เท่านั้น!)</p>
+              <p class="text-white">MIDDLEWARE = [<span class="text-red-300">'corsheaders.middleware.CorsMiddleware'</span>,</p>
+              <p class="pl-8 text-slate-500">*MIDDLEWARE]  <span class="text-slate-400"># ต้องวางบนสุด</span></p>
+              <p class="text-white">CORS_ALLOW_ALL_ORIGINS = <span class="text-yellow-300">True</span></p>
+            </div>
+          </div>
+          <div class="mt-3 bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-[11px] text-slate-200">
+            ✅ <strong>จุดตรวจสอบ:</strong> เปิด <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">http://localhost:8000/admin</code> แล้วล็อกอินด้วยบัญชี superuser ได้ = ผ่าน Step 1
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 25: Lab Step 2 — ลงทะเบียน Client และผู้ใช้ทดสอบ -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 25">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Step 2 • Register an OIDC Client via Admin
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-200">
+            Step 2: ลงทะเบียน Client และผู้ใช้ทดสอบ 👥
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 leading-relaxed">
+            <div class="space-y-3 text-xs md:text-sm text-slate-200">
+              <p>
+                แอป Flutter ของเราคือ <strong class="text-yellow-300">Relying Party (RP)</strong> ที่ต้องขึ้นทะเบียนกับ OP ก่อน — ไปที่ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">http://localhost:8000/admin</code> → เมนู <strong>Oidc provider › Clients › Add</strong> แล้วกรอกตามตารางด้านขวา:
+              </p>
+              <div class="bg-white/5 p-3 rounded-xl border border-white/10 space-y-2">
+                <h5 class="font-bold text-blue-300">👤 สร้างผู้ใช้ทดสอบด้วย</h5>
+                <p class="text-slate-300 text-xs">เมนู <strong>Authentication and Authorization › Users › Add user</strong> — ตั้งชื่อ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">student01</code> รหัสผ่าน <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">test1234</code> (กรอก email ด้วยเพื่อให้ claim email มีค่า)</p>
+              </div>
+              <div class="bg-yellow-500/10 p-3 rounded-xl border border-yellow-500/20 text-xs">
+                ⚠️ <strong>สำคัญ:</strong> หลังบันทึก Client ระบบจะสร้าง <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">client_id</code> ให้อัตโนมัติ — คัดลอกค่านี้ไว้ใช้ในโค้ด Flutter ของ Step 3 (client_type เป็น public จะไม่มี client_secret)
+              </div>
+              <div class="pt-1 text-[11px]">
+                <span class="text-slate-400 block mb-0.5">🔗 รายละเอียดฟิลด์ทั้งหมดของ Client:</span>
+                <a href="https://django-oidc-provider.readthedocs.io/en/master/sections/relyingparties.html" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold truncate block">
+                  Docs: Relying Parties — Using the admin
+                </a>
+              </div>
+            </div>
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+              <h4 class="font-bold text-yellow-300 text-xs mb-3 text-center">📋 ค่าที่แนะนำสำหรับฟอร์มสร้าง Client</h4>
+              <table class="w-full text-left border-collapse text-[11px] md:text-xs">
+                <tbody class="divide-y divide-white/10 text-slate-300">
+                  <tr><td class="py-2 pr-2 font-bold text-white whitespace-nowrap">name</td><td class="py-2"><code class="text-yellow-200">flutter-web-app</code></td></tr>
+                  <tr><td class="py-2 pr-2 font-bold text-white">client_type</td><td class="py-2"><code class="text-yellow-200">public</code> — SPA/มือถือเก็บ secret ไม่ได้</td></tr>
+                  <tr><td class="py-2 pr-2 font-bold text-white">response_types</td><td class="py-2"><code class="text-yellow-200">code</code> — Authorization Code Flow</td></tr>
+                  <tr><td class="py-2 pr-2 font-bold text-white">redirect_uris</td><td class="py-2"><code class="text-yellow-200">http://localhost:50000</code><br><span class="text-[10px] text-slate-400">↳ ต้องตรงกับ --web-port ของ flutter run!</span></td></tr>
+                  <tr><td class="py-2 pr-2 font-bold text-white">jwt_alg</td><td class="py-2"><code class="text-yellow-200">RS256</code> (default)</td></tr>
+                  <tr><td class="py-2 pr-2 font-bold text-white">reuse_consent</td><td class="py-2">✔ — ไม่ถาม Consent ซ้ำทุกครั้ง</td></tr>
+                </tbody>
+              </table>
+              <div class="mt-3 pt-2 border-t border-white/10 text-[10px] text-slate-400">
+                💡 เหตุผลที่ fix port ไว้ที่ 50000: redirect URI ต้อง “ตรงเป๊ะ” ทุกครั้ง — ถ้าปล่อย Flutter สุ่ม port เอง จะต้องแก้ admin ใหม่ทุกรอบ
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 26: Lab Step 3 — Flutter Web App เชื่อมต่อ OIDC -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 26">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Step 3 • Flutter Web connects to our OIDC Server
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-200">
+            Step 3: เขียน Flutter Web App เชื่อมต่อ OIDC 📱
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed">
+                <p class="text-slate-400"># Terminal 2 — สร้างแอปและรันบน Chrome ที่ port 50000</p>
+                <p>$ <span class="text-white">flutter create oidc_demo --platforms web</span></p>
+                <p>$ <span class="text-white">cd oidc_demo</span></p>
+                <p>$ <span class="text-white">flutter pub add openid_client</span>  <span class="text-slate-400"># รองรับเว็บ</span></p>
+                <p>$ <span class="text-white">flutter run -d chrome --web-port 50000</span></p>
+              </div>
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed max-h-64 overflow-y-auto">
+                <p class="text-slate-400">// lib/main.dart (ส่วนสำคัญ)</p>
+                <p class="text-blue-400">import <span class="text-red-300">'package:openid_client/openid_client_browser.dart'</span>;</p>
+                <p class="mt-2 text-blue-400">Future&lt;<span class="text-yellow-300">Credential</span>?&gt; signIn() async {</p>
+                <p class="pl-4"><span class="text-slate-400">// ① ค้นหา endpoints จาก discovery document</span></p>
+                <p class="pl-4 text-blue-400">final <span class="text-yellow-300">issuer</span> = await Issuer.discover(</p>
+                <p class="pl-8">Uri.parse(<span class="text-red-300">'http://localhost:8000'</span>));</p>
+                <p class="pl-4 text-blue-400">final <span class="text-yellow-300">client</span> = Client(issuer, <span class="text-red-300">'&lt;client_id จาก Step 2&gt;'</span>);</p>
+                <p class="pl-4 text-blue-400">final <span class="text-yellow-300">auth</span> = Authenticator(client,</p>
+                <p class="pl-8">scopes: [<span class="text-red-300">'openid'</span>, <span class="text-red-300">'profile'</span>, <span class="text-red-300">'email'</span>]);</p>
+                <p class="pl-4 text-blue-400">final <span class="text-yellow-300">c</span> = await auth.credential;</p>
+                <p class="pl-4"><span class="text-blue-400">if</span> (c == <span class="text-yellow-300">null</span>) {</p>
+                <p class="pl-8">auth.authorize();  <span class="text-slate-400">// ② ไปหน้า login ของ Django</span></p>
+                <p class="pl-8 text-slate-400">// ③ Django redirect กลับมาหน้านี้พร้อม ?code=…</p>
+                <p class="pl-8"><span class="text-blue-400">return null</span>;  <span class="text-slate-400">// reload แล้ว c จะมีค่า</span></p>
+                <p class="pl-4">}</p>
+                <p class="pl-4"><span class="text-blue-400">return</span> c;  <span class="text-slate-400">// ④ ได้ credential สำเร็จ</span></p>
+                <p>}</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed max-h-64 overflow-y-auto">
+                <p class="text-slate-400">// ปุ่มล็อกอิน + แสดงผลผู้ใช้ (ใน StatefulWidget)</p>
+                <p class="text-blue-400">ElevatedButton.icon(</p>
+                <p class="pl-4">icon: Icon(Icons.login),</p>
+                <p class="pl-4">label: Text(<span class="text-red-300">'Sign in with OIDC'</span>),</p>
+                <p class="pl-4">onPressed: () async {</p>
+                <p class="pl-8 text-blue-400">final <span class="text-yellow-300">cred</span> = await signIn();</p>
+                <p class="pl-8"><span class="text-blue-400">if</span> (cred != <span class="text-yellow-300">null</span>) {</p>
+                <p class="pl-12 text-blue-400">final <span class="text-yellow-300">info</span> = await cred.getUserInfo();</p>
+                <p class="pl-12">setState(() =&gt; _user =</p>
+                <p class="pl-16"><span class="text-red-300">'${info.name} (${info.email})'</span>);</p>
+                <p class="pl-8">}</p>
+                <p class="pl-4">},</p>
+                <p>);</p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-xs text-slate-300 space-y-1.5">
+                <h5 class="font-bold text-yellow-300 text-sm">🔄 วงจรการทำงานโดยสรุป</h5>
+                <p>ครั้งแรก <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">credential == null</code> → <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">authorize()</code> เด้งไปหน้า Login ของ Django → ล็อกอินด้วย student01/test1234 → กลับมาหน้าเดิม → ตัวแปร credential ถูก restore จาก session → กดปุ่มอีกครั้งจะเห็นชื่อ+อีเมลทันที</p>
+                <p class="pt-1"><a href="https://pub.dev/packages/openid_client" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold">🔗 pub.dev: openid_client (รองรับ Android/iOS/Web)</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- สไลด์ที่ 27: Lab Step 4 — ทดสอบและแก้ปัญหา + สรุป -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 27">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-green-500/30 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Step 4 • Verify with HTTPie &amp; Troubleshooting
+          </span>
+          <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-200">
+            Step 4: ทดสอบความสมบูรณ์และแก้ปัญหาที่พบบ่อย 🩺
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] leading-relaxed">
+                <p class="text-slate-400"># ตรวจ discovery document — ต้องเห็น endpoints ครบ</p>
+                <p>$ <span class="text-white">http :8000/.well-known/openid-configuration</span></p>
+                <p class="text-slate-400 pt-2"># ตรวจกุญแจ RS256 ที่ใช้เซ็น ID Token</p>
+                <p>$ <span class="text-white">http :8000/jwks/</span></p>
+              </div>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-xs text-slate-300">
+                <h5 class="font-bold text-yellow-300 text-sm mb-1">🔍 พิสูจน์ว่า ID Token เป็น JWT จริง</h5>
+                <p>คัดลอกค่า <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">id_token</code> จากแอป (print ออก console) แล้วนำไปวางบน jwt.io — จะเห็น header alg=RS256 และ claims <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-200">iss, sub, aud, exp</code> ตรงกับที่เรียนในหมวดที่ 3</p>
+              </div>
+              <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-[11px] text-slate-200">
+                🎓 <strong>สรุปวันนี้:</strong> ใช้ uv แทน pip/venv • ใช้ HTTPie แทน curl • สร้าง OIDC Server เองด้วย django-oidc-provider • Flutter Web ล็อกอินสำเร็จด้วย openid_client — สัปดาห์หน้า (Week 13 Data Layer) เราจะนำ access token ไปเรียก protected API ของ backend นี้
+              </div>
+            </div>
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+              <h4 class="font-bold text-red-300 text-xs mb-3 text-center">🔧 ตารางแก้ปัญหาที่พบบ่อย</h4>
+              <table class="w-full text-left border-collapse text-[10px] md:text-[11px]">
+                <thead>
+                  <tr class="border-b border-white/20 text-red-300 font-bold">
+                    <th class="pb-1.5">อาการ</th>
+                    <th class="pb-1.5">สาเหตุ / วิธีแก้</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/10 text-slate-300">
+                  <tr>
+                    <td class="py-2 font-bold text-white">redirect_uri_mismatch</td>
+                    <td class="py-2">URI ใน admin ไม่ตรง — ต้องเป็น <code class="text-yellow-200">http://localhost:50000</code> เป๊ะๆ (รวม port)</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 font-bold text-white">CORS error ใน DevTools</td>
+                    <td class="py-2">CorsMiddleware ต้องอยู่บนสุดของ MIDDLEWARE แล้ว restart runserver</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 font-bold text-white">invalid_client</td>
+                    <td class="py-2">client_id คัดลอกผิด — เปิด admin › Clients ตรวจอีกครั้ง</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 font-bold text-white">404 /.well-known/...</td>
+                    <td class="py-2">ยังไม่ได้ include <code class="text-yellow-200">oidc_provider.urls</code> ใน config/urls.py</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 font-bold text-white">login แล้วไม่กลับแอป</td>
+                    <td class="py-2">flutter ต้องรันด้วย <code class="text-yellow-200">--web-port 50000</code> ให้ตรงกับ redirect_uris ที่ลงทะเบียน</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
