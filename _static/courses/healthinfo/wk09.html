@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 9 Midterm Review & Exam Guide">
+    <meta name="keywords" content="Health Informatics, Midterm, Review, SQL, pandas, Exam">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 9 — สอบกลางภาค (Review & Exam Guide)</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk09.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer">
+
+      <!-- 0 Cover -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-red-500/30 text-red-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 9</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">สอบกลางภาค 📝</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">Midterm — Review &amp; Exam Guide</p>
+          <p class="text-lg text-white/70 mb-6">ครอบคลุมสัปดาห์ 1–8 · ทฤษฎี + ปฏิบัติ (ตามแผนการสอน: การสอบปฏิบัติงาน/ทฤษฎีในชั้นเรียน)</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 สิ่งที่สไลด์ชุดนี้ให้</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>ขอบเขตสอบ + สัดส่วนคะแนน (จาก syllabus)</li>
+              <li>Recap ทีละสัปดาห์ พร้อม cheat-sheet links</li>
+              <li>โน้ตบุ๊ก mock exam พร้อมเฉลย: <code class="bg-black/30 px-1 rounded">week09-midterm-review.ipynb</code></li>
+              <li>Checklist เตรียมตัววันสอบ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · Format & Scope</div>ข้อสอบวัดอะไร</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · คะแนน</div>สัดส่วนตาม syllabus</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · Recap Wk1–2</div>pandas CSV/JSON · merge/groupby</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · Recap Wk3–4</div>Insights · ETL/DW/Lake</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · Recap Wk5</div>DDL/DML/PK/NULL</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · Recap Wk6</div>WHERE/aggregates/patterns</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · Recap Wk7</div>JOIN/GROUP/HAVING</button>
+            <button @click="currentSlide=9" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">08 · Pipeline คิดเป็นระบบ</div>อ่านโจทย์→query</button>
+            <button @click="currentSlide=9+1" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">09 · Mock Lab 🧪</div>ipynb + เฉลย</button>
+            <button @click="currentSlide=11" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">10 · Checklist</div>ก่อนเข้าห้องสอบ</button>
+            <button @click="currentSlide=12" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl col-span-2"><div class="text-yellow-300 font-bold">11 · หลังสอบ → Weeks 10–14</div>Ethics · Standards · Big Data</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 Format -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · รูปแบบข้อสอบ &amp; ขอบเขต</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-left text-xs mt-4">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🧠 Part A: ทฤษฎี (~40%)</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li>Concept ฐานข้อมูลเชิงสัมพันธ์ / PK-FK</li>
+                <li>OLTP vs DW vs Lake</li>
+                <li>NULL logic · JOIN types · WHERE vs HAVING</li>
+                <li>CSV/JSON/FHIR structure</li>
+              </ul>
+            </div>
+            <div class="bg-emerald-900/30 border border-emerald-700 rounded-2xl p-4">
+              <h3 class="font-bold text-emerald-300 mb-2">💻 Part B: ปฏิบัติ SQL (~35%)</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li>เขียน SELECT/WHERE/ORDER BY/LIMIT</li>
+                <li>GROUP BY + HAVING บน healthinfo.db</li>
+                <li>JOIN patients×prescriptions</li>
+              </ul>
+            </div>
+            <div class="bg-blue-900/30 border border-blue-700 rounded-2xl p-4">
+              <h3 class="font-bold text-blue-300 mb-2">🐼 Part C: pandas (~25%)</h3>
+              <ul class="list-disc list-inside space-y-1">
+                <li>read_csv/clean/save (preprocessing flow)</li>
+                <li>merge/groupby.agg เทียบ SQL</li>
+                <li>Boolean indexing cohort</li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">📖 ขอบเขต = ทุกอย่างใน <strong>wk01–wk07 slides + notebooks</strong> (ไม่รวม wk08 ที่ยังไม่สอนเชิงลึก) — ทุก cheat sheet ของสัปดาห์ 5–7 สรุปไว้ท้ายสไลด์แต่ละชุดแล้ว</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: คะแนน →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 Scores -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · สัดส่วนคะแนนรวมทั้งภาค (จาก Syllabus)</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs mt-4 max-w-3xl mx-auto">
+            <div class="bg-white/10 rounded-2xl p-4 text-center"><div class="text-3xl font-bold text-yellow-300">50%</div><p class="mt-1">สอบทฤษฎี+ปฏิบัติ<br/>(กลาง+ปลาย)</p></div>
+            <div class="bg-white/10 rounded-2xl p-4 text-center"><div class="text-3xl font-bold text-cyan-300">20%</div><p class="mt-1">Homework<br/>สัปดาห์ละชุด</p></div>
+            <div class="bg-white/10 rounded-2xl p-4 text-center"><div class="text-3xl font-bold text-emerald-300">20%</div><p class="mt-1">Project กลุ่ม<br/>(ERD สปสช.)</p></div>
+            <div class="bg-white/10 rounded-2xl p-4 text-center"><div class="text-3xl font-bold text-violet-300">10%</div><p class="mt-1">Presentation<br/>สัปดาห์ 16</p></div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">💡 Midterm นับใน 50% ข้างต้น — HW ที่ส่งครบทุกสัปดาห์ช่วยดันเกรดก่อนสอบปลายภาค · ตารางเต็มดูที่ <a class="text-cyan-300 underline" href="../../../courses/healthinfo/index.html">แผนการเรียนรู้</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: Recap Wk1–2 →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 Recap 1-2 -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · Recap Week 1–2 — pandas &amp; Linking</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">Week 1: Pre-processing</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">df = pd.read_csv('patients_data.csv')
+df.shape; df.dtypes; df.head()
+df.isnull().sum()                    # นับ NULL
+df.dropna(subset=['HbA1c_level'])
+df['bp'].fillna(df['bp'].mean())     # impute
+df = df[(df.Age>=0)&(df.Age<=89)]    # validity
+pd.to_datetime(df['admission_date'])
+df.to_csv('clean.csv', index=False)
+json.load(open('patient_fhir_demo.json'))
+pd.json_normalize(rec, record_path=['entry'])</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Week 2: Merge &amp; GroupBy</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">pd.merge(rx, reg, on='practice_code',
+         how='left')                 # LEFT JOIN
+g = df.groupby('practice_name').agg(
+    total=('cost','sum'),
+    avg=('cost','mean'),
+    n=('items','count')).reset_index()
+# HAVING:
+g[g['n'] > 50].sort_values('total', ascending=False)</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">🎯 คำถามชื่นใน exam: pd.merge how='left' ≡ SQL LEFT JOIN · split-apply-combine ≡ GROUP BY</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: Recap Wk3–4 →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 Recap 3-4 -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · Recap Week 3–4 — Insights &amp; Architecture</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">Week 3: Boolean Indexing</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">mask = (df.gender=='female') & \
+      (df.age>=60) & (df.hba1c>7)   # วงเล็บ!
+cohort = df.loc[mask]
+df[df['DRUG'].isin(['METFORMIN','INSULIN'])]
+df.info(); df.describe()
+invalid = df[df.dischtime < df.admittime]</pre>
+              <p class="text-[11px] text-white/60 mt-1">&amp; | ~ (bitwise) — and/or ธรรมดา error!</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Week 4: Architecture</h3>
+              <table class="w-full text-[10px] border-collapse">
+                <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1">Feature</th><th class="border border-white/10 p-1">DW</th><th class="border border-white/10 p-1">Lake</th></tr></thead>
+                <tbody class="text-white/90">
+                  <tr><td class="border border-white/10 p-1">Data</td><td class="border border-white/10 p-1">structured</td><td class="border border-white/10 p-1">raw all</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">Schema</td><td class="border border-white/10 p-1 font-bold">on-write</td><td class="border border-white/10 p-1 font-bold">on-read</td></tr>
+                  <tr><td class="border border-white/10 p-1">ETL</td><td class="border border-white/10 p-1" colspan="2">Extract → Transform → Load (pipeline สู่ DW)</td></tr>
+                </tbody>
+              </table>
+              <p class="text-[11px] text-white/60 mt-1">PySynthea (tietai-synthea) = Python-native synthetic patient generator (แทน Synthea Java)</p>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: Recap Wk5 →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 Recap 5 -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · Recap Week 5 — DDL / DML / PK</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">CREATE TABLE IF NOT EXISTS patients(
+ patient_id INTEGER PRIMARY KEY,
+ hn TEXT UNIQUE NOT NULL,
+ systolic_bp REAL CHECK(systolic_bp>0));
+INSERT INTO patients VALUES(…);
+INSERT OR IGNORE …           -- skip dup
+cur.executemany(sql, rows); con.commit();
+SELECT cols FROM t LIMIT 5 OFFSET 5;
+SELECT sql FROM sqlite_master;   -- schema
+PRAGMA table_info(patients);</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Must-know traps</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>PK = UNIQUE+NOT NULL+stable; INTEGER PK = rowid alias</li>
+                <li>= NULL → <strong>0 rows</strong>; ใช้ IS NULL</li>
+                <li>LIMIT ไม่มี ORDER BY → ลำดับไม่การันตี</li>
+                <li>SQLite types: TEXT/INTEGER/REAL/NUMERIC/BLOB</li>
+                <li>วันที่ = TEXT ISO8601 'YYYY-MM-DD'</li>
+                <li>ลืม commit() = ข้อมูลหาย</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">📄 Full cheat: <a class="underline text-cyan-300" href="./wk05.html">wk05 slide 16</a></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: Recap Wk6 →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 Recap 6 -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · Recap Week 6 — Query Toolbox</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">WHERE gender='หญิง' AND hba1c>7
+WHERE NOT(gender='หญิง')
+SELECT COUNT(*) n, AVG(hba1c), MIN… MAX…
+COUNT(DISTINCT gender)
+ORDER BY hba1c DESC, hn ASC
+hn LIKE 'HN-54%'   birth LIKE '____-02-__'
+gender IN ('ชาย','หญิง')
+hba1c BETWEEN 6.5 AND 7.0
+strftime('%Y',birth_date) AS y
+CAST((julianday('now')-julianday(d))/365.25 AS INT) age</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Pipeline (จำ!)</h3>
+              <div class="bg-black/40 rounded-xl p-2 text-center text-[11px]">FROM → WHERE → SELECT → ORDER BY → LIMIT</div>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>alias ใช้ใน ORDER BY ✓ / WHERE ✗</li>
+                <li>NOT IN (+NULL in list) → 0 rows</li>
+                <li>BETWEEN รวมขอบทั้งสอง</li>
+                <li>aggregate ข้าม NULL (COALESCE ถ้าต้องการ 0)</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">📄 Full cheat: <a class="underline text-cyan-300" href="./wk06.html">wk06 slide 16</a></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: Recap Wk7 →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Recap 7 -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · Recap Week 7 — Joins &amp; Aggregation</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">PRAGMA foreign_keys = ON   -- per connection!
+REFERENCES patients(patient_id)
+
+INNER JOIN r ON r.pid=p.pid   -- match only
+LEFT  JOIN …                  -- left full
+LEFT … WHERE r.rx_id IS NULL  -- anti-join
+RIGHT/FULL OUTER              -- SQLite≥3.39
+SELF: referrals a JOIN patients pa… pb…
+q1 UNION q2                   -- dedupe stack
+
+GROUP BY drug
+HAVING COUNT(*) > 1
+-- non-aggregate ⇒ ต้องอยู่ใน GROUP BY</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Pipeline 8 ขั้น</h3>
+              <div class="bg-black/40 rounded-xl p-2 text-[11px] text-center leading-relaxed">FROM → <strong>JOIN</strong> → WHERE → <strong>GROUP BY</strong> → <strong>HAVING</strong> → SELECT → ORDER BY → LIMIT</div>
+              <ul class="list-disc list-inside space-y-1 mt-2">
+                <li>dot notation p.col/r.col — กัน ambiguous</li>
+                <li>anti-join = หา "ไม่มี" (missed follow-up)</li>
+                <li>UNION dedupe / UNION ALL เร็วกว่า</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">📄 Full cheat: <a class="underline text-cyan-300" href="./wk07.html">wk07 slide 14</a></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: คิดเป็นระบบ →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 Method -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · วิธีคิดทำข้อสอบ SQL แบบมีระบบ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-black/40 rounded-xl p-4 text-center text-[11px] space-y-1">
+              <div class="bg-white/10 rounded p-1.5">1️⃣ อ่านโจทย์ → output columns อะไร?</div>
+              <div class="bg-white/10 rounded p-1.5">2️⃣ ตารางไหนมี columns เหล่านั้น? → FROM/JOIN</div>
+              <div class="bg-white/10 rounded p-1.5">3️⃣ กรองแถว? → WHERE</div>
+              <div class="bg-white/10 rounded p-1.5">4️⃣ คำว่า "แต่ละ/รายกลุ่ม"? → GROUP BY</div>
+              <div class="bg-white/10 rounded p-1.5">5️⃣ เงื่อนไขหลัง aggregate? → HAVING</div>
+              <div class="bg-white/10 rounded p-1.5">6️⃣ เรียง/ตัด? → ORDER BY/LIMIT</div>
+              <div class="bg-emerald-500/20 rounded p-1.5">✍️ เขียน query → รัน → นับ rows sanity-check</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">ตัวอย่างจริง</h3>
+              <p class="text-[11px] italic text-white/80">"แสดง 3 คลินิกที่จ่ายยา Metformin เฉลี่ยราคาสูงสุด"</p>
+              <ol class="list-decimal list-inside text-[11px] space-y-0.5 mt-1">
+                <li>output: clinic, avg_price → SELECT</li>
+                <li>rx table → FROM prescriptions</li>
+                <li>Metformin only → WHERE drug='Metformin'</li>
+                <li>"แต่ละคลินิก" → GROUP BY practice_code</li>
+                <li>—</li>
+                <li>sport สูงสุด 3 → ORDER BY DESC LIMIT 3</li>
+              </ol>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">⏱️ ติดขัด > 5 นาที → ข้ามไปข้ออื่นก่อน แล้ววนกลับ</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: Mock Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 Mock lab -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · Mock Exam Lab 🧪 — ลองก่อนจริง</h2>
+          <div class="bg-white/10 rounded-2xl p-5 text-left text-sm max-w-2xl mx-auto">
+            <p class="mb-2">เปิด <a class="text-cyan-300 underline" href="./week09-midterm-review.ipynb">week09-midterm-review.ipynb</a> ด้วย <code class="bg-black/30 px-1 rounded">uv run jupyter lab</code></p>
+            <ul class="list-decimal list-inside space-y-1.5 text-xs">
+              <li><strong>Part A (10×3):</strong> เขียน SQL 10 ข้อ ครอบคลุม COUNT/WHERE-NULL/agg/DISTINCT/LIKE/date/JOIN/GROUP/HAVING</li>
+              <li><strong>Part B (2×10):</strong> pandas clean pipeline + groupby เทียบ SQL</li>
+              <li><strong>Part C:</strong> concept Q&amp;A (NULL logic, joins, WHERE vs HAVING, DW/Lake, HIPAA tie-in)</li>
+              <li>🔑 ทุกข้อมี <em>เฉลยซ่อนใน details tag</em> — พยายามก่อน แล้วค่อยเปิด!</li>
+            </ul>
+            <div class="bg-emerald-900/30 border border-emerald-700 rounded p-2 mt-3 text-xs">ทำครบ ≤ 90 นาที = พร้อมสอบจริง 💪</div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=9" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=11" class="hover:text-white">ถัดไป: Checklist →</button></div>
+        </div>
+      </div>
+
+      <!-- 11 Checklist -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">10 · Checklist ก่อนเข้าห้องสอบ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🎒 ของที่ต้องมี</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>โฟลเดอร์โปรเจกต์ที่รันได้: <code class="bg-black/30 px-1 rounded">uv run jupyter lab</code> ผ่านแน่นอน</li>
+                <li><code class="bg-black/30 px-1 rounded">healthinfo.db</code> (patients + prescriptions)</li>
+                <li>สำเนา notebooks wk05–07 (offline reference ถ้าอนุญาต)</li>
+                <li>Printed cheat sheets wk05–07 (ตามที่ประกาศอนุญาต)</li>
+                <li>PowerShell พร้อม scoop/uv ทดสอบก่อนวันสอบ!</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🧘 ระหว่างสอบ</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>อ่านทุกข้อก่อน — เริ่มจากข้อที่ชัวร์</li>
+                <li>SQL: รัน sanity check (COUNT/LIMIT 5) ทุก query</li>
+                <li>= NULL trap, วงเล็บ boolean, dot notation</li>
+                <li>เหลือเวลา 10 นาทีสุดท้าย = ตรวจ commit/close + save file</li>
+              </ul>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-3 text-[11px]">⚠️ อย่าสร้าง DB ใหม่ทับของเดิมกลางสอบ — backup healthinfo.db ไว้ก่อนเข้าห้อง</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=10" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=12" class="hover:text-white">ถัดไป: หลังสอบ →</button></div>
+        </div>
+      </div>
+
+      <!-- 12 After -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">11 · หลัง Midterm — ครึ่งหลังของคอร์ส</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-left text-xs mt-4">
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">Wk10 Ethics</div>PDPA · HIPAA · PII audit<br/><a class="underline text-cyan-300" href="./wk10.html">wk10.html</a></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">Wk11 Standards</div>FHIR · OMOP · ICD-10<br/><a class="underline text-cyan-300" href="./wk11.html">wk11.html</a></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">Wk12 Big Data I</div>BigQuery/DuckDB + PySynthea<br/><a class="underline text-cyan-300" href="./wk12.html">wk12.html</a></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">Wk13 Big Data II</div>OMOP insights<br/><a class="underline text-cyan-300" href="./wk13.html">wk13.html</a></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">Wk14 Techniques</div>chunking · parquet · permissions<br/><a class="underline text-cyan-300" href="./wk14.html">wk14.html</a></div>
+            <div class="bg-emerald-500/20 rounded-xl p-3 border border-emerald-700"><div class="text-emerald-300 font-bold">Wk15–16 Project</div>ERD สปสช. + Presentation</div>
+          </div>
+          <p class="text-sm text-white/70 mt-4">โชคดีกับการสอบนะครับ! 🍀</p>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 10 Health Information Ethics and Regulations">
+    <meta name="keywords" content="Health Informatics, PDPA, HIPAA, PII, Privacy, Ethics, De-identification">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 10 — Health Information Ethics & Regulations</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk10.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer">
+
+      <!-- 0 -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-amber-500/30 text-amber-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 10</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">จริยธรรม &amp; กฎหมายข้อมูลสุขภาพ</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">Health Information Ethics and Regulations</p>
+          <p class="text-lg text-white/70 mb-6">Data Privacy · Security · PII · PDPA พ.ศ. 2562 · HIPAA · นโยบายคลาวด์กลางสาธารณสุข</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมาย (CLO3/CLO4)</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>จำแนก PII/quasi-identifier ใน dataset จริงได้</li>
+              <li>เปรียบเทียบ PDPA (ไทย) vs HIPAA (สากล) ได้</li>
+              <li>ปฏิบัติ de-identification (mask/hash/generalize) ด้วย pandas ได้</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/60 mt-4">Lab: 🧪 <a class="underline text-cyan-300" href="./week10-ethics-pii-audit.ipynb">week10-ethics-pii-audit.ipynb</a></div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · ทำไมต้องระวัง</div>Case studies</button>
+            <button @click="currentSlide=2+1" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · PII Map</div>จำแนกใน dataset</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · De-ID 3 ระดับ</div>Mask/Pseudo/Anon</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · PDPA 2562</div>หลักการ + สิทธิ</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · HIPAA</div>Privacy/Security Rule</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · Safe Harbor</div>18 identifiers</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · PDPA vs HIPAA</div>ตารางเทียบ</button>
+            <button @click="currentSlide=9" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">08 · Cloud กลาง</div>G-Cloud policy ไทย</button>
+            <button @click="currentSlide=10" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">09 · Lab 🧪</div>Audit + de-id</button>
+            <button @click="currentSlide=11" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl col-span-2"><div class="text-yellow-300 font-bold">10 · อ้างอิงทางการ</div>PDPC · HHS · DGA</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 Why -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · ทำไมข้อมูลสุขภาพ "อ่อนไหว" พิเศษ?</h2>
+          <p class="text-sm text-white/80 mb-4 text-left indent-8">รั่ว = โดนเลิกจ้าง/ถูกเมือง/ถูกปฏิเสธงาน/insurance แพงขึ้น — ความเสียหายไม่จำกัดเวลา ต่างจากเลขบัตรที่เปลี่ยนได้</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4"><h3 class="font-bold text-red-300 mb-1">💸 โจรกรรมข้อมูลแพงสุด</h3><p>Health record มีมูลค่าตลาดมืดสูงกว่า card data หลายเท่า — ใช้ fraud ประกัน/ยาได้ยาวนาน</p></div>
+            <div class="bg-white/10 rounded-2xl p-4"><h3 class="font-bold text-red-300 mb-1">🔍 Re-identification</h3><p>Research: 95% ชาว MA ชี้ตัวได้จาก (ZIP, birthdate, gender) — quasi-identifiers ร้ายกว่าที่คิด</p></div>
+            <div class="bg-white/10 rounded-2xl p-4"><h3 class="font-bold text-red-300 mb-1">⚖️ กฎหมายเข้ม</h3><p>PDPA ปรับสูงสุด 5 ล้านบาท + ค่าเสียหายทางแพ่ง · HIPAA ปรับ tier สูงสุด $2.1M/ปี/clause</p></div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">📚 อ่านเพิ่ม: <a class="text-cyan-300 underline" href="https://www.hhs.gov/hipaa/for-professionals/privacy/index.html" target="_blank">HIPAA Privacy Rule</a> · <a class="text-cyan-300 underline" href="https://pdpc.or.th/" target="_blank">PDPC Thailand news/คำวินิจฉัย</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: PII Map →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 PII map -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · จำแนกข้อมูลใน patients_data.csv</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-[11px] border-collapse">
+              <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">Column</th><th class="border border-white/10 p-1.5">Class</th><th class="border border-white/10 p-1.5">เหตุผล</th></tr></thead>
+              <tbody class="text-white/90">
+                <tr><td class="border border-white/10 p-1.5 font-mono">Name</td><td class="border border-white/10 p-1.5 text-red-300 font-bold">Direct identifier 🔴</td><td class="border border-white/10 p-1.5">ชี้ตัวตรง — ต้อง drop/mask ก่อนแชร์</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-mono">subject_id</td><td class="border border-white/10 p-1.5 text-orange-300 font-bold">Direct (contextual) 🟠</td><td class="border border-white/10 p-1.5">hash/pseudonymize ก่อนออกนอกระบบ</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-mono">Age, gender, admission_date</td><td class="border border-white/10 p-1.5 text-yellow-300 font-bold">Quasi-identifier 🟡</td><td class="border border-white/10 p-1.5">รวมกัน narrow down ตัวตน → generalize/band</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-mono">systolic_bp, HbA1c</td><td class="border border-white/10 p-1.5 text-blue-300 font-bold">Clinical value 🔵</td><td class="border border-white/10 p-1.5">ผูก identity = sensitive; แยกขาด = วิเคราะห์ได้อย่างปลอดภัย</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-black/40 rounded-xl p-3 mt-3 text-[11px] text-left">
+            <div class="font-mono">risk = f(direct_ids, quasi_combo, external_data)</div>
+            <div class="text-white/70 mt-1">💡 โจทย์ lab: audit ทุกคอลัมน์ + จัด class ด้วยตัวเองก่อนดูเฉลย</div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: De-ID →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 DeID -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · De-identification 3 ระดับ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4"><h3 class="font-bold text-yellow-300 mb-1">Masking</h3><div class="bg-black/40 rounded p-1 font-mono text-[10px]">'สมชาย'→'สม***'</div><p class="mt-1">ซ่อนบางส่วน · ❌ ย้อนไม่ได้ · ใช้ display/log</p></div>
+            <div class="bg-white/10 rounded-2xl p-4 border border-cyan-700"><h3 class="font-bold text-cyan-300 mb-1">Pseudonymization</h3><div class="bg-black/40 rounded p-1 font-mono text-[10px]">id→SHA256(salt+id)[:12]</div><p class="mt-1">token แทนตัวตน · ⚠️ ย้อนได้ถ้ามี key · PDPA ยังนับเป็น personal data</p></div>
+            <div class="bg-white/10 rounded-2xl p-4 border border-emerald-700"><h3 class="font-bold text-emerald-300 mb-1">Anonymization</h3><div class="bg-black/40 rounded p-1 font-mono text-[10px]">drop ids + band ages + year-only</div><p class="mt-1">เป้าหมาย Safe Harbor · ❌ ย้อนไม่ได้ · หลุดจาก scope กฎหมาย</p></div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">
+            <strong>k-anonymity:</strong> ทุก record ต้องเหมือน ≥k records อื่นใน quasi-identifier set — lab §3.2 เช็ค k&lt;5 groups<br/>
+            📚 <a class="text-cyan-300 underline" href="https://www.hhs.gov/hipaa/for-professionals/special-topics/de-identification/index.html" target="_blank">HHS De-identification (official)</a>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: PDPA →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 PDPA -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · PDPA พ.ศ. 2562 (Thailand)</h2>
+          <p class="text-sm text-white/80 mb-3">พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล — GDPR-style · บังคับใช้เต็ม 1 มิ.ย. 2565</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">บทบาท &amp; หลักสำคัญ</h3>
+              <ul class="space-y-1.5 list-disc list-inside">
+                <li><strong>Data Controller</strong> = กำหนดวัตถุประสงค์ (โรงพยาบาล) · <strong>Processor</strong> = ทำแทน (IT vendor)</li>
+                <li>ฐานทำการ 6 ข้อ: consent, contract, legal duty, vital interest, public task, legitimate interest</li>
+                <li>ข้อมูล<strong>sensitive</strong> (สุขภาพ!) = ต้อง explicit consent หรือ exemption เฉพาะ</li>
+                <li>Breach → แจ้ง DPO/สำนักงาน ≤72 ชม.</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">สิทธิเจ้าของข้อมูล (8 สิทธิ)</h3>
+              <ul class="space-y-1 list-disc list-inside text-[11px]">
+                <li>ถอนความยินยอม / ปฏิเสธ</li>
+                <li>เข้าถึง &amp; ขอสำเนา</li>
+                <li>แก้ไขให้ถูกต้อง</li>
+                <li>ลบ/ทำลาย (right to erasure)</li>
+                <li>คัดค้าน / ระงับใช้</li>
+                <li>โอนย้าย (portability)</li>
+              </ul>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]">โทษ: ปรับ ≤ ฿5M (+2× ถ้าซ้ำ), จำคลุกคลี 6 ปี ฯลฯ</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 Official: <a class="text-cyan-300 underline" href="https://pdpc.or.th/" target="_blank">pdpc.or.th — กฎหมาย/คู่มือ/ข่าว</a> (ทางการคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล)</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: HIPAA →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 HIPAA -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · HIPAA (US, 1996)</h2>
+          <p class="text-sm text-white/80 mb-3">Health Insurance Portability &amp; Accountability Act — มาตรฐานสากลที่ระบบไทยมักอ้างถึง</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <ul class="space-y-1.5 list-disc list-inside">
+                <li><strong>Privacy Rule:</strong> PHI use/disclosure — minimum necessary principle</li>
+                <li><strong>Security Rule:</strong> ePHI safeguards — admin/physical/technical (encryption, access control, audit logs)</li>
+                <li><strong>Breach Notification Rule:</strong> แจ้ง HHS+ผู้ป่วย ≤60 วัน</li>
+                <li><strong>Covered Entities / Business Associates</strong> ≈ controller/processor</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">PHI = Identifier + Health data</h3>
+              <p class="text-[11px] mb-2">18 identifiers ใต้ Safe Harbor (ชื่อ, geo&lt;state, dates, phone, fax, email, SSN, MRN, health plan#, account#, license#, vehicle, device, URL, IP, biometric, photo, any other unique id)</p>
+              <pre class="bg-black/40 text-green-400 p-2 rounded font-mono text-[10px]"># ตัวอย่างที่เจอใน course:
+# Name ✗ | MRN/HN ✗ | exact date ✗
+# age ✓(≤89) | year-only ✓ | state-level geo ✓</pre>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 Official: <a class="text-cyan-300 underline" href="https://www.hhs.gov/hipaa/index.html" target="_blank">hhs.gov/hipaa</a> · <a class="text-cyan-300 underline" href="https://www.hhs.gov/hipaa/for-professionals/security/index.html" target="_blank">Security Rule</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: Safe Harbor →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 Safe harbor -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · Safe Harbor Method — apply กับ dataset เรา</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-[11px] border-collapse">
+              <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">Safe Harbor rule</th><th class="border border-white/10 p-1.5">patients_data.csv</th><th class="border border-white/10 p-1.5">Action (lab)</th></tr></thead>
+              <tbody class="text-white/90">
+                <tr><td class="border border-white/10 p-1.5">(1) Names</td><td class="border border-white/10 p-1.5">Name</td><td class="border border-white/10 p-1.5 font-mono">DROP / mask</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5">(2) geography &lt; state</td><td class="border border-white/10 p-1.5">—</td><td class="border border-white/10 p-1.5">n/a</td></tr>
+                <tr><td class="border border-white/10 p-1.5">(3) dates (except year)</td><td class="border border-white/10 p-1.5">admission_date</td><td class="border border-white/10 p-1.5 font-mono">year_only</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5">(16) any other unique id</td><td class="border border-white/10 p-1.5">subject_id</td><td class="border border-white/10 p-1.5 font-mono">SHA-256 salt hash</td></tr>
+                <tr><td class="border border-white/10 p-1.5">age &gt; 89 aggregation</td><td class="border border-white/10 p-1.5">Age (102,114!)</td><td class="border border-white/10 p-1.5 font-mono">band → '89+'</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-black/40 rounded-xl p-3 mt-3 text-[11px] text-left">ผลลัพธ์ใน ipynb §4 = <code>patients_deidentified.csv</code> (safe-for-teaching) — จำว่า hashed-id ยังเป็น pseudonymized ตาม PDPA ไม่ใช่ anonymous 100%</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: เทียบ 2 กฎหมาย →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Compare -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · PDPA vs HIPAA</h2>
+          <table class="w-full text-[11px] border-collapse">
+            <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">ประเด็น</th><th class="border border-white/10 p-1.5">PDPA (ไทย)</th><th class="border border-white/10 p-1.5">HIPAA (US)</th></tr></thead>
+            <tbody class="text-white/90">
+              <tr><td class="border border-white/10 p-1.5 font-bold">Scope</td><td class="border border-white/10 p-1.5">personal data ทุกประเภท</td><td class="border border-white/10 p-1.5">เฉพาะ PHI (health)</td></tr>
+              <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">Sensitive health</td><td class="border border-white/10 p-1.5">explicit consent/exemption</td><td class="border border-white/10 p-1.5">treatment/payment/ops permitted</td></tr>
+              <tr><td class="border border-white/10 p-1.5 font-bold">Roles</td><td class="border border-white/10 p-1.5">Controller / Processor</td><td class="border border-white/10 p-1.5">Covered Entity / BA</td></tr>
+              <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">De-ID standard</td><td class="border border-white/10 p-1.5">อิงแนวเดียวกัน (expert/Safe-Harbor-like)</td><td class="border border-white/10 p-1.5">Safe Harbor / Expert Determination</td></tr>
+              <tr><td class="border border-white/10 p-1.5 font-bold">Breach notify</td><td class="border border-white/10 p-1.5">≤72 ชม. → สำนักงาน PDPC</td><td class="border border-white/10 p-1.5">≤60 วัน → HHS + individuals</td></tr>
+              <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">โทษสูงสุด</td><td class="border border-white/10 p-1.5">ปรับ ฿5M(+2×) / จำ 6 ปี(คดีอาญาบางมาตรา)</td><td class="border border-white/10 p-1.5">$2.1M/yr/clause + jail</td></tr>
+            </tbody>
+          </table>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: G-Cloud →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 Cloud -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · นโยบายคลาวด์กลางด้านสาธารณสุข (ไทย)</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">G-Cloud / Cloud First</h3>
+              <ul class="space-y-1 list-disc list-inside">
+                <li>หน่วยงานราชการใช้<strong>คลาวด์ภาครัฐ (G-Cloud)</strong> ที่ DGA ให้บริการ ก่อน private cloud/offshore</li>
+                <li>ระดับความปลอดภัยข้อมูล (S0–S3): ข้อมูลสุขภาพ = ระดับสูง → hosting ในประเทศ + เข้ารหัส</li>
+                <li>PDPA §28: โอนข้อมูลออกนอก kingdom ได้เมื่อปลายทางมี protection เทียบเท่า</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Implication กับนักศึกษา</h3>
+              <ul class="space-y-1 list-disc list-inside text-[11px]">
+                <li>❌ upload raw patient file ขึ้น public AI/cloud โดยพลการ</li>
+                <li>✅ ใช้ synthetic data (PySynthea wk12–13) สำหรับ demo/AI</li>
+                <li>✅ production ต้อง BAA/DPA + encryption at rest/in-transit</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 นี่คือเหตุผลที่คอร์สนี้ใช้ synthetic + de-identified data ตลอด!</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 Official: <a class="text-cyan-300 underline" href="https://cloud.dga.or.th/" target="_blank">cloud.dga.or.th (G-Cloud)</a> · <a class="text-cyan-300 underline" href="https://www.etda.or.th/" target="_blank">ETDA</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 Lab -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · Lab สัปดาห์ที่ 10 🧪</h2>
+          <p class="text-sm text-white/80 mb-3"><a class="underline text-cyan-300" href="./week10-ethics-pii-audit.ipynb">week10-ethics-pii-audit.ipynb</a> — audit → mask/hash/generalize → export safe CSV</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📋 ภารกิจ ↔ §</h3>
+              <ol class="list-decimal list-inside space-y-1.5">
+                <li>§1 Audit 7 คอลัมน์ → class Direct/Quasi/Clinical</li>
+                <li>§2 Masking Name + SHA-256 pseudonymize id (salt)</li>
+                <li>§3 Age band (89+ per HIPAA) + k-anonymity check k&lt;5</li>
+                <li>§4 Export <code class="bg-black/30 px-1 rounded">patients_deidentified.csv</code></li>
+              </ol>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">📝 Homework 10</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>เรียงความ 1 หน้า: PDPA vs HIPAA (consent/rights/penalty) อ้างอิง pdpc.or.th + hhs.gov</li>
+                <li>ส่ง .ipynb + patients_deidentified.csv</li>
+                <li>(Bonus) หา quasi-identifier combo ที่ re-identify ได้ใน class dataset แล้ว propose fix</li>
+              </ul>
+              <div class="bg-emerald-900/30 border border-emerald-700 rounded p-2 mt-2 text-[11px]">เกณฑ์: audit ถูก class 50% · de-id ครบ workflow 50%</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=9" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=11" class="hover:text-white">ถัดไป: อ้างอิง →</button></div>
+        </div>
+      </div>
+
+      <!-- 11 Refs -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">10 · แหล่งอ้างอิงทางการ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🇹🇭 Thailand</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://pdpc.or.th/" target="_blank">สำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล (PDPC)</a> — กฎหมาย PDPA ฉบับสมบูรณ์ + ประกาศ/คู่มือ</li>
+                <li><a class="text-cyan-300 underline" href="https://cloud.dga.or.th/" target="_blank">DGA — G-Cloud Thai Government</a> · <a class="text-cyan-300 underline" href="https://www.dga.or.th/" target="_blank">dga.or.th</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.etda.or.th/" target="_blank">ETDA</a> — cyber security &amp; digital law</li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">🇺🇸 US / International</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.hhs.gov/hipaa/index.html" target="_blank">HIPAA — HHS official</a> · <a class="text-cyan-300 underline" href="https://www.hhs.gov/hipaa/for-professionals/special-topics/de-identification/index.html" target="_blank">De-identification Guidance</a></li>
+                <li>Training: CITI Program (data ethics cert — ใช้สมัคร MIMIC/PhysioNet)</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🐍 Python</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://docs.python.org/3/library/hashlib.html" target="_blank">hashlib</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/secrets.html" target="_blank">secrets</a></li>
+                <li><a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.apply.html" target="_blank">df.apply</a> · <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.GroupBy.size.html" target="_blank">groupby().size()</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — wichit.s@ubu.ac.th</p>
+              <p class="text-white/60 mt-2">คาบหน้า: Health Care Data Standards (FHIR/OMOP/ICD-10)</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">Next: <a class="underline text-cyan-300" href="./wk11.html">Week 11 — Standards</a> · <a class="underline text-cyan-300" href="./week11-data-standards.ipynb">week11-data-standards.ipynb</a></div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>

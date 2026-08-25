@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 12 Finding Insights from Big Data Part 1">
+    <meta name="keywords" content="Health Informatics, BigQuery, DuckDB, PySynthea, Synthetic Data, Big Data">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 12 — Finding Insights from Big Data (Part 1)</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk12.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer">
+
+      <!-- 0 -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 12</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">Finding Insights from Big Data (I)</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">Google BigQuery · DuckDB · PySynthea synthetic cohort</p>
+          <p class="text-lg text-white/70 mb-6">Columnar DW · serverless SQL · Python-native patient generation · offline analytics</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมาย (CLO2/CLO4)</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>อธิบายสถาปัตยกรรม BigQuery + เทียบกับ local DuckDB</li>
+              <li>generate synthetic patients ด้วย PySynthea (seed reproducible)</li>
+              <li>query prevalence insights ด้วย SQL บนไฟล์โดยตรง</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/60 mt-4">Lab: 🧪 <a class="underline text-cyan-300" href="./week12-bigdata-part1.ipynb">week12-bigdata-part1.ipynb</a> — install: <code class="bg-black/30 px-1 rounded">uv add tietai-synthea duckdb</code></div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · BigQuery</div>สถาปัตยกรรม cloud</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · Console tour</div>sandbox ฟรี</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · DuckDB</div>offline twin</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · PySynthea</div>generate cohort</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · Load &amp; Query</div>CSV in-place</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · Prevalence</div>CASE + decade bands</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · Cost tips</div>dry-run/partition</button>
+            <button @click="currentSlide=9" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">08 · Lab 🧪</div>+ HW</button>
+            <button @click="currentSlide=10" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl col-span-2 md:col-start-3"><div class="text-yellow-300 font-bold">09 · อ้างอิงทางการ</div>GCP · TIET-AI · DuckDB</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 BigQuery -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · Google BigQuery — serverless DW</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px]">
+                <div class="flex justify-center gap-1 mb-1"><span class="bg-blue-900/40 border border-blue-700 rounded px-2 py-1">Your browser (console)</span></div>
+                <div class="text-white/50">↓ HTTPS SQL</div>
+                <div class="bg-purple-900/40 border border-purple-700 rounded px-2 py-1 inline-block">Query engine (Dremel)</div>
+                <div class="text-white/50 my-1">↓ columnar scan, parallel 1000s slots</div>
+                <div class="bg-emerald-900/40 border border-emerald-700 rounded px-2 py-1 inline-block">Storage (Capacitor) — petabytes</div>
+                <div class="text-white/50 mt-1">compute ⬄ storage แยกกัน scale อิสระ</div>
+              </div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <ul class="space-y-1.5 list-disc list-inside">
+                <li><strong>Serverless:</strong> ไม่ต้องจัดการ server/index</li>
+                <li><strong>Columnar:</strong> SELECT 2 cols จาก 100 = อ่านเฉพาะ 2</li>
+                <li><strong>Pricing:</strong> จ่ายตาม bytes scanned (~$6.25/TB) — sandbox ฟรี 10GB storage/1TB query/เดือน</li>
+                <li>SQL 2011 standard — ใช้ skill เดิมได้หมด</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 wk10 tie-in: upload <em>synthetic only</em> — raw PHI ผิด policy!</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/introduction" target="_blank">BigQuery intro</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/sandbox" target="_blank">Free sandbox</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: Console →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 Console -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · Console tour — 5 ขั้นเริ่มงาน</h2>
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-left text-[11px]">
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">1. Sandbox</div>cloud.google.com/bigquery/docs/sandbox — login Google ไม่ต้องบัตร</div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">2. Dataset</div>console → ⋮ next to project → Create dataset → <code>amms302</code> (region asia-southeast1)</div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">3. Table</div>Create table → Upload `synthetic_cohort.csv` → auto-detect schema</div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">4. Query</div>Compose new → SQL editor → Run (Ctrl+Enter)</div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">5. Dry-run ✓</div>validator แสดง bytes before run — เช็ค cost เสมอ</div>
+          </div>
+          <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] text-left mt-3 max-w-2xl mx-auto overflow-x-auto">-- BigQuery SQL — เหมือนที่เรียนมาทั้งหมด
+SELECT gender, COUNT(*) AS n, AVG(hba1c) AS avg_a1c
+FROM `your-project.amms302.synthetic_cohort`
+GROUP BY gender ORDER BY gender;</pre>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: DuckDB →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 DuckDB -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · DuckDB — BigQuery จิ๋วแบบออฟไลน์</h2>
+          <p class="text-sm text-white/80 mb-3">“SQLite for analytics” — columnar vectorized engine · query CSV/Parquet <strong>in-place</strong> ไม่ต้อง import</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]"># uv add duckdb
+import duckdb
+con = duckdb.connect()   # in-memory
+
+con.execute("""
+SELECT gender, COUNT(*) n,
+       ROUND(AVG(hba1c),2) avg_a1c
+FROM read_csv_auto('synthetic_cohort.csv')
+GROUP BY gender""").df()</pre>
+              <p class="text-[11px] text-white/60 mt-1">.df() → pandas DataFrame ทันที</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">ประเด็น</th><th class="border border-white/10 p-1">BigQuery</th><th class="border border-white/10 p-1">DuckDB</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">Scale</td><td class="border border-white/10 p-1">PB</td><td class="border border-white/10 p-1">GB–TB (single node)</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">Setup</td><td class="border border-white/10 p-1">account+project</td><td class="border border-white/10 p-1">uv add จบ!</td></tr>
+                  <tr><td class="border border-white/10 p-1">Cost</td><td class="border border-white/10 p-1">pay/query</td><td class="border border-white/10 p-1">ฟรี local</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">Offline lab</td><td class="border border-white/10 p-1">✗</td><td class="border border-white/10 p-1 font-bold text-emerald-300">✓ เราใช้ตัวนี้</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/clients/python/overview.html" target="_blank">DuckDB Python guide</a> · <a class="text-cyan-300 underline" href="https://duckdb.org/docs/" target="_blank">docs home</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: PySynthea →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 PySynthea -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · PySynthea — generate cohort</h2>
+          <p class="text-sm text-white/80 mb-3"><code class="bg-black/30 px-1 rounded">uv add tietai-synthea</code> → import name = <code class="bg-black/30 px-1 rounded">synthea</code> — Python-native, ไม่ต้อง Java/JVM</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">from synthea import Generator,
+                    GeneratorOptions
+
+opts = GeneratorOptions()
+opts.population_size = 50
+opts.seed = 42        # reproducible!
+gen = Generator(opts)
+gen.run()
+print(gen.stats)
+# {'total_generated': 50, ...}</pre>
+              <p class="text-[11px] text-white/60 mt-1">CLI: <code class="bg-black/30 px-1 rounded">uv run synthea -p 50 --state California</code></p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Output &amp; why seed matters</h3>
+              <ul class="list-disc list-inside space-y-1 text-[11px]">
+                <li>FHIR R4 bundles + pandas-friendly exports</li>
+                <li>disease modules ครบ (DM, HT, AF…) bundled ใน package</li>
+                <li>seed เดิม = dataset เดิม → homework ตรวจซ้ำได้</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">🔗 <a class="underline text-cyan-300" href="https://github.com/TIET-AI/tietai-synthea#quick-start" target="_blank">Quick Start</a> · <a class="underline text-cyan-300" href="https://pypi.org/project/tietai-synthea/" target="_blank">PyPI</a> · <a class="underline text-cyan-300" href="https://tiet.ai/pdf/pysynthea-paper.pdf" target="_blank">Paper</a> · upstream Java: <a class="underline text-cyan-300" href="https://github.com/synthetichealth/synthea" target="_blank">synthea™</a></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: Query →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 Query -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · Load &amp; Query — in-place analytics</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- CASE + GROUP BY บนไฟล์ตรง ๆ
+SELECT
+  CASE WHEN age&lt;40 THEN '18-39'
+       WHEN age&lt;60 THEN '40-59'
+       ELSE '60+' END AS band,
+  COUNT(*) n,
+  SUM(dm_dx::INT) dm_n
+FROM read_csv_auto('synthetic_cohort.csv')
+GROUP BY band ORDER BY band;</pre>
+              <p class="text-[11px] text-white/60 mt-1">syntax เดียวกับ wk6–7 — แค่ FROM เปลี่ยนเป็น reader</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Pipeline diagram</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-1">
+                <div class="bg-blue-900/40 rounded p-1">synthetic_cohort.csv (disk)</div>
+                <div class="text-white/50">↓ read_csv_auto (scan เฉพาะ col ที่ใช้)</div>
+                <div class="bg-emerald-900/40 rounded p-1">vectorized filter/agg</div>
+                <div class="text-white/50">↓ .df()</div>
+                <div class="bg-purple-900/40 rounded p-1">pandas → matplotlib</div>
+              </div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">RAM ใช้เท่าที่จำเป็น — ไฟล์ 10GB ก็ query ได้บนเครื่องธรรมดา (wk14 เจาะต่อ)</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: Prevalence →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 Prevalence -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · Insight: DM prevalence by decade</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT age/10*10 AS decade,
+ COUNT(*) n,
+ ROUND(AVG(sbp),0) avg_sbp,
+ ROUND(100.0*SUM(CASE
+   WHEN hba1c&gt;7 THEN 1 ELSE 0 END)
+   /COUNT(*),1) pct_uncontrolled
+FROM read_csv_auto('synthetic_cohort.csv')
+GROUP BY decade ORDER BY decade;</pre>
+              <p class="text-[11px] text-white/60 mt-1">+ matplotlib bar chart ใน ipynb §4</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">อ่านผลแบบ epidemiologist</h3>
+              <ul class="list-disc list-inside space-y-1 text-[11px]">
+                <li>%uncontrolled ควร<strong>เพิ่มตาม decade</strong> — sanity check ว่า generator สมจริง</li>
+                <li>avg_sbp trend ขึ้น = comorbidity pattern</li>
+                <li>n ต่อ cell ≥ 30 ถึงเชื่อได้ (small-N caution)</li>
+              </ul>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-3 text-[11px]"><span class="font-bold text-red-300">จำ:</span> insight จาก synthetic data ใช้<em>ฝึก method</em> ไม่ใช่สรุปสู่ประชากรจริง</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: Cost →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Cost -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · BigQuery cost &amp; performance tips</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-left text-[11px]">
+            <div class="bg-white/10 rounded-2xl p-3"><div class="font-bold text-yellow-300 mb-1">Dry-run first</div>Validator บอก bytes ที่จะ scan ก่อน Run — ประมาณ cost ทุกครั้ง</div>
+            <div class="bg-white/10 rounded-2xl p-3"><div class="font-bold text-yellow-300 mb-1">SELECT columns</div>columnar = อย่า SELECT * — 100 cols→2 cols = ลด bill ~50×</div>
+            <div class="bg-white/10 rounded-2xl p-3"><div class="font-bold text-yellow-300 mb-1">Partition/Cluster</div>แบ่งตาม date → WHERE date กรอง physical blocks</div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-3 text-xs text-left max-w-2xl mx-auto">
+            <strong>DuckDB equivalents:</strong> LIMIT + projection pushdown อัตโนมัติ · Parquet (wk14) = partition-like pruning<br/>
+            📚 <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/best-practices-costs" target="_blank">Best practices: controlling costs</a>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 Lab -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · Lab สัปดาห์ที่ 12 🧪</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <ol class="list-decimal list-inside space-y-1.5">
+                <li>§1 Generate 50 patients seed=42 (หรือ fallback)</li>
+                <li>§3 DuckDB: group-by-gender + pct_dm</li>
+                <li>§3 CASE age-bands 3 groups</li>
+                <li>§4 prevalence by decade + matplotlib chart</li>
+              </ol>
+              <div class="bg-black/30 rounded p-2 mt-2 text-[11px]">ipynb §5: BigQuery sandbox walkthrough (optional, cloud)</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">📝 Homework 12</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Generate 500 คน — seed = เลขรหัสนักศึกษา</li>
+                <li>Top-3 decades by DM prevalence + bar chart</li>
+                <li>ส่ง .ipynb + csv — อาจารย์รันซ้ำด้วย seed เดิมต้องได้ผลตรง</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: อ้างอิง →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 Refs -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · แหล่งอ้างอิงทางการ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">☁️ Google BigQuery</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs" target="_blank">Documentation</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/sandbox" target="_blank">Sandbox (free)</a></li>
+                <li><a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/loading-data" target="_blank">Loading data</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/best-practices-costs" target="_blank">Cost best practices</a></li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">🦆 DuckDB</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90"><li><a class="text-cyan-300 underline" href="https://duckdb.org/docs/" target="_blank">Docs</a> · <a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/clients/python/overview.html" target="_blank">Python API</a></li></ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🧬 PySynthea</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://github.com/TIET-AI/tietai-synthea" target="_blank">GitHub</a> · <a class="text-cyan-300 underline" href="https://pypi.org/project/tietai-synthea/" target="_blank">PyPI</a> · <a class="text-cyan-300 underline" href="https://tiet.ai/blog/py-synthea/" target="_blank">Blog</a> · <a class="text-cyan-300 underline" href="https://tiet.ai/pdf/pysynthea-paper.pdf" target="_blank">Paper</a></li>
+                <li>Upstream: <a class="text-cyan-300 underline" href="https://github.com/synthetichealth/synthea" target="_blank">synthea™ (Java)</a> · NIH tutorial: <a class="text-cyan-300 underline" href="https://nih-odss.github.io/fhir-for-research/modules/synthea-overview" target="_blank">FHIR for Research</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — wichit.s@ubu.ac.th</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">Next: <a class="underline text-cyan-300" href="./wk13.html">Week 13 — OMOP Insights</a> · <a class="underline text-cyan-300" href="./week13-omop-insights.ipynb">notebook</a></div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>

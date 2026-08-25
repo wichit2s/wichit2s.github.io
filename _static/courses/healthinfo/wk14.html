@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 14 Techniques when dealing with Big Data">
+    <meta name="keywords" content="Health Informatics, Chunking, Parquet, DuckDB, Permissions, IAM, Big Data Techniques">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 14 — Techniques when dealing with Big Data</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk14.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer">
+
+      <!-- 0 -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-orange-500/30 text-orange-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 14</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">Techniques with Big Data</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">Chunking · dtype downcast · Parquet · Views · UPDATE/DELETE · Permissions</p>
+          <p class="text-lg text-white/70 mb-6">ทำงานกับข้อมูลใหญ่กว่า RAM · table view/update · access control (BigQuery IAM)</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมาย (CLO2/CLO4)</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>คำนวณ RAM footprint + เลือก chunk/downcast/columnar ให้ถูกสถานการณ์</li>
+              <li>UPDATE/DELETE แบบ transaction-guard + CREATE VIEW in-place</li>
+              <li>ออกแบบ permission plan (least privilege) สำหรับทีมวิจัย</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/60 mt-4">Lab: 🧪 <a class="underline text-cyan-300" href="./week14-bigdata-techniques.ipynb">week14-bigdata-techniques.ipynb</a> — benchmark จริงบนเครื่องเรา</div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · RAM math</div>ทำไม OOM</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · Chunking</div>read_csv chunksize</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · Downcast</div>int32/category</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · Parquet</div>columnar binary</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · VIEW</div>query in-place</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · UPDATE/DELETE</div>+ rollback guard</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · Permissions</div>IAM / ACL / chmod</button>
+            <button @click="currentSlide=9" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">08 · Lab 🧪</div>+ HW benchmark</button>
+            <button @click="currentSlide=10" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl col-span-2 md:col-start-3"><div class="text-yellow-300 font-bold">09 · อ้างอิงทางการ</div>Specs</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 RAM -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · RAM Math — รู้ก่อนพัง</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-black/40 rounded-xl p-4 text-center text-[11px]">
+              <div class="font-mono">float64 = 8 bytes / cell</div>
+              <div class="mt-2 space-y-1">
+                <div>100 cols × 1M rows = <strong class="text-yellow-300">800 MB</strong></div>
+                <div>100 cols × 10M rows = <strong class="text-red-300">8 GB</strong> 💥</div>
+                <div>+ pandas overhead ~2× → crash บนเครื่อง 8GB RAM</div>
+              </div>
+              <pre class="mt-2 text-green-400 text-[10px] text-left">df.memory_usage(deep=True).sum()/1e6   # MB
+# วัดก่อนเสมอ!</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">Decision tree</h3>
+              <ul class="space-y-1 list-disc list-inside text-[11px]">
+                <li>&lt; 25% RAM → pandas full load OK</li>
+                <li>25–75% RAM → downcast/usecols/categories</li>
+                <li>&gt; 75% RAM หรือ &gt; RAM → <strong>chunking</strong> หรือ <strong>DuckDB/Parquet</strong></li>
+                <li>TB scale → cloud DW (BigQuery)</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 lab §1 วัดจริงกับ big_vitals.csv (200k rows จำลอง)</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: Chunking →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 Chunking -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · Chunking — streaming aggregate</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto">acc = {}                       # sum,n per group
+for chunk in pd.read_csv(
+      'big.csv', chunksize=50_000,
+      usecols=['gender','hba1c']):   # ← col pruning!
+    for g, sub in chunk.groupby('gender'):
+        s, n = acc.get(g, (0.0, 0))
+        acc[g] = (s+sub.hba1c.sum(), n+len(sub))
+# combine:
+mean = {g: round(s/n,3) for g,(s,n) in acc.items()}</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Diagram</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-1">
+                <div class="bg-blue-900/40 rounded p-1">big.csv (disk, 10GB)</div>
+                <div class="flex justify-center gap-1"><span class="bg-white/10 rounded px-1">chunk 50k</span><span class="bg-white/10 rounded px-1">chunk 50k</span><span class="bg-white/10 rounded px-1">…</span></div>
+                <div class="text-white/50">↓ aggregate each → merge accumulator</div>
+                <div class="bg-emerald-900/40 rounded p-1">RAM peak ≈ 1 chunk (~5MB) ✓</div>
+              </div>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">ห้าม:</span> append chunk เข้า list จนหมดไฟล์ = โหลดเต็มเหมือนเดิม!</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html" target="_blank">read_csv (chunksize param)</a> · <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/user_guide/scale.html" target="_blank">Scaling to large datasets</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: Downcast →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 Downcast -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · dtype downcasting</h2>
+          <table class="w-full text-[11px] border-collapse max-w-2xl mx-auto">
+            <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">dtype เดิม</th><th class="border border-white/10 p-1.5">downcast</th><th class="border border-white/10 p-1.5">bytes</th><th class="border border-white/10 p-1.5">เงื่อนไข</th></tr></thead>
+            <tbody class="text-white/90">
+              <tr><td class="border border-white/10 p-1.5 font-mono">int64</td><td class="border border-white/10 p-1.5 font-mono">int8/int16/int32</td><td class="border border-white/10 p-1.5">8→1/2/4</td><td class="border border-white/10 p-1.5">range พอ (age≤127 → int8)</td></tr>
+              <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-mono">float64</td><td class="border border-white/10 p-1.5 font-mono">float32</td><td class="border border-white/10 p-1.5">8→4</td><td class="border border-white/10 p-1.5">precision 7 หลักพอ (lab values)</td></tr>
+              <tr><td class="border border-white/10 p-1.5 font-mono">object (str)</td><td class="border border-white/10 p-1.5 font-mono">category</td><td class="border border-white/10 p-1.5">~10×</td><td class="border border-white/10 p-1.5">cardinality ต่ำ (gender, ward)</td></tr>
+            </tbody>
+          </table>
+          <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] text-left mt-3 max-w-2xl mx-auto">for c in df.select_dtypes('integer'):
+    df[c] = pd.to_numeric(df[c], downcast='integer')
+df['gender'] = df['gender'].astype('category')</pre>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left max-w-2xl mx-auto">lab §3: ลด memory ได้ 50–70% บน dataset เดียวกัน · 📚 <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.select_dtypes.html" target="_blank">select_dtypes</a> · <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/user_guide/categorical.html" target="_blank">Categorical guide</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: Parquet →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 Parquet -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · Parquet — columnar binary format</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px]">
+                <div class="mb-1">CSV (row-based)</div>
+                <div class="font-mono text-[10px] bg-white/10 rounded p-1">r1:a,b,c,d | r2:a,b,c,d …</div>
+                <div class="my-1">↓ convert</div>
+                <div>Parquet (column chunks + encodings)</div>
+                <div class="font-mono text-[10px] bg-white/10 rounded p-1 mt-1">col_a: [v,v,v…] | col_b: […] (snappy/zstd)</div>
+              </div>
+              <ul class="list-disc list-inside mt-2 space-y-1 text-[11px]">
+                <li>compression 60–80% smaller</li>
+                <li>read เฉพาะ column + row-group (predicate pushdown)</li>
+                <li>typed schema ในตัว (ไม่เดา dtype!)</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto"># via duckdb COPY
+con.execute(\"\"\"
+COPY (SELECT * FROM
+      read_csv_auto('big_vitals.csv'))
+TO 'big_vitals.parquet'
+(FORMAT PARQUET)\"\"\")
+
+# or pandas:
+df.to_parquet('x.parquet')     # needs pyarrow
+pd.read_parquet('x.parquet')</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 lab §4: CSV→Parquet เล็กลง ~70% + query เร็วขึ้น</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 Official spec: <a class="text-cyan-300 underline" href="https://parquet.apache.org/" target="_blank">parquet.apache.org</a> · pandas <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_parquet.html" target="_blank">to_parquet</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: VIEW →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 View -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · CREATE VIEW — ตารางเสมือน</h2>
+          <p class="text-sm text-white/80 mb-3">VIEW = saved query ชี้ไฟล์จริง — ไม่ copy data, ผล fresh ทุกครั้งที่ query</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto">CREATE OR REPLACE VIEW v_vitals AS
+SELECT * FROM read_parquet('big_vitals.parquet');
+
+-- ใช้เหมือนตาราง:
+SELECT age/10*10 decade, AVG(sbp)
+FROM v_vitals GROUP BY decade;
+
+-- vs TABLE AS (materialize):
+CREATE TABLE t AS SELECT ...; -- copy จริง</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1"></th><th class="border border-white/10 p-1">VIEW</th><th class="border border-white/10 p-1">TABLE</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">Storage</td><td class="border border-white/10 p-1">0 (query only)</td><td class="border border-white/10 p-1">copy ข้อมูล</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">Freshness</td><td class="border border-white/10 p-1">real-time</td><td class="border border-white/10 p-1">snapshot</td></tr>
+                  <tr><td class="border border-white/10 p-1">Speed</td><td class="border border-white/10 p-1">re-compute</td><td class="border border-white/10 p-1">fast read</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 BigQuery: view + authorized views = fine-grained sharing (tie wk10 privacy)</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/sql/statements/create_view.html" target="_blank">DuckDB CREATE VIEW</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/views" target="_blank">BigQuery views</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: UPDATE →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 Update -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · UPDATE / DELETE — อย่างมีเซฟตี้เบ็ลต์</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px] overflow-x-auto">-- pattern: BEGIN → check → commit/rollback
+BEGIN;
+-- ดูก่อนว่าจะกระทบกี่แถว:
+SELECT COUNT(*) FROM patients
+ WHERE systolic_bp > 220;         -- e.g. 5
+
+UPDATE patients SET systolic_bp=NULL
+ WHERE systolic_bp > 220;
+
+SELECT changes();                 -- == 5 ?
+COMMIT;   -- หรือ ROLLBACK;</pre>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-2">-- DELETE: preview ก่อนเสมอ!
+SELECT COUNT(*) FROM patients
+ WHERE patient_id NOT IN
+       (SELECT patient_id FROM rx);
+-- แล้วค่อย DELETE ตามเงื่อนไขเดิม</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Golden rules</h3>
+              <ul class="list-disc list-inside space-y-1 text-[11px]">
+                <li>WHERE ทุกครั้ง — UPDATE ไร้ WHERE = ล้างทั้งตาราง!</li>
+                <li>preview SELECT ด้วยเงื่อนไขเดิมก่อน execute</li>
+                <li>backup file (.db/.csv copy) ก่อน bulk ops</li>
+                <li>audit log: ใคร update อะไรเมื่อไร (BigQuery: Information Schema)</li>
+              </ul>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">จำ wk10:</span> update PHI ต้อง log + least privilege editor role</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/sql/statements/update.html" target="_blank">DuckDB UPDATE</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_update.html" target="_blank">SQLite UPDATE</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/manually-changing-table-schema?hl=en" target="_blank">BQ modify data</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: Permissions →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Perms -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · Permission management — least privilege</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-[11px] border-collapse">
+              <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">System</th><th class="border border-white/10 p-1.5">Model</th><th class="border border-white/10 p-1.5">ตัวอย่างการให้สิทธิ์</th></tr></thead>
+              <tbody class="text-white/90">
+                <tr><td class="border border-white/10 p-1.5 font-bold">SQLite/DuckDB</td><td class="border border-white/10 p-1.5">file-level OS</td><td class="border border-white/10 p-1.5 font-mono">chmod 600 healthinfo.db (owner rw only)</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">PostgreSQL</td><td class="border border-white/10 p-1.5">roles + GRANT</td><td class="border border-white/10 p-1.5 font-mono">GRANT SELECT ON patients TO analyst_ro;</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">BigQuery</td><td class="border border-white/10 p-1.5">IAM per project/dataset/table</td><td class="border border-white/10 p-1.5 font-mono">roles/bigquery.dataViewer (read-only)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] mt-3 text-left">
+            <div class="bg-white/10 rounded-xl p-3"><div class="font-bold text-yellow-300">Analyst</div>dataViewer — SELECT only</div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="font-bold text-cyan-300">ETL service acct</div>dataEditor เฉพาะ staging dataset</div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="font-bold text-emerald-300">PI/owner</div>admin + billing + audit logs on</div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/access-control" target="_blank">BQ Access control (IAM roles)</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/dataset-access-controls" target="_blank">Dataset ACLs</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 Lab -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · Lab สัปดาห์ที่ 14 🧪</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <ol class="list-decimal list-inside space-y-1.5">
+                <li>§1 generate big_vitals.csv 200k + วัด memory</li>
+                <li>§2 chunked aggregate — เทียบผลกับ full-load</li>
+                <li>§3 downcast → %saved</li>
+                <li>§4 CSV→Parquet + view query timing</li>
+                <li>§5 UPDATE bp&gt;220 ด้วย rollback guard บน healthinfo.db</li>
+              </ol>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">📝 Homework 14</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Benchmark 400k rows: chunk(20k) vs duckdb — ตารางเวลา + สรุป 3 บรรทัด</li>
+                <li>Permission plan ½ หน้า สำหรับ project กลุ่ม (roles ตาม BQ IAM)</li>
+                <li>ส่ง .ipynb — งานนี้ป้อนเข้า project consultation สัปดาห์ 15</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: อ้างอิง →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 Refs -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · แหล่งอ้างอิงทางการ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🐼 pandas</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html" target="_blank">read_csv (chunksize/usecols/dtype)</a></li>
+                <li><a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/user_guide/scale.html" target="_blank">Scaling to large datasets</a> · <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_parquet.html" target="_blank">to_parquet</a></li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">📄 Format</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90"><li><a class="text-cyan-300 underline" href="https://parquet.apache.org/" target="_blank">Apache Parquet official</a></li></ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🦆 SQL engines &amp; security</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/clients/python/overview.html" target="_blank">DuckDB Python</a> · <a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/sql/statements/create_view.html" target="_blank">CREATE VIEW</a> · <a class="text-cyan-300 underline" href="https://duckdb.org/docs/stable/sql/statements/update.html" target="_blank">UPDATE</a></li>
+                <li><a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/access-control" target="_blank">BigQuery IAM access control</a> · <a class="text-cyan-300 underline" href="https://cloud.google.com/bigquery/docs/views" target="_blank">Views</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — wichit.s@ubu.ac.th</p>
+              <p class="text-white/60 mt-2">สัปดาห์หน้า: Project Consultation — เตรียม ERD + dataset proposal</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">Next: Week 15–16 Group Project 🚀</div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>

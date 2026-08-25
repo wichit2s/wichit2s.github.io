@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 11 Health Care Data Standards">
+    <meta name="keywords" content="Health Informatics, HL7 FHIR, OMOP CDM, ICD-10, Data Standards">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 11 — Health Care Data Standards</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk11.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer">
+
+      <!-- 0 -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-teal-500/30 text-teal-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 11</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">มาตรฐานข้อมูลสุขภาพสากล</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">Health Care Data Standards</p>
+          <p class="text-lg text-white/70 mb-6">HL7 FHIR R4 · OMOP Common Data Model · ICD-10 · สปสช. Data Dictionary</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมาย (CLO1/CLO4)</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>อธิบายบทบาท FHIR (exchange) vs OMOP (research model) vs ICD-10 (terminology)</li>
+              <li>อ่าน FHIR Bundle JSON + flatten เป็นตารางได้</li>
+              <li>Map ICD-10 → chapter และสร้าง mini-OMOP จาก dataset เราได้</li>
+            </ul>
+          </div>
+          <div class="text-sm text-white/60 mt-4">Lab: 🧪 <a class="underline text-cyan-300" href="./week11-data-standards.ipynb">week11-data-standards.ipynb</a> · ใช้ <code class="bg-black/30 px-1 rounded">patient_fhir_demo.json</code></div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · Babel problem</div>ทำไมต้องมี standard</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · Landscape</div>Terminology vs Model</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · ICD-10</div>โครงสร้างรหัส WHO</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · FHIR</div>Resources &amp; Bundle</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · FHIR JSON</div>walkthrough จริง</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · OMOP CDM</div>OHDSI research model</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · FHIR↔OMOP</div>ETL mapping idea</button>
+            <button @click="currentSlide=9" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">08 · สปสช. Dictionary</div>Thai claims data</button>
+            <button @click="currentSlide=10" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">09 · Lab 🧪</div>FHIR+ICD+miniOMOP</button>
+            <button @click="currentSlide=11" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl col-span-2"><div class="text-yellow-300 font-bold">10 · อ้างอิงทางการ</div>HL7 · OHDSI · WHO</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 Babel -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · ปัญหา Babel — ทำไมต้องมี standard?</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-red-300 mb-2">❌ โรงพยาบาลคุยกันไม่รู้เรื่อง</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-[11px] space-y-1">
+                <div>Hosp A: "DM" | Hosp B: "เบาหวาน" | Hosp C: "E11.9"</div>
+                <div>Field: <code>DOB</code> vs <code>วันเกิด</code> vs <code>birthDate</code></div>
+                <div>Lab HbA1c: % vs mmol/mol!</div>
+              </div>
+              <p class="mt-2">→ ETL ทุกคู่ = O(n²) งานซ้ำซ้อน และแปลผิดได้</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-emerald-300 mb-2">✅ Standard = ภาษากลาง</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px]">
+                <div class="flex justify-center gap-1 items-center flex-wrap">
+                  <span class="bg-blue-900/40 border border-blue-700 rounded p-1">HIS A</span><span>→</span>
+                  <span class="bg-yellow-400/20 border border-yellow-600 rounded p-1 font-bold">FHIR / OMOP / ICD-10</span><span>→</span>
+                  <span class="bg-emerald-900/40 border border-emerald-700 rounded p-1">HIS B · Research DB</span>
+                </div>
+                <div class="text-white/60 mt-1">write once → interop everywhere</div>
+              </div>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li><strong>Exchange format:</strong> HL7 FHIR (REST/JSON/XML)</li>
+                <li><strong>Research data model:</strong> OMOP CDM</li>
+                <li><strong>Terminology:</strong> ICD-10, SNOMED CT, LOINC, RxNorm</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: Landscape →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 Landscape -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · Standards Landscape Map</h2>
+          <table class="w-full text-[11px] border-collapse">
+            <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">Layer</th><th class="border border-white/10 p-1.5">Standard</th><th class="border border-white/10 p-1.5">หน้าที่</th><th class="border border-white/10 p-1.5">ตัวอย่าง</th></tr></thead>
+            <tbody class="text-white/90">
+              <tr><td class="border border-white/10 p-1.5 font-bold">Terminology</td><td class="border border-white/10 p-1.5">ICD-10 · SNOMED CT · LOINC · RxNorm</td><td class="border border-white/10 p-1.5">ให้รหัส concept</td><td class="border border-white/10 p-1.5 font-mono">E11.9 = T2DM</td></tr>
+              <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">Message/Exchange</td><td class="border border-white/10 p-1.5">HL7 v2 · CDA · FHIR</td><td class="border border-white/10 p-1.5">ส่งข้อมูลระหว่างระบบ</td><td class="border border-white/10 p-1.5">FHIR REST + JSON</td></tr>
+              <tr><td class="border border-white/10 p-1.5 font-bold">Research model</td><td class="border border-white/10 p-1.5">OMOP CDM v5.4</td><td class="border border-white/10 p-1.5">schema กลางเพื่อ analytics</td><td class="border border-white/10 p-1.5">person/condition_occurrence</td></tr>
+              <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">Claims (ไทย)</td><td class="border border-white/10 p-1.5">สปสช. 43 แฟ้ม</td><td class="border border-white/10 p-1.5">เบิกจ่ายสิทธิประโยชน์</td><td class="border border-white/10 p-1.5">CHA, DCH, ORFS…</td></tr>
+            </tbody>
+          </table>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">💡 ระดับไหนต่างกัน? FHIR = วิธี<em>ส่ง</em>, ICD = <em>ความหมาย</em>, OMOP = <em>รูปทรงตาราง</em> — ใช้ประกอบกันได้ (wk12–13)</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: ICD-10 →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 ICD -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · ICD-10 — รหัสโรคสากล (WHO)</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <div class="bg-black/40 rounded-xl p-3 font-mono text-center text-sm">
+                <span class="text-yellow-300 text-lg">E</span><span class="text-cyan-300 text-lg">11</span><span class="text-emerald-300">.</span><span class="text-violet-300">9</span>
+                <div class="text-[10px] text-white/70 mt-1">Chapter(Endocrine) · Category(DM) · Subtype(no complication)</div>
+              </div>
+              <ul class="list-disc list-inside mt-3 space-y-1">
+                <li>A–Z chapter letters (22 chapters)</li>
+                <li>Thailand: ICD-10-TM (adapted) ใน claims สปสช.</li>
+                <li>ICD-11 ออกแล้ว — แต่ claims ยังใช้ 10</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Chapter ที่ใช้บ่อย</h3>
+              <table class="w-full text-[10px] border-collapse">
+                <tbody class="text-white/90">
+                  <tr><td class="border border-white/10 p-1 font-mono">E11</td><td class="border border-white/10 p-1">Type 2 diabetes mellitus</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">I10</td><td class="border border-white/10 p-1">Essential hypertension</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">I48</td><td class="border border-white/10 p-1">Atrial fibrillation</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">J45</td><td class="border border-white/10 p-1">Asthma</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">Z00</td><td class="border border-white/10 p-1">General health exam</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 lab §3: map first-letter → chapter group ด้วย dict ธรรมดา</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 Official browse: <a class="text-cyan-300 underline" href="https://icd.who.int/browse10/2019/en" target="_blank">icd.who.int/browse10</a> (WHO)</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: FHIR →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 FHIR -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · HL7 FHIR — Resources &amp; Bundle</h2>
+          <p class="text-sm text-white/80 mb-3"><strong>F</strong>ast <strong>H</strong>ealthcare <strong>I</strong>nteroperability <strong>R</strong>esources (R4) — modular resources + REST API</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🧱 Resource = LEGO block</h3>
+              <div class="flex flex-wrap gap-1 justify-center text-[11px]">
+                <span class="bg-blue-900/40 border border-blue-700 rounded p-1">Patient</span>
+                <span class="bg-emerald-900/40 border border-emerald-700 rounded p-1">Encounter</span>
+                <span class="bg-purple-900/40 border border-purple-700 rounded p-1">Observation</span>
+                <span class="bg-amber-900/40 border border-amber-700 rounded p-1">Condition</span>
+                <span class="bg-red-900/40 border border-red-700 rounded p-1">MedicationRequest</span>
+              </div>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-2">GET /Patient?gender=female&amp;birthdate=ge1970
+→ JSON Bundle of matching Patients</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">📦 Bundle structure</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">Bundle
+├─ resourceType: "Bundle"
+├─ id, type: "collection"
+└─ entry[]
+   ├─ fullUrl: urn:uuid:…
+   └─ resource: {resourceType:
+        "Patient", id, name[],
+        gender, birthDate}</pre>
+              <p class="text-[11px] text-white/60 mt-1">PySynthea (wk12) ส่งออกเป็น FHIR R4 bundles — อ่านด้วย skill เดียวกัน</p>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 Spec: <a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/" target="_blank">hl7.org/fhir (R4)</a> · <a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/patient.html" target="_blank">Patient</a> · <a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/bundle.html" target="_blank">Bundle</a> · <a class="text-cyan-300 underline" href="https://build.fhir.org/json.html" target="_blank">JSON rules</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: Walkthrough →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 FHIR JSON -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · Walkthrough: patient_fhir_demo.json</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[10px] overflow-x-auto">{ "resourceType": "Bundle",
+  "id": "bundle-amms302-demo",
+  "entry": [
+    { "fullUrl": "urn:uuid:10313763",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "10313763",
+        "name": [{"family":"รักดี",
+                  "given":["สมชาย"]}],
+        "gender": "male",
+        "birthDate": "1975-05-12"}}]}</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]"># flatten ทั้ง bundle
+pd.json_normalize(bundle,
+  record_path=['entry'])
+# columns:
+# resource.resourceType
+# resource.id
+# resource.name[].family …
+# resource.gender, birthDate
+
+# dot-path ตาม spec
+df['resource.birthDate']</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">🎯 Lab §1–2: นับ resourceType + สกัด age จาก birthDate</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.json_normalize.html" target="_blank">json_normalize docs</a> — ทบทวน wk01 สไลด์ 16</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: OMOP →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 OMOP -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · OMOP CDM — โมเดลวิจัยของ OHDSI</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">⭐ Core tables (v5.4)</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px]">
+                <div class="bg-blue-900/40 border border-blue-700 rounded p-1.5 inline-block">person (person_id PK)</div>
+                <div class="my-1 text-white/50">↑ FK person_id จากทุกตาราง ↓</div>
+                <div class="grid grid-cols-2 gap-1">
+                  <span class="bg-emerald-900/40 border border-emerald-700 rounded p-1">visit_occurrence</span>
+                  <span class="bg-purple-900/40 border border-purple-700 rounded p-1">condition_occurrence</span>
+                  <span class="bg-amber-900/40 border border-amber-700 rounded p-1">drug_exposure</span>
+                  <span class="bg-sky-900/40 border border-sky-700 rounded p-1">measurement/observation</span>
+                </div>
+              </div>
+              <ul class="list-disc list-inside mt-2 space-y-1 text-[11px]">
+                <li>concept_id อ้าง vocabulary tables (SNOMED/RxNorm mapped)</li>
+                <li>เขียน query ครั้งเดียว รันข้าม network ได้ (250+ DBs worldwide)</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Tools ecosystem</h3>
+              <ul class="list-disc list-inside space-y-1 text-[11px]">
+                <li><strong>ATLAS</strong>: GUI design cohort/characterization — <a class="underline text-cyan-300" href="https://atlas-demo.ohdsi.org/" target="_blank">atlas-demo.ohdsi.org</a></li>
+                <li><strong>ACHILLES</strong>: data quality summary</li>
+                <li><strong>HADES/R packages</strong>: stats &amp; ML</li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">📖 <a class="underline text-cyan-300" href="https://ohdsi.github.io/TheBookOfOhdsi/" target="_blank">The Book of OHDSI (free online)</a> — อ่าน ch.4–5 ก่อน wk13</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html" target="_blank">CDM v5.4 spec</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html#person" target="_blank">person table</a> · <a class="text-cyan-300 underline" href="https://ohdsi.org/" target="_blank">ohdsi.org</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: Mapping →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Mapping -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · FHIR ↔ OMOP — แนวคิด mapping</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-[11px] border-collapse">
+              <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">FHIR Resource</th><th class="border border-white/10 p-1.5">field</th><th class="border border-white/10 p-1.5">→</th><th class="border border-white/10 p-1.5">OMOP table.field</th></tr></thead>
+              <tbody class="text-white/90">
+                <tr><td class="border border-white/10 p-1.5 font-mono">Patient.id</td><td class="border border-white/10 p-1.5">—</td><td class="border border-white/10 p-1.5">→</td><td class="border border-white/10 p-1.5 font-mono">person.person_id</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-mono">Patient.gender</td><td class="border border-white/10 p-1.5">male/female</td><td class="border border-white/10 p-1.5">→</td><td class="border border-white/10 p-1.5 font-mono">person.gender_concept_id (8507/8532)</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-mono">Patient.birthDate</td><td class="border border-white/10 p-1.5">YYYY-MM-DD</td><td class="border border-white/10 p-1.5">→</td><td class="border border-white/10 p-1.5 font-mono">person.year_of_birth/month/day</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-mono">Condition.code</td><td class="border border-white/10 p-1.5">ICD-10/SNOMED coding</td><td class="border border-white/10 p-1.5">→</td><td class="border border-white/10 p-1.5 font-mono">condition_occurrence.condition_concept_id</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-mono">Encounter.period</td><td class="border border-white/10 p-1.5">start/end</td><td class="border border-white/10 p-1.5">→</td><td class="border border-white/10 p-1.5 font-mono">visit_occurrence.visit_start/end_date</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">ETL tools สำเร็จรูปมีอยู่แล้ว (e.g., FHIR-to-OMOP pipelines ใน OHDSI community) — เราฝึก<em>หลักการ</em>ผ่าน mini-OMOP ใน lab §4</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: สปสช. →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 NHSO -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · สปสช. Data Dictionary — บริบทไทย</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">43 แฟ้ม claims (UC service)</h3>
+              <ul class="space-y-1 list-disc list-inside text-[11px]">
+                <li><code class="font-mono">CHA</code> = รับรองสิทธิ (HN, CID hash, สิทธิ)</li>
+                <li><code class="font-mono">DCH</code>/<code class="font-mono">ODX</code>/<code class="font-mono">ORF</code> = opd dx/drug/referral</li>
+                <li>ICD-10-TM + DRG grouping สำหรับเบิกจ่าย</li>
+                <li>PID field ต้อง de-id ก่อนใช้วิจัย (wk10!)</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Project สัปดาห์ 15–16</h3>
+              <p class="text-[11px]">วาด ER diagram จาก dictionary ของ 2–3 แฟ้มที่เลือก → เสนอ dashboard/insight — ใช้ skill: ERD(wk07) + SQL(wk5–7) + standards(wk11)</p>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">📚 dictionary download ผ่าน <a class="underline text-cyan-300" href="https://nhso.go.th/" target="_blank">nhso.go.th</a> (สปสช. — National Health Security Office)</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 Lab -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · Lab สัปดาห์ที่ 11 🧪</h2>
+          <p class="text-sm text-white/80 mb-3"><a class="underline text-cyan-300" href="./week11-data-standards.ipynb">week11-data-standards.ipynb</a></p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <ol class="list-decimal list-inside space-y-1.5">
+                <li>§1 Load bundle → นับ resourceTypes</li>
+                <li>§2 json_normalize + dot-path สกัด Patient fields → age</li>
+                <li>§3 ICD-10 chapter dict + classify hba1c → E11.9/Z00.0</li>
+                <li>§4 สร้าง omop_mini.db (person + condition_occurrence + FK)</li>
+              </ol>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">📝 Homework 11</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>เพิ่ม visit_occurrence table ≥5 แถว + JOIN query</li>
+                <li>อ่าน FHIR Patient page → list 5 missing fields ใน dataset เรา</li>
+                <li>ส่ง .ipynb + omop_mini.db</li>
+              </ul>
+              <div class="bg-emerald-900/30 border border-emerald-700 rounded p-2 mt-2 text-[11px]">เกณฑ์: normalize ถูก path 40% · mini-OMOP FK ครบ 40% · HW อ้าง spec ถูก 20%</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=9" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=11" class="hover:text-white">ถัดไป: อ้างอิง →</button></div>
+        </div>
+      </div>
+
+      <!-- 11 Refs -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">10 · แหล่งอ้างอิงทางการ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🔥 HL7 FHIR</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/" target="_blank">FHIR R4 Spec home</a> · <a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/patient.html" target="_blank">Patient</a> · <a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/observation.html" target="_blank">Observation</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.hl7.org/fhir/bundle.html" target="_blank">Bundle</a> · <a class="text-cyan-300 underline" href="https://build.fhir.org/json.html" target="_blank">JSON representation</a></li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">🌍 Terminology</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90"><li><a class="text-cyan-300 underline" href="https://icd.who.int/browse10/2019/en" target="_blank">WHO ICD-10 browser</a></li></ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🏛️ OHDSI / OMOP</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html" target="_blank">CDM v5.4</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/TheBookOfOhdsi/" target="_blank">Book of OHDSI</a></li>
+                <li><a class="text-cyan-300 underline" href="https://atlas-demo.ohdsi.org/" target="_blank">ATLAS demo</a> · <a class="text-cyan-300 underline" href="https://ohdsi.org/" target="_blank">ohdsi.org</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — wichit.s@ubu.ac.th</p>
+              <p class="text-white/60 mt-2">คาบหน้า: BigQuery/DuckDB + PySynthea generation</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">Next: <a class="underline text-cyan-300" href="./wk12.html">Week 12 — Big Data Part 1</a> · <a class="underline text-cyan-300" href="./week12-bigdata-part1.ipynb">notebook</a></div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>

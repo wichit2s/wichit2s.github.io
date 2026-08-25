@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 5 Relational Database & SQL Part 1">
+    <meta name="keywords" content="Health Informatics, SQL, SQLite, Relational Database, Primary Key, CREATE TABLE, INSERT, SELECT">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5 — Relational Database & SQL (Part 1)</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk05.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Cover -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-blue-500/30 text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 5</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">ฐานข้อมูลเชิงสัมพันธ์ & SQL ตอนที่ 1</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">Relational Database & SQL (Part 1)</p>
+          <p class="text-lg text-white/70 mb-6">Database Schema · Column Types · PRIMARY KEY · SQLite · INSERT · SELECT · LIMIT</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมายคาบนี้</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>อธิบายตารางเชิงสัมพันธ์ สคีมา ชนิดคอลัมน์ และ PRIMARY KEY ได้ (CLO1)</li>
+              <li>สร้างฐานข้อมูล SQLite ไฟล์เดียว <code class="bg-black/30 px-1 rounded">healthinfo.db</code> บน Windows ได้</li>
+              <li>เขียน <code class="bg-black/30 px-1 rounded">CREATE TABLE</code> · <code class="bg-black/30 px-1 rounded">INSERT</code> · <code class="bg-black/30 px-1 rounded">SELECT</code> · <code class="bg-black/30 px-1 rounded">LIMIT</code> กับเวชระเบียนจริงได้ (CLO2)</li>
+            </ul>
+            <h3 class="text-center text-yellow-300 font-semibold mt-4 mb-2">🗺️ เส้นทางการเรียน (Learning Path)</h3>
+            <div class="flex justify-center items-center gap-1 text-[11px]">
+              <span class="bg-white/10 px-2 py-1 rounded">อ่านสไลด์ 2–7<br/>ทฤษฎี</span><span class="text-yellow-300">→</span>
+              <span class="bg-emerald-500/20 border border-emerald-600 px-2 py-1 rounded">เปิดโน้ตบุ๊ก<br/>week05-sql-basics.ipynb</span><span class="text-yellow-300">→</span>
+              <span class="bg-white/10 px-2 py-1 rounded">ฝึกสไลด์ 8–13<br/>พร้อมโน้ตบุ๊ก</span><span class="text-yellow-300">→</span>
+              <span class="bg-yellow-400/20 border border-yellow-500 px-2 py-1 rounded">Lab + Homework<br/>สไลด์ 15</span>
+            </div>
+          </div>
+          <div class="text-sm text-white/60 mt-4">Self-study — ทุกโค้ด copy-paste ได้ · มีปุ่มเลื่อนสไลด์ด้านบน/ล่างทุกหน้า · ลิงก์สเปกทางการในทุกสไลด์</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ — คลิกข้ามไปหัวข้อที่ต้องการ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · ทำไมเชิงสัมพันธ์</div>Flat file vs Relational</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · กายวิภาคตาราง</div>Table / Row / Column / Schema</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · Data Dictionary</div>สคีมา = พิมพ์เขียว</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · ชนิดคอลัมน์</div>TEXT / INTEGER / REAL…</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · Primary Key</div>UNIQUE + NOT NULL</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · SQLite</div>ฐานข้อมูลไฟล์เดียว</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · CREATE TABLE</div>สร้างตาราง patients</button>
+            <button @click="currentSlide=9" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">08 · INSERT</div>1 แถว / executemany</button>
+            <button @click="currentSlide=10" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">09 · NULL vs ''</div>IS NULL เท่านั้น!</button>
+            <button @click="currentSlide=11" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">10 · SELECT</div>สืบค้น + pandas</button>
+            <button @click="currentSlide=12" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">11 · LIMIT / OFFSET</div>แบ่งหน้า</button>
+            <button @click="currentSlide=13" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">12 · ลำดับทำงาน</div>FROM→SELECT→LIMIT</button>
+            <button @click="currentSlide=14" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">13 · Workflow Windows</div>Python / GUI / CLI</button>
+            <button @click="currentSlide=15" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">14 · Lab 🧪</div>6 ภารกิจ + เฉลย</button>
+            <button @click="currentSlide=16" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">15 · Cheat Sheet</div>สรุปคำสั่งทั้งหมด</button>
+            <button @click="currentSlide=17" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">16 · อ้างอิงทางการ</div>Specs & Docs</button>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">
+            📚 สเปกตลอดคาบ: <a class="text-cyan-300 underline" href="https://www.sqlite.org/docs.html" target="_blank">SQLite Docs</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html" target="_blank">CREATE TABLE</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_insert.html" target="_blank">INSERT</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">SELECT</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html" target="_blank">Python sqlite3</a> · โน้ตบุ๊ก: <a class="text-cyan-300 underline" href="./week05-sql-basics.ipynb">week05-sql-basics.ipynb</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Why relational -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · ทำไมโรงพยาบาลต้องฐานข้อมูลเชิงสัมพันธ์?</h2>
+          <p class="text-sm text-white/80 mb-4 text-left indent-8">เวชระเบียนกระจายหลายระบบ: Admission, Lab, Pharmacy, Billing — เก็บ Excel ไฟล์เดียว = ซ้ำซ้อน/ผิดพลาดง่าย ฐานข้อมูลเชิงสัมพันธ์แยกเป็นตารางย่อยแล้วเชื่อมด้วยคีย์</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-sm">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-red-300 mb-2">❌ Flat file — ตารางเดียว</h3>
+              <div class="bg-black/40 rounded p-2 font-mono text-[11px] leading-tight">
+                patient_id | name | age | drug&nbsp;&nbsp;&nbsp;&nbsp;| dose&nbsp;&nbsp;| ward<br/>
+                1001 | สมชาย | 67 | Metformin | 500mg | MED<br/>
+                1001 | สมชาย | 67 | Lisinopril| 10mg&nbsp; | MED ← ซ้ำ!
+              </div>
+              <p class="text-[11px] text-white/60 mt-2">แก้ชื่อผู้ป่วย = ต้องแก้ทุกแถว → เสี่ยงไม่ตรงกัน (Update Anomaly)</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-emerald-300 mb-2">✅ Relational — แยกตาราง + คีย์</h3>
+              <div class="bg-black/30 rounded-xl p-3">
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                  <div class="bg-blue-900/40 border border-blue-700 rounded p-2"><div class="font-bold text-blue-300">patients</div><span class="font-mono">patient_id (PK)</span><br/>name, birth_date</div>
+                  <div class="bg-emerald-900/40 border border-emerald-700 rounded p-2"><div class="font-bold text-emerald-300">prescriptions</div><span class="font-mono">rx_id (PK)</span><br/><span class="font-mono">patient_id (FK)</span> ──┐<br/>drug, dose</div>
+                </div>
+                <div class="text-center text-white/60 text-[11px] mt-1">── เชื่อมด้วย patient_id ──▶ ไม่ซ้ำ · JOIN ได้ (สัปดาห์ 7)</div>
+              </div>
+              <p class="text-[11px] text-white/60 mt-2">โมเดลเดียวกับ <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/" target="_blank">OMOP CDM</a>: person / condition_era / drug_exposure แยกกัน</p>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-4 text-xs text-left">🔗 อ่านเพิ่ม: <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_rdbms.asp" target="_blank">RDBMS concept (W3Schools)</a> · <a class="text-cyan-300 underline" href="https://mimic.mit.edu/docs/iv/modules/hosp/" target="_blank">MIMIC-IV hosp schema จริง</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=3" class="hover:text-white">ถัดไป: กายวิภาคตาราง →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Anatomy -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · กายวิภาคของตาราง (Table Anatomy)</h2>
+          <p class="text-sm text-white/80 mb-4">Table = Relation · แถว = Record (ผู้ป่วย 1 คน) · คอลัมน์ = Field (ตัวแปร) · ทุกตารางมี <strong>Schema</strong> = พิมพ์เขียวชื่อ+ชนิด+กฎ</p>
+          <div class="bg-white/10 rounded-2xl p-4">
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs border-collapse">
+                <thead><tr class="bg-yellow-400/20 text-yellow-200">
+                  <th class="border border-white/20 p-2">patient_id ⭐<br/><span class="font-normal text-white/60">INTEGER · PK</span></th>
+                  <th class="border border-white/20 p-2">hn<br/><span class="font-normal text-white/60">TEXT · UNIQUE</span></th>
+                  <th class="border border-white/20 p-2">gender<br/><span class="font-normal text-white/60">TEXT</span></th>
+                  <th class="border border-white/20 p-2">birth_date<br/><span class="font-normal text-white/60">TEXT ISO8601</span></th>
+                  <th class="border border-white/20 p-2">systolic_bp<br/><span class="font-normal text-white/60">REAL</span></th>
+                </tr></thead>
+                <tbody class="bg-black/30">
+                  <tr><td class="border border-white/10 p-1.5 font-mono">10001</td><td class="border border-white/10 p-1.5">HN-54001</td><td class="border border-white/10 p-1.5">ชาย</td><td class="border border-white/10 p-1.5 font-mono">1960-06-23</td><td class="border border-white/10 p-1.5">129.0</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-mono">10002</td><td class="border border-white/10 p-1.5">HN-54002</td><td class="border border-white/10 p-1.5">หญิง</td><td class="border border-white/10 p-1.5 font-mono">1975-02-10</td><td class="border border-white/10 p-1.5">155.0</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-[11px] text-left">
+              <div class="bg-white/5 rounded p-2"><span class="text-yellow-300 font-bold">⭐ แถวหัวตาราง = Schema</span><br/>บอกชื่อ+ชนิดทุกคอลัมน์ — เปลี่ยนยาก ต้องคิดก่อนสร้าง</div>
+              <div class="bg-white/5 rounded p-2"><span class="text-cyan-300 font-bold">แถวข้อมูล = Record</span><br/>1 แถว = 1 เอนทิตี — ห้ามมี 2 แถวผู้ป่วยคนเดียวกัน (PK กันไว้)</div>
+              <div class="bg-white/5 rounded p-2"><span class="text-emerald-300 font-bold">เซลล์ = ค่าเดียว</span><br/>Atomic value — ห้ามฝัง list/JSON ถ้าแยกคอลัมน์ได้</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-4 text-xs text-left">📖 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html" target="_blank">CREATE TABLE syntax</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_create_table.asp" target="_blank">W3Schools CREATE TABLE</a> — คีย์เวิร์ด SQL ไม่สน case แต่ชื่อตาราง/คอลัมน์ควร snake_case</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=4" class="hover:text-white">ถัดไป: Data Dictionary →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Data Dictionary -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · สคีมา & Data Dictionary</h2>
+          <p class="text-sm text-white/80 mb-4 text-left indent-8">ก่อน <code class="bg-black/30 px-1 rounded">CREATE TABLE</code> ต้องตอบให้ได้: เก็บอะไร · ชนิดอะไร · คีย์คืออะไร · ห้ามว่างไหม — คำตอบชุดนี้คือ <strong>Data Dictionary</strong></p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📋 Data Dictionary ของตาราง patients</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">คอลัมน์</th><th class="border border-white/10 p-1">Type</th><th class="border border-white/10 p-1">Constraint</th><th class="border border-white/10 p-1">คำอธิบาย</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1 font-mono">patient_id</td><td class="border border-white/10 p-1">INTEGER</td><td class="border border-white/10 p-1">PRIMARY KEY</td><td class="border border-white/10 p-1">รหัสผู้ป่วย (ห้ามซ้ำ)</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">hn</td><td class="border border-white/10 p-1">TEXT</td><td class="border border-white/10 p-1">UNIQUE NOT NULL</td><td class="border border-white/10 p-1">เลข HN</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">gender</td><td class="border border-white/10 p-1">TEXT</td><td class="border border-white/10 p-1">CHECK IN ('ชาย','หญิง')</td><td class="border border-white/10 p-1">เพศ</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">birth_date</td><td class="border border-white/10 p-1">TEXT</td><td class="border border-white/10 p-1">— (ISO8601)</td><td class="border border-white/10 p-1">YYYY-MM-DD</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">systolic_bp</td><td class="border border-white/10 p-1">REAL</td><td class="border border-white/10 p-1">CHECK (&gt;0)</td><td class="border border-white/10 p-1">mmHg</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">hba1c</td><td class="border border-white/10 p-1">REAL</td><td class="border border-white/10 p-1">— (NULL ได้)</td><td class="border border-white/10 p-1">HbA1c % — ยังไม่วัด = NULL</td></tr>
+                </tbody>
+              </table>
+              <p class="text-[11px] text-white/60 mt-2">เทียบของจริง: <a class="text-cyan-300 underline" href="https://mimic.mit.edu/docs/iv/modules/hosp/patients/" target="_blank">MIMIC-IV patients</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html#person" target="_blank">OMOP person</a></p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🔍 ดูสคีมาที่สร้างแล้ว</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- CLI: .schema patients
+-- Python/SQL:
+SELECT sql FROM sqlite_master
+WHERE type='table' AND name='patients';
+-- ผล:
+CREATE TABLE patients(
+  patient_id INTEGER PRIMARY KEY,
+  hn TEXT UNIQUE NOT NULL,
+  gender TEXT CHECK(gender IN ('ชาย','หญิง')),
+  birth_date TEXT,
+  systolic_bp REAL CHECK(systolic_bp &gt; 0),
+  hba1c REAL
+);</pre>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-2">-- ดูคอลัมน์แบบแบน:
+PRAGMA table_info(patients);</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 Self-study: เปิด <code class="bg-black/30 px-1 rounded">patients_data.csv</code> ใน Excel แล้วถามตัวเอง “คอลัมน์ไหนเป็น PK? ชนิดอะไร?” ก่อนดูสไลด์ 7</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/pragma.html#pragma_table_info" target="_blank">PRAGMA table_info</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/schematab.html" target="_blank">sqlite_master</a> · <a class="text-cyan-300 underline" href="https://sqlite.org/cli.html" target="_blank">.schema (CLI)</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=5" class="hover:text-white">ถัดไป: ชนิดคอลัมน์ →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Column types -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · ชนิดคอลัมน์ (Column Types)</h2>
+          <p class="text-sm text-white/80 mb-3">SQLite มี type affinity 5 แบบ — เลือกให้ตรงธรรมชาติข้อมูล ไม่งั้นเปรียบเทียบ/เรียงผิด</p>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs text-left">
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-yellow-300 font-bold">TEXT</div>ข้อความ<div class="text-white/60 text-[10px] mt-1">hn, gender, ICD-10</div><div class="bg-black/40 rounded p-1 mt-1 font-mono text-[10px]">'HN-54001'<br/>'ชาย'</div></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-blue-300 font-bold">INTEGER</div>จำนวนเต็ม<div class="text-white/60 text-[10px] mt-1">patient_id, อายุ</div><div class="bg-black/40 rounded p-1 mt-1 font-mono text-[10px]">10001<br/>67</div></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-emerald-300 font-bold">REAL</div>ทศนิยม<div class="text-white/60 text-[10px] mt-1">bp, HbA1c</div><div class="bg-black/40 rounded p-1 mt-1 font-mono text-[10px]">129.5<br/>7.3</div></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-purple-300 font-bold">NUMERIC</div>ยืดหยุ่น<div class="text-white/60 text-[10px] mt-1">เมื่อไม่แน่ใจ<br/>เลข/ข้อความผสม</div></div>
+            <div class="bg-white/10 rounded-xl p-3"><div class="text-red-300 font-bold">BLOB</div>ไบนารี<div class="text-white/60 text-[10px] mt-1">ภาพ/ไฟล์<br/>ไม่ใช้ในคาบนี้</div></div>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-4 mt-3 text-left text-xs">
+            <h3 class="font-bold text-red-300 mb-2">⚠️ กับดักที่พบบ่อย (Anti-patterns)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="bg-red-900/30 border border-red-700 rounded p-2"><span class="font-bold text-red-300">❌ วันที่แบบ '24/05/2025'</span><br/>ORDER/BETWEEN เรียงผิด ('07/02' &gt; '24/05')<br/><span class="font-bold text-emerald-300">✅ ISO8601 '2025-05-24'</span> — เรียง/เทียบถูก</div>
+              <div class="bg-red-900/30 border border-red-700 rounded p-2"><span class="font-bold text-red-300">❌ เลขเก็บเป็น TEXT '67'</span><br/>เทียบแบบข้อความ: '9' &gt; '67' เป็นจริง!<br/><span class="font-bold text-emerald-300">✅ INTEGER/REAL</span> — เทียบเชิงตัวเลข</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/datatype3.html" target="_blank">Datatypes &amp; Type Affinity</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_datefunc.html" target="_blank">Date functions</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_datatypes.asp" target="_blank">W3Schools Data Types</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=6" class="hover:text-white">ถัดไป: Primary Key →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Primary Key -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · Primary Key — บัตรประชาชนของแถว</h2>
+          <p class="text-sm text-white/80 mb-3">PK ต้อง <strong>UNIQUE + NOT NULL + Stable</strong> — ใช้ชี้ระเบียน 1 แถวได้แม่นยำ และเป็นสะพาน JOIN ข้ามตาราง (สัปดาห์ 7)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">Diagram: มี/ไม่มี PK</h3>
+              <div class="bg-black/40 rounded-xl p-3">
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <div class="text-red-300 font-bold text-[11px]">❌ ไม่มี PK</div>
+                    <table class="w-full border-collapse text-[10px] mt-1"><thead><tr class="bg-red-900/40"><th class="border border-white/10 p-1">name</th><th class="border border-white/10 p-1">dob</th></tr></thead><tbody><tr><td class="border border-white/10 p-1">สมชาย</td><td class="border border-white/10 p-1">1960-06-23</td></tr><tr><td class="border border-white/10 p-1">สมชาย</td><td class="border border-white/10 p-1">1960-06-23</td></tr></tbody></table>
+                    <p class="text-[10px] text-white/60 mt-1">UPDATE/DELETE ไม่รู้ชี้แถวไหน</p>
+                  </div>
+                  <div>
+                    <div class="text-emerald-300 font-bold text-[11px]">✅ มี PK</div>
+                    <table class="w-full border-collapse text-[10px] mt-1"><thead><tr class="bg-emerald-900/40"><th class="border border-white/10 p-1">patient_id ⭐</th><th class="border border-white/10 p-1">name</th></tr></thead><tbody><tr><td class="border border-white/10 p-1 font-mono">10001</td><td class="border border-white/10 p-1">สมชาย</td></tr><tr><td class="border border-white/10 p-1 font-mono">10002</td><td class="border border-white/10 p-1">สมชาย</td></tr></tbody></table>
+                    <p class="text-[10px] text-white/60 mt-1">WHERE patient_id=10001 ชัดเจน</p>
+                  </div>
+                </div>
+              </div>
+              <p class="text-[11px] text-white/60 mt-2">เคล็ด: <code class="bg-black/30 px-1 rounded">INTEGER PRIMARY KEY</code> alias rowid → auto-increment + เร็วสุดใน SQLite</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">💻 ลองละเมิด PK ดู</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">CREATE TABLE t(
+  patient_id INTEGER PRIMARY KEY,
+  hn TEXT UNIQUE NOT NULL
+);
+
+INSERT INTO t VALUES (10001,'HN-A');   -- ok
+INSERT INTO t VALUES (10001,'HN-B');
+-- ▶︎ IntegrityError:
+-- UNIQUE constraint failed: t.patient_id
+
+INSERT INTO t VALUES (NULL,'HN-C');
+-- ▶︎ IntegrityError: NOT NULL constraint</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 Constraint คือระบบนิรภัย — ให้ DB ด่าเราตอน INSERT ดีกว่าข้อมูลพังภายหลัง</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html#primkeyconst" target="_blank">PRIMARY KEY</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html#rowid" target="_blank">ROWIDs &amp; INTEGER PK</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_primarykey.asp" target="_blank">W3Schools PK</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=7" class="hover:text-white">ถัดไป: SQLite →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: SQLite -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · SQLite — ฐานข้อมูลในไฟล์เดียว</h2>
+          <p class="text-sm text-white/80 mb-3">ไม่ต้องติดตั้งเซิร์ฟเวอร์ · ไม่มี user/password · ก๊อปปี้ไฟล์ = ก๊อปปี้ฐานข้อมูลทั้งฐาน — เหมาะกับ self-study ออฟไลน์</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📦 healthinfo.db — ไฟล์เดียวจบ</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center">
+                <div class="bg-blue-900/40 border border-blue-700 rounded p-2 inline-block"><div class="font-bold text-blue-300">healthinfo.db</div><div class="text-[11px] text-white/70">1 ไฟล์ = หลายตาราง</div><div class="text-[10px] font-mono">patients | visits | …</div></div>
+                <div class="text-white/60 text-[11px] mt-2">ส่งอาจารย์ = แนบไฟล์ .db ไปเลย</div>
+              </div>
+              <div class="bg-white/5 rounded p-2 mt-3 text-[11px]"><span class="font-bold">vs Server DB (Postgres/BigQuery):</span> ต้องรัน daemon · ตั้ง user/pass · เปิด port — เกินจำเป็นตอนเรียนพื้นฐาน</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🛠️ เปิดใช้ 3 วิธี (Windows)</h3>
+              <ol class="space-y-2 text-[11px] list-decimal list-inside">
+                <li><span class="bg-emerald-500/20 text-emerald-300 px-1.5 rounded font-bold">แนะนำ</span> <strong>Python sqlite3</strong> — มากับ Python อยู่แล้ว:<br/><code class="bg-black/40 px-1 rounded">import sqlite3; con=sqlite3.connect("healthinfo.db")</code><br/><a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#tutorial" target="_blank">docs.python.org/sqlite3#tutorial</a></li>
+                <li><strong>DB Browser (GUI)</strong>: <code class="bg-black/40 px-1 rounded">scoop install sqlitebrowser</code> — ลากไฟล์ .db เข้า ดูตารางเหมือน Excel<br/><a class="text-cyan-300 underline" href="https://sqlitebrowser.org/" target="_blank">sqlitebrowser.org</a></li>
+                <li><strong>sqlite3 CLI</strong>: <code class="bg-black/40 px-1 rounded">scoop install sqlite</code> → <code class="bg-black/40 px-1 rounded">sqlite3 healthinfo.db</code><br/><a class="text-cyan-300 underline" href="https://www.sqlite.org/cli.html" target="_blank">sqlite.org/cli</a></li>
+              </ol>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 แล็บนี้ใช้ Python ใน Jupyter — รันด้วย <code class="bg-black/30 px-1 rounded">uv run jupyter lab</code> (ติดตั้ง scoop/uv ดูสไลด์ 14)</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 ทางการ: <a class="text-cyan-300 underline" href="https://www.sqlite.org/about.html" target="_blank">About SQLite</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/onefile.html" target="_blank">One-file DB</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/whentouse.html" target="_blank">When to use SQLite</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=8" class="hover:text-white">ถัดไป: CREATE TABLE →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: CREATE TABLE -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · CREATE TABLE — สร้างตาราง patients</h2>
+          <p class="text-sm text-white/80 mb-3">Syntax อ่านจาก Data Dictionary สไลด์ 03 → แปลงเป็น DDL ตรง ๆ</p>
+          <div class="bg-black/40 rounded-xl p-3 text-left font-mono text-[11px] mb-3 overflow-x-auto">
+            <span class="text-purple-300">CREATE TABLE</span> <span class="text-yellow-300">IF NOT EXISTS</span> <span class="text-cyan-300">ชื่อตาราง</span> (<br/>
+            &nbsp;&nbsp;<span class="text-emerald-300">คอลัมน์</span> <span class="text-yellow-300">ชนิด</span> [<span class="text-red-300">CONSTRAINT</span>],<br/>
+            &nbsp;&nbsp;... );<br/>
+            <span class="text-white/50">-- IF NOT EXISTS: รันซ้ำไม่ error · CONSTRAINT: PK/UNIQUE/CHECK/NOT NULL</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">💻 โค้ดเต็ม (ใช้ใน ipynb)</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">import sqlite3
+con = sqlite3.connect("healthinfo.db")
+cur = con.cursor()
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS patients(
+  patient_id   INTEGER PRIMARY KEY,
+  hn           TEXT UNIQUE NOT NULL,
+  gender       TEXT CHECK(gender IN ('ชาย','หญิง')),
+  birth_date   TEXT,
+  systolic_bp  REAL CHECK(systolic_bp &gt; 0),
+  hba1c        REAL
+);
+""")
+con.commit()</pre>
+              <p class="text-[11px] text-white/60 mt-2">DDL ไม่ต้อง commit ก็ได้ใน SQLite แต่ commit เป็นนิสัยที่ดี</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🧩 ตรวจว่าได้ตามแผนไหม</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-blue-900/40 text-blue-200"><tr><th class="border border-white/10 p-1">Field</th><th class="border border-white/10 p-1">Type</th><th class="border border-white/10 p-1">Key/Rule</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1 font-mono">patient_id</td><td class="border border-white/10 p-1">INTEGER</td><td class="border border-white/10 p-1">PK ⭐</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">hn</td><td class="border border-white/10 p-1">TEXT</td><td class="border border-white/10 p-1">UNIQUE NOT NULL</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">gender</td><td class="border border-white/10 p-1">TEXT</td><td class="border border-white/10 p-1">CHECK IN</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">birth_date</td><td class="border border-white/10 p-1">TEXT</td><td class="border border-white/10 p-1">ISO8601</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">systolic_bp</td><td class="border border-white/10 p-1">REAL</td><td class="border border-white/10 p-1">CHECK &gt; 0</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">hba1c</td><td class="border border-white/10 p-1">REAL</td><td class="border border-white/10 p-1">NULL ได้</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">ห้าม:</span> ชื่อคอลัมน์มี space/ภาษาไทยล้วน — ใช้ <code class="bg-black/30 px-1 rounded">snake_case</code></div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">🔗 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html" target="_blank">lang_createtable.html</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Cursor.execute" target="_blank">Cursor.execute</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=9" class="hover:text-white">ถัดไป: INSERT →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: INSERT -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · INSERT — เพิ่มข้อมูล</h2>
+          <p class="text-sm text-white/80 mb-3">1 แถว: <code class="bg-black/30 px-1 rounded">execute</code> · หลายแถว: <code class="bg-black/30 px-1 rounded">executemany</code> · ละเมิด PK/UNIQUE = error ทันที (หรือ <code class="bg-black/30 px-1 rounded">OR IGNORE</code> ข้าม)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">💻 1 แถว + batch จาก CSV</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]"># 1 แถว
+cur.execute("""
+INSERT INTO patients
+  (patient_id,hn,gender,birth_date,systolic_bp,hba1c)
+VALUES (10001,'HN-54001','ชาย','1960-06-23',129.0,8.1)
+""")
+
+# หลายแถวจาก CSV (parameterized = กัน injection)
+import csv
+with open('patients_data.csv', encoding='utf-8') as f:
+    rows = [(int(float(r['subject_id'])),
+             f"HN-{int(float(r['subject_id']))}",
+             r['gender'], None,
+             float(r['systolic_bp']) if r['systolic_bp'] else None,
+             float(r['HbA1c_level']) if r['HbA1c_level'] else None)
+            for r in csv.DictReader(f)]
+cur.executemany("INSERT OR IGNORE INTO patients VALUES (?,?,?,?,?,?)", rows)
+
+con.commit()  # 🔴 ลืม commit = ข้อมูลหาย!</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🛡️ Parameterized query</h3>
+              <div class="bg-black/40 rounded p-2 font-mono text-[10px]">
+                <span class="text-red-300">❌ f-string:</span> cur.execute(f"INSERT ... VALUES ({name})")<br/>
+                <span class="text-emerald-300">✅ placeholder:</span> cur.execute("INSERT ... VALUES (?)", (name,))
+              </div>
+              <p class="text-[11px] text-white/70 mt-2">Placeholder <code class="bg-black/30 px-1 rounded">?</code>/<code class="bg-black/30 px-1 rounded">:name</code> ให้ driver escape ให้ — ปลอดภัยจาก SQL injection เสมอ</p>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-1">Diagram: commit</h3>
+              <div class="bg-black/40 rounded p-2 text-center text-[11px]">
+                execute() → อยู่ใน transaction<br/>↓ con.commit()<br/>เขียนลงไฟล์ .db จริง 💾
+              </div>
+              <p class="text-[11px] text-white/60 mt-1">con.rollback() ย้อนได้ถ้ายังไม่ commit</p>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_insert.html" target="_blank">lang_insert.html</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Cursor.executemany" target="_blank">executemany</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.commit" target="_blank">commit/transaction</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=10" class="hover:text-white">ถัดไป: NULL vs '' →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: NULL -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · NULL ≠ '' — ค่าว่าง 2 แบบ</h2>
+          <p class="text-sm text-white/80 mb-3">เวชระเบียน: HbA1c ที่ยังไม่ได้วัด = <strong>NULL</strong> (ไม่ทราบ) — ต่างจาก '' (ทราบว่าว่าง) — ตรวจด้วย <code class="bg-black/30 px-1 rounded">IS NULL</code> เท่านั้น!</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">ค่า</th><th class="border border-white/10 p-1">ความหมายทางคลินิก</th><th class="border border-white/10 p-1">ตรวจด้วย</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1 font-mono">NULL</td><td class="border border-white/10 p-1">ยังไม่ได้ตรวจ / ไม่ทราบ</td><td class="border border-white/10 p-1 font-mono">IS NULL</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">''</td><td class="border border-white/10 p-1">ตรวจแล้ว แต่บันทึกว่าง</td><td class="border border-white/10 p-1 font-mono">= ''</td></tr>
+                </tbody>
+              </table>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-3">-- ✅ ถูก: หาคนที่ยังไม่ได้วัด
+SELECT hn FROM patients WHERE hba1c IS NULL;
+
+-- ❌ ผิด: ได้ 0 แถวเสมอ!
+SELECT hn FROM patients WHERE hba1c = NULL;</pre>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">ทำไม?</span> NULL เทียบกับอะไรก็ได้ UNKNOWN (three-valued logic) — WHERE คัดเฉพาะ TRUE</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Diagram: three-valued logic</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-1">
+                <div class="bg-emerald-900/40 border border-emerald-700 rounded p-2">TRUE → แถวผ่าน ✓</div>
+                <div class="bg-red-900/40 border border-red-700 rounded p-2">FALSE → ตก ✗</div>
+                <div class="bg-yellow-900/40 border border-yellow-700 rounded p-2">UNKNOWN (มี NULL) → ตกเช่นกัน ⚠️</div>
+              </div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 ในโน้ตบุ๊ก section 7 มีเซลล์ทดลอง <code class="bg-black/30 px-1 rounded">= NULL</code> ให้เห็น 0 แถวด้วยตา</div>
+              <p class="text-[11px] text-white/60 mt-2">อ่านต่อ: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#nullvalues" target="_blank">NULL values (sqlite.org)</a></p>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#isisnull" target="_blank">IS NULL</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_null_values.asp" target="_blank">W3Schools NULL</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=9" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=11" class="hover:text-white">ถัดไป: SELECT →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: SELECT -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">10 · SELECT — สืบค้นข้อมูล</h2>
+          <p class="text-sm text-white/80 mb-3"><code class="bg-black/30 px-1 rounded">SELECT คอลัมน์ FROM ตาราง;</code> — <code class="bg-black/30 px-1 rounded">*</code>=ทุกคอลัมน์ · ระบุชื่อ = เร็วกว่า/ชัดกว่า · ใช้ AS ตั้งชื่อผลลัพธ์ได้</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">💻 ตัวอย่าง</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT * FROM patients;                    -- ทุกคอลัมน์
+SELECT hn, hba1c FROM patients;            -- เลือกบางคอลัมน์
+SELECT hn AS hospital_no,                  -- alias
+       hba1c * 10 AS a1c_x10
+FROM patients;
+SELECT COUNT(*) FROM patients;             -- นับแถว (สไลด์ 08)
+
+-- ใน Jupyter: เป็น DataFrame ได้เลย
+pd.read_sql("SELECT hn, hba1c FROM patients", con)</pre>
+              <p class="text-[11px] text-white/60 mt-2">งานจริงเลี่ยง <code class="bg-black/30 px-1 rounded">*</code> กับตารางใหญ่ — transfer น้อยลง 10–100×</p>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Diagram: SELECT ไหลอย่างไร</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px]">
+                <div class="bg-blue-900/40 border border-blue-700 rounded p-2">patients<br/>103 แถว × 6 คอลัมน์</div>
+                <div class="text-white/60 my-1">↓ FROM patients</div>
+                <div class="bg-emerald-900/40 border border-emerald-700 rounded p-2">SELECT hn, hba1c<br/>103 แถว × 2 คอลัมน์</div>
+                <div class="text-white/60 my-1">↓ ส่งกลับ Python</div>
+                <div class="bg-purple-900/40 border border-purple-700 rounded p-2">DataFrame / rows</div>
+              </div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 สัปดาห์ 6 จะเพิ่ม <code class="bg-black/30 px-1 rounded">WHERE</code> กรองแถวก่อน SELECT</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">lang_select.html</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Cursor.fetchone" target="_blank">fetchone/fetchall</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_select.asp" target="_blank">W3Schools SELECT</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=10" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=12" class="hover:text-white">ถัดไป: LIMIT →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: LIMIT -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">11 · LIMIT / OFFSET — ดูบางส่วน</h2>
+          <p class="text-sm text-white/80 mb-3">ตารางเวชระเบียนแสนแถว — <code class="bg-black/30 px-1 rounded">LIMIT n</code> ดูตัวอย่าง n แถว · <code class="bg-black/30 px-1 rounded">LIMIT 5 OFFSET 5</code> ข้าม 5 แล้วเอา 5 (หน้า 2)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">💻 ตัวอย่าง</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- 5 แถวแรก — ตรวจหลัง INSERT เสมอ
+SELECT * FROM patients LIMIT 5;
+
+-- หน้า 2 (แถว 6-10)
+SELECT patient_id, hn FROM patients LIMIT 5 OFFSET 5;
+
+-- เทียบ pandas
+pd.read_sql("SELECT * FROM patients LIMIT 5", con)
+df.head(5)  # เทียบเท่า</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 DB Browser มีปุ่ม Browse Data ใส่ LIMIT ให้เอง — แต่เขียน SQL เองควบคุมได้แม่นกว่า</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Pagination Diagram</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-[11px]">
+                <div class="flex items-center gap-1 justify-center">
+                  <span class="bg-white/10 px-2 py-1 rounded">Row 1-5</span><span class="text-white/40">|</span>
+                  <span class="bg-yellow-400/20 border border-yellow-600 px-2 py-1 rounded">Row 6-10 ◀ OFFSET 5</span><span class="text-white/40">|</span>
+                  <span class="bg-white/10 px-2 py-1 rounded">Row 11-15</span><span class="text-white/40">…</span>
+                </div>
+                <div class="text-center text-white/60 text-[11px] mt-2">LIMIT 5 → เอาแค่ 5 แถว</div>
+                <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-3 text-[11px]"><span class="font-bold text-red-300">ห้าม:</span> LIMIT โดยไม่มี ORDER BY — ลำดับไม่การันตี รันใหม่ได้คนละแถว! (ORDER BY สัปดาห์ 6)</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#limitopts" target="_blank">SELECT → LIMIT/OFFSET</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_top.asp" target="_blank">TOP / LIMIT (W3Schools)</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=11" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=13" class="hover:text-white">ถัดไป: ลำดับทำงาน →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Execution order -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">12 · ลำดับการทำงานจริง (Week-5 subset)</h2>
+          <p class="text-sm text-white/80 mb-3">เขียน <code class="bg-black/30 px-1 rounded">SELECT … FROM … LIMIT</code> — เครื่องทำ <strong>FROM → SELECT → LIMIT</strong> — เข้าใจลำดับ = ไม่งงว่าทำไม LIMIT ได้ก่อน/หลัง</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">Diagram: Pipeline</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-1">
+                <div class="bg-blue-900/40 border border-blue-700 rounded p-2">1. FROM patients (103 แถว)</div>
+                <div class="text-white/60">↓</div>
+                <div class="bg-emerald-900/40 border border-emerald-700 rounded p-2">2. SELECT hn, hba1c (ตัดคอลัมน์, ตั้ง alias)</div>
+                <div class="text-white/60">↓</div>
+                <div class="bg-yellow-400/20 border border-yellow-600 rounded p-2">3. LIMIT 5 (ตัดแถวท้าย)</div>
+                <div class="text-white/60">↓</div>
+                <div class="bg-white/10 rounded p-2">5 แถวส่งกลับ Python</div>
+              </div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">💻 ผลของลำดับ</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- ✅ ปกติ: FROM → SELECT → LIMIT
+SELECT hn FROM patients LIMIT 3;</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-3">📅 สัปดาห์ 6 จะแทรก <code class="bg-black/30 px-1 rounded">WHERE</code> ระหว่าง FROM กับ SELECT และเพิ่ม <code class="bg-black/30 px-1 rounded">ORDER BY</code> ก่อน LIMIT — ลำดับเต็มคือ<br/><code class="bg-black/30 px-1 rounded">FROM → WHERE → SELECT → ORDER BY → LIMIT</code></div>
+              <p class="text-[11px] text-white/60 mt-2">จำ pipeline นี้ไว้ — ทุก query ที่เหลือของคอร์สวางบนโครงเดียวกัน</p>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">SELECT syntax order</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=12" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=14" class="hover:text-white">ถัดไป: Workflow →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Workflow Windows -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">13 · Workflow บน Windows (ออฟไลน์)</h2>
+          <p class="text-sm text-white/80 mb-3">ติดตั้งครั้งเดียวด้วย scoop + uv — แล้วเลือกวิธีเปิด <code class="bg-black/30 px-1 rounded">healthinfo.db</code></p>
+          <div class="bg-white/10 rounded-2xl p-3 text-left text-xs mb-3">
+            <h3 class="font-bold text-yellow-300 mb-1">🔧 ติดตั้งครั้งแรก (PowerShell)</h3>
+            <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[11px]">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+scoop install git uv sqlite sqlitebrowser
+D: ; mkdir health-informatics ; cd health-informatics
+uv init ; uv add jupyterlab pandas
+uv run jupyter lab   # → http://localhost:8888</pre>
+            <p class="text-[11px] text-white/60 mt-1">คู่มือ: <a class="text-cyan-300 underline" href="https://scoop.sh" target="_blank">scoop.sh</a> · <a class="text-cyan-300 underline" href="https://docs.astral.sh/uv/getting-started/installation/" target="_blank">uv installation</a> · <a class="text-cyan-300 underline" href="https://docs.astral.sh/uv/guides/projects/" target="_blank">uv projects</a></p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-left text-xs">
+            <div class="bg-emerald-900/30 border border-emerald-700 rounded-2xl p-4">
+              <h3 class="font-bold text-emerald-300 mb-2">⭐ A: Python + Jupyter</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">uv run jupyter lab
+# เปิด week05-sql-basics.ipynb
+import sqlite3, pandas as pd
+con = sqlite3.connect("healthinfo.db")
+pd.read_sql("SELECT * FROM patients LIMIT 5", con)</pre>
+              <p class="text-[11px] text-white/70 mt-2">ดี: รวม pandas · ส่ง .ipynb ได้</p>
+            </div>
+            <div class="bg-blue-900/30 border border-blue-700 rounded-2xl p-4">
+              <h3 class="font-bold text-blue-300 mb-2">B: DB Browser (GUI)</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">scoop install sqlitebrowser
+# Open Database → healthinfo.db
+# Browse Data / Execute SQL tab</pre>
+              <p class="text-[11px] text-white/70 mt-2">ดี: เห็นตารางแบบ Excel</p>
+              <a class="text-cyan-300 underline text-[11px]" href="https://sqlitebrowser.org/about/" target="_blank">→ sqlitebrowser.org/about</a>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">C: sqlite3 CLI</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">scoop install sqlite
+sqlite3 healthinfo.db
+sqlite&gt; .tables
+sqlite&gt; SELECT * FROM patients LIMIT 5;
+sqlite&gt; .quit</pre>
+              <p class="text-[11px] text-white/70 mt-2">ดี: เบา · ใช้ในสคริปต์</p>
+              <a class="text-cyan-300 underline text-[11px]" href="https://www.sqlite.org/cli.html" target="_blank">→ sqlite.org/cli</a>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=13" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=15" class="hover:text-white">ถัดไป: Lab 🧪 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Lab -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">14 · Lab สัปดาห์ที่ 5 🧪 — ทำตามในโน้ตบุ๊ก</h2>
+          <p class="text-sm text-white/80 mb-3">เปิด <code class="bg-black/40 px-1 rounded">week05-sql-basics.ipynb</code> ด้วย <code class="bg-black/40 px-1 rounded">uv run jupyter lab</code> — รันออฟไลน์ได้ทุกเครื่อง</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📋 6 ภารกิจ ↔ เซลล์ในโน้ตบุ๊ก</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">#</th><th class="border border-white/10 p-1">ภารกิจ</th><th class="border border-white/10 p-1">ipynb §</th><th class="border border-white/10 p-1">สไลด์</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">สร้าง DB + CREATE TABLE patients</td><td class="border border-white/10 p-1 font-mono">§2</td><td class="border border-white/10 p-1">07</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">2</td><td class="border border-white/10 p-1">INSERT 3 แถว + executemany CSV (~100 แถว)</td><td class="border border-white/10 p-1 font-mono">§3–4</td><td class="border border-white/10 p-1">08</td></tr>
+                  <tr><td class="border border-white/10 p-1">3</td><td class="border border-white/10 p-1">SELECT เลือกคอลัมน์ + alias + pandas</td><td class="border border-white/10 p-1 font-mono">§5</td><td class="border border-white/10 p-1">10</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">4</td><td class="border border-white/10 p-1">LIMIT / OFFSET + เทียบ pd.read_csv</td><td class="border border-white/10 p-1 font-mono">§6</td><td class="border border-white/10 p-1">11</td></tr>
+                  <tr><td class="border border-white/10 p-1">5</td><td class="border border-white/10 p-1">IS NULL vs = NULL (0 แถว!)</td><td class="border border-white/10 p-1 font-mono">§7</td><td class="border border-white/10 p-1">09</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">6</td><td class="border border-white/10 p-1">ละเมิด PK → IntegrityError + OR IGNORE</td><td class="border border-white/10 p-1 font-mono">§8</td><td class="border border-white/10 p-1">05</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-black/30 rounded p-2 mt-2 text-[11px]">ไฟล์: <a class="text-cyan-300 underline" href="./week05-sql-basics.ipynb" target="_blank">week05-sql-basics.ipynb</a> · ข้อมูล <code class="bg-black/30 px-1 rounded">patients_data.csv</code> · ผลลัพธ์ <code class="bg-black/30 px-1 rounded">healthinfo.db</code></div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">✅ Self-check + Homework</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li><code class="bg-black/30 px-1 rounded">SELECT COUNT(*) FROM patients;</code> ≈ 103 (บางแถวถูก OR IGNORE ข้าม)</li>
+                <li><code class="bg-black/30 px-1 rounded">SELECT sql FROM sqlite_master;</code> เห็น PK/UNIQUE/CHECK ครบ</li>
+                <li>INSERT PK ซ้ำ → <code class="bg-black/30 px-1 rounded">UNIQUE constraint failed</code> และอธิบายได้</li>
+              </ul>
+              <div class="bg-emerald-900/30 border border-emerald-700 rounded p-2 mt-3 text-[11px]"><strong>Homework 5:</strong> ส่ง <code class="bg-black/30 px-1 rounded">.ipynb</code> + <code class="bg-black/30 px-1 rounded">healthinfo.db</code> — อาจารย์ตรวจด้วย<br/><code class="bg-black/30 px-1 rounded">sqlite3 healthinfo.db "SELECT COUNT(*) FROM patients;"</code><br/><code class="bg-black/30 px-1 rounded">sqlite3 healthinfo.db ".schema patients"</code></div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 ทำไม่ทันในคาบ? โน้ตบุ๊กทุกเซลล์มีเฉลย inline — รันตามแล้วอ่านคำอธิบายทีละเซลล์</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=14" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=16" class="hover:text-white">ถัดไป: Cheat Sheet →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Cheat sheet -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">15 · Cheat Sheet — สรุปทั้งคาบ</h2>
+          <p class="text-sm text-white/80 mb-3">หน้าเดียวจบ — ใช้ทบทวนก่อนสอบกลางภาค (คาบ 9)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">⌨️ คำสั่ง</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">งาน</th><th class="border border-white/10 p-1">SQL</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">สร้างตาราง</td><td class="border border-white/10 p-1 font-mono">CREATE TABLE IF NOT EXISTS t(col TYPE RULE,…)</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">เพิ่มแถว</td><td class="border border-white/10 p-1 font-mono">INSERT [OR IGNORE] INTO t VALUES(?)</td></tr>
+                  <tr><td class="border border-white/10 p-1">หลายแถว</td><td class="border border-white/10 p-1 font-mono">cur.executemany(sql, rows)</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">อ่าน</td><td class="border border-white/10 p-1 font-mono">SELECT cols FROM t [LIMIT n]</td></tr>
+                  <tr><td class="border border-white/10 p-1">บันทึก</td><td class="border border-white/10 p-1 font-mono">con.commit()</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">ดูสคีมา</td><td class="border border-white/10 p-1 font-mono">.schema t / PRAGMA table_info(t)</td></tr>
+                  <tr><td class="border border-white/10 p-1">นับ</td><td class="border border-white/10 p-1 font-mono">SELECT COUNT(*) FROM t</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-red-300 mb-2">🚫 Error ที่เจอบ่อย & วิธีแก้</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-red-200"><tr><th class="border border-white/10 p-1">Error</th><th class="border border-white/10 p-1">สาเหตุ/แก้</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1 font-mono text-[10px]">UNIQUE constraint failed</td><td class="border border-white/10 p-1">PK/HN ซ้ำ → เปลี่ยน id หรือใช้ INSERT OR IGNORE</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono text-[10px]">no such column</td><td class="border border-white/10 p-1">พิมพ์ชื่อผิด → PRAGMA table_info(t)</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono text-[10px]">no such table</td><td class="border border-white/10 p-1">connect ผิดไฟล์/ลืม CREATE → ls *.db</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono text-[10px]">ข้อมูลหายหลังรัน</td><td class="border border-white/10 p-1">ลืม con.commit()</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono text-[10px]">WHERE x = NULL ได้ 0</td><td class="border border-white/10 p-1">ใช้ IS NULL เสมอ</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-black/30 rounded p-2 mt-2 text-[11px]">Python side: <code class="bg-black/30 px-1 rounded">connect → cursor → execute/executemany → commit → close</code></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60">
+            <button @click="currentSlide=15" class="hover:text-white">◀ ก่อนหน้า</button>
+            <button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button>
+            <button @click="currentSlide=17" class="hover:text-white">ถัดไป: อ้างอิง →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: References -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">16 · แหล่งอ้างอิงทางการ</h2>
+          <p class="text-sm text-white/70 mb-3">ทุกลิงก์เป็นสเปก/เอกสารทางการ — อ่านต่อด้วยตนเองได้เต็มรูปแบบ</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📘 SQLite (official)</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/docs.html" target="_blank">Documentation home</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/about.html" target="_blank">About</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/onefile.html" target="_blank">One-file DB</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/whentouse.html" target="_blank">When to use</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/datatype3.html" target="_blank">Datatypes</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html" target="_blank">CREATE TABLE</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html#primkeyconst" target="_blank">PRIMARY KEY</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_insert.html" target="_blank">INSERT</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">SELECT</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#limitopts" target="_blank">LIMIT</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#isisnull" target="_blank">IS NULL</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/pragma.html#pragma_table_info" target="_blank">PRAGMA table_info</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/cli.html" target="_blank">CLI (.schema)</a></li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">🐍 Python</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html" target="_blank">sqlite3 module</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#tutorial" target="_blank">Tutorial</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Cursor.executemany" target="_blank">executemany</a></li>
+              </ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🛠️ Tools & เสริม</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://sqlitebrowser.org/" target="_blank">DB Browser for SQLite</a> — <code class="bg-black/30 px-1 rounded">scoop install sqlitebrowser</code></li>
+                <li><a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/" target="_blank">W3Schools SQL Tutorial</a> — <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_create_table.asp" target="_blank">CREATE</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_insert.asp" target="_blank">INSERT</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_select.asp" target="_blank">SELECT</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_primarykey.asp" target="_blank">PK</a></li>
+                <li>สคีมาจริง: <a class="text-cyan-300 underline" href="https://mimic.mit.edu/docs/iv/modules/hosp/patients/" target="_blank">MIMIC-IV patients</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html#person" target="_blank">OMOP person</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — <a class="text-cyan-300 underline" href="https://staff.sci.ubu.ac.th/wichit.s" target="_blank">staff.sci.ubu.ac.th/wichit.s</a> · wichit.s@ubu.ac.th</p>
+              <p class="text-white/60 mt-2">สัปดาห์หน้า: Data Warehouse &amp; SQL Queries (WHERE/ORDER BY/aggregates) — เก็บ <code class="bg-black/30 px-1 rounded">healthinfo.db</code> ไว้ใช้ต่อ!</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">เก่งมาก! — ต่อไป: เปิด <a class="underline text-cyan-300" href="./week06-sql-queries.ipynb">week06-sql-queries.ipynb</a> / <a class="underline text-cyan-300" href="./wk06.html">สไลด์สัปดาห์ 6</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+        nextSlide() { this.currentSlide = (this.currentSlide + 1) % this.totalSlides; },
+        previousSlide() { this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides; },
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); this.nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); this.previousSlide(); }
+          });
+        },
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => { this.touchStartX = e.changedTouches[0].screenX; });
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+            if (this.touchStartX - this.touchEndX > swipeDistance) this.nextSlide();
+            else if (this.touchEndX - this.touchStartX > swipeDistance) this.previousSlide();
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

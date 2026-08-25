@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 7 Advanced Database Design & Joins">
+    <meta name="keywords" content="Health Informatics, ER diagram, FOREIGN KEY, SQL JOIN, GROUP BY, HAVING, UNION">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 7 — Advanced Database Design & Joins</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk07.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer">
+
+      <!-- 0 Cover -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white active">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <span class="bg-violet-500/30 text-violet-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 7</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">Advanced DB Design &amp; Joins</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">การออกแบบฐานข้อมูลขั้นสูง & การเชื่อมตาราง</p>
+          <p class="text-lg text-white/70 mb-6">ER Diagram · FOREIGN KEY · INNER/LEFT/RIGHT/FULL JOIN · SELF JOIN · dot notation · UNION · GROUP BY · HAVING</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมายคาบนี้</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>วาด ER diagram และประกาศ FOREIGN KEY + PRAGMA foreign_keys ได้ (CLO1)</li>
+              <li>เขียน JOIN ทุกชนิด / SELF JOIN / UNION พร้อม dot notation ได้ (CLO2)</li>
+              <li>ใช้ GROUP BY + HAVING สรุปยอดจ่ายยาต่อผู้ป่วย/ยาได้</li>
+            </ul>
+            <h3 class="text-center text-yellow-300 font-semibold mt-4 mb-2">🗺️ Learning Path</h3>
+            <div class="flex justify-center items-center gap-1 text-[11px]">
+              <span class="bg-white/10 px-2 py-1 rounded">ทฤษฎี FK+ER<br/>สไลด์ 2–3</span><span class="text-yellow-300">→</span>
+              <span class="bg-emerald-500/20 border border-emerald-600 px-2 py-1 rounded">week07-joins.ipynb<br/>สร้างตาราง rx</span><span class="text-yellow-300">→</span>
+              <span class="bg-white/10 px-2 py-1 rounded">JOIN ทั้ง 5 + GROUP/HAVING<br/>สไลด์ 4–11</span><span class="text-yellow-300">→</span>
+              <span class="bg-yellow-400/20 border border-yellow-500 px-2 py-1 rounded">Lab + HW<br/>สไลด์ 12–13</span>
+            </div>
+          </div>
+          <div class="text-sm text-white/60 mt-4">ใช้ healthinfo.db ต่อ — เราจะเพิ่มตาราง prescriptions + referrals ในโน้ตบุ๊ก</div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · ER Diagram</div>Entity-Relationship</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · FOREIGN KEY</div>+ PRAGMA enforcement</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · INNER JOIN</div>Venn ∩</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · LEFT JOIN</div>+ IS NULL pattern</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · RIGHT/FULL</div>SQLite ≥3.39</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · SELF JOIN</div>alias 2 มุม</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · Dot notation</div>p.col · r.col + alias</button>
+            <button @click="currentSlide=9" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">08 · UNION</div>vs UNION ALL</button>
+            <button @click="currentSlide=10" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">09 · GROUP BY</div>Split-Apply-Combine</button>
+            <button @click="currentSlide=11" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">10 · HAVING</div>กรองหลัง aggregate</button>
+            <button @click="currentSlide=12" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">11 · Pipeline เต็ม</div>8 ขั้น</button>
+            <button @click="currentSlide=13" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">12 · Lab 🧪</div>+ HW</button>
+            <button @click="currentSlide=14" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">13 · Cheat Sheet</div>สรุป JOINs</button>
+            <button @click="currentSlide=15" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl col-span-2"><div class="text-yellow-300 font-bold">14 · อ้างอิงทางการ</div>Specs & Docs</button>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">📚 โน้ตบุ๊ก: <a class="text-cyan-300 underline" href="./week07-joins.ipynb">week07-joins.ipynb</a> · Specs: <a class="text-cyan-300 underline" href="https://www.sqlite.org/foreignkeys.html" target="_blank">FK</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#joinclause" target="_blank">JOIN</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join.asp" target="_blank">W3Schools JOINs</a></div>
+        </div>
+      </div>
+
+      <!-- 2 ER -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">01 · ER Diagram — พิมพ์เขียวความสัมพันธ์</h2>
+          <p class="text-sm text-white/80 mb-4">Entity = ตาราง · Relationship = เส้นเชื่อม · Cardinality บอกจำนวน: 1:1 · 1:N · M:N — ใช้ crow's foot notation</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <div class="bg-black/40 rounded-xl p-4 text-center">
+                <div class="flex justify-between items-center gap-2">
+                  <div class="bg-blue-900/40 border border-blue-700 rounded-lg p-2 w-36"><div class="font-bold text-blue-300">patients</div><hr class="border-white/20 my-1"/><div class="font-mono text-[10px] text-left">🔑 patient_id<br/>hn UNIQUE<br/>gender<br/>birth_date</div></div>
+                  <div class="flex flex-col items-center text-[10px] text-white/70"><span>1</span><span class="text-2xl leading-none">───&lt;</span><span>N</span><br/><span class="bg-white/10 px-1 rounded mt-1">receives</span></div>
+                  <div class="bg-emerald-900/40 border border-emerald-700 rounded-lg p-2 w-36"><div class="font-bold text-emerald-300">prescriptions</div><hr class="border-white/20 my-1"/><div class="font-mono text-[10px] text-left">🔑 rx_id<br/>🔗 patient_id<br/>drug · dose<br/>cost_thb</div></div>
+                </div>
+                <div class="text-white/60 text-[11px] mt-2">ผู้ป่วย 1 คน ← ได้หลายใบสั่งยา (1:N)</div>
+              </div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Cardinality ที่เจอในโรงพยาบาล</h3>
+              <ul class="space-y-1.5 text-[11px]">
+                <li>👤 patient → visits : <strong>1:N</strong> (มาหลายครั้ง)</li>
+                <li>💊 prescription → drugs : <strong>N:M</strong> (ผ่าน junction table)</li>
+                <li>🩺 doctor → doctor : <strong>self</strong> (referral)</li>
+              </ul>
+              <div class="bg-black/40 rounded p-2 mt-2 font-mono text-[10px]">N:M → สร้างตารางกลาง<br/>rx_items(rx_id FK, drug_id FK, qty)</div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 Homework: วาด ER ของ สปสช. Data Dictionary ด้วย <a class="text-cyan-300 underline" href="https://www.drawio.com/" target="_blank">draw.io</a> (ฟรี) — เตรียม Project (สัปดาห์ 15)</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-4 text-xs text-left">🔗 ศึกษา schema จริง: <a class="text-cyan-300 underline" href="https://mimic.mit.edu/docs/iv/modules/hosp/" target="_blank">MIMIC-IV hosp ERD</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html" target="_blank">OMOP CDM v5.4 tables</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: FOREIGN KEY →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 FK -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">02 · FOREIGN KEY — สายใยตาราง</h2>
+          <p class="text-sm text-white/80 mb-3">FK = คอลัมน์ที่ชี้ไป PK ตารางอื่น — SQLite <strong>ปิด enforce โดย default!</strong> ต้องเปิดต่อ connection</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">import sqlite3
+con = sqlite3.connect("healthinfo.db")
+cur = con.cursor()
+
+# 🔑 เปิด enforce — ทำ "ต่อ connection"
+cur.execute("PRAGMA foreign_keys = ON")
+print(cur.execute("PRAGMA foreign_keys").fetchone())
+
+cur.execute("""
+CREATE TABLE prescriptions(
+  rx_id      INTEGER PRIMARY KEY,
+  patient_id INTEGER NOT NULL
+             REFERENCES patients(patient_id),
+  drug       TEXT NOT NULL,
+  dose_mg    REAL, cost_thb REAL
+)""")</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">FK ป้องกันอะไร?</h3>
+              <ul class="list-disc list-inside space-y-1.5 text-[11px]">
+                <li>INSERT patient_id 99999 ที่ไม่มีจริง → error (ถ้า enforce)</li>
+                <li>DELETE patients ที่มี rx → <code class="bg-black/30 px-1 rounded">FOREIGN KEY constraint failed</code></li>
+                <li>ไม่มี orphan records = รายงานไม่บิดเบี้ยว</li>
+              </ul>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-2">-- ลบแบบ cascade (ใช้อย่างระวัง)
+CREATE TABLE t(…
+  REFERENCES patients(patient_id)
+  ON DELETE CASCADE);</pre>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">กับดัก:</span> ลืม PRAGMA = FK เป็นแค่ comment! Python sqlite3 ปิด default</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 สเปก: <a class="text-cyan-300 underline" href="https://www.sqlite.org/foreignkeys.html" target="_blank">Foreign Key Support</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/pragma.html#pragma_foreign_keys" target="_blank">PRAGMA foreign_keys</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_foreignkey.asp" target="_blank">W3Schools FK</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: INNER JOIN →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 INNER -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">03 · INNER JOIN — จุดตัด A∩B</h2>
+          <p class="text-sm text-white/80 mb-3">แถวที่ key match ทั้งสองฝั่งเท่านั้น — ไม่ match หล่นทิ้ง (orphan หาย!)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT p.hn, r.drug, r.cost_thb
+FROM patients AS p
+INNER JOIN prescriptions AS r
+        ON r.patient_id = p.patient_id;
+
+-- ON คือเงื่อนไขจับคู่
+-- WHERE กรองหลัง join ได้เหมือนกัน
+… WHERE r.drug = 'Metformin'</pre>
+              <div class="bg-black/40 rounded p-2 mt-2 text-center text-[11px]">
+                <div class="inline-block relative w-40 h-16">
+                  <div class="absolute left-0 top-2 w-16 h-12 rounded-full bg-blue-500/40 border border-blue-400"></div>
+                  <div class="absolute right-0 top-2 w-16 h-12 rounded-full bg-emerald-500/40 border border-emerald-400"></div>
+                  <div class="absolute left-1/2 -translate-x-1/2 top-5 w-8 h-6 bg-yellow-400/60 rounded"></div>
+                  <span class="absolute left-1/2 -translate-x-1/2 bottom-0 text-[9px]">A∩B only</span>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">hn</th><th class="border border-white/10 p-1">drug</th><th class="border border-white/10 p-1">cost</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">HN-54001</td><td class="border border-white/10 p-1">Metformin</td><td class="border border-white/10 p-1">35</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">HN-54001</td><td class="border border-white/10 p-1">Lisinopril</td><td class="border border-white/10 p-1">42</td></tr>
+                  <tr><td class="border border-white/10 p-1">HN-54002</td><td class="border border-white/10 p-1">Metformin</td><td class="border border-white/10 p-1">55</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">HN-54003</td><td class="border border-white/10 p-1">Atorva…</td><td class="border border-white/10 p-1">68</td></tr>
+                  <tr><td class="border border-white/10 p-1">HN-54003</td><td class="border border-white/10 p-1">Metformin</td><td class="border border-white/10 p-1">35</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 นับ: patients=103, rx=6 → INNER=5 (orphan rx_id=6 หาย!) — เช็ค count หลัง JOIN เสมอ</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#joinclause" target="_blank">JOIN clause</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join_inner.asp" target="_blank">W3Schools INNER</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: LEFT JOIN →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 LEFT -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">04 · LEFT JOIN — ซ้ายครบถ้วน</h2>
+          <p class="text-sm text-white/80 mb-3">A ทั้งหมด + B ที่ match · ไม่ match → คอลัมน์ขวา = NULL — มาตรฐานงาน public health (ไม่ทำคนไข้หาย)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT p.patient_id, p.hn, r.drug
+FROM patients p
+LEFT JOIN prescriptions r
+       ON r.patient_id = p.patient_id
+ORDER BY p.patient_id LIMIT 8;
+
+-- ⭐ Anti-JOIN: คนที่ "ไม่มี" rx
+SELECT p.hn
+FROM patients p
+LEFT JOIN prescriptions r
+       ON r.patient_id=p.patient_id
+WHERE r.rx_id IS NULL;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">patient_id</th><th class="border border-white/10 p-1">hn</th><th class="border border-white/10 p-1">drug</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">10001</td><td class="border border-white/10 p-1">HN-54001</td><td class="border border-white/10 p-1">Metformin</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">10001</td><td class="border border-white/10 p-1">HN-54001</td><td class="border border-white/10 p-1">Lisinopril</td></tr>
+                  <tr><td class="border border-white/10 p-1">10004</td><td class="border border-white/10 p-1">HN-54004</td><td class="border border-white/10 p-1 text-red-300 font-mono">NULL</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">10005</td><td class="border border-white/10 p-1">HN-54005</td><td class="border border-white/10 p-1 text-red-300 font-mono">NULL</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-emerald-900/20 border border-emerald-700 rounded p-2 mt-3 text-[11px]">✅ 103 คนไม่หาย · IS NULL row = anti-join หา “ยังไม่จ่ายยา” ได้ทันที</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join_left.asp" target="_blank">W3Schools LEFT</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#joinclause" target="_blank">sqlite JOIN</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: RIGHT/FULL →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 RIGHT/FULL -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">05 · RIGHT / FULL OUTER JOIN</h2>
+          <p class="text-sm text-white/80 mb-3">SQLite รองรับตั้งแต่ <strong>v3.39</strong> (2022) — เช็ค <code class="bg-black/30 px-1 rounded">sqlite_version</code>; เวอร์ชันเก่า emulate ด้วย LEFT สลับข้าง</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- RIGHT: ขวาครบ (เห็น orphan!)
+SELECT r.rx_id, r.drug, p.hn
+FROM patients p
+RIGHT JOIN prescriptions r
+        ON r.patient_id = p.patient_id;
+-- rx_id=6 → hn=NULL ✓
+
+-- FULL: สองฝั่งครบ
+SELECT … FROM patients p
+FULL OUTER JOIN prescriptions r
+  ON r.patient_id=p.patient_id;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Venn เทียบ 3 แบบ</h3>
+              <div class="grid grid-cols-3 gap-1 text-center text-[9px]">
+                <div class="bg-black/40 rounded p-2"><div class="relative h-10"><div class="absolute inset-x-2 top-1 h-8 rounded-full bg-blue-500/40"></div><div class="absolute inset-x-2 top-1 h-8 rounded-full bg-emerald-500/40 ml-3"></div></div>INNER<br/>∩</div>
+                <div class="bg-black/40 rounded p-2"><div class="relative h-10"><div class="absolute left-0 top-1 h-8 w-10 rounded-full bg-blue-500/50"></div><div class="absolute right-0 top-1 h-8 w-10 rounded-full bg-emerald-500/25 ml-2"></div></div>LEFT<br/>A∪(A∩B)</div>
+                <div class="bg-black/40 rounded p-2"><div class="relative h-10"><div class="absolute inset-0 top-1 h-8 rounded-full bg-gradient-to-r from-blue-500/40 to-emerald-500/40"></div></div>FULL<br/>A∪B</div>
+              </div>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-2">-- Emulate RIGHT บน SQLite เก่า:
+SELECT r.*, p.*
+FROM prescriptions r
+LEFT JOIN patients p
+  ON r.patient_id=p.patient_id; -- สลับข้าง</pre>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join_right.asp" target="_blank">RIGHT</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join_full.asp" target="_blank">FULL</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/changes.html" target="_blank">Release history (3.39)</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: SELF JOIN →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 SELF -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">06 · SELF JOIN — ตารางเชื่อมตัวเอง</h2>
+          <p class="text-sm text-white/80 mb-3">ใช้ alias ตั้ง 2 ชื่อให้ตารางเดียว — use case: referral chain, contact tracing, org hierarchy</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <div class="bg-black/40 rounded-xl p-3">
+                <div class="text-[11px] font-mono">referrals(rx_from, rx_to)</div>
+                <table class="w-full border-collapse text-[10px] mt-1"><thead><tr class="bg-white/10"><th class="border border-white/10 p-1">rx_from</th><th class="border border-white/10 p-1">rx_to</th></tr></thead><tbody><tr><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">2</td></tr><tr><td class="border border-white/10 p-1">2</td><td class="border border-white/10 p-1">3</td></tr><tr><td class="border border-white/10 p-1">3</td><td class="border border-white/10 p-1">1</td></tr></tbody></table>
+                <div class="text-white/60 text-[10px] mt-2">id ล้วน อ่านไม่รู้เรื่อง → ต้อง map เป็น hn 2 ฝั่ง</div>
+              </div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT a.rx_from,
+       pa.hn AS from_hn,   -- alias ฝั่งต้น
+       a.rx_to,
+       pb.hn AS to_hn      -- alias ฝั่งปลาย
+FROM referrals a
+JOIN patients pa
+     ON pa.patient_id = a.rx_from
+JOIN patients pb
+     ON pb.patient_id = a.rx_to;</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 patients ปรากฏ 2 ครั้ง (pa, pb) — นี่คือ SELF JOIN + dot notation ทำงานร่วมกัน</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join_self.asp" target="_blank">W3Schools SELF JOIN</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_alias.html" target="_blank">Alias syntax</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: Dot notation →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Dot -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">07 · Dot notation & Alias ระดับโปร</h2>
+          <p class="text-sm text-white/80 mb-3"><code class="bg-black/30 px-1 rounded">ตาราง.คอลัมน์</code> บอกที่มาชัด — จำเป็นเมื่อ JOIN แล้วชื่อคอลัมน์ซ้ำ (patient_id มีทั้งสองตาราง!)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- ❌ ambiguous:
+SELECT patient_id FROM patients p
+JOIN prescriptions r USING(patient_id);
+-- → Error: ambiguous column
+
+-- ✅ dot notation:
+SELECT p.patient_id, p.hn,
+       r.rx_id, r.drug
+FROM patients p
+JOIN prescriptions r
+     ON r.patient_id = p.patient_id;
+
+-- suffixes แบบ pandas (เทียบ)
+pd.merge(p, r, on='patient_id',
+         suffixes=('_p','_r'))</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Convention ที่นิยม</h3>
+              <ul class="list-disc list-inside space-y-1.5 text-[11px]">
+                <li>ตารางยาว → alias ตัวเดียว: <code class="bg-black/30 px-1 rounded">patients p</code>, <code class="bg-black/30 px-1 rounded">prescriptions r</code></li>
+                <li>SELECT ระบุ dot เสมอ — อ่านรู้ทันทีว่าคอลัมน์ไหนมาจากไหน</li>
+                <li>ON ใช้ dot ทั้งคู่: <code class="bg-black/30 px-1 rounded">r.patient_id = p.patient_id</code></li>
+              </ul>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 USING(col) ย่อได้เมื่อชื่อเหมือน: <code class="bg-black/30 px-1 rounded">JOIN r USING(patient_id)</code> — แต่ dot ชัดกว่า</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_alias.asp" target="_blank">Alias</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#resultset" target="_blank">Result columns</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: UNION →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 UNION -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">08 · UNION / UNION ALL</h2>
+          <p class="text-sm text-white/80 mb-3">ต่อผลลัพธ์<strong>แนวตั้ง</strong> (stack rows) — จำนวนคอลัมน์+type ต้องตรง · UNION ตัดซ้ำ / ALL คงซ้ำ(เร็วกว่า)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT hn, 'มียา' AS status
+FROM patients p
+JOIN prescriptions r
+  ON r.patient_id=p.patient_id
+UNION                       -- ตัดซ้ำ
+SELECT hn, 'ไม่มียา'
+FROM patients p
+LEFT JOIN prescriptions r
+       ON r.patient_id=p.patient_id
+WHERE r.rx_id IS NULL;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px]">
+                <div class="bg-blue-900/40 rounded p-1">query A: 5 แถว</div>
+                <div class="text-white/50 my-0.5">↓ UNION ↓</div>
+                <div class="bg-emerald-900/40 rounded p-1">query B: 98 แถว</div>
+                <div class="text-white/50 my-0.5">↓ dedupe</div>
+                <div class="bg-yellow-400/20 rounded p-1">ผล ≤ 103 (unique)</div>
+              </div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-3">💡 แยกกลุ่ม cohort แล้ว stack — เทียบ pandas: <code class="bg-black/30 px-1 rounded">pd.concat([a,b]).drop_duplicates()</code></div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#compound" target="_blank">Compound SELECT</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_union.asp" target="_blank">W3Schools UNION</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: GROUP BY →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 GROUP BY -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">09 · GROUP BY — Split-Apply-Combine</h2>
+          <p class="text-sm text-white/80 mb-3">non-aggregate ทุกคอลัมน์ต้องอยู่ใน GROUP BY — ไม่งั้น error</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- ยอดต่อผู้ป่วย (JOIN + GROUP BY)
+SELECT p.hn,
+       COUNT(r.rx_id)   AS n_rx,
+       SUM(r.cost_thb)  AS spend,
+       AVG(r.cost_thb)  AS avg_cost
+FROM patients p
+LEFT JOIN prescriptions r
+       ON r.patient_id=p.patient_id
+GROUP BY p.patient_id
+ORDER BY spend DESC NULLS LAST;
+
+-- ต่อชนิดยา
+SELECT drug, COUNT(*) n, SUM(cost_thb) s
+FROM prescriptions GROUP BY drug;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Diagram</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-1">
+                <div class="flex justify-center gap-1 flex-wrap"><span class="bg-blue-500/30 px-1 rounded">10001|35</span><span class="bg-blue-500/30 px-1 rounded">10001|42</span><span class="bg-emerald-500/30 px-1 rounded">10002|55</span><span class="bg-purple-500/30 px-1 rounded">10003|68</span><span class="bg-purple-500/30 px-1 rounded">10003|35</span></div>
+                <div class="text-white/60">Split by patient_id ↓ Apply SUM/COUNT ↓ Combine</div>
+                <div class="bg-yellow-400/20 rounded p-1">10001→77 | 10002→55 | 10003→103</div>
+              </div>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-3 text-[11px]"><span class="font-bold text-red-300">❌:</span> <code class="bg-black/30 px-1 rounded">SELECT hn, drug, COUNT(*) FROM rx</code> ไม่มี GROUP BY → "no such column"/ผลสุ่ม</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#groupby" target="_blank">GROUP BY</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_groupby.asp" target="_blank">W3Schools</a> — เทียบ pandas <code class="bg-black/30 px-1 rounded">groupby().agg()</code> สัปดาห์ 2</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=9" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=11" class="hover:text-white">ถัดไป: HAVING →</button></div>
+        </div>
+      </div>
+
+      <!-- 11 HAVING -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">10 · HAVING — กรองหลังจัดกลุ่ม</h2>
+          <p class="text-sm text-white/80 mb-3">WHERE = กรองแถวดิบ (ก่อน group) · HAVING = กรองผล aggregate (หลัง group)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- ผู้ป่วยที่จ่าย &gt; 1 ใบ
+SELECT p.hn, COUNT(r.rx_id) n_rx,
+       SUM(r.cost_thb) total
+FROM patients p
+LEFT JOIN prescriptions r
+  ON r.patient_id=p.patient_id
+GROUP BY p.patient_id
+HAVING COUNT(r.rx_id) > 1
+ORDER BY total DESC;
+
+-- WHERE + HAVING ร่วม
+WHERE drug='Metformin'   -- pre-group
+GROUP BY drug
+HAVING AVG(cost_thb)>30  -- post-group</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-1">Pipeline ตำแหน่ง HAVING</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-0.5">
+                <div class="bg-blue-900/40 rounded p-1">FROM + JOIN</div><div class="text-white/40">↓ WHERE (rows)</div>
+                <div class="bg-emerald-900/40 rounded p-1">GROUP BY</div><div class="text-white/40">↓ HAVING (groups)</div>
+                <div class="bg-purple-900/40 rounded p-1">SELECT</div><div class="text-white/40">↓ ORDER BY → LIMIT</div>
+              </div>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-3 text-[11px]"><span class="font-bold text-red-300">❌:</span> <code class="bg-black/30 px-1 rounded">WHERE COUNT(*)>1</code> → misuse! COUNT ยังไม่เกิด ณ WHERE</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#having" target="_blank">HAVING</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_having.asp" target="_blank">W3Schools HAVING</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=10" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=12" class="hover:text-white">ถัดไป: Pipeline →</button></div>
+        </div>
+      </div>
+
+      <!-- 12 Pipeline -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">11 · Pipeline ฉบับเต็ม 8 ขั้น</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-0.5">
+              <div class="bg-blue-900/40 rounded p-1">1 FROM patients p</div>
+              <div class="text-white/40">↓ 2 JOIN prescriptions r ON …</div>
+              <div class="bg-sky-900/40 rounded p-1">3 WHERE birth_date LIKE '____-__-__'</div>
+              <div class="text-white/40">↓</div>
+              <div class="bg-emerald-900/40 rounded p-1">4 GROUP BY gender</div>
+              <div class="text-white/40">↓ 5 HAVING SUM(cost)&gt;0</div>
+              <div class="bg-purple-900/40 rounded p-1">6 SELECT gender, COUNT(DISTINCT…) …</div>
+              <div class="text-white/40">↓ 7 ORDER BY spend DESC</div>
+              <div class="bg-yellow-400/20 rounded p-1">8 LIMIT 5</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[10px]">SELECT p.gender,
+  COUNT(DISTINCT p.patient_id) n_patients,
+  SUM(r.cost_thb) spend
+FROM patients p
+LEFT JOIN prescriptions r
+  ON r.patient_id=p.patient_id
+WHERE p.birth_date LIKE '____-__-__'
+GROUP BY p.gender
+HAVING SUM(r.cost_thb)>0
+ORDER BY spend DESC LIMIT 5;</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">🎯 query นี้ครบทั้ง 8 clause — ถ้าอ่านออกทีละขั้น = พร้อมสอบกลางภาค (คาบ 9)</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=11" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=13" class="hover:text-white">ถัดไป: Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 13 Lab -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">12 · Lab สัปดาห์ที่ 7 🧪</h2>
+          <p class="text-sm text-white/80 mb-3"><code class="bg-black/40 px-1 rounded">week07-joins.ipynb</code> — สร้างตาราง prescriptions/referrals แล้ว JOIN ครบทุกแบบ</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📋 ภารกิจ ↔ § ↔ สไลด์</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">#</th><th class="border border-white/10 p-1">ภารกิจ</th><th class="border border-white/10 p-1">§</th><th class="border border-white/10 p-1">สไลด์</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">PRAGMA FK + CREATE prescriptions + seed</td><td class="border border-white/10 p-1 font-mono">§2</td><td>02–03</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">2</td><td class="border border-white/10 p-1">INNER vs LEFT นับแถว + anti-join</td><td class="border border-white/10 p-1 font-mono">§3–4</td><td>04–05</td></tr>
+                  <tr><td class="border border-white/10 p-1">3</td><td class="border border-white/10 p-1">RIGHT/FULL (≥3.39) เห็น orphan</td><td class="border border-white/10 p-1 font-mono">§5</td><td>06</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">4</td><td class="border border-white/10 p-1">SELF JOIN referrals → hn สองฝั่ง</td><td class="border border-white/10 p-1 font-mono">§6–7</td><td>07–08</td></tr>
+                  <tr><td class="border border-white/10 p-1">5</td><td class="border border-white/10 p-1">UNION vs UNION ALL นับ</td><td class="border border-white/10 p-1 font-mono">§7</td><td>09</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">6</td><td class="border border-white/10 p-1">GROUP BY + HAVING + pipeline 8 ขั้น</td><td class="border border-white/10 p-1 font-mono">§8–10</td><td>10–12</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">✅ Self-check + HW</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>INNER=5, LEFT=6 (orphan ต่างกัน)</li>
+                <li>anti-join เจอคนไม่มียา (NULL row)</li>
+                <li>DELETE patient มี rx + FK on → IntegrityError</li>
+                <li>HAVING COUNT&gt;1 ได้ 2 คน (HN-54001, HN-54003)</li>
+              </ul>
+              <div class="bg-emerald-900/30 border border-emerald-700 rounded p-2 mt-3 text-[11px]"><strong>Homework 7:</strong> สร้าง <code class="bg-black/30 px-1 rounded">visits(visit_id PK, patient_id FK, visit_date, hba1c)</code> + ≥5 แถว + query หาคน hba1c เฉลี่ย&gt;7 (JOIN+GROUP+HAVING) — วาด ER ด้วย draw.io แนบภาพ</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=12" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=14" class="hover:text-white">ถัดไป: Cheat Sheet →</button></div>
+        </div>
+      </div>
+
+      <!-- 14 Cheat -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">13 · Cheat Sheet — JOINs</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-[11px] border-collapse">
+              <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">ชนิด</th><th class="border border-white/10 p-1.5">Syntax</th><th class="border border-white/10 p-1.5">ได้อะไร</th><th class="border border-white/10 p-1.5">Use case สุขภาพ</th></tr></thead>
+              <tbody class="text-white/90">
+                <tr><td class="border border-white/10 p-1.5 font-bold">INNER</td><td class="border border-white/10 p-1.5 font-mono">A JOIN B ON k</td><td class="border border-white/10 p-1.5">match เท่านั้น</td><td class="border border-white/10 p-1.5">rx + ข้อมูลผู้ป่วย (clean cohort)</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">LEFT</td><td class="border border-white/10 p-1.5 font-mono">A LEFT JOIN B</td><td class="border border-white/10 p-1.5">A ครบ + B or NULL</td><td class="border border-white/10 p-1.5">รายงานผู้ป่วยครบทุกคน</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">anti-LEFT</td><td class="border border-white/10 p-1.5 font-mono">LEFT … WHERE B.k IS NULL</td><td class="border border-white/10 p-1.5">A ที่ไม่มีใน B</td><td class="border border-white/10 p-1.5">ยังไม่จ่ายยา / missed follow-up</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">RIGHT</td><td class="border border-white/10 p-1.5 font-mono">A RIGHT JOIN B</td><td class="border border-white/10 p-1.5">B ครบ (≥3.39)</td><td class="border border-white/10 p-1.5">audit orphan records</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">FULL</td><td class="border border-white/10 p-1.5 font-mono">A FULL OUTER JOIN B</td><td class="border border-white/10 p-1.5">ทั้งสองฝั่ง</td><td class="border border-white/10 p-1.5">data quality check</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">SELF</td><td class="border border-white/10 p-1.5 font-mono">t a JOIN t b ON …</td><td class="border border-white/10 p-1.5">ตาราง×2 มุม</td><td class="border border-white/10 p-1.5">referral chain</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">UNION</td><td class="border border-white/10 p-1.5 font-mono">q1 UNION [ALL] q2</td><td class="border border-white/10 p-1.5">stack แนวตั้ง</td><td class="border border-white/10 p-1.5">รวม cohorts</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">Golden rules: เปิด <code class="bg-black/30 px-1 rounded">PRAGMA foreign_keys=ON</code> · dot notation เสมอ · นับ COUNT ก่อน/หลัง JOIN · non-aggregate ต้องอยู่ใน GROUP BY · filter rows=WHERE, groups=HAVING</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=13" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=15" class="hover:text-white">ถัดไป: อ้างอิง →</button></div>
+        </div>
+      </div>
+
+      <!-- 15 References -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h2 class="text-4xl font-bold mb-2">14 · แหล่งอ้างอิงทางการ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📘 SQLite</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/foreignkeys.html" target="_blank">Foreign Key Support</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/pragma.html#pragma_foreign_keys" target="_blank">PRAGMA fk</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#joinclause" target="_blank">JOIN clause</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#compound" target="_blank">UNION</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#groupby" target="_blank">GROUP BY</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html#having" target="_blank">HAVING</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_createtable.html#foreignkeyconstraints" target="_blank">FK constraints (CREATE)</a></li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">🐍 Python</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90"><li><a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html" target="_blank">sqlite3</a> · <a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.execute" target="_blank">Connection.execute</a></li></ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🛠️ เสริม</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_join.asp" target="_blank">W3Schools All JOINs</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_groupby.asp" target="_blank">GROUP BY</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_having.asp" target="_blank">HAVING</a></li>
+                <li>ER tool: <a class="text-cyan-300 underline" href="https://www.drawio.com/" target="_blank">draw.io</a> · Schema จริง: <a class="text-cyan-300 underline" href="https://mimic.mit.edu/docs/iv/modules/hosp/" target="_blank">MIMIC-IV</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html" target="_blank">OMOP CDM</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — wichit.s@ubu.ac.th</p>
+              <p class="text-white/60 mt-2">คาบหน้า: <strong>สอบกลางภาค</strong> — ทบทวน wk05–07 + cheat sheets!</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">Next: <a class="underline text-cyan-300" href="./wk09.html">Week 9 — Midterm Review & Exam Guide</a></div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>
