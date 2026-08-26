@@ -3,13 +3,27 @@
   <head>
     <meta charset="UTF-8">
     <meta name="description" content="Deep Learning Week 9: Introduction to PyTorch and Simple Perceptron">
-    <meta name="keywords" content="Deep Learning, PyTorch, Perceptron, uv, Gradient Descent">
+    <meta name="keywords" content="Deep Learning, PyTorch, Perceptron, uv, Python">
     <meta name="author" content="Wichit Sombat, PhD.,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deep Learning - สัปดาห์ที่ 9: PyTorch และเพอร์เซปตรอน</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../css/greenish.css" rel="stylesheet" />
+
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
   </head>
   <body class="bg-gray-50" x-data="slideshow()">
 
@@ -61,7 +75,7 @@
             <span class="text-emerald-300">Simple Perceptron และการฝึกโมเดล</span>
           </h1>
           <div class="text-xl text-white/90 mb-8 font-light">
-            uv • tensors • คณิตศาสตร์ของนิวรอน • training loop
+            uv - tensors - คณิตศาสตร์ของนิวรอน - training loop
           </div>
           <div class="tech-card mb-8">
             <h2 class="text-2xl font-semibold mb-4 text-emerald-300">ผลลัพธ์การเรียนรู้</h2>
@@ -72,34 +86,34 @@
               <div>4. เขียน training loop (forward/backward/update) ได้</div>
             </div>
           </div>
-          <div class="text-lg text-white/80">สัปดาห์ที่ 9 • 1145208 การเรียนรู้เชิงลึก</div>
+          <div class="text-lg text-white/80">สัปดาห์ที่ 9 - 1145208 การเรียนรู้เชิงลึก</div>
         </div>
       </div>
 
       <!-- Slide 0: Roadmap -->
       <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">เส้นทางของวันนี้: จากศูนย์ → โมเดลแรกของคุณ</h2>
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">เส้นทางของวันนี้: จากศูนย์ -> โมเดลแรกของคุณ</h2>
           <div class="grid md:grid-cols-2 gap-6">
             <div class="agenda-item">
-              <div class="agenda-time">Part 1 • เครื่องมือ</div>
+              <div class="agenda-time">Part 1 - เครื่องมือ</div>
               <div class="agenda-title">เริ่มจากศูนย์ด้วย uv</div>
-              <div class="agenda-description">ติดตั้ง uv → <code class="font-mono">uv init</code> → <code class="font-mono">uv add torch</code> → รันได้บนทุกเครื่องเหมือนกัน</div>
+              <div class="agenda-description">ติดตั้ง uv -> <code class="font-mono">uv init</code> -> <code class="font-mono">uv add torch</code> -> รันได้บนทุกเครื่องเหมือนกัน</div>
             </div>
             <div class="agenda-item">
-              <div class="agenda-time">Part 2 • คณิตศาสตร์</div>
+              <div class="agenda-time">Part 2 - คณิตศาสตร์</div>
               <div class="agenda-title">นิวรอนหนึ่งตัวคืออะไร</div>
-              <div class="agenda-description"><em>z = w·x + b</em>, activation (sigmoid), loss function และ gradient descent</div>
+              <div class="agenda-description"><em>\(z = w \cdot x + b\)</em>, activation (sigmoid), loss function และ gradient descent</div>
             </div>
             <div class="agenda-item">
-              <div class="agenda-time">Part 3 • ลงมือทำ</div>
+              <div class="agenda-time">Part 3 - ลงมือทำ</div>
               <div class="agenda-title">เพอร์เซปตรอนใน PyTorch</div>
               <div class="agenda-description">แปลงสมการเป็น <code class="font-mono">nn.Linear</code> + <code class="font-mono">nn.Sigmoid</code></div>
             </div>
             <div class="agenda-item">
-              <div class="agenda-time">Part 4 • ฝึกโมเดล</div>
+              <div class="agenda-time">Part 4 - ฝึกโมเดล</div>
               <div class="agenda-title">Training loop</div>
-              <div class="agenda-description">forward → loss → backward → update แล้วดู loss ลด accuracy ขึ้นด้วยตาตัวเอง</div>
+              <div class="agenda-description">forward -> loss -> backward -> update แล้วดู loss ลด accuracy ขึ้นด้วยตาตัวเอง</div>
             </div>
           </div>
         </div>
@@ -108,7 +122,7 @@
       <!-- Slide 1: Install uv -->
       <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Part 1: เริ่มจากศูนย์ — ติดตั้งเครื่องมือ</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Part 1: เริ่มจากศูนย์ -- ติดตั้งเครื่องมือ</h2>
           <p class="text-lg text-center mb-8">uv คือตัวจัดการโปรเจกต์ Python แบบ all-in-one (แทน pip + venv + requirements.txt)</p>
           <div class="grid md:grid-cols-3 gap-6">
             <div class="tech-card">
@@ -140,7 +154,7 @@ PS&gt; scoop install uv
 PS&gt; uv --version</pre>
             </div>
           </div>
-          <p class="mt-8 text-center text-emerald-200">✓ เมื่อ <code class="font-mono">uv --version</code> ทำงานได้ = พร้อมไปต่อ</p>
+          <p class="mt-8 text-center text-emerald-200">[OK] เมื่อ <code class="font-mono">uv --version</code> ทำงานได้ = พร้อมไปต่อ</p>
         </div>
       </div>
 
@@ -159,9 +173,9 @@ perceptron/
 └── pyproject.toml    # ศูนย์กลาง config</pre>
             </div>
             <div class="space-y-4 text-lg">
-              <p>📌 <strong>pyproject.toml</strong> คือบัตรประชาชนของโปรเจกต์ — บอกชื่อ, เวอร์ชัน, dependencies</p>
-              <p>📌 <strong>.python-version</strong> ทำให้ทุกเครื่องใช้ Python เวอร์ชันเดียวกัน</p>
-              <p>📌 ไม่ต้องสร้าง venv เอง — uv จัดการให้อัตโนมัติ</p>
+              <p>- <strong>pyproject.toml</strong> คือบัตรประชาชนของโปรเจกต์ -- บอกชื่อ, เวอร์ชัน, dependencies</p>
+              <p>- <strong>.python-version</strong> ทำให้ทุกเครื่องใช้ Python เวอร์ชันเดียวกัน</p>
+              <p>- ไม่ต้องสร้าง venv เอง -- uv จัดการให้อัตโนมัติ</p>
             </div>
           </div>
         </div>
@@ -183,9 +197,9 @@ $ uv run main.py     # รันใน venv ของโปรเจกต์
 Hello from perceptron-lab!</pre>
             </div>
             <div class="space-y-4 text-lg">
-              <p>📌 uv สร้าง virtualenv + ติดตั้ง + บันทึกเวอร์ชันลง <code class="font-mono">uv.lock</code> ให้เอง</p>
-              <p>📌 <code class="font-mono text-emerald-300">uv run</code> ทุกครั้ง = ไม่มีปัญหา "รันใน env ผิด"</p>
-              <p class="text-emerald-200 border-l-4 border-emerald-400 pl-4">💡 เครื่องที่ clone ไปแค่ <code class="font-mono">uv sync</code> ก็ได้ environment เหมือนกันเป๊ะ</p>
+              <p>- uv สร้าง virtualenv + ติดตั้ง + บันทึกเวอร์ชันลง <code class="font-mono">uv.lock</code> ให้เอง</p>
+              <p>- <code class="font-mono text-emerald-300">uv run</code> ทุกครั้ง = ไม่มีปัญหา "รันใน env ผิด"</p>
+              <p class="text-emerald-200 border-l-4 border-emerald-400 pl-4">[Tip] เครื่องที่ clone ไปแค่ <code class="font-mono">uv sync</code> ก็ได้ environment เหมือนกันเป๊ะ</p>
             </div>
           </div>
         </div>
@@ -209,8 +223,8 @@ t = torch.tensor([[1.0, 2.0],
                   [3.0, 4.0]])
 print(t @ t.T)   # matrix multiply</pre>
             <div class="space-y-4 text-lg">
-              <p>📌 <strong>Tensor</strong> คือ n-dimensional array ของ PyTorch (คล้าย ndarray ของ NumPy)</p>
-              <p>📌 tensor เก็บ computation graph ไว้ให้ด้วย → คำนวณ derivative อัตโนมัติ (<strong>autograd</strong>)</p>
+              <p>- <strong>Tensor</strong> คือ n-dimensional array ของ PyTorch (คล้าย ndarray ของ NumPy)</p>
+              <p>- tensor เก็บ computation graph ไว้ให้ด้วย -> คำนวณ derivative อัตโนมัติ (<strong><a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">autograd</a></strong>)</p>
               <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">$ uv run check.py
 torch: 2.x.x
 device: cpu
@@ -224,10 +238,10 @@ tensor([[ 5., 11.],
       <!-- Slide 5: Math - neuron model -->
       <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Part 2: คณิตศาสตร์ — นิวรอนหนึ่งตัว</h2>
-          <p class="text-xl text-center mb-6">เพอร์เซปตรอน = ฟังก์ชันทางคณิตศาสตร์ชุดเดียว</p>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Part 2: คณิตศาสตร์ -- นิวรอนหนึ่งตัว</h2>
+          <p class="text-xl text-center mb-6"><a href="https://en.wikipedia.org/wiki/Perceptron" target="_blank" class="underline decoration-dotted">เพอร์เซปตรอน</a> = ฟังก์ชันทางคณิตศาสตร์ชุดเดียว</p>
           <div class="tech-card text-center mb-8">
-            <p class="text-3xl font-mono font-bold text-yellow-300">z = w·x + b</p>
+            <p class="text-3xl font-mono font-bold text-yellow-300">\(z = w \cdot x + b\)</p>
             <p class="text-lg mt-3">weighted sum ของ input ทุกตัว บวก bias</p>
           </div>
           <div class="grid md:grid-cols-3 gap-4 text-center">
@@ -237,11 +251,11 @@ tensor([[ 5., 11.],
             </div>
             <div class="tech-card">
               <h4 class="text-emerald-300 font-bold mb-2">Weights w, bias b</h4>
-              <p class="text-sm">ตัวเลขที่โมเดลจะ<strong>เรียนรู้</strong> — ยิ่ง w มาก feature นั้นยิ่งมีน้ำหนัก</p>
+              <p class="text-sm">ตัวเลขที่โมเดลจะ<strong>เรียนรู้</strong> -- ยิ่ง w มาก feature นั้นยิ่งมีน้ำหนัก</p>
             </div>
             <div class="tech-card">
               <h4 class="text-emerald-300 font-bold mb-2">Output</h4>
-              <p class="text-sm">z เป็นตัวเลขเท่าไรก็ได้ → ต้องแปลงเป็น "ความมั่นใจ" ก่อน</p>
+              <p class="text-sm">z เป็นตัวเลขเท่าไรก็ได้ -> ต้องแปลงเป็น "ความมั่นใจ" ก่อน</p>
             </div>
           </div>
         </div>
@@ -250,17 +264,17 @@ tensor([[ 5., 11.],
       <!-- Slide 6: Activation -->
       <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Activation function: แปลง z → คำตอบ</h2>
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Activation function: แปลง z -> คำตอบ</h2>
           <div class="grid md:grid-cols-2 gap-6">
             <div class="tech-card text-center">
               <h4 class="text-xl font-bold mb-3 text-blue-300">Step (เพอร์เซปตรอนดั้งเดิม 1958)</h4>
-              <p class="font-mono text-2xl mb-3">ŷ = 1 if z ≥ 0, else 0</p>
-              <p class="text-sm">ตัดสินใจเด็ดขาด แต่... ไม่มีอนุพันธ์ → ฝึกด้วย gradient descent ไม่ได้</p>
+              <p class="font-mono text-2xl mb-3">\(\hat{y} = 1 \text{ if } z \geq 0, \text{ else } 0\)</p>
+              <p class="text-sm">ตัดสินใจเด็ดขาด แต่... ไม่มีอนุพันธ์ -> ฝึกด้วย gradient descent ไม่ได้</p>
             </div>
             <div class="tech-card text-center border-yellow-400">
-              <h4 class="text-xl font-bold mb-3 text-yellow-300">Sigmoid (ที่เราจะใช้)</h4>
-              <p class="font-mono text-2xl mb-3">σ(z) = 1 / (1 + e<sup>-z</sup>)</p>
-              <p class="text-sm">บีบค่าเข้าช่วง (0, 1) = probability ✓ smooth ✓ มีอนุพันธ์ทุกจุด ✓</p>
+              <h4 class="text-xl font-bold mb-3 text-yellow-300"><a href="https://en.wikipedia.org/wiki/Sigmoid_function" target="_blank" class="underline decoration-dotted">Sigmoid</a> (ที่เราจะใช้)</h4>
+              <p class="font-mono text-2xl mb-3">\(\sigma(z) = \dfrac{1}{1 + e^{-z}}\)</p>
+              <p class="text-sm">บีบค่าเข้าช่วง (0, 1) = probability [OK] smooth [OK] มีอนุพันธ์ทุกจุด [OK]</p>
             </div>
           </div>
           <p class="mt-8 text-center text-lg text-emerald-200">ความนุ่มของ sigmoid คือกุญแจที่ทำให้ "การเรียนรู้" เป็นไปได้</p>
@@ -274,57 +288,57 @@ tensor([[ 5., 11.],
           <p class="text-xl text-center mb-8">ยิ่ง loss น้อย ยิ่ง prediction ตรงกับคำตอบจริง</p>
           <div class="grid md:grid-cols-2 gap-6">
             <div class="tech-card">
-              <h4 class="text-xl font-bold mb-3 text-blue-300">MSE (Mean Squared Error) — งาน regression</h4>
-              <p class="font-mono text-lg text-center my-3">L = (1/N) Σ (ŷᵢ − yᵢ)<sup>2</sup></p>
+              <h4 class="text-xl font-bold mb-3 text-blue-300"><a href="https://en.wikipedia.org/wiki/Mean_squared_error" target="_blank" class="underline decoration-dotted">MSE (Mean Squared Error)</a> -- งาน regression</h4>
+              <p class="font-mono text-lg text-center my-3">\(L = \dfrac{1}{N} \sum (\hat{y}_i - y_i)^2\)</p>
               <p class="text-sm text-center">ระยะห่างกำลังสองระหว่างทำนาย vs จริง</p>
             </div>
             <div class="tech-card border-yellow-400">
-              <h4 class="text-xl font-bold mb-3 text-yellow-300">BCE (Binary Cross-Entropy) — งาน binary classification</h4>
-              <p class="font-mono text-lg text-center my-3">L = −[y·log ŷ + (1−y)·log(1−ŷ)]</p>
-              <p class="text-sm text-center">ทำนายผิดฝั่ง = ลงโทษหนักมาก (log พุ่งไป −∞)</p>
+              <h4 class="text-xl font-bold mb-3 text-yellow-300"><a href="https://en.wikipedia.org/wiki/Cross_entropy#Binary_classification" target="_blank" class="underline decoration-dotted">BCE (Binary Cross-Entropy)</a> -- งาน binary classification</h4>
+              <p class="font-mono text-lg text-center my-3">\(L = -\big[y \log \hat{y} + (1-y) \log(1-\hat{y})\big]\)</p>
+              <p class="text-sm text-center">ทำนายผิดฝั่ง = ลงโทษหนักมาก (log พุ่งไป -inf)</p>
             </div>
           </div>
-          <p class="mt-8 text-center text-lg">🎯 เป้าหมายของ training: <strong class="text-yellow-300">ปรับ w, b ให้ L ต่ำที่สุด</strong></p>
+          <p class="mt-8 text-center text-lg">[Goal] เป้าหมายของ training: <strong class="text-yellow-300">ปรับ w, b ให้ L ต่ำที่สุด</strong></p>
         </div>
       </div>
 
       <!-- Slide 8: Gradient descent -->
       <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Gradient Descent: ลงเนินหา loss ต่ำสุด</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank" class="underline decoration-dotted">Gradient Descent</a>: ลงเนินหา loss ต่ำสุด</h2>
           <div class="tech-card text-center mb-8">
-            <p class="text-3xl font-mono font-bold text-yellow-300">w ← w − η · ∂L/∂w</p>
+            <p class="text-3xl font-mono font-bold text-yellow-300">\(w \leftarrow w - \eta \cdot \dfrac{\partial L}{\partial w}\)</p>
             <p class="mt-3">ขยับ weight ทีละน้อย ตามทิศทางที่ loss ลดลง</p>
           </div>
           <div class="grid md:grid-cols-3 gap-4 text-center text-sm">
             <div class="tech-card">
-              <h4 class="text-emerald-300 font-bold mb-2">∂L/∂w</h4>
+              <h4 class="text-emerald-300 font-bold mb-2">dL/dw</h4>
               <p>อนุพันธ์ = ทิศทาง + ความชัน ที่บอกว่า loss จะแยก/ดีขึ้นถ้าขยับ w</p>
             </div>
             <div class="tech-card">
-              <h4 class="text-emerald-300 font-bold mb-2">η (learning rate)</h4>
+              <h4 class="text-emerald-300 font-bold mb-2">eta (learning rate)</h4>
               <p>ก้าวใหญ่ไป = กระโดดข้ามหลุม, ก้าวเล็กไป = ช้ามาก (เราใช้ 0.1)</p>
             </div>
             <div class="tech-card">
-              <h4 class="text-emerald-300 font-bold mb-2">autograd</h4>
-              <p><code class="font-mono">loss.backward()</code> คำนวณอนุพันธ์ทุกตัวแทนเรา — ไม่ต้องไล่สมการเอง</p>
+              <h4 class="text-emerald-300 font-bold mb-2"><a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">autograd</a></h4>
+              <p><code class="font-mono">loss.backward()</code> คำนวณอนุพันธ์ทุกตัวแทนเรา -- ไม่ต้องไล่สมการเอง</p>
             </div>
           </div>
-          <p class="mt-8 text-center">🔁 repeat: forward → backward → update จน loss ลดพอใจ</p>
+          <p class="mt-8 text-center">[Loop] repeat: forward -> backward -> update จน loss ลดพอใจ</p>
         </div>
       </div>
 
       <!-- Slide 9: Perceptron in PyTorch -->
       <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: สมการ → PyTorch code</h2>
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: สมการ -> PyTorch code</h2>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <div class="tech-card">
               <p class="text-lg space-y-2">
-                สมการ <span class="font-mono text-yellow-300">ŷ = σ(w·x + b)</span><br>
-                ↳ <code class="font-mono text-emerald-300">nn.Linear(2, 1)</code> = w·x + b<br>
+                สมการ <span class="font-mono text-yellow-300">\(\hat{y} = \sigma(w \cdot x + b)\)</span><br>
+                -> <code class="font-mono text-emerald-300">nn.Linear(2, 1)</code> = \(w \cdot x + b\)<br>
                 <span class="opacity-60">&nbsp;&nbsp;&nbsp;(เก็บ w, b ไว้ให้และเรียนรู้เอง)</span><br>
-                ↳ <code class="font-mono text-emerald-300">nn.Sigmoid()</code> = σ(z)
+                -> <code class="font-mono text-emerald-300">nn.Sigmoid()</code> = \(\sigma(z)\)
               </p>
             </div>
             <pre class="font-mono text-sm bg-black/40 rounded-xl p-5 overflow-x-auto">import torch
@@ -339,14 +353,14 @@ print(model[0].weight)   # tensor([[...]])
 print(model[0].bias)     # tensor([...])
 y_hat = model(torch.randn(5, 2))  # ทาย 5 จุด</pre>
           </div>
-          <p class="mt-6 text-center text-lg text-emerald-200">model เริ่มจาก w, b สุ่ม ๆ — ยัง "โง่" อยู่ ต่อไปคือทำให้ฉลาด</p>
+          <p class="mt-6 text-center text-lg text-emerald-200">model เริ่มจาก w, b สุ่ม ๆ -- ยัง "โง่" อยู่ ต่อไปคือทำให้ฉลาด</p>
         </div>
       </div>
 
       <!-- Slide 10: Training loop -->
       <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Part 4: Training loop ฉบับเต็ม — train.py</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Part 4: Training loop ฉบับเต็ม -- train.py</h2>
           <div class="grid md:grid-cols-[3fr_2fr] gap-6 items-start">
             <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import torch
 
@@ -371,44 +385,44 @@ opt = torch.optim.SGD(model.parameters(), lr=0.1)</pre>
                   <li>y_hat = model(X) <span class="opacity-70"># forward</span></li>
                   <li>loss = loss_fn(y_hat, y) <span class="opacity-70"># วัด</span></li>
                   <li>opt.zero_grad()</li>
-                  <li>loss.backward() <span class="opacity-70"># autograd</span></li>
+                  <li>loss.backward() <span class="opacity-70"># <a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">autograd</a></span></li>
                   <li>opt.step() <span class="opacity-70"># update w, b</span></li>
                 </ol>
               </div>
-              <p class="text-sm text-emerald-200">⚠️ ลืม <code class="font-mono">zero_grad()</code> = gradient ทับกัน โมเดลพังแบบเข้าใจยาก!</p>
+              <p class="text-sm text-emerald-200">[!] ลืม <code class="font-mono">zero_grad()</code> = gradient ทับกัน โมเดลพังแบบเข้าใจยาก!</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide: Backpropagation — chain rule -->
+      <!-- Slide:  -- <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">chain rule</a> -->
       <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Backpropagation: คำนวณ gradient ย้อนกลับด้วย Chain Rule</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank" class="underline decoration-dotted">Backpropagation</a>: คำนวณ gradient ย้อนกลับด้วย <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">Chain Rule</a></h2>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <div class="space-y-4">
               <div class="tech-card">
-                <h4 class="font-bold text-blue-300 mb-2">Forward pass → คำนวณ loss</h4>
+                <h4 class="font-bold text-blue-300 mb-2">Forward pass -> คำนวณ loss</h4>
                 <pre class="font-mono text-xs bg-black/40 rounded-lg p-3 overflow-x-auto leading-5">z  = w₁·x₁ + w₂·x₂ + b     ← linear
 a  = sigmoid(z)              ← activation
 L  = BCE(a, y)               ← loss</pre>
               </div>
               <div class="tech-card">
-                <h4 class="font-bold text-red-300 mb-2">Backward pass → คำนวณ gradient</h4>
+                <h4 class="font-bold text-red-300 mb-2">Backward pass -> คำนวณ gradient</h4>
                 <pre class="font-mono text-xs bg-black/40 rounded-lg p-3 overflow-x-auto leading-5">dL/da = ...                   ← loss → activation
 da/dz = sigmoid'(z)           ← activation → z
 dz/dw₁ = x₁                  ← z → w₁
 
-dL/dw₁ = dL/da · da/dz · dz/dw₁   ← chain rule!</pre>
+dL/dw₁ = dL/da · da/dz · dz/dw₁   ← <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">chain rule</a>!</pre>
               </div>
-              <p class="text-sm text-emerald-200">💡 Chain rule คูณ derivatives ย้อนกลับทีละชั้น — เหมือนกระโดด rope ย้อนจาก loss กลับมายัง w ทุกตัว</p>
+              <p class="text-sm text-emerald-200">[Tip] Chain rule คูณ derivatives ย้อนกลับทีละชั้น -- เหมือนกระโดด rope ย้อนจาก loss กลับมายัง w ทุกตัว</p>
             </div>
             <div class="space-y-3 text-base">
-              <p>📌 <strong>Forward pass</strong>: ใส่ข้อมูล → โมเดลคำนวณ → ได้คำตอบ + loss</p>
-              <p>📌 <strong>Backward pass</strong>: จาก loss คำนวณย้อนกลับว่า "w แต่ละตัวมีส่วนทำให้ loss ผิดไปเท่าไหร่"</p>
-              <p>📌 <code class="font-mono text-yellow-300">dL/dw</code> = ถ้าเพิ่ม w นิดเดียว loss จะเปลี่ยนเท่าไหร่ → ทิศทางที่ควรปรับ</p>
-              <p>📌 โมเดล 1 ชั้น = chain rule 1 ชั้น / โมเดล 100 ชั้น = chain rule 100 ชั้น → นี่คือ "deep" ใน deep learning</p>
-              <div class="tech-card"><p class="text-sm">💡 ย้อนกลับจาก loss → output → hidden → input เรียกว่า "back" propagation เพราะเริ่มจาก "back" (ท้าย)</p></div>
+              <p>- <strong>Forward pass</strong>: ใส่ข้อมูล -> โมเดลคำนวณ -> ได้คำตอบ + loss</p>
+              <p>- <strong>Backward pass</strong>: จาก loss คำนวณย้อนกลับว่า "w แต่ละตัวมีส่วนทำให้ loss ผิดไปเท่าไหร่"</p>
+              <p>- <code class="font-mono text-yellow-300">\(\frac{\partial L}{\partial w}\)</code> = ถ้าเพิ่ม w นิดเดียว loss จะเปลี่ยนเท่าไหร่ -> ทิศทางที่ควรปรับ</p>
+              <p>- โมเดล 1 ชั้น = <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">chain rule</a> 1 ชั้น / โมเดล 100 ชั้น = <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">chain rule</a> 100 ชั้น -> นี่คือ "deep" ใน deep learning</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ย้อนกลับจาก loss -> output -> hidden -> input เรียกว่า "back" propagation เพราะเริ่มจาก "back" (ท้าย)</p></div>
             </div>
           </div>
         </div>
@@ -424,7 +438,7 @@ dL/dw₁ = dL/da · da/dz · dz/dw₁   ← chain rule!</pre>
 # 1) requires_grad=True → ให้ PyTorch ติดตาม
 w = torch.tensor(1.0, requires_grad=True)
 
-# 2) Forward pass — PyTorch สร้าง computational graph
+# 2) Forward pass — PyTorch สร้าง <a href="https://en.wikipedia.org/wiki/Computational_graph" target="_blank" class="underline decoration-dotted">computational graph</a>
 x = torch.tensor(2.0)
 z = w * x          # z = 2w
 loss = (z - 3)**2  # loss = (2w - 3)²
@@ -437,12 +451,12 @@ print(w.grad)      # tensor(4.)  ← dloss/dw = 4(2w-3)
 opt = torch.optim.SGD([w], lr=0.1)
 opt.step()          # w = 1.0 - 0.1*4.0 = 0.6</pre>
             <div class="space-y-3 text-base">
-              <p>📌 <code class="font-mono text-yellow-300">requires_grad=True</code> = ป้ายบอก PyTorch "เก็บ operation ทุกขั้นตอนไว้"</p>
-              <p>📌 ทุกครั้งที่คำนวณ (forward) PyTorch สร้าง <strong>computational graph</strong> เบื้องหลัง</p>
-              <p>📌 <code class="font-mono text-emerald-300">loss.backward()</code> = เดินย้อน graph เรียก chain rule อัตโนมัติ → ผลอยู่ใน <code class="font-mono">w.grad</code></p>
-              <p>📌 <code class="font-mono text-emerald-300">optimizer.step()</code> = ใช้ gradient ปรับน้ำหนัก: <code class="font-mono">w = w - lr × grad</code></p>
-              <p>📌 <code class="font-mono text-emerald-300">zero_grad()</code> = ล้าง gradient เก่าก่อนรอบใหม่ — ไม่งั้น gradient บวกทับกัน</p>
-              <div class="tech-card"><p class="text-sm">💡 ใน train.py: 3 บรรทัดนี้ = หัวใจของการเทรน — <code class="font-mono">loss.backward()</code> + <code class="font-mono">opt.step()</code> + <code class="font-mono">zero_grad()</code></p></div>
+              <p>- <code class="font-mono text-yellow-300">requires_grad=True</code> = ป้ายบอก PyTorch "เก็บ operation ทุกขั้นตอนไว้"</p>
+              <p>- ทุกครั้งที่คำนวณ (forward) PyTorch สร้าง <strong><a href="https://en.wikipedia.org/wiki/Computational_graph" target="_blank" class="underline decoration-dotted">computational graph</a></strong> เบื้องหลัง</p>
+              <p>- <code class="font-mono text-emerald-300">loss.backward()</code> = เดินย้อน graph เรียก chain rule อัตโนมัติ -> ผลอยู่ใน <code class="font-mono">w.grad</code></p>
+              <p>- <code class="font-mono text-emerald-300">optimizer.step()</code> = ใช้ gradient ปรับน้ำหนัก: <code class="font-mono">w = w - lr * grad</code></p>
+              <p>- <code class="font-mono text-emerald-300">zero_grad()</code> = ล้าง gradient เก่าก่อนรอบใหม่ -- ไม่งั้น gradient บวกทับกัน</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ใน train.py: 3 บรรทัดนี้ = หัวใจของการเทรน -- <code class="font-mono">loss.backward()</code> + <code class="font-mono">opt.step()</code> + <code class="font-mono">zero_grad()</code></p></div>
             </div>
           </div>
         </div>
@@ -464,8 +478,8 @@ model = nn.Sequential(
 print(model)
 # Linear(in_features=2,
 #        out_features=1)</pre>
-              <p class="text-sm mt-3">📌 <code class="font-mono">nn.Linear(2,1)</code> — บอก input/output ตรง ๆ ไม่ต้องมี input_shape</p>
-              <p class="text-sm">📌 ไม่มี summary() สำเร็จรูป ต้อง <code class="font-mono">print(model)</code> เอง</p>
+              <p class="text-sm mt-3">- <code class="font-mono">nn.Linear(2,1)</code> -- บอก input/output ตรง ๆ ไม่ต้องมี input_shape</p>
+              <p class="text-sm">- ไม่มี summary() สำเร็จรูป ต้อง <code class="font-mono">print(model)</code> เอง</p>
             </div>
             <div class="tech-card">
               <h4 class="text-xl font-bold mb-3 text-yellow-300">Keras</h4>
@@ -479,11 +493,11 @@ model = keras.Sequential([
 model.summary()
 # Layer (type)   Output    Param
 # dense (Dense)  (None,1)  3</pre>
-              <p class="text-sm mt-3">📌 <code class="font-mono">input_shape=(2,)</code> — บอก shape อินพุตครั้งเดียวในชั้นแรก</p>
-              <p class="text-sm">📌 <code class="font-mono">model.summary()</code> — นับพารามิเตอร์ให้ทันที (2×1+1=3)</p>
+              <p class="text-sm mt-3">- <code class="font-mono">input_shape=(2,)</code> -- บอก shape อินพุตครั้งเดียวในชั้นแรก</p>
+              <p class="text-sm">- <code class="font-mono">model.summary()</code> -- นับพารามิเตอร์ให้ทันที (2*1+1=3)</p>
             </div>
           </div>
-          <p class="mt-4 text-center text-emerald-200">/Instruction เหมือนกัน: กำหนดชั้น → ใส่ activation → เตรียมเทรน ต่างกันแค่ syntax</p>
+          <p class="mt-4 text-center text-emerald-200">/Instruction เหมือนกัน: กำหนดชั้น -> ใส่ activation -> เตรียมเทรน ต่างกันแค่ syntax</p>
         </div>
       </div>
 
@@ -493,7 +507,7 @@ model.summary()
           <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">ฝึกโมเดล: PyTorch vs Keras</h2>
           <div class="grid md:grid-cols-2 gap-6">
             <div class="tech-card">
-              <h4 class="text-xl font-bold mb-3 text-blue-300">PyTorch — เขียน loop เอง</h4>
+              <h4 class="text-xl font-bold mb-3 text-blue-300">PyTorch -- เขียน loop เอง</h4>
               <pre class="font-mono text-xs bg-black/40 rounded-lg p-4 overflow-x-auto leading-6">loss_fn = nn.BCELoss()
 opt = torch.optim.SGD(
     model.parameters(), lr=0.1)
@@ -502,13 +516,13 @@ for epoch in range(200):
     y_hat = model(X)          # 1. forward
     loss = loss_fn(y_hat, y)  # 2. คำนวณ loss
     opt.zero_grad()           # 3. ล้าง gradient
-    loss.backward()           # 4. autograd
+    loss.backward()           # 4. <a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">autograd</a>
     opt.step()                # 5. update w,b</pre>
-              <p class="text-sm mt-3">✅ เข้าถึงทุกขั้นตอน — custom loop, multi-task, debug ง่าย</p>
-              <p class="text-sm">⚠️ เขียนมากกว่า — ลืม zero_grad ได้</p>
+              <p class="text-sm mt-3">[OK] เข้าถึงทุกขั้นตอน -- custom loop, multi-task, debug ง่าย</p>
+              <p class="text-sm">[!] เขียนมากกว่า -- ลืม zero_grad ได้</p>
             </div>
             <div class="tech-card">
-              <h4 class="text-xl font-bold mb-3 text-yellow-300">Keras — ให้ model.fit() จัดการ</h4>
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Keras -- ให้ model.fit() จัดการ</h4>
               <pre class="font-mono text-xs bg-black/40 rounded-lg p-4 overflow-x-auto leading-6">model.compile(
     loss='binary_crossentropy',
     optimizer='sgd',
@@ -518,18 +532,18 @@ model.fit(X, y,
           epochs=200,
           verbose=1)
 # loss: 0.22 - acc: 0.99</pre>
-              <p class="text-sm mt-3">✅ 2 บรรทัดจบ — callbacks, tensorboard สำเร็จรูป</p>
-              <p class="text-sm">⚠️ ซ่อนรายละเอียด — ปรับ custom training ยากกว่า</p>
+              <p class="text-sm mt-3">[OK] 2 บรรทัดจบ -- callbacks, tensorboard สำเร็จรูป</p>
+              <p class="text-sm">[!] ซ่อนรายละเอียด -- ปรับ custom training ยากกว่า</p>
             </div>
           </div>
-          <p class="mt-4 text-center text-emerald-200">PyTorch = ขับรถเอง (ควบคุมทุกอย่าง) • Keras = นั่งแท็กซี่ (สะดวก แต่เลือกทางไม่ได้)</p>
+          <p class="mt-4 text-center text-emerald-200">PyTorch = ขับรถเอง (ควบคุมทุกอย่าง) - Keras = นั่งแท็กซี่ (สะดวก แต่เลือกทางไม่ได้)</p>
         </div>
       </div>
 
       <!-- Slide 13: Visualize step 1 - before training -->
       <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">มองให้เห็นก่อนเทรน — Step 1: วาดข้อมูล + เส้นแบ่งสุ่ม ๆ</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">มองให้เห็นก่อนเทรน -- Step 1: วาดข้อมูล + เส้นแบ่งสุ่ม ๆ</h2>
           <p class="text-lg text-center mb-6">ต้องเพิ่มไลบรารีวาดกราฟก่อน: <code class="font-mono text-yellow-300">uv add matplotlib</code></p>
           <div class="grid md:grid-cols-[3fr_2fr] gap-6 items-start">
             <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># viz.py — ดูว่าโมเดล "เดา" ได้แย่แค่ไหน
@@ -554,9 +568,9 @@ plt.scatter(Xp[yp == 0, 0], Xp[yp == 0, 1],
             c="tab:red", s=15)
 plt.show()</pre>
             <div class="space-y-4 text-base">
-              <p>📌 เขียว = class 1, แดง = class 0 — ข้อมูลแบ่งด้วยเส้นตรงได้</p>
-              <p>📌 <strong>ก่อนเทรน</strong> w, b เป็นค่าสุ่ม → เส้นแบ่งวิ่งพาดผิดที่</p>
-              <div class="tech-card"><p class="text-sm">💡 เป้าหมายของ training ในสายตา: หมุน + เลื่อนเส้นนี้ไปอยู่กึ่งกลางสองฝั่งให้ได้</p></div>
+              <p>- เขียว = class 1, แดง = class 0 -- ข้อมูลแบ่งด้วยเส้นตรงได้</p>
+              <p>- <strong>ก่อนเทรน</strong> w, b เป็นค่าสุ่ม -> เส้นแบ่งวิ่งพาดผิดที่</p>
+              <div class="tech-card"><p class="text-sm">[Tip] เป้าหมายของ training ในสายตา: หมุน + เลื่อนเส้นนี้ไปอยู่กึ่งกลางสองฝั่งให้ได้</p></div>
             </div>
           </div>
         </div>
@@ -565,10 +579,10 @@ plt.show()</pre>
       <!-- Slide 14: Visualize step 2 - boundary math -->
       <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-16">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Step 2: เส้นแบ่งมาจากไหน? — จาก w, b ที่โมเดลถืออยู่</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Step 2: เส้นแบ่งมาจากไหน? -- จาก w, b ที่โมเดลถืออยู่</h2>
           <div class="tech-card text-center mb-8">
-            <p class="text-lg mb-2">เส้นแบ่ง = จุดที่โมเดลเดาไม่ออกว่าฝั่งไหน คือ <span class="font-mono text-yellow-300">σ(z) = 0.5 ⇔ z = 0</span></p>
-            <p class="text-2xl font-mono font-bold mt-3">w₁x₁ + w₂x₂ + b = 0 &nbsp;⇒&nbsp; x₂ = −(w₁x₁ + b) / w₂</p>
+            <p class="text-lg mb-2">เส้นแบ่ง = จุดที่โมเดลเดาไม่ออกว่าฝั่งไหน คือ <span class="font-mono text-yellow-300">\(\sigma(z) = 0.5 \iff z = 0\)</span></p>
+            <p class="text-2xl font-mono font-bold mt-3">\(w_1 x_1 + w_2 x_2 + b = 0 \;\Longrightarrow\; x_2 = -\dfrac{w_1 x_1 + b}{w_2}\)</p>
           </div>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">def plot_boundary(model):
@@ -582,9 +596,9 @@ plt.show()</pre>
 plot_boundary(model)   # ลองก่อนเทรน!
 plt.show()</pre>
             <div class="space-y-4 text-base">
-              <p>📌 ดึง <code class="font-mono text-emerald-300">weight</code>, <code class="font-mono text-emerald-300">bias</code> ออกจาก <code class="font-mono">nn.Linear</code> (ชั้นแรก = <code class="font-mono">model[0]</code>)</p>
-              <p>📌 แทนจุด x₁ สองค่า (-3, 3) → คำนวณ x₂ → ได้เส้นตรง 2 จุด</p>
-              <p>📌 ฟังก์ชันนี้ reuse ได้ทุกตอนที่อยาก "ถ่ายรูป" โมเดล</p>
+              <p>- ดึง <code class="font-mono text-emerald-300">weight</code>, <code class="font-mono text-emerald-300">bias</code> ออกจาก <code class="font-mono">nn.Linear</code> (ชั้นแรก = <code class="font-mono">model[0]</code>)</p>
+              <p>- แทนจุด x1 สองค่า (-3, 3) -> คำนวณ x2 -> ได้เส้นตรง 2 จุด</p>
+              <p>- ฟังก์ชันนี้ reuse ได้ทุกตอนที่อยาก "ถ่ายรูป" โมเดล</p>
             </div>
           </div>
         </div>
@@ -593,7 +607,7 @@ plt.show()</pre>
       <!-- Slide 15: Visualize step 3 - every epoch -->
       <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Step 3: ดูโมเดลเรียนรู้ — วาดใหม่ทุก 10 epoch</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Step 3: ดูโมเดลเรียนรู้ -- วาดใหม่ทุก 10 epoch</h2>
           <div class="grid md:grid-cols-[3fr_2fr] gap-6 items-start">
             <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">for epoch in range(200):
     y_hat = model(X)
@@ -613,18 +627,18 @@ plt.show()</pre>
             f"epoch {epoch} | loss {loss.item():.3f}")
         plt.pause(0.001)     # ให้หน้าต่าง "เคลื่อน" สด ๆ</pre>
             <div class="space-y-4 text-base">
-              <p>🎬 <strong>สิ่งที่จะเห็น:</strong> เส้นสุ่ม ๆ → หมุน+เลื่อนทีละนิด → นิ่งในตำแหน่งแบ่งสองคลาสสวยงาม (loss ลดลงพร้อมกัน)</p>
-              <p>📌 <code class="font-mono">plt.pause(0.001)</code> = บังคับ render ใหม่ในหน้าต่างเดิม</p>
-              <div class="tech-card"><p class="text-sm">💡 อยากได้ GIF แนบรายงาน? เปลี่ยน pause เป็น <code class="font-mono">plt.savefig(f"e{epoch}.png")</code> แล้วต่อเฟรมด้วย imageio</p></div>
+              <p>[See] <strong>สิ่งที่จะเห็น:</strong> เส้นสุ่ม ๆ -> หมุน+เลื่อนทีละนิด -> นิ่งในตำแหน่งแบ่งสองคลาสสวยงาม (loss ลดลงพร้อมกัน)</p>
+              <p>- <code class="font-mono">plt.pause(0.001)</code> = บังคับ render ใหม่ในหน้าต่างเดิม</p>
+              <div class="tech-card"><p class="text-sm">[Tip] อยากได้ GIF แนบรายงาน? เปลี่ยน pause เป็น <code class="font-mono">plt.savefig(f"e{epoch}.png")</code> แล้วต่อเฟรมด้วย imageio</p></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide: Django Dashboard (Polling) — Backend -->
+      <!-- Slide: Django Dashboard (Polling) -- Backend -->
       <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Polling Dashboard — Backend: train แล้วเปิด API ให้ JS ดึงสถานะ</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Polling Dashboard -- Backend: train แล้วเปิด API ให้ JS ดึงสถานะ</h2>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <pre class="font-mono text-xs bg-black/40 rounded-xl p-4 overflow-x-auto leading-5"># views.py
 import threading, json, torch
@@ -664,20 +678,20 @@ def train_start(request):
 def train_state(request):
     return JsonResponse(_state)</pre>
             <div class="space-y-3 text-base">
-              <p>📌 <code class="font-mono text-yellow-300">_state</code> = ตัวแปรกลางเก็บสถานะโมเดลล่าสุด — JS จะดึงตัวนี้</p>
-              <p>📌 <code class="font-mono text-emerald-300">threading.Thread</code> = train ในเบื้องหลัง ไม่บล็อก Django server</p>
-              <p>📌 <code class="font-mono text-emerald-300">/api/train/</code> = ปุ่มเริ่มเทรน (POST)</p>
-              <p>📌 <code class="font-mono text-emerald-300">/api/state/</code> = JS polling ทุก 50ms ดึง loss, acc, w, b</p>
-              <div class="tech-card"><p class="text-sm">⚠️ ข้อเสีย: JS ต้องยิง request ซ้ำ — เปลือง bandwidth, lag ตาม polling interval</p></div>
+              <p>- <code class="font-mono text-yellow-300">_state</code> = ตัวแปรกลางเก็บสถานะโมเดลล่าสุด -- JS จะดึงตัวนี้</p>
+              <p>- <code class="font-mono text-emerald-300">threading.Thread</code> = train ในเบื้องหลัง ไม่บล็อก Django server</p>
+              <p>- <code class="font-mono text-emerald-300">/api/train/</code> = ปุ่มเริ่มเทรน (POST)</p>
+              <p>- <code class="font-mono text-emerald-300">/api/state/</code> = JS polling ทุก 50ms ดึง loss, acc, w, b</p>
+              <div class="tech-card"><p class="text-sm">[!] ข้อเสีย: JS ต้องยิง request ซ้ำ -- เปลือง bandwidth, lag ตาม polling interval</p></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide: Django Dashboard (Polling) — Frontend -->
+      <!-- Slide: Django Dashboard (Polling) -- Frontend -->
       <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Polling Dashboard — Frontend: วาด boundary สด ๆ บน Canvas</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Polling Dashboard -- Frontend: วาด boundary สด ๆ บน Canvas</h2>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <pre class="font-mono text-xs bg-black/40 rounded-xl p-4 overflow-x-auto leading-5">&lt;canvas id="cv" width="400" height="400"&gt;&lt;/canvas&gt;
 &lt;div id="info"&gt;&lt;/div&gt;
@@ -717,23 +731,23 @@ async function poll(){
 fetch('/api/train/').then(()=&gt;poll());
 &lt;/script&gt;</pre>
             <div class="space-y-3 text-base">
-              <p>📌 <strong>Canvas</strong> = ผ้าใบวาดด้วย JS — เร็วกว่า DOM manipulation มาก</p>
-              <p>📌 สูตรเส้นแบ่ง: <code class="font-mono text-yellow-300">y = −(w₁x + b) / w₂</code> แทนค่าจาก <code class="font-mono">/api/state/</code></p>
-              <p>📌 <code class="font-mono text-emerald-300">setTimeout(poll, 50)</code> = ดึงทุก 50ms → กราฟลื่น ~20fps</p>
-              <div class="tech-card"><p class="text-sm">⚠️ ทุก 50ms = วินาทีละ 20 request — ถ้ามี 100 คนดู = 2000 request/วินาที!</p></div>
+              <p>- <strong>Canvas</strong> = ผ้าใบวาดด้วย JS -- เร็วกว่า DOM manipulation มาก</p>
+              <p>- สูตรเส้นแบ่ง: <code class="font-mono text-yellow-300">y = -(w1x + b) / w2</code> แทนค่าจาก <code class="font-mono">/api/state/</code></p>
+              <p>- <code class="font-mono text-emerald-300">setTimeout(poll, 50)</code> = ดึงทุก 50ms -> กราฟลื่น ~20fps</p>
+              <div class="tech-card"><p class="text-sm">[!] ทุก 50ms = วินาทีละ 20 request -- ถ้ามี 100 คนดู = 2000 request/วินาที!</p></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide 16: Django Dashboard — Backend -->
+      <!-- Slide 16: Django Dashboard -- Backend -->
       <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Django Dashboard — Backend: Stream สถานะโมเดลทุก epoch ด้วย SSE</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Django Dashboard -- Backend: Stream สถานะโมเดลทุก epoch ด้วย SSE</h2>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <pre class="font-mono text-xs bg-black/40 rounded-xl p-4 overflow-x-auto leading-5"># views.py
 import json, torch
-from django.http import StreamingHttpResponse
+from django.http import <a href="https://docs.djangoproject.com/en/5.1/ref/request-response/#streaminghttpresponse" target="_blank" class="underline decoration-dotted">StreamingHttpResponse</a>
 
 def train_stream(request):
     def generate():
@@ -758,24 +772,24 @@ def train_stream(request):
                     model[0].weight.data.tolist()[0]],
                 b=round(model[0].bias.data.item(),4)
             )) + "\n\n"
-    return StreamingHttpResponse(
+    return <a href="https://docs.djangoproject.com/en/5.1/ref/request-response/#streaminghttpresponse" target="_blank" class="underline decoration-dotted">StreamingHttpResponse</a>(
         generate(),
         content_type='text/event-stream')</pre>
             <div class="space-y-3 text-base">
-              <p>📌 <code class="font-mono text-yellow-300">StreamingHttpResponse</code> = ส่งข้อมูลทีละชิ้นโดยไม่ปิด connection</p>
-              <p>📌 <code class="font-mono text-emerald-300">yield</code> = สร้าง generator — ส่ง JSON ทุก epoch แล้วรอ</p>
-              <p>📌 <code class="font-mono text-emerald-300">text/event-stream</code> = รูปแบบ SSE (Server-Sent Events) ที่ browser รู้จัก</p>
-              <p>📌 ไม่ต้อง <code class="font-mono">threading</code> — generator ทำงานใน request cycle ของ Django เอง</p>
-              <div class="tech-card"><p class="text-sm">💡 SSE ต่างจาก polling: ไม่ต้องยิง request ซ้ำ — server ส่งข้อมูลมาเองเมื่อพร้อม</p></div>
+              <p>- <code class="font-mono text-yellow-300">StreamingHttpResponse</code> = ส่งข้อมูลทีละชิ้นโดยไม่ปิด connection</p>
+              <p>- <code class="font-mono text-emerald-300">yield</code> = สร้าง generator -- ส่ง JSON ทุก epoch แล้วรอ</p>
+              <p>- <code class="font-mono text-emerald-300">text/event-stream</code> = รูปแบบ <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events" target="_blank" class="underline decoration-dotted">SSE (Server-Sent Events)</a> ที่ browser รู้จัก</p>
+              <p>- ไม่ต้อง <code class="font-mono">threading</code> -- generator ทำงานใน request cycle ของ Django เอง</p>
+              <div class="tech-card"><p class="text-sm">[Tip] SSE ต่างจาก polling: ไม่ต้องยิง request ซ้ำ -- server ส่งข้อมูลมาเองเมื่อพร้อม</p></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide 17: Django Dashboard — Frontend -->
+      <!-- Slide 17: Django Dashboard -- Frontend -->
       <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
         <div class="max-w-5xl mx-auto px-8 py-14">
-          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Django Dashboard — Frontend: รับ stream แล้ววาด boundary สด ๆ</h2>
+          <h2 class="text-3xl font-semibold mb-4 text-emerald-300 text-center">Django Dashboard -- Frontend: รับ stream แล้ววาด boundary สด ๆ</h2>
           <div class="grid md:grid-cols-2 gap-6 items-start">
             <pre class="font-mono text-xs bg-black/40 rounded-xl p-4 overflow-x-auto leading-5">&lt;canvas id="cv" width="400" height="400"&gt;&lt;/canvas&gt;
 &lt;div id="info"&gt;&lt;/div&gt;
@@ -806,17 +820,17 @@ function draw(s){
   document.getElementById('info').textContent=
     `epoch ${s.epoch} | loss ${s.loss} | acc ${(s.acc*100).toFixed(0)}%`;}
 
-// EventSource = browser API สำหรับรับ SSE stream
+// <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource" target="_blank" class="underline decoration-dotted">EventSource</a> = browser API สำหรับรับ SSE stream
 const es = new EventSource('/api/train/');
 es.onmessage = (e) =&gt; draw(JSON.parse(e.data));
 es.onerror   = () =&gt; es.close();  // จบ stream → ปิด
 &lt;/script&gt;</pre>
             <div class="space-y-3 text-base">
-              <p>📌 <strong>EventSource</strong> = browser API สำหรับรับ SSE — ไม่ต้องเขียน loop เอง</p>
-              <p>📌 <code class="font-mono text-yellow-300">onmessage</code> = callback ที่เรียกทุกครั้งที่ server ส่ง <code class="font-mono">data: ...</code> มา</p>
-              <p>📌 สูตรเส้นแบ่ง: <code class="font-mono text-emerald-300">y = −(w₁x + b) / w₂</code> แทนค่าจาก stream ตรง ๆ</p>
-              <p>📌 ไม่ต้อง <code class="font-mono">setTimeout</code> — browser จัดการ timing ให้เอง</p>
-              <div class="tech-card"><p class="text-sm">💡 ลองเปิด <code class="font-mono">/dashboard/</code> บน 2 เบราว์เซอร์พร้อมกัน — เห็น boundary ขยับพร้อมกัน realtime!</p></div>
+              <p>- <strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource" target="_blank" class="underline decoration-dotted">EventSource</a></strong> = browser API สำหรับรับ SSE -- ไม่ต้องเขียน loop เอง</p>
+              <p>- <code class="font-mono text-yellow-300">onmessage</code> = callback ที่เรียกทุกครั้งที่ server ส่ง <code class="font-mono">data: ...</code> มา</p>
+              <p>- สูตรเส้นแบ่ง: <code class="font-mono text-emerald-300">y = -(w1x + b) / w2</code> แทนค่าจาก stream ตรง ๆ</p>
+              <p>- ไม่ต้อง <code class="font-mono">setTimeout</code> -- browser จัดการ timing ให้เอง</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ลองเปิด <code class="font-mono">/dashboard/</code> บน 2 เบราว์เซอร์พร้อมกัน -- เห็น boundary ขยับพร้อมกัน realtime!</p></div>
             </div>
           </div>
         </div>
@@ -836,10 +850,10 @@ epoch 200 | loss 0.2190 | acc 99.00%
 w = tensor([[2.1772, 1.4041]])
 b = tensor([-0.7237])</pre>
             <div class="space-y-4 text-base">
-              <p>📉 <strong>loss ลด</strong> 0.39 → 0.22 และ 📈 <strong>accuracy ขึ้น</strong> 94% → 99% — โมเดลเรียนรู้จริง</p>
-              <p>🔍 สายตรงจริงคือ (1.5, 1.0), b=−0.5 — โมเดลเรียนได้ (2.18, 1.40), b=−0.72 ซึ่งเป็นเส้น<strong>เดียวกัน</strong> (scale ต่างกันเท่านั้น)</p>
-              <p class="border-l-4 border-yellow-400 pl-4">🎉 คุณเพิ่งฝึก neural network ตัวแรกด้วย PyTorch สำเร็จ!</p>
-              <p>🎬 รันพร้อมโค้ดจาก Step 1–3 จะเห็นหน้าต่างกราฟวาดเส้นแบ่งใหม่ทุก 10 epoch จนนิ่ง</p>
+              <p>[-] <strong>loss ลด</strong> 0.39 -> 0.22 และ [+] <strong>accuracy ขึ้น</strong> 94% -> 99% -- โมเดลเรียนรู้จริง</p>
+              <p>[>] สายตรงจริงคือ (1.5, 1.0), b=-0.5 -- โมเดลเรียนได้ (2.18, 1.40), b=-0.72 ซึ่งเป็นเส้น<strong>เดียวกัน</strong> (scale ต่างกันเท่านั้น)</p>
+              <p class="border-l-4 border-yellow-400 pl-4">[Done] คุณเพิ่งฝึก neural network ตัวแรกด้วย PyTorch สำเร็จ!</p>
+              <p>[See] รันพร้อมโค้ดจาก Step 1-3 จะเห็นหน้าต่างกราฟวาดเส้นแบ่งใหม่ทุก 10 epoch จนนิ่ง</p>
             </div>
           </div>
         </div>
@@ -863,10 +877,10 @@ X_xor, y_xor = make_xor_data()
 # จุดในเขตรวมสีเดียวกัน = XOR = ทแยงกัน
 # → เส้นตรงเส้นเดียวไม่มีวันแบ่งถูกทั้งหมด</pre>
             <div class="space-y-4 text-base">
-              <p>📌 สูตร <code class="font-mono text-yellow-300">x₁ · x₂ > 0</code> หมายถึงจุดอยู่ในช่องที่ 1 หรือ 3 (ค่าเท่ากัน)</p>
-              <p>📌 ถ้าวาด scatter จุดสีแดงจะอยู่ช่อง 2,4 และเขียวช่อง 1,3 → " checkerboard "</p>
-              <p>📌 เส้นตรงที่ลากตัด ctxt ได้ดีสุด = 50% แบ่งไม่ได้มากกว่านั้น — <strong>Minsky & Papert 1969</strong> ใช้ XOR เป็นหลักฐานว่าเพอร์เซปตรอนมีขีดจำกัด</p>
-              <div class="tech-card"><p class="text-sm">💡 วิธีพลิก: hidden layer พับพื้นที่ให้ XOR กลายเป็น linearly separable ได้ คือหัวใจของ "deep learning"</p></div>
+              <p>- สูตร <code class="font-mono text-yellow-300">x1 * x2 > 0</code> หมายถึงจุดอยู่ในช่องที่ 1 หรือ 3 (ค่าเท่ากัน)</p>
+              <p>- ถ้าวาด scatter จุดสีแดงจะอยู่ช่อง 2,4 และเขียวช่อง 1,3 -> " checkerboard "</p>
+              <p>- เส้นตรงที่ลากตัด ctxt ได้ดีสุด = 50% แบ่งไม่ได้มากกว่านั้น -- <strong><a href="https://en.wikipedia.org/wiki/Perceptrons_(book)" target="_blank" class="underline decoration-dotted">Minsky & Papert 1969</a></strong> ใช้ XOR เป็นหลักฐานว่าเพอร์เซปตรอนมีขีดจำกัด</p>
+              <div class="tech-card"><p class="text-sm">[Tip] วิธีพลิก: hidden layer พับพื้นที่ให้ XOR กลายเป็น linearly separable ได้ คือหัวใจของ "deep learning"</p></div>
             </div>
           </div>
         </div>
@@ -880,18 +894,18 @@ X_xor, y_xor = make_xor_data()
             <div class="ct-principle">
               <h3>สิ่งที่ทำวันนี้</h3>
               <ul>
-                <li>uv: install → init → add → run (workflow เดียวใช้ทุกโปรเจกต์)</li>
-                <li>นิวรอน = z = w·x + b ตามด้วย activation</li>
-                <li>มองการเทรนเป็นภาพ: เส้นแบ่ง x₂ = −(w₁x₁+b)/w₂ หมุน+เลื่อนจน loss ต่ำ</li>
-                <li>BCELoss + SGD + autograd = training loop</li>
+                <li>uv: install -> init -> add -> run (workflow เดียวใช้ทุกโปรเจกต์)</li>
+                <li>นิวรอน = z = w*x + b ตามด้วย activation</li>
+                <li>มองการเทรนเป็นภาพ: เส้นแบ่ง x2 = -(w1x1+b)/w2 หมุน+เลื่อนจน loss ต่ำ</li>
+                <li>BCELoss + <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent" target="_blank" class="underline decoration-dotted">SGD</a> + <a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">autograd</a> = training loop</li>
               </ul>
             </div>
             <div class="ct-principle">
               <h3>การบ้าน (ส่งสัปดาห์หน้า)</h3>
               <ul>
-                <li>เปลี่ยน lr เป็น 0.001 และ 1.0 — เกิดอะไรขึ้?</li>
-                <li>ลอง dataset XOR (เส้นตรงเดียวแบ่งไม่ได้) — เพอร์เซปตรอน fail อย่างไร?</li>
-                <li>เพิ่ม hidden layer: Linear(2,4) → ReLU → Linear(4,1) แก้ XOR ได้?</li>
+                <li>เปลี่ยน lr เป็น 0.001 และ 1.0 -- เกิดอะไรขึ้?</li>
+                <li>ลอง dataset XOR (เส้นตรงเดียวแบ่งไม่ได้) -- <a href="https://en.wikipedia.org/wiki/Perceptron" target="_blank" class="underline decoration-dotted">เพอร์เซปตรอน</a> fail อย่างไร?</li>
+                <li>เพิ่ม hidden layer: Linear(2,4) -> ReLU -> Linear(4,1) แก้ XOR ได้?</li>
               </ul>
             </div>
           </div>

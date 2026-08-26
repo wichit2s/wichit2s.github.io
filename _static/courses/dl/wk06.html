@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 6: Feature Engineering and Preprocessing">
+    <meta name="keywords" content="Deep Learning, Feature Engineering, Normalization, Tokenization, Preprocessing">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - Week 6: Feature Engineering and Preprocessing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Learning Plan </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk06.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- ==================== Title & Roadmap ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight mt-8">
+            Feature Engineering<br>and Preprocessing
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            scaling - encoding - tokenization - pipelines
+          </div>
+          <div class="tech-card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Learning Outcomes</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-base">
+              <div>1. Apply normalization and standardization to numerical features</div>
+              <div>2. Encode categorical variables with one-hot and label encoding</div>
+              <div>3. Preprocess text data for deep learning (tokenization, padding)</div>
+              <div>4. Build preprocessing pipelines that prevent data leakage</div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">Week 6 -- 1145208 Deep Learning</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">Today's Roadmap</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="agenda-item">
+              <div class="agenda-time">Part 1 - Why preprocessing?</div>
+              <div class="agenda-title">Feature engineering basics</div>
+              <div class="agenda-description">why scale, why encode, types of features</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 2 - Numerical + Categorical</div>
+              <div class="agenda-title">Tabular data preprocessing</div>
+              <div class="agenda-description"><a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">MinMaxScaler</a>, <a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">StandardScaler</a>, one-hot, label encoding</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 3 - Text + Image</div>
+              <div class="agenda-title">Specialized preprocessing</div>
+              <div class="agenda-description"><a href="https://keras.io/api/layers/preprocessing/text_vectorization/" target="_blank" class="underline decoration-dotted">tokenization</a>, <a href="https://keras.io/api/ops/padding/" target="_blank" class="underline decoration-dotted">padding</a>, image normalization</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 4 - Wrap up</div>
+              <div class="agenda-title">Summary + Homework</div>
+              <div class="agenda-description">pipelines, data leakage, exercises</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 1: Why Preprocessing? ==================== -->
+
+      <!-- Slide 2: Why preprocess? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 1: Why preprocess?</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Without preprocessing</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Features on different scales confuse gradient descent</li>
+                <li>- Text strings cannot be fed to a network</li>
+                <li>- Categories need numbers, not strings</li>
+                <li>- Large values dominate small values</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">With preprocessing</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- All features contribute equally</li>
+                <li>- Text becomes sequences of numbers</li>
+                <li>- Categories become meaningful vectors</li>
+                <li>- Training converges faster and more reliably</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Garbage in, garbage out. Good preprocessing = better models.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Types of features -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Types of Features</h2>
+          <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Numerical</h4>
+              <p class="text-sm">age, income, temperature</p>
+              <p class="text-sm text-white/60 mt-2">Continuous: 0-100, -50.5</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Categorical</h4>
+              <p class="text-sm">color, city, gender</p>
+              <p class="text-sm text-white/60 mt-2">Discrete: red, blue, green</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-emerald-300">Text</h4>
+              <p class="text-sm">reviews, emails, articles</p>
+              <p class="text-sm text-white/60 mt-2">Variable length sequences</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Different types need different preprocessing strategies</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: The scaling problem -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">The Scaling Problem</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold mb-2">Without scaling</h4>
+                <pre class="font-mono text-xs bg-black/40 rounded-lg p-3">age:        25, 30, 45, 60     (range: 35)
+income:  30000, 50000, 80000    (range: 50000)</pre>
+                <p class="text-sm mt-2">Income dominates because range is 1400x larger</p>
+              </div>
+              <div class="tech-card border-yellow-400">
+                <h4 class="text-yellow-300 font-bold mb-2">After scaling</h4>
+                <pre class="font-mono text-xs bg-black/40 rounded-lg p-3">age:     0.0, 0.2, 0.6, 1.0
+income:  0.0, 0.4, 1.0</pre>
+                <p class="text-sm mt-2">Both in [0, 1] range -- equal contribution</p>
+              </div>
+            </div>
+            <div class="space-y-4 text-base">
+              <p>- Neural networks use <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent" target="_blank" class="underline decoration-dotted">gradient descent</a></p>
+              <p>- Unscaled features = gradients point in wrong direction</p>
+              <p>- Training is slow or fails to converge</p>
+              <p>- <strong>Always scale numerical features</strong></p>
+              <div class="tech-card"><p class="text-sm">[Tip] Trees (Random Forest, XGBoost) don't need scaling. Neural networks always do.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Numerical + Categorical ==================== -->
+
+      <!-- Slide 5: MinMaxScaler -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 2: <a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">MinMaxScaler</a> -- scale to [0, 1]</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+
+# Fit on training data ONLY
+X_train_scaled = scaler.fit_transform(X_train)
+
+# Transform test data (no fit!)
+X_test_scaled = scaler.transform(X_test)
+
+# Formula:
+# X_scaled = (X - X_min) / (X_max - X_min)</pre>
+            <div class="space-y-4 text-base">
+              <p>- Maps all values to range [0, 1]</p>
+              <p>- <code class="font-mono text-yellow-300">fit_transform()</code> = learn min/max + apply</p>
+              <p>- <code class="font-mono text-yellow-300">transform()</code> = apply learned min/max</p>
+              <p class="font-mono text-sm mt-2">\( X_{\text{scaled}} = \frac{X - X_{\min}}{X_{\max} - X_{\min}} \)</p>
+              <div class="tech-card border-yellow-400"><p class="text-sm"><strong>Critical:</strong> Never fit on test data! This is data leakage.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: StandardScaler -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">StandardScaler</a> -- mean=0, std=1</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled  = scaler.transform(X_test)
+
+# Formula:
+# X_scaled = (X - mean) / std</pre>
+            <div class="space-y-4 text-base">
+              <p>- Centers data around 0, spreads to unit variance</p>
+              <p>- <a href="https://en.wikipedia.org/wiki/Standard_score" target="_blank" class="underline decoration-dotted">Z-score</a>: how many standard deviations from mean</p>
+              <p class="font-mono text-sm mt-2">\( Z = \frac{X - \mu}{\sigma} \)</p>
+              <p>- Better when data has <strong>outliers</strong> (MinMax is sensitive)</p>
+              <p>- Most common scaler for neural networks</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Use StandardScaler as default. MinMaxScaler only if you need [0,1] range (e.g., images).</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: One-hot encoding -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/One-hot" target="_blank" class="underline decoration-dotted">One-Hot Encoding</a> for categories</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import pandas as pd
+from keras.utils import to_categorical
+
+# Option 1: pandas get_dummies
+df = pd.DataFrame({'color': ['red','blue','green','red']})
+df_encoded = pd.get_dummies(df, columns=['color'])
+#  color_blue  color_green  color_red
+#           0            0          1
+#           1            0          0
+#           0            1          0
+#           0            0          1
+
+# Option 2: Keras to_categorical
+labels = [0, 1, 2, 0]  # red=0, blue=1, green=2
+one_hot = to_categorical(labels, num_classes=3)
+# [[1,0,0], [0,1,0], [0,0,1], [1,0,0]]</pre>
+            <div class="space-y-4 text-base">
+              <p>- Converts each category to a binary vector</p>
+              <p>- One "1" in the position of that category</p>
+              <p>- Good for: low-cardinality categories (< 20 unique values)</p>
+              <p>- <strong>Bad for:</strong> high cardinality (1000+ cities = 1000 columns)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Label encoding -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://scikit-learn.org/stable/modules/preprocessing.html#label-encoding" target="_blank" class="underline decoration-dotted">Label Encoding</a> and <a href="https://scikit-learn.org/stable/modules/preprocessing.html#ordinal-encoding" target="_blank" class="underline decoration-dotted">Ordinal Encoding</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># Label Encoding: assign integer to each category
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+colors = ['red', 'blue', 'green', 'red']
+encoded = le.fit_transform(colors)
+# [2, 0, 1, 2]  (alphabetical order)
+
+# Ordinal Encoding: for ordered categories
+from sklearn.preprocessing import OrdinalEncoder
+
+# Data with natural order
+sizes = [['S'], ['M'], ['L'], ['XL']]
+oe = OrdinalEncoder(categories=[['S','M','L','XL']])
+encoded = oe.fit_transform(sizes)
+# [[0], [1], [2], [3]]</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Label Encoding:</strong> assigns 0, 1, 2... (alphabetical)</p>
+              <p>- Problem: implies ordering (blue > green?) which may mislead</p>
+              <p>- <strong>Ordinal Encoding:</strong> for categories with natural order</p>
+              <p>- S < M < L < XL -- this order is meaningful</p>
+              <p>- For unordered categories: use one-hot instead</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Data leakage -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Leakage_(machine_learning)" target="_blank" class="underline decoration-dotted">Data Leakage</a> -- fit on train only!</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-red-300">WRONG (leakage)</h4>
+              <pre class="font-mono text-xs bg-black/40 rounded-lg p-3 leading-5">scaler.fit_transform(X_train)
+scaler.fit_transform(X_test)  # BAD!</pre>
+              <p class="text-sm mt-2">Test statistics used to scale training data</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">CORRECT</h4>
+              <pre class="font-mono text-xs bg-black/40 rounded-lg p-3 leading-5">scaler.fit_transform(X_train)
+scaler.transform(X_test)  # GOOD</pre>
+              <p class="text-sm mt-2">Only training statistics used everywhere</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Leakage = test data influences training = artificially high test scores</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Text + Image ==================== -->
+
+      <!-- Slide 10: Text preprocessing -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: Text Preprocessing</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Step 1: Tokenization
+from keras.layers import TextVectorization
+
+texts = [
+    "I love deep learning",
+    "Keras is easy to use",
+    "Neural networks are powerful"
+]
+
+vectorizer = TextVectorization(
+    max_tokens=1000,    # vocabulary size
+    output_sequence_length=5  # pad/truncate to 5
+)
+vectorizer.adapt(texts)  # build vocabulary
+
+# Step 2: Vectorize
+vectorized = vectorizer(texts)
+print(vectorized)
+# [[ 3,  4,  5,  6,  0],  # "I love deep learning" + pad
+#  [ 7,  8,  9, 10, 11],
+#  [12, 13, 14, 15, 16]]</pre>
+            <div class="space-y-4 text-base">
+              <p>- <a href="https://keras.io/api/layers/preprocessing/text_vectorization/" target="_blank" class="underline decoration-dotted">TextVectorization</a>: converts strings to integer sequences</p>
+              <p>- <strong>Tokenization:</strong> split text into words</p>
+              <p>- <strong>Vocabulary:</strong> unique words mapped to integers</p>
+              <p>- <strong>Padding:</strong> make all sequences the same length</p>
+              <p>- <code class="font-mono text-yellow-300">0</code> = padding token, added to shorter sequences</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Text in a model -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Text classification with Embedding</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">model = keras.Sequential([
+    # Text input
+    vectorizer,                # <-- raw text in
+    layers.Embedding(
+        input_dim=1000,        # vocab size
+        output_dim=64,         # embedding dim
+        mask_zero=True),       # ignore padding
+    layers.GlobalAveragePooling1D(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+
+# Can feed raw strings directly!
+model.fit(texts, labels, epochs=10)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <a href="https://keras.io/api/layers/core_layers/embedding/" target="_blank" class="underline decoration-dotted">Embedding</a>: learns vector representation for each word</p>
+              <p>- <code class="font-mono text-yellow-300">mask_zero=True</code>: ignore padding (0s)</p>
+              <p>- <a href="https://keras.io/api/layers/pooling/global_average_pooling1d/" target="_blank" class="underline decoration-dotted">GlobalAveragePooling1D</a>: compress sequence to single vector</p>
+              <p>- Model accepts raw strings -- vectorizer is part of the model!</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Preprocessing inside the model = no leakage, portable model</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Image preprocessing -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Image Preprocessing</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Standard: normalize to [0, 1]
+X_train = X_train.astype('float32') / 255.0
+X_test  = X_test.astype('float32') / 255.0
+
+# Or: standardize with ImageNet stats
+from keras.applications.resnet50 \
+    import preprocess_input
+
+X_train = preprocess_input(X_train)
+X_test  = preprocess_input(X_test)
+
+# Resize if needed
+from keras.layers import Resizing
+resize = Resizing(224, 224)
+resized = resize(images)</pre>
+            <div class="space-y-4 text-base">
+              <p>- Pixel values: 0-255 (uint8) -> 0.0-1.0 (float32)</p>
+              <p>- <strong>Simple version:</strong> divide by 255</p>
+              <p>- <a href="https://keras.io/api/applications/resnet/#resnet50-function" target="_blank" class="underline decoration-dotted">Pre-trained models</a>: use their specific preprocessing</p>
+              <p>- <a href="https://keras.io/api/layers/preprocessing/resizing/" target="_blank" class="underline decoration-dotted">Resizing</a>: all images must be same size</p>
+              <p>- <strong>No augmentation on test data</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Preprocessing in model -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Preprocessing inside the model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Better: preprocessing as model layer
+model = keras.Sequential([
+    # Numerical preprocessing
+    layers.Normalization(axis=-1),
+    # Text preprocessing
+    vectorizer,
+    layers.Embedding(1000, 64),
+    layers.GlobalAveragePooling1D(),
+    # Image preprocessing
+    Resizing(224, 224),
+    # Then classification layers...
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+# Normalization learns from data
+norm = layers.Normalization()
+norm.adapt(X_train)  # compute mean/std</pre>
+            <div class="space-y-4 text-base">
+              <p>- <a href="https://keras.io/api/layers/preprocessing/normalization/" target="_blank" class="underline decoration-dotted">Normalization</a> layer: computes mean/std from data</p>
+              <p>- Preprocessing as layers = model is self-contained</p>
+              <p>- No separate scaler needed at inference time</p>
+              <p>- Handles text, images, numerical all in one model</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Complete pipeline -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Complete Preprocessing Pipeline</h2>
+          <pre class="font-mono text-xs bg-black/40 rounded-xl p-5 overflow-x-auto leading-5 mx-auto max-w-4xl">import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow import keras
+from keras import layers
+
+# 1. Load data
+X, y = load_your_data()
+
+# 2. Split FIRST
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+# 3. Scale: fit on train only
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test  = scaler.transform(X_test)
+
+# 4. Build model
+model = keras.Sequential([
+    layers.Dense(128, activation='relu',
+                 input_shape=(X_train.shape[1],)),
+    layers.Dropout(0.3),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+
+# 5. Compile and train
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+
+callbacks = [
+    keras.callbacks.EarlyStopping(
+        monitor='val_loss', patience=5,
+        restore_best_weights=True)
+]
+
+model.fit(X_train, y_train, epochs=100,
+          validation_split=0.2,
+          callbacks=callbacks)
+
+# 6. Evaluate (on held-out test)
+loss, acc = model.evaluate(X_test, y_test)</pre>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Summary + Homework ==================== -->
+
+      <!-- Slide 15: Preprocessing cheat sheet -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Preprocessing Cheat Sheet</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>Numerical Features</h3>
+              <ul>
+                <li>- <a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">StandardScaler</a>: default choice, handles outliers</li>
+                <li>- <a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">MinMaxScaler</a>: when you need [0,1] range</li>
+                <li>- Always fit on train only, transform test</li>
+                <li>- Images: divide by 255.0</li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Categorical / Text / Image</h3>
+              <ul>
+                <li>- Low cardinality (< 20): <a href="https://en.wikipedia.org/wiki/One-hot" target="_blank" class="underline decoration-dotted">one-hot encoding</a></li>
+                <li>- High cardinality: <a href="https://keras.io/api/layers/core_layers/embedding/" target="_blank" class="underline decoration-dotted">Embedding</a></li>
+                <li>- Text: <a href="https://keras.io/api/layers/preprocessing/text_vectorization/" target="_blank" class="underline decoration-dotted">TextVectorization</a> inside model</li>
+                <li>- Images: normalize + resize</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>What we covered</h3>
+              <ul>
+                <li>- Why preprocessing matters for neural networks</li>
+                <li>- <a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">StandardScaler</a> and <a href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank" class="underline decoration-dotted">MinMaxScaler</a> for numerical data</li>
+                <li>- One-hot, label, ordinal encoding for categories</li>
+                <li>- Text: <a href="https://keras.io/api/layers/preprocessing/text_vectorization/" target="_blank" class="underline decoration-dotted">TextVectorization</a> + <a href="https://keras.io/api/layers/core_layers/embedding/" target="_blank" class="underline decoration-dotted">Embedding</a></li>
+                <li>- Image: normalize to [0,1], resize</li>
+                <li>- <a href="https://en.wikipedia.org/wiki/Leakage_(machine_learning)" target="_blank" class="underline decoration-dotted">Data leakage</a>: fit on train only</li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Homework (due next week)</h3>
+              <ul>
+                <li>- Build a text classifier for <a href="https://huggingface.co/datasets/imdb" target="_blank" class="underline decoration-dotted">IMDB reviews</a> (sentiment analysis)</li>
+                <li>- Use TextVectorization + Embedding inside model</li>
+                <li>- Compare: with vs without proper preprocessing</li>
+                <li>- Use <code class="font-mono">uv init --no-package wk06-hw</code></li>
+                <li>- Report accuracy on test set</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg text-emerald-200">Next week: Intro to PyTorch</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 2: Mathematical Building Blocks of Neural Networks">
+    <meta name="keywords" content="Deep Learning, Tensors, Gradients, NumPy, PyTorch">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - สัปดาห์ที่ 2: Mathematical Building Blocks</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk02.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight mt-8">
+            Mathematical Building Blocks
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            tensors - operations - gradients - differentiation
+          </div>
+          <div class="tech-card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-base">
+              <div>1. สร้างและจัดการ <a href="https://en.wikipedia.org/wiki/Tensor" target="_blank" class="underline decoration-dotted">tensor</a> ได้</div>
+              <div>2. ทำการคำนวณบน tensor (arithmetic, dot product, reshaping)</div>
+              <div>3. เข้าใจ <a href="https://en.wikipedia.org/wiki/Broadcasting_(arrays)" target="_blank" class="underline decoration-dotted">broadcasting</a> ใน NumPy/PyTorch</div>
+              <div>4. คำนวณ <a href="https://en.wikipedia.org/wiki/Gradient" target="_blank" class="underline decoration-dotted">gradient</a> และเข้าใจ <a href="https://en.wikipedia.org/wiki/Automatic_differentiation" target="_blank" class="underline decoration-dotted">autodiff</a></div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">สัปดาห์ที่ 2 -- 1145208 การเรียนรู้เชิงลึก</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">เส้นทางของวันนี้</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="agenda-item">
+              <div class="agenda-time">Part 1 - Data Structure</div>
+              <div class="agenda-title">Tensor คืออะไร?</div>
+              <div class="agenda-description">scalar, vector, matrix, tensor -- สร้าง จัดรูป แปลงมิติ</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 2 - Operations</div>
+              <div class="agenda-title">คำนวณบน Tensor</div>
+              <div class="agenda-description">element-wise, dot product, matrix multiply, broadcasting</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 3 - Calculus</div>
+              <div class="agenda-title">Gradient และ Autodiff</div>
+              <div class="agenda-description">partial derivative, chain rule, computational graph</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 4 - tying it together</div>
+              <div class="agenda-title">จากสมการสู่โค้ด</div>
+              <div class="agenda-description">step-by-step: build a tiny model with tensors only</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 1: Tensors ==================== -->
+
+      <!-- Slide 2: What is a Tensor? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 1: <a href="https://en.wikipedia.org/wiki/Tensor" target="_blank" class="underline decoration-dotted">Tensor</a> คืออะไร?</h2>
+          <div class="tech-card text-center mb-8">
+            <p class="text-xl">Tensor = กล่องเก็บตัวเลขหลายมิติ (เหมือน <a href="https://en.wikipedia.org/wiki/NumPy" target="_blank" class="underline decoration-dotted">NumPy</a> array)</p>
+          </div>
+          <div class="grid md:grid-cols-4 gap-4 text-center">
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Scalar (0D)</h4>
+              <p class="font-mono text-lg">x = 3.14</p>
+              <p class="text-sm">ตัวเลขเดียว</p>
+              <p class="text-xs opacity-70">ndim = 0</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Vector (1D)</h4>
+              <p class="font-mono text-lg">x = [1, 2, 3]</p>
+              <p class="text-sm">แถวเดียว</p>
+              <p class="text-xs opacity-70">ndim = 1, shape=(3,)</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Matrix (2D)</h4>
+              <p class="font-mono text-lg">x = [[1,2],[3,4]]</p>
+              <p class="text-sm">ตาราง</p>
+              <p class="text-xs opacity-70">ndim = 2, shape=(2,2)</p>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-yellow-300 font-bold mb-2">3D+ Tensor</h4>
+              <p class="font-mono text-sm">x = [[[1,2],[3,4]]]</p>
+              <p class="text-sm">กล่องซ้อนกล่อง</p>
+              <p class="text-xs opacity-70">ndim = 3, shape=(1,2,2)</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">ใน Deep Learning: รูปภาพ = 3D tensor (height, width, channels) / batch ข้อมูล = 4D tensor</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Tensors in NumPy -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">สร้าง Tensor ด้วย <a href="https://en.wikipedia.org/wiki/NumPy" target="_blank" class="underline decoration-dotted">NumPy</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import numpy as np
+
+# สร้าง tensor หลายแบบ
+x = np.array([1, 2, 3])          # vector
+y = np.zeros((3, 4))             # matrix 3x4, เติม 0
+z = np.ones((2, 3, 4))           # 3D tensor, เติม 1
+r = np.random.randn(5, 5)        # normal distribution
+
+# สอบถาม shape
+print(x.shape)     # (3,)
+print(y.ndim)      # 2
+print(z.dtype)     # float64</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">np.array()</code> = สร้างจาก list</p>
+              <p>- <code class="font-mono text-yellow-300">np.zeros()</code> / <code class="font-mono">np.ones()</code> = สร้าง tensor เปล่า</p>
+              <p>- <code class="font-mono text-yellow-300">np.random.randn()</code> = สุ่มจาก normal distribution</p>
+              <p>- <strong>shape</strong> = ขนาดในแต่ละมิติ (tuple)</p>
+              <p>- <strong>ndim</strong> = จำนวนมิติ</p>
+              <p>- <strong>dtype</strong> = ชนิดข้อมูล (float32, float64, int64)</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ใน DL มักใช้ <code class="font-mono">float32</code> เพราะประหยัด memory + เร็วกว่าบน GPU</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Tensors in PyTorch -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Tensor ใน <a href="https://pytorch.org/" target="_blank" class="underline decoration-dotted">PyTorch</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import torch
+
+# สร้าง tensor (เหมือน NumPy แต่เพิ่ม requires_grad)
+x = torch.tensor([1.0, 2.0, 3.0])
+y = torch.zeros(3, 4)
+z = torch.ones(2, 3, 4)
+r = torch.randn(5, 5)
+
+# 询问属性
+print(x.shape)       # torch.Size([3])
+print(x.dtype)       # torch.float32
+
+# 的关键: requires_grad
+w = torch.tensor(2.0, requires_grad=True)
+# บอก PyTorch: "ช่วยจำ operation ทุกอย่างที่ทำกับ w ด้วย"</pre>
+            <div class="space-y-4 text-base">
+              <p>- PyTorch tensor = NumPy array + <strong><a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">autograd</a></strong></p>
+              <p>- <code class="font-mono text-yellow-300">requires_grad=True</code> = เปิดคำนวณ <a href="https://en.wikipedia.org/wiki/Gradient" target="_blank" class="underline decoration-dotted">gradient</a> อัตโนมัติ</p>
+              <p>- shape, ndim, dtype ใช้เหมือน NumPy</p>
+              <p>- เปลี่ยนจาก NumPy: <code class="font-mono text-emerald-300">tensor.numpy()</code></p>
+              <p>- เปลี่ยนเป็น NumPy: <code class="font-mono text-emerald-300">torch.from_numpy(arr)</code></p>
+              <div class="tech-card"><p class="text-sm">[Tip] PyTorch tensor + NumPy array มี API ใกล้เคียงกันมาก -- ถ้ารู้ NumPy ก็ใช้ PyTorch ได้เลย</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Reshaping -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Reshaping Tensor: เปลี่ยนรูปแบบไม่เปลี่ยนค่า</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">x = torch.arange(12)
+# tensor([ 0,  1,  2,  3,  4,  5,
+#           6,  7,  8,  9, 10, 11])
+
+# reshape
+x.reshape(3, 4)    # -> 3 rows x 4 cols
+x.reshape(4, 3)    # -> 4 rows x 3 cols
+x.reshape(2, 2, 3) # -> 3D tensor
+x.reshape(-1, 4)   # -1 = ให้ NumPy คำนวณเอง
+
+# flatten (2D -> 1D)
+x.flatten()         # -> tensor([0..11])
+
+# transpose
+m = torch.arange(6).reshape(2, 3)
+m.T                 # -> shape (3, 2)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">reshape()</code> = เปลี่ยน shape โดยไม่เปลี่ยนค่า</p>
+              <p>- <code class="font-mono text-yellow-300">-1</code> = ให้ framework คำนวณมิตินั้นให้ (ต้องหารกันลงตัว)</p>
+              <p>- <code class="font-mono text-yellow-300">flatten()</code> = ยุบเป็น 1 มิติ</p>
+              <p>- <code class="font-mono text-yellow-300">.T</code> = transpose (สลับมิติ)</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ใน DL มัก reshape ก่อนป้อนเข้าโมเดล เช่น รูป (28,28) -> flatten เป็น vector ขนาด 784</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Tensor Operations ==================== -->
+
+      <!-- Slide 6: Element-wise Operations -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 2: Element-wise Operations</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">a = torch.tensor([1.0, 2.0, 3.0])
+b = torch.tensor([4.0, 5.0, 6.0])
+
+# arithmetic
+a + b       # -> [5., 7., 9.]
+a * b       # -> [4., 10., 18.]
+a - b       # -> [-3., -3., -3.]
+a / b       # -> [0.25, 0.4, 0.5]
+
+# power
+a ** 2      # -> [1., 4., 9.]
+
+# comparison
+a > 2       # -> [False, False, True]
+
+# math functions
+torch.exp(a)
+torch.log(a)
+torch.abs(a - b)</pre>
+            <div class="space-y-4 text-base">
+              <p>- ทุก operation ทำ <strong>ทีละ element</strong> (ขนานกัน)</p>
+              <p>- ผลลัพธ์ = tensor ใหม่ (ไม่เปลี่ยนตัวเดิม)</p>
+              <p>- คล้าย NumPy: <code class="font-mono text-yellow-300">a + b</code> ทำงานเหมือนกัน</p>
+              <p>- ใน DL: activation function = element-wise operation</p>
+              <p>- <a href="https://pytorch.org/docs/stable/torch.html#math-ops" target="_blank" class="underline decoration-dotted">Math operations</a> มีให้เลือกหลายแบบ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Dot Product -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Dot_product" target="_blank" class="underline decoration-dotted">Dot Product</a> -- หัวใจของ neural network</h2>
+          <div class="tech-card text-center mb-6">
+            <p class="text-xl font-mono">dot(a, b) = a[0]*b[0] + a[1]*b[1] + ... = \( \sum_i a_i \cdot b_i \)</p>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">a = torch.tensor([1.0, 2.0, 3.0])
+b = torch.tensor([4.0, 5.0, 6.0])
+
+# dot product = scalar เดียว
+torch.dot(a, b)
+# -> 1*4 + 2*5 + 3*6 = 32
+
+# manual version
+(a * b).sum()
+# -> tensor(32.)
+
+# matrix-vector: ใช้ @ operator
+W = torch.randn(3, 4)   # matrix 3x4
+x = torch.randn(4)      # vector ขนาด 4
+y = W @ x               # -> vector ขนาด 3
+# y[i] = dot(W[i], x)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Dot product</strong> = วัด "ความคล้าย" ระหว่าง 2 vectors</p>
+              <p>- ใน <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank" class="underline decoration-dotted">neural network</a>: <code class="font-mono text-yellow-300">z = w @ x + b</code> = weighted sum</p>
+              <p>- <code class="font-mono text-yellow-300">@</code> operator = matrix multiply (ใน Python 3.5+)</p>
+              <p>- ถ้า <code class="font-mono">a</code> และ <code class="font-mono">b</code> ชี้ทิศเดียวกัน = dot product มาก</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Cosine similarity = dot product / (norm(a) * norm(b)) = dot product ที่ normalize แล้ว</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Matrix Multiply -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Matrix_multiplication" target="_blank" class="underline decoration-dotted">Matrix Multiplication</a>: เทรนทีเดียวหลายจุด</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># ข้อมูล N จุด, แต่ละจุดมี 3 features
+X = torch.randn(5, 3)   # (N=5, features=3)
+
+# weight matrix: 3 inputs -> 2 outputs
+W = torch.randn(3, 2)   # (in=3, out=2)
+
+# matrix multiply: ครั้งเดียวได้ 5 จุด
+Z = X @ W               # (5,3) @ (3,2) = (5,2)
+
+# เทียบกับ loop
+for i in range(5):
+    z[i] = X[i] @ W     # <-- ช้ามาก!</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Matrix multiply</strong> = dot product หลายคู่พร้อมกัน</p>
+              <p>- <code class="font-mono text-yellow-300">(N, K) @ (K, M) = (N, M)</code> -- K ต้องตรงกัน</p>
+              <p>- ทำ 1 ครั้งได้ทุกจุด = <strong>เร็วกว่า loop 100x</strong></p>
+              <p>- นี่คือเหตุผลที่ DL ต้องการ <a href="https://en.wikipedia.org/wiki/Graphics_processing_unit" target="_blank" class="underline decoration-dotted">GPU</a> -- GPU คำนวณ matrix ได้ parallel</p>
+              <div class="tech-card"><p class="text-sm">[Tip] nn.Linear ใน PyTorch = ทำ <code class="font-mono">x @ W.T + b</code> ให้เราอัตโนมัติ</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Broadcasting -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Broadcasting_(arrays)" target="_blank" class="underline decoration-dotted">Broadcasting</a>: เติมมิติอัตโนมัติ</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># บวก matrix กับ vector
+m = torch.ones(3, 4)    # (3, 4)
+v = torch.tensor([1., 2., 3., 4.])  # (4,)
+
+# Broadcasting: v ถูก copy เป็น 3 แถว
+result = m + v
+# -> [[2., 3., 4., 5.],
+#      [2., 3., 4., 5.],
+#      [2., 3., 4., 5.]]
+
+# broadcast ได้เมื่อ:
+# - มิติตรงกัน, หรือ
+# - มิติใดมิติหนึ่งเป็น 1
+
+a = torch.ones(3, 1)    # (3, 1)
+b = torch.ones(1, 4)    # (1, 4)
+c = a + b               # (3, 4) -- ทั้งสองมิติ broadcast</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Broadcasting</strong> = "คัดลอก" tensor ให้ตรงมิติอัตโนมัติ</p>
+              <p>- ไม่ต้องเขียน loop -- เร็วกว่ามาก</p>
+              <p>- กฎ: มิติจาก<strong>หลังไปหน้า</strong> ต้องตรงกัน หรือเป็น 1</p>
+              <p>- ตัวอย่าง: เพิ่ม bias ทุกจุดพร้อมกัน</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ถ้า error บอก "operands could not be broadcast together" = shape ไม่ตรงตามกฎ -- ต้อง reshape ก่อน</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Aggregation -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Aggregation: รวม tensor เป็นค่าเดียว</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">x = torch.tensor([[1., 2.],
+                   [3., 4.]])
+
+x.sum()           # -> 10. (รวมทุกค่า)
+x.mean()          # -> 2.5
+x.max()           # -> 4.
+x.min()           # -> 1.
+
+# along axis
+x.sum(axis=0)     # -> [4., 6.]  (รวมตาม column)
+x.sum(axis=1)     # -> [3., 7.]  (รวมตาม row)
+
+# argmax = index ของค่ามากสุด
+x.argmax()        # -> 3 (index ของ 4.0)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">axis=0</code> = รวมตามแนวตั้ง (ลด row)</p>
+              <p>- <code class="font-mono text-yellow-300">axis=1</code> = รวมตามแนวนอน (ลด column)</p>
+              <p>- ใน DL: <a href="https://en.wikipedia.org/wiki/Loss_function" target="_blank" class="underline decoration-dotted">loss function</a> มัก sum/mean ทั้ง batch</p>
+              <p>- <code class="font-mono text-yellow-300">argmax()</code> = หา class ที่ทำนายได้มากสุด (classification)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Gradients & Autodiff ==================== -->
+
+      <!-- Slide 11: Derivative / Gradient -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: <a href="https://en.wikipedia.org/wiki/Gradient" target="_blank" class="underline decoration-dotted">Gradient</a> คืออะไร?</h2>
+          <div class="tech-card text-center mb-6">
+            <p class="text-xl font-mono">\(f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}\)</p>
+            <p class="mt-2">Gradient =  vector ของ <a href="https://en.wikipedia.org/wiki/Partial_derivative" target="_blank" class="underline decoration-dotted">partial derivatives</a> = ทิศทางที่ function ชันมากที่สุด</p>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># ตัวอย่าง: f(x) = x^2
+# f'(x) = 2x
+
+def f(x):
+    return x ** 2
+
+# numerical derivative
+def numerical_grad(f, x, h=1e-4):
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+print(numerical_grad(f, 3.0))  # ~6.0
+print(numerical_grad(f, -2.0)) # ~-4.0</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Gradient</strong> = ทิศทางที่ function ไต่ขึ้นเร็วที่สุด</p>
+              <p>- ใน DL: gradient ของ loss respect w = "ขยับ w แล้ว loss เปลี่ยนเท่าไหร่"</p>
+              <p>- <code class="font-mono text-yellow-300">gradient > 0</code> = ขยับ w ขึ้น -> loss ขึ้น -> ต้องขยับลง</p>
+              <p>- <code class="font-mono text-yellow-300">gradient < 0</code> = ขยับ w ลง -> loss ขึ้น -> ต้องขยับขึ้น</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Gradient descent = ไป <strong>ทวน</strong> gradient (-negative direction) = loss ลดลง</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Autodiff -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Automatic_differentiation" target="_blank" class="underline decoration-dotted">Automatic Differentiation</a>: ให้เครื่องคำนวณให้</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import torch
+
+x = torch.tensor(3.0, requires_grad=True)
+
+# forward pass: สร้าง computational graph
+y = x ** 2          # y = x^2
+z = 2 * y + 1       # z = 2x^2 + 1
+
+# backward pass: คำนวณ gradient อัตโนมัติ
+z.backward()
+
+# dz/dx = 4x = 4*3 = 12
+print(x.grad)       # tensor(12.)
+
+#  เปรียบเทียบ: numerical vs autodiff
+#  numerical:  (f(x+h) - f(x-h)) / 2h
+#  autodiff:    แม่นยำ 100%, เร็ว, ไม่ต้องเลือก h</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">requires_grad=True</code> = ให้ PyTorch ติดตาม operation</p>
+              <p>- <code class="font-mono text-yellow-300">.backward()</code> = เดินย้อน graph คำนวณ gradient ทุกจุด</p>
+              <p>- <code class="font-mono text-yellow-300">.grad</code> = เก็บค่า gradient ไว้ให้</p>
+              <p>- ข้อดี: แม่นยำ + เร็ว + ไม่ต้องเขียนสูตรเอง</p>
+              <p>- ข้อเสีย: ต้อง forward pass ก่อนถึงจะ backward ได้</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Autodiff = หัวใจของ deep learning framework ทุกตัว (PyTorch, TensorFlow, JAX)</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Chain Rule -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">Chain Rule</a>: คูณ gradient ย้อนกลับ</h2>
+          <div class="tech-card text-center mb-6">
+            <p class="text-xl font-mono">\( \frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx} \)</p>
+            <p class="mt-2">ถ้า \( f = f(g(x)) \) แล้วก็ \( \frac{df}{dx} \) = คูณ gradient ทีละชั้น</p>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># ตัวอย่าง: y = (2x + 1)^2
+#  LET u = 2x + 1,  y = u^2
+
+# _dy/du = 2u,  du/dx = 2
+#  _dy/dx = 2u * 2 = 4u = 4(2x+1)
+
+import torch
+x = torch.tensor(1.0, requires_grad=True)
+u = 2 * x + 1     # u = 3
+y = u ** 2         # y = 9
+y.backward()
+print(x.grad)      # tensor(12.) = 4*3</pre>
+            <div class="space-y-4 text-base">
+              <p>- Chain rule = หัวใจของ <a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank" class="underline decoration-dotted">backpropagation</a></p>
+              <p>- Neural network = function ซ้อน function หลายชั้น</p>
+              <p>- backward() ใช้ chain rule คูณ gradient ย้อนกลับทีละชั้น</p>
+              <p>- ชั้น越多 = chain rule ยิ่งยาว -- นี่คือ "deep" ใน deep learning</p>
+              <div class="tech-card"><p class="text-sm">[Tip] ไม่ต้องเขียน chain rule เอง -- .backward() ทำให้หมด!</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Tying It Together ==================== -->
+
+      <!-- Slide 14: Mini Model with Tensors -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 4: สร้างโมเดลเล็กๆ ด้วย Tensor ล้วน</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># tiny model: y = sigmoid(w @ x + b)
+import torch
+
+# ข้อมูล: 4 จุด, 2 features
+X = torch.randn(4, 2)
+y_true = torch.tensor([[1.],[0.],[1.],[0.]])
+
+# parameters (สุ่ม)
+w = torch.randn(2, 1, requires_grad=True)
+b = torch.zeros(1, requires_grad=True)
+
+# training loop (10 รอบ)
+lr = 0.1
+for i in range(10):
+    # forward
+    z = X @ w + b
+    y_pred = torch.sigmoid(z)
+    loss = ((y_pred - y_true)**2).mean()
+    # backward + update
+    loss.backward()
+    w.data -= lr * w.grad
+    b.data -= lr * b.grad
+    w.grad.zero_()
+    b.grad.zero_()
+    print(f"round {i}: loss={loss.item():.4f}")</pre>
+            <div class="space-y-4 text-base">
+              <p>- ทุกอย่างเป็น tensor -- <strong>ไม่ต้องมี framework</strong></p>
+              <p>- forward: <code class="font-mono text-yellow-300">z = X @ w + b</code> แล้ว <code class="font-mono">sigmoid</code></p>
+              <p>- backward: <code class="font-mono text-yellow-300">loss.backward()</code> คำนวณ gradient ทุกตัว</p>
+              <p>- update: <code class="font-mono text-yellow-300">w.data -= lr * w.grad</code> ปรับ parameter</p>
+              <p>- ล้าง gradient: <code class="font-mono text-yellow-300">w.grad.zero_()</code></p>
+              <div class="tech-card"><p class="text-sm">[Tip] โค้ดนี้ = ต้นแบบของ training loop ที่จะใช้ตลอดคอร์ส -- เข้าใจตรงนี้ = เข้าใจ DL</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: NumPy vs PyTorch -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">เปรียบเทียบ: NumPy vs PyTorch</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300"><a href="https://en.wikipedia.org/wiki/NumPy" target="_blank" class="underline decoration-dotted">NumPy</a></h4>
+              <ul class="space-y-2 text-sm">
+                <li>- array operations สำหรับ data science</li>
+                <li>- ไม่มี GPU acceleration</li>
+                <li>- ไม่มี autograd</li>
+                <li>- เร็วพอสำหรับ data preprocessing</li>
+                <li>- API ที่ PyTorch เลียนแบบ</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300"><a href="https://pytorch.org/" target="_blank" class="underline decoration-dotted">PyTorch</a></h4>
+              <ul class="space-y-2 text-sm">
+                <li>- GPU acceleration (CUDA, MPS)</li>
+                <li>- <a href="https://pytorch.org/docs/stable/autograd.html" target="_blank" class="underline decoration-dotted">Autograd</a> = คำนวณ gradient อัตโนมัติ</li>
+                <li>- Dynamic computational graph</li>
+                <li>- API คล้าย NumPy มาก</li>
+                <li>- เป็นที่นิยมใน research + production</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">รู้ NumPy = พร้อมใช้ PyTorch เลย / รู้ Tensor ทั้ง 2 = พร้อมเข้าโลก DL</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Summary & Homework -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">สรุป + การบ้าน</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>สิ่งที่ทำวันนี้</h3>
+              <ul>
+                <li>- Tensor = กล่องเก็บตัวเลขหลายมิติ (scalar -> vector -> matrix -> 3D+)</li>
+                <li>- Operations: element-wise, <a href="https://en.wikipedia.org/wiki/Dot_product" target="_blank" class="underline decoration-dotted">dot product</a>, <a href="https://en.wikipedia.org/wiki/Matrix_multiplication" target="_blank" class="underline decoration-dotted">matrix multiply</a>, <a href="https://en.wikipedia.org/wiki/Broadcasting_(arrays)" target="_blank" class="underline decoration-dotted">broadcasting</a></li>
+                <li>- <a href="https://en.wikipedia.org/wiki/Gradient" target="_blank" class="underline decoration-dotted">Gradient</a> = ทิศทางที่ function ชันมากที่สุด</li>
+                <li>- <a href="https://en.wikipedia.org/wiki/Automatic_differentiation" target="_blank" class="underline decoration-dotted">Autodiff</a> + <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">Chain rule</a> = คำนวณ gradient ย้อนกลับอัตโนมัติ</li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>การบ้าน (ส่งสัปดาห์หน้า)</h3>
+              <ul>
+                <li>- สร้าง tensor 5 แบบ แล้ว print shape, ndim, dtype</li>
+                <li>- คำนวณ dot product ระหว่าง 2 vectors ด้วยมือ + ด้วย torch</li>
+                <li>- เขียน numerical gradient สำหรับ \( f(x) = x^3 - 2x + 1 \) ที่ x=2</li>
+                <li>- รัน tiny model (สไลด์ 14) จน loss ลด -- ปรับ lr แล้วดูผลต่าง</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg text-emerald-200">สัปดาห์หน้า: Introduction to Keras and TensorFlow</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 3: Introduction to Keras and TensorFlow">
+    <meta name="keywords" content="Deep Learning, Keras, TensorFlow, uv, Neural Networks">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - Week 3: Introduction to Keras and TensorFlow</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Learning Plan </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk03.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- ==================== Title & Roadmap ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight mt-8">
+            Introduction to Keras and TensorFlow
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            setup - layers - compile - train - evaluate
+          </div>
+          <div class="tech-card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Learning Outcomes</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-base">
+              <div>1. Set up a <a href="https://www.tensorflow.org/" target="_blank" class="underline decoration-dotted">TensorFlow</a>/<a href="https://keras.io/" target="_blank" class="underline decoration-dotted">Keras</a> project with <a href="https://github.com/astral-sh/uv" target="_blank" class="underline decoration-dotted">uv</a></div>
+              <div>2. Build a neural network using the <a href="https://keras.io/guides/sequential_model/" target="_blank" class="underline decoration-dotted">Sequential API</a></div>
+              <div>3. Explain layers, activation, optimizer, loss</div>
+              <div>4. Train, evaluate, and make predictions with Keras</div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">Week 3 -- 1145208 Deep Learning</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">Today's Roadmap</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="agenda-item">
+              <div class="agenda-time">Part 1 - Setup</div>
+              <div class="agenda-title">Install and configure</div>
+              <div class="agenda-description"><a href="https://github.com/astral-sh/uv" target="_blank" class="underline decoration-dotted">uv</a> init, add TensorFlow, verify import</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 2 - Build</div>
+              <div class="agenda-title">Create a model</div>
+              <div class="agenda-description"><a href="https://keras.io/guides/sequential_model/" target="_blank" class="underline decoration-dotted">Sequential</a>, <a href="https://keras.io/api/layers/core_layers/dense/" target="_blank" class="underline decoration-dotted">Dense</a>, activation functions</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 3 - Train</div>
+              <div class="agenda-title">Compile and fit</div>
+              <div class="agenda-description"><a href="https://keras.io/api/losses/" target="_blank" class="underline decoration-dotted">loss</a>, <a href="https://keras.io/api/optimizers/" target="_blank" class="underline decoration-dotted">optimizer</a>, <a href="https://keras.io/api/metrics/" target="_blank" class="underline decoration-dotted">metrics</a>, <code class="font-mono">model.fit()</code></div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 4 - Wrap up</div>
+              <div class="agenda-title">Evaluate and predict</div>
+              <div class="agenda-description"><code class="font-mono">model.evaluate()</code>, <code class="font-mono">model.predict()</code>, summary + homework</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 1: Setup ==================== -->
+
+      <!-- Slide 2: Why Keras + TensorFlow? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 1: Why <a href="https://www.tensorflow.org/" target="_blank" class="underline decoration-dotted">TensorFlow</a> + <a href="https://keras.io/" target="_blank" class="underline decoration-dotted">Keras</a>?</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">TensorFlow</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Open-source library by Google</li>
+                <li>- Deploy anywhere: server, mobile, edge</li>
+                <li>- Production-ready ecosystem</li>
+                <li>- Keras is the official high-level API</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Keras</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- High-level API: simple, readable, fast</li>
+                <li>- 3 lines of code = working model</li>
+                <li>- Great for learning and prototyping</li>
+                <li>- Built into TensorFlow as <code class="font-mono">tf.keras</code></li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Keras = friendly interface / TensorFlow = powerful engine underneath</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Install with uv -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Project setup with <a href="https://github.com/astral-sh/uv" target="_blank" class="underline decoration-dotted">uv</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-7"># 1. Create new project
+$ uv init --no-package wk03
+$ cd wk03
+
+# 2. Add TensorFlow
+$ uv add tensorflow
+
+# 3. Run your code
+$ uv run python main.py</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">uv init --no-package wk03</code> = create project folder with config</p>
+              <p>- <code class="font-mono text-yellow-300">uv add tensorflow</code> = install TF + dependencies into venv</p>
+              <p>- <code class="font-mono text-yellow-300">uv run</code> = run in the project's venv (no "wrong env" bugs)</p>
+              <p>- No need to manually create venv -- uv handles it</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Project structure: <code class="font-mono">wk03/</code> contains main.py, pyproject.toml, uv.lock</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Verify install -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Verify: import TensorFlow + Keras</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># main.py
+import tensorflow as tf
+from tensorflow import keras
+
+print("TensorFlow:", tf.__version__)
+print("Keras:", keras.__version__)
+
+# Quick test: tensor operations
+x = tf.constant([[1.0, 2.0],
+                 [3.0, 4.0]])
+print(x @ x.T)   # matrix multiply</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">import tensorflow as tf</code> = standard import</p>
+              <p>- <code class="font-mono text-yellow-300">from tensorflow import keras</code> = Keras API</p>
+              <p>- TF tensor works like NumPy array + GPU support</p>
+              <p>- If you see version numbers = ready to go</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">$ uv run main.py
+TensorFlow: 2.x.x
+Keras: 3.x.x
+tf.Tensor(
+[[ 7. 10.]
+ [15. 22.]], shape=(2,2))</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Build a Model ==================== -->
+
+      <!-- Slide 5: Sequential API -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 2: <a href="https://keras.io/guides/sequential_model/" target="_blank" class="underline decoration-dotted">Sequential API</a> -- stack layers</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">from tensorflow import keras
+from keras import layers
+
+model = keras.Sequential([
+    # Hidden layer 1
+    layers.Dense(64, activation='relu',
+                 input_shape=(10,)),
+    # Hidden layer 2
+    layers.Dense(32, activation='relu'),
+    # Output layer
+    layers.Dense(1, activation='sigmoid')
+])
+
+model.summary()</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">Sequential()</code> = stack layers one after another</p>
+              <p>- <a href="https://keras.io/api/layers/core_layers/dense/" target="_blank" class="underline decoration-dotted">Dense</a>(units) = fully connected layer (every neuron connects to every neuron in next layer)</p>
+              <p>- <code class="font-mono text-yellow-300">activation</code> = non-linearity function</p>
+              <p>- <code class="font-mono text-yellow-300">input_shape=(10,)</code> = tell the model the shape of one input sample</p>
+              <div class="tech-card"><p class="text-sm">[Tip] First layer must have input_shape. Later layers infer automatically.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Layers and Neurons -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Layers and Neurons</h2>
+          <div class="tech-card text-center mb-6">
+            <pre class="font-mono text-sm bg-black/40 rounded-lg p-4 inline-block text-left leading-6">Input(10)  Dense(64)   Dense(32)   Dense(1)
+ [x1] --> [h1] -----> [h3] ----> [y]
+ [x2] --> [h2] -----> [h4]
+ ...       ...         ...
+[x10] --> [h64]</pre>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 text-center text-sm">
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">input_shape=(10,)</h4>
+              <p>Each sample has 10 features</p>
+              <p>e.g. 10 measurements of a patient</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Dense(64, relu)</h4>
+              <p>64 neurons, each learns a pattern</p>
+              <p>Params: 10*64 + 64 = 704</p>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-yellow-300 font-bold mb-2">Dense(1, sigmoid)</h4>
+              <p>1 neuron, output probability</p>
+              <p>Binary classification (0 or 1)</p>
+            </div>
+          </div>
+          <p class="mt-6 text-center text-emerald-200">More neurons = more capacity to learn, but also more risk of overfitting</p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Activation Functions -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Activation_function" target="_blank" class="underline decoration-dotted">Activation Functions</a></h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-blue-300"><a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)" target="_blank" class="underline decoration-dotted">ReLU</a></h4>
+              <p class="font-mono text-lg mb-2">f(x) = max(0, x)</p>
+              <p class="text-sm">Most popular for hidden layers</p>
+              <p class="text-sm">Fast, simple, effective</p>
+            </div>
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300"><a href="https://en.wikipedia.org/wiki/Sigmoid_function" target="_blank" class="underline decoration-dotted">Sigmoid</a></h4>
+              <p class="font-mono text-lg mb-2">\( \sigma(z) = \frac{1}{1+e^{-z}} \)</p>
+              <p class="text-sm">Output: (0, 1) = probability</p>
+              <p class="text-sm">Used in output layer for binary classification</p>
+            </div>
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-emerald-300"><a href="https://en.wikipedia.org/wiki/Softmax_function" target="_blank" class="underline decoration-dotted">Softmax</a></h4>
+              <p class="font-mono text-lg mb-2">\( \sigma(z_i) = \frac{e^{z_i}}{\sum e^{z_j}} \)</p>
+              <p class="text-sm">Output sums to 1 (probability distribution)</p>
+              <p class="text-sm">Used for multi-class classification</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Hidden layers: use <strong class="text-yellow-300">ReLU</strong> / Output: match the task</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Parameters Count -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Counting Parameters</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">model = keras.Sequential([
+    layers.Dense(64, activation='relu',
+                 input_shape=(10,)),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+
+model.summary()
+# Layer (type)         Output     Param
+# dense (Dense)        (None,64)  704   <-- 10*64+64
+# dense_1 (Dense)      (None,32)  2080  <-- 64*32+32
+# dense_2 (Dense)      (None,1)   33    <-- 32*1+1
+# Total params: 2,817</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Formula:</strong> Dense(in, out) = in*out + out (weights + bias)</p>
+              <p>- Layer 1: 10*64 + 64 = 704</p>
+              <p>- Layer 2: 64*32 + 32 = 2080</p>
+              <p>- Layer 3: 32*1 + 1 = 33</p>
+              <p>- <strong>Total: 2,817 trainable parameters</strong></p>
+              <div class="tech-card"><p class="text-sm">[Tip] <code class="font-mono">model.summary()</code> = instant parameter count -- use it to sanity-check model size</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Compile and Train ==================== -->
+
+      <!-- Slide 9: Compile -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: Compile -- set up learning</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">optimizer</code> = algorithm that adjusts weights</p>
+              <p>  - <a href="https://keras.io/api/optimizers/adam/" target="_blank" class="underline decoration-dotted">Adam</a> = adaptive learning rate, good default</p>
+              <p>  - <a href="https://keras.io/api/optimizers/sgd/" target="_blank" class="underline decoration-dotted">SGD</a> = classic, slower but predictable</p>
+              <p>- <code class="font-mono text-yellow-300">loss</code> = how wrong the model is</p>
+              <p>  - <a href="https://keras.io/api/losses/probabilistic_losses/#binarycrossentropy-class" target="_blank" class="underline decoration-dotted">binary_crossentropy</a> = binary classification</p>
+              <p>  - <a href="https://keras.io/api/losses/probabilistic_losses/#categoricalcrossentropy-class" target="_blank" class="underline decoration-dotted">categorical_crossentropy</a> = multi-class</p>
+              <p>  - <a href="https://keras.io/api/losses/regression_losses/#meansquarederror-class" target="_blank" class="underline decoration-dotted">mse</a> = regression</p>
+              <p>- <code class="font-mono text-yellow-300">metrics</code> = what to monitor (not used for training)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Fit (train) -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><code class="font-mono">model.fit()</code> -- train the model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import numpy as np
+
+# Sample data: 1000 samples, 10 features
+X_train = np.random.randn(1000, 10)
+y_train = (X_train[:, 0] > 0).astype(float)
+
+# Train!
+history = model.fit(
+    X_train, y_train,
+    epochs=20,
+    batch_size=32,
+    validation_split=0.2
+)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">epochs</code> = how many times to see all data</p>
+              <p>- <code class="font-mono text-yellow-300">batch_size</code> = samples per gradient update</p>
+              <p>- <code class="font-mono text-yellow-300">validation_split</code> = hold out 20% for validation</p>
+              <p>- <code class="font-mono text-yellow-300">history</code> = dict with loss/metrics per epoch</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">Epoch 1/20 - 25/25 - 0s - loss: 0.72 - accuracy: 0.51
+Epoch 2/20 - 25/25 - 0s - loss: 0.48 - accuracy: 0.82
+...
+Epoch 20/20 - 25/25 - 0s - loss: 0.21 - accuracy: 0.93</pre>
+              <div class="tech-card"><p class="text-sm">[Tip] Watch val_loss -- if it goes up while loss goes down = overfitting</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: History and Overfitting -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Reading the history</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># history contains training curves
+import matplotlib.pyplot as plt
+
+plt.plot(history.history['loss'],
+         label='train loss')
+plt.plot(history.history['val_loss'],
+         label='val loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+
+# Also:
+# history.history['accuracy']
+# history.history['val_accuracy']</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>loss decreasing</strong> = model is learning</p>
+              <p>- <strong>val_loss decreasing</strong> = generalizes to unseen data</p>
+              <p>- <strong>loss down, val_loss up</strong> = <a href="https://en.wikipedia.org/wiki/Overfitting" target="_blank" class="underline decoration-dotted">overfitting</a></p>
+              <p>- <strong>both flat</strong> = model is too simple (underfitting)</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Early stopping: stop when val_loss stops improving. Use <code class="font-mono">keras.callbacks.EarlyStopping()</code></p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Evaluate and Predict ==================== -->
+
+      <!-- Slide 12: Evaluate -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 4: <code class="font-mono">model.evaluate()</code> -- test performance</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># Test data (unseen during training)
+X_test = np.random.randn(200, 10)
+y_test = (X_test[:, 0] > 0).astype(float)
+
+# Evaluate
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f"Test loss: {loss:.4f}")
+print(f"Test accuracy: {accuracy:.4f}")
+
+# Output:
+# 7/7 [======] - 0s - loss: 0.19 - accuracy: 0.94
+# Test loss: 0.1923
+# Test accuracy: 0.9400</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">evaluate()</code> = run model on test set, return loss + metrics</p>
+              <p>- Uses the same loss/metrics from <code class="font-mono">compile()</code></p>
+              <p>- Returns tuple: (loss, metric1, metric2, ...)</p>
+              <p>- Test accuracy should be close to validation accuracy</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Never peek at test data during training -- it's your final exam, not practice</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Predict -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><code class="font-mono">model.predict()</code> -- use the model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># New data
+X_new = np.array([[0.5, -0.3, 0.8, 0.1,
+                    -0.2, 0.6, -0.1, 0.4,
+                    0.9, -0.5]])
+
+# Predict
+pred = model.predict(X_new)
+print(pred)       # [[0.87]]
+print(pred[0][0]) # 0.87 = probability
+
+# Convert to class
+if pred[0][0] > 0.5:
+    print("Class 1")
+else:
+    print("Class 0")</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">predict()</code> = forward pass on new data</p>
+              <p>- Returns probability (if sigmoid output)</p>
+              <p>- Threshold: <code class="font-mono">pred > 0.5</code> = class 1</p>
+              <p>- For multi-class: <code class="font-mono">np.argmax(pred, axis=1)</code></p>
+              <div class="tech-card"><p class="text-sm">[Tip] In production, save model: <code class="font-mono">model.save('my_model.keras')</code></p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Complete Example -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Complete Example -- end to end</h2>
+          <pre class="font-mono text-xs bg-black/40 rounded-xl p-5 overflow-x-auto leading-5 mx-auto max-w-4xl">import numpy as np
+from tensorflow import keras
+from keras import layers
+
+# 1. Data
+X = np.random.randn(1000, 10)
+y = (X[:, 0] * X[:, 1] > 0).astype(float)
+
+# 2. Model
+model = keras.Sequential([
+    layers.Dense(64, activation='relu', input_shape=(10,)),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+
+# 3. Compile
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+
+# 4. Train
+model.fit(X[:800], y[:800], epochs=20, validation_split=0.2)
+
+# 5. Evaluate
+loss, acc = model.evaluate(X[800:], y[800:])
+print(f"Test accuracy: {acc:.4f}")
+
+# 6. Predict
+preds = model.predict(X[800:5])
+print("Predictions:", (preds > 0.5).astype(int).ravel())</pre>
+        </div>
+      </div>
+
+      <!-- Slide 15: Keras vs PyTorch -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Keras vs PyTorch (preview)</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Keras (this week)</h4>
+              <pre class="font-mono text-xs bg-black/40 rounded-lg p-3 leading-5">model = Sequential([
+  Dense(64, relu, input_shape=(10,)),
+  Dense(1, sigmoid)])
+model.compile(optimizer='adam',
+              loss='binary_crossentropy')
+model.fit(X, y, epochs=10)</pre>
+              <p class="text-sm mt-2">+ Simple, fast prototyping</p>
+              <p class="text-sm">+ Good defaults, less boilerplate</p>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">PyTorch (week 9+)</h4>
+              <pre class="font-mono text-xs bg-black/40 rounded-lg p-3 leading-5">model = nn.Sequential(
+  nn.Linear(10, 64), nn.ReLU(),
+  nn.Linear(64, 1), nn.Sigmoid())
+opt = optim.Adam(model.parameters())
+for epoch in range(10):
+    # ... manual training loop</pre>
+              <p class="text-sm mt-2">+ Full control, easier to debug</p>
+              <p class="text-sm">+ Preferred in research</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Learn both: Keras first (easy start) -> PyTorch later (deeper understanding)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Summary & Homework -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>What we covered</h3>
+              <ul>
+                <li>- Project setup: <code class="font-mono">uv init --no-package</code> -> <code class="font-mono">uv add tensorflow</code></li>
+                <li>- <a href="https://keras.io/guides/sequential_model/" target="_blank" class="underline decoration-dotted">Sequential</a> API: stack <a href="https://keras.io/api/layers/core_layers/dense/" target="_blank" class="underline decoration-dotted">Dense</a> layers</li>
+                <li>- Activation: <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)" target="_blank" class="underline decoration-dotted">ReLU</a> (hidden), <a href="https://en.wikipedia.org/wiki/Sigmoid_function" target="_blank" class="underline decoration-dotted">Sigmoid</a>/<a href="https://en.wikipedia.org/wiki/Softmax_function" target="_blank" class="underline decoration-dotted">Softmax</a> (output)</li>
+                <li>- <code class="font-mono">compile(optimizer, loss, metrics)</code></li>
+                <li>- <code class="font-mono">fit()</code> -> <code class="font-mono">evaluate()</code> -> <code class="font-mono">predict()</code></li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Homework (due next week)</h3>
+              <ul>
+                <li>- Build a classifier for MNIST digits (use <code class="font-mono">keras.datasets.mnist</code>)</li>
+                <li>- Architecture: 784 -> 128(relu) -> 10(softmax)</li>
+                <li>- Try different: optimizers (sgd vs adam), batch_size (16 vs 128)</li>
+                <li>- Plot training curves, report test accuracy</li>
+                <li>- Use <code class="font-mono">uv init --no-package wk03-hw</code> for your project</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg text-emerald-200">Next week: Neural networks -- Classification and Regression</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

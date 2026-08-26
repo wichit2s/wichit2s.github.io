@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 4: Neural Networks - Classification and Regression">
+    <meta name="keywords" content="Deep Learning, Classification, Regression, MNIST, Multi-class">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - Week 4: Neural Networks - Classification and Regression</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Learning Plan </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk04.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- ==================== Title & Roadmap ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight mt-8">
+            Neural Networks:<br>Classification and Regression
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            binary - multi-class - multi-label - regression
+          </div>
+          <div class="tech-card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Learning Outcomes</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-base">
+              <div>1. Build classifiers for binary and multi-class tasks</div>
+              <div>2. Understand output layer: softmax, sigmoid</div>
+              <div>3. Build regressors that predict continuous values</div>
+              <div>4. Use common Keras patterns: MNIST, California Housing</div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">Week 4 -- 1145208 Deep Learning</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">Today's Roadmap</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="agenda-item">
+              <div class="agenda-time">Part 1 - Classification</div>
+              <div class="agenda-title">Binary classifiers</div>
+              <div class="agenda-description">output layer, loss functions, MNIST binary</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 2 - Multi-class</div>
+              <div class="agenda-title">Multi-class classification</div>
+              <div class="agenda-description"><a href="https://en.wikipedia.org/wiki/Softmax_function" target="_blank" class="underline decoration-dotted">softmax</a>, MNIST 10 classes, one-hot encoding</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 3 - Regression</div>
+              <div class="agenda-title">Regression networks</div>
+              <div class="agenda-description">continuous output, California Housing, no activation</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 4 - Wrap up</div>
+              <div class="agenda-title">Summary + Homework</div>
+              <div class="agenda-description">comparison table, review, exercises</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 1: Binary Classification ==================== -->
+
+      <!-- Slide 2: Classification overview -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 1: Classification Tasks</h2>
+          <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Binary</h4>
+              <p class="text-2xl mb-2">0 or 1</p>
+              <p class="text-sm">spam / not spam</p>
+              <p class="text-sm">cat / dog</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Multi-class</h4>
+              <p class="text-2xl mb-2">1 of N</p>
+              <p class="text-sm">digit 0-9</p>
+              <p class="text-sm">fruit type (5 classes)</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-emerald-300">Multi-label</h4>
+              <p class="text-2xl mb-2">many labels</p>
+              <p class="text-sm">movie tags</p>
+              <p class="text-sm">image has: cat + outdoors</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Today: binary + multi-class. Regression in Part 3.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Binary classifier output -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Binary classifier: output layer</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">model = keras.Sequential([
+    layers.Dense(64, activation='relu',
+                 input_shape=(784,)),
+    layers.Dense(32, activation='relu'),
+    # 1 neuron + sigmoid = probability
+    layers.Dense(1, activation='sigmoid')
+])
+
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)</pre>
+            <div class="space-y-4 text-base">
+              <p>- Output: 1 neuron, <a href="https://en.wikipedia.org/wiki/Sigmoid_function" target="_blank" class="underline decoration-dotted">sigmoid</a></p>
+              <p>- Output range: (0, 1) = probability of class 1</p>
+              <p>- <strong>Loss:</strong> <a href="https://keras.io/api/losses/probabilistic_losses/#binarycrossentropy-class" target="_blank" class="underline decoration-dotted">binary_crossentropy</a></p>
+              <p class="font-mono text-sm mt-2">\( L = -[y \log(\hat{y}) + (1-y)\log(1-\hat{y})] \)</p>
+              <p>- <strong>Decision:</strong> threshold at 0.5</p>
+              <p>- <strong>Metrics:</strong> accuracy, precision, recall</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: MNIST binary example -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Example: MNIST binary (digit 5 vs not-5)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import numpy as np
+from tensorflow import keras
+from keras import layers
+
+(X_train, y_train), (X_test, y_test) = \
+    keras.datasets.mnist.load_data()
+
+# Flatten & normalize
+X_train = X_train.reshape(-1, 784) / 255.0
+X_test  = X_test.reshape(-1, 784) / 255.0
+
+# Binary: is this digit a 5?
+y_train = (y_train == 5).astype(float)
+y_test  = (y_test == 5).astype(float)
+
+model = keras.Sequential([
+    layers.Dense(128, activation='relu',
+                 input_shape=(784,)),
+    layers.Dense(1, activation='sigmoid')
+])
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=10,
+          batch_size=128, validation_split=0.2)</pre>
+            <div class="space-y-4 text-base">
+              <p>- MNIST: 60k train + 10k test, 28x28 grayscale images</p>
+              <p>- <a href="https://en.wikipedia.org/wiki/Min-max_normalization" target="_blank" class="underline decoration-dotted">Normalize</a>: pixel values 0-255 -> 0.0-1.0 (divide by 255)</p>
+              <p>- <a href="https://en.wikipedia.org/wiki/Flattening_(machine_learning)" target="_blank" class="underline decoration-dotted">Flatten</a>: 28x28 = 784 features</p>
+              <p>- Target: 1 if digit is 5, else 0</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">Epoch 10/10 - 375/375 - loss: 0.03 - accuracy: 0.99</pre>
+              <div class="tech-card"><p class="text-sm">[Tip] Binary MNIST is easy -- the real challenge is multi-class (Part 2)</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Precision, Recall, F1 -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Beyond Accuracy: <a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank" class="underline decoration-dotted">Precision</a> and <a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank" class="underline decoration-dotted">Recall</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold">Precision</h4>
+                <p class="font-mono">TP / (TP + FP)</p>
+                <p class="text-sm">Of all predicted positive: how many are actually positive?</p>
+              </div>
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold">Recall</h4>
+                <p class="font-mono">TP / (TP + FN)</p>
+                <p class="text-sm">Of all actual positive: how many did we catch?</p>
+              </div>
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold"><a href="https://en.wikipedia.org/wiki/F-score" target="_blank" class="underline decoration-dotted">F1 Score</a></h4>
+                <p class="font-mono">2 * (P * R) / (P + R)</p>
+                <p class="text-sm">Harmonic mean: balances precision and recall</p>
+              </div>
+            </div>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Accuracy</strong> can be misleading when classes are imbalanced</p>
+              <p>- <strong>99% accuracy</strong> on spam = only 1% is spam? Model might say "not spam" every time</p>
+              <p>- Use precision/recall for imbalanced problems</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy',
+             keras.metrics.Precision(),
+             keras.metrics.Recall()]
+)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Multi-class Classification ==================== -->
+
+      <!-- Slide 6: Multi-class output -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 2: Multi-class Classification</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">model = keras.Sequential([
+    layers.Dense(128, activation='relu',
+                 input_shape=(784,)),
+    layers.Dense(64, activation='relu'),
+    # 10 neurons + softmax = probabilities
+    layers.Dense(10, activation='softmax')
+])
+
+model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)</pre>
+            <div class="space-y-4 text-base">
+              <p>- Output: N neurons (one per class)</p>
+              <p>- <a href="https://en.wikipedia.org/wiki/Softmax_function" target="_blank" class="underline decoration-dotted">Softmax</a>: turns logits into probabilities that sum to 1</p>
+              <p class="font-mono text-sm mt-2">\( \text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}} \)</p>
+              <p>- <strong>Loss:</strong> <a href="https://keras.io/api/losses/probabilistic_losses/#categoricalcrossentropy-class" target="_blank" class="underline decoration-dotted">categorical_crossentropy</a></p>
+              <p>- <strong>Decision:</strong> <code class="font-mono">argmax(output)</code> = predicted class</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: One-hot encoding -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/One-hot" target="_blank" class="underline decoration-dotted">One-hot</a> Encoding</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold mb-2">Label: 5</h4>
+                <p class="font-mono">[0, 0, 0, 0, 0, 1, 0, 0, 0, 0]</p>
+                <p class="text-sm mt-2">Position 5 = 1, all others = 0</p>
+              </div>
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold mb-2">Label: 3</h4>
+                <p class="font-mono">[0, 0, 0, 1, 0, 0, 0, 0, 0, 0]</p>
+                <p class="text-sm mt-2">Position 3 = 1, all others = 0</p>
+              </div>
+            </div>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">keras.utils.to_categorical(y, 10)</code></p>
+              <p>- Converts integer labels to one-hot vectors</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">y_train = keras.utils.to_categorical(y_train, 10)
+# Before: [5, 0, 3, 7, ...]
+# After:
+# [[0,0,0,0,0,1,0,0,0,0],
+#  [1,0,0,0,0,0,0,0,0,0],
+#  [0,0,0,1,0,0,0,0,0,0],
+#  [0,0,0,0,0,0,0,1,0,0]]</pre>
+              <div class="tech-card border-yellow-400"><p class="text-sm"><a href="https://keras.io/api/losses/probabilistic_losses/#sparsecategoricalcrossentropy-class" target="_blank" class="underline decoration-dotted">sparse_categorical_crossentropy</a> = skip one-hot, use integer labels directly</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: MNIST multi-class -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Full Example: MNIST 10 classes</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">(X_train, y_train), (X_test, y_test) = \
+    keras.datasets.mnist.load_data()
+
+X_train = X_train.reshape(-1,784)/255.0
+X_test  = X_test.reshape(-1,784)/255.0
+y_train = keras.utils.to_categorical(y_train,10)
+y_test  = keras.utils.to_categorical(y_test,10)
+
+model = keras.Sequential([
+    layers.Dense(128, activation='relu',
+                 input_shape=(784,)),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+model.compile(optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=10,
+          batch_size=128, validation_split=0.2)
+loss, acc = model.evaluate(X_test, y_test)
+print(f"Test accuracy: {acc:.4f}")
+# Test accuracy: ~0.9750</pre>
+            <div class="space-y-4 text-base">
+              <p>- Same data as binary, but all 10 classes</p>
+              <p>- Output: 10 probabilities (sum to 1.0)</p>
+              <p>- <code class="font-mono text-yellow-300">argmax</code> = predicted digit</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">preds = model.predict(X_test[:5])
+print(preds.argmax(axis=1))
+# [7, 2, 1, 0, 4]
+print(y_test[:5].argmax(axis=1))
+# [7, 2, 1, 0, 4] -- match!</pre>
+              <div class="tech-card"><p class="text-sm">[Tip] ~97.5% accuracy with just 2 Dense layers. Adding convolution would reach 99%+</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Softmax deep dive -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Softmax_function" target="_blank" class="underline decoration-dotted">Softmax</a> in detail</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold mb-2">Raw logits (before softmax)</h4>
+                <p class="font-mono">[2.0, 1.0, 0.1, 3.5, 0.3]</p>
+              </div>
+              <div class="tech-card">
+                <h4 class="text-yellow-300 font-bold mb-2">After softmax</h4>
+                <p class="font-mono">[0.17, 0.06, 0.03, 0.70, 0.04]</p>
+                <p class="text-sm mt-2">Sum = 1.0</p>
+              </div>
+              <div class="tech-card border-yellow-400">
+                <h4 class="text-yellow-300 font-bold mb-2">Predicted class</h4>
+                <p class="font-mono">argmax = 3 (highest)</p>
+              </div>
+            </div>
+            <div class="space-y-4 text-base">
+              <p>- Softmax = "winner take all": highest logit gets most probability</p>
+              <p>- <strong>Temperature</strong> controls sharpness:</p>
+              <p class="font-mono text-sm">\( \text{softmax}(z_i / T) \)</p>
+              <p>- T=1: normal. T=0.1: very sharp. T=10: very smooth</p>
+              <p>- In Keras: <code class="font-mono">activation='softmax'</code> = T=1</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Output of softmax + cross-entropy = stable numerically. Never compute log(softmax) manually.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Regression ==================== -->
+
+      <!-- Slide 10: Regression overview -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: Regression -- predict continuous values</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Classification</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Output: class label (discrete)</li>
+                <li>- Output layer: softmax / sigmoid</li>
+                <li>- Loss: cross-entropy</li>
+                <li>- Example: is this email spam?</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Regression</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Output: number (continuous)</li>
+                <li>- Output layer: no activation (linear)</li>
+                <li>- Loss: <a href="https://keras.io/api/losses/regression_losses/#meansquarederror-class" target="_blank" class="underline decoration-dotted">MSE</a> or <a href="https://keras.io/api/losses/regression_losses/#meanabsoluteerror-class" target="_blank" class="underline decoration-dotted">MAE</a></li>
+                <li>- Example: predict house price</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Key difference: <strong class="text-yellow-300">output layer has no activation</strong> = output any real number</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Regression output layer -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Regression output layer</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6"># Single output (most common)
+model = keras.Sequential([
+    layers.Dense(64, activation='relu',
+                 input_shape=(8,)),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1)  # NO activation!
+])
+
+model.compile(
+    optimizer='adam',
+    loss='mse',        # Mean Squared Error
+    metrics=['mae']    # Mean Absolute Error
+)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">Dense(1)</code> = no activation = linear output</p>
+              <p>- Can output any real number: -50.3, 0, 1234567</p>
+              <p>- <a href="https://keras.io/api/losses/regression_losses/#meansquarederror-class" target="_blank" class="underline decoration-dotted">MSE</a>: \( L = \frac{1}{N}\sum(y - \hat{y})^2 \)</p>
+              <p>- <a href="https://keras.io/api/losses/regression_losses/#meanabsoluteerror-class" target="_blank" class="underline decoration-dotted">MAE</a>: \( L = \frac{1}{N}\sum|y - \hat{y}| \)</p>
+              <p>- <strong>Never use sigmoid/softmax for regression</strong> -- it would cap output to (0, 1)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: California Housing -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Example: <a href="https://scikit-learn.org/stable/datasets/real_world.html#california-housing-dataset" target="_blank" class="underline decoration-dotted">California Housing</a> price prediction</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import numpy as np
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+data = fetch_california_housing()
+X_train, X_test, y_train, y_test = \
+    train_test_split(data.data, data.target,
+                     test_size=0.2)
+
+# IMPORTANT: scale features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test  = scaler.transform(X_test)
+
+model = keras.Sequential([
+    layers.Dense(64, activation='relu',
+                 input_shape=(8,)),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1)
+])
+model.compile(optimizer='adam',
+              loss='mse', metrics=['mae'])
+model.fit(X_train, y_train, epochs=50,
+          batch_size=32, validation_split=0.2)</pre>
+            <div class="space-y-4 text-base">
+              <p>- 8 features: income, age, rooms, etc.</p>
+              <p>- Target: house value (in $100k units)</p>
+              <p>- <strong>Must scale features</strong> for neural networks (StandardScaler)</p>
+              <p>- Output: 1 number = predicted price</p>
+              <pre class="font-mono text-sm bg-black/40 rounded-lg p-4">loss, mae = model.evaluate(X_test, y_test)
+print(f"MAE: {mae:.3f}")
+# MAE: ~0.32 (average error: $32k)</pre>
+              <div class="tech-card"><p class="text-sm">[Tip] MAE is easier to interpret: "off by $32k on average"</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Common patterns -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Pattern Summary</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Binary Classification</h4>
+              <p class="font-mono text-sm mb-2">Output: Dense(1, sigmoid)</p>
+              <p class="font-mono text-sm mb-2">Loss: binary_crossentropy</p>
+              <p class="text-sm">email spam, disease, fraud</p>
+            </div>
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Multi-class</h4>
+              <p class="font-mono text-sm mb-2">Output: Dense(N, softmax)</p>
+              <p class="font-mono text-sm mb-2">Loss: categorical_crossentropy</p>
+              <p class="text-sm">digit recognition, fruit type</p>
+            </div>
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-emerald-300">Regression</h4>
+              <p class="font-mono text-sm mb-2">Output: Dense(1)</p>
+              <p class="font-mono text-sm mb-2">Loss: mse or mae</p>
+              <p class="text-sm">house price, temperature</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Only change: <strong class="text-yellow-300">output layer</strong> and <strong class="text-yellow-300">loss function</strong></p>
+            <p class="text-sm text-white/70 mt-2">Hidden layers stay the same (Dense + ReLU)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Summary + Homework ==================== -->
+
+      <!-- Slide 14: Loss functions cheat sheet -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Loss Function Cheat Sheet</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-yellow-300 font-bold mb-3">Classification</h4>
+              <div class="space-y-3 text-sm">
+                <div><span class="font-mono text-blue-300">binary_crossentropy</span> -- binary, output sigmoid</div>
+                <div><span class="font-mono text-blue-300">categorical_crossentropy</span> -- multi-class, output softmax</div>
+                <div><span class="font-mono text-blue-300">sparse_categorical_crossentropy</span> -- multi-class, labels as integers</div>
+              </div>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-yellow-300 font-bold mb-3">Regression</h4>
+              <div class="space-y-3 text-sm">
+                <div><span class="font-mono text-blue-300">mse</span> -- <a href="https://en.wikipedia.org/wiki/Mean_squared_error" target="_blank" class="underline decoration-dotted">Mean Squared Error</a>, penalizes large errors more</div>
+                <div><span class="font-mono text-blue-300">mae</span> -- <a href="https://en.wikipedia.org/wiki/Mean_absolute_error" target="_blank" class="underline decoration-dotted">Mean Absolute Error</a>, more robust to outliers</div>
+                <div><span class="font-mono text-blue-300">huber</span> -- combines MSE + MAE, robust + smooth</div>
+              </div>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Wrong loss = model learns the wrong thing. Always double-check!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Tips and pitfalls -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Common Pitfalls</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>Do</h3>
+              <ul>
+                <li>- <strong>Normalize inputs</strong>: scale to 0-1 or standardize</li>
+                <li>- <strong>Start simple</strong>: 1-2 hidden layers, 32-128 units</li>
+                <li>- <strong>Monitor val_loss</strong>: stop if it goes up</li>
+                <li>- <strong>Check shape</strong>: <code class="font-mono">model.summary()</code></li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Don't</h3>
+              <ul>
+                <li>- <strong>Don't use softmax for regression</strong></li>
+                <li>- <strong>Don't use sigmoid for multi-class</strong></li>
+                <li>- <strong>Don't train without validation split</strong></li>
+                <li>- <strong>Don't forget to scale test data</strong> (use train scaler)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>What we covered</h3>
+              <ul>
+                <li>- Binary classification: <a href="https://en.wikipedia.org/wiki/Sigmoid_function" target="_blank" class="underline decoration-dotted">sigmoid</a> + <a href="https://keras.io/api/losses/probabilistic_losses/#binarycrossentropy-class" target="_blank" class="underline decoration-dotted">binary_crossentropy</a></li>
+                <li>- Multi-class: <a href="https://en.wikipedia.org/wiki/Softmax_function" target="_blank" class="underline decoration-dotted">softmax</a> + <a href="https://keras.io/api/losses/probabilistic_losses/#categoricalcrossentropy-class" target="_blank" class="underline decoration-dotted">categorical_crossentropy</a></li>
+                <li>- Regression: no activation + <a href="https://keras.io/api/losses/regression_losses/#meansquarederror-class" target="_blank" class="underline decoration-dotted">MSE</a>/<a href="https://keras.io/api/losses/regression_losses/#meanabsoluteerror-class" target="_blank" class="underline decoration-dotted">MAE</a></li>
+                <li>- <a href="https://en.wikipedia.org/wiki/One-hot" target="_blank" class="underline decoration-dotted">One-hot</a> encoding vs <a href="https://keras.io/api/losses/probabilistic_losses/#sparsecategoricalcrossentropy-class" target="_blank" class="underline decoration-dotted">sparse</a> loss</li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Homework (due next week)</h3>
+              <ul>
+                <li>- Build a classifier for <a href="https://keras.io/api/datasets/fashion_mnist/" target="_blank" class="underline decoration-dotted">Fashion MNIST</a> (10 classes of clothing)</li>
+                <li>- Architecture: 784 -> 256(relu) -> 128(relu) -> 10(softmax)</li>
+                <li>- Try: different hidden layer sizes (32 vs 256)</li>
+                <li>- Plot training curves, compare train vs val accuracy</li>
+                <li>- Use <code class="font-mono">uv init --no-package wk04-hw</code> for your project</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg text-emerald-200">Next week: Evaluation, Overfitting, and Underfitting</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

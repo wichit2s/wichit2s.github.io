@@ -2,17 +2,30 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Workshop in Heallth Informatics">
-    <meta name="keywords" content="Health Informatics, Clinical Informatics, Python">
+    <meta name="description" content="Deep Learning Week 1: Introduction to Deep Learning">
+    <meta name="keywords" content="Deep Learning, Neural Networks, AI, Machine Learning">
     <meta name="author" content="Wichit Sombat, PhD.,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Learning</title>
+    <title>Deep Learning - สัปดาห์ที่ 1: Introduction to Deep Learning</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
   </head>
   <body class="bg-gray-50" x-data="slideshow()">
-    
+
     <div class="home flex items-center gap-4">
       <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
         <span class="hover:text-blue-700">
@@ -36,7 +49,7 @@
       </button>
 
       <div class="mx-auto flex items-center gap-4">
-        <a href="./wk08.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+        <a href="./wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
           <span>
             <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
           </span>
@@ -53,6 +66,429 @@
 
     <div x-ref="slidesContainer">
 
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight mt-8">
+            Introduction to Deep Learning
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            neural networks - activation - learning - tools
+          </div>
+          <div class="tech-card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">ผลลัพธ์การเรียนรู้</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-base">
+              <div>1. อธิบายความแตกต่างระหว่าง <a href="https://en.wikipedia.org/wiki/Machine_learning" target="_blank" class="underline decoration-dotted">Machine Learning</a> กับ <a href="https://en.wikipedia.org/wiki/Deep_learning" target="_blank" class="underline decoration-dotted">Deep Learning</a> ได้</div>
+              <div>2. อธิบายโครงสร้างของ <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank" class="underline decoration-dotted">neural network</a> ง่ายๆ ได้</div>
+              <div>3. อธิบายว่าโมเดล "เรียนรู้" ได้อย่างไร (loss, gradient descent)</div>
+              <div>4. รู้จักเครื่องมือที่จะใช้ตลอดคอร์ส (Keras, PyTorch)</div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">สัปดาห์ที่ 1 -- 1145208 การเรียนรู้เชิงลึก</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">เส้นทางของวันนี้</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="agenda-item">
+              <div class="agenda-time">Part 1 - ภาพรวม</div>
+              <div class="agenda-title">Deep Learning คืออะไร?</div>
+              <div class="agenda-description">ML vs DL, ทำไมถึง Hot, neural network คืออะไร</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 2 - พื้นฐาน</div>
+              <div class="agenda-title">โครงสร้างของ Neural Network</div>
+              <div class="agenda-description">perceptron, activation function, layers</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 3 - ลงมือทำ</div>
+              <div class="agenda-title">เครื่องมือที่ใช้</div>
+              <div class="agenda-description">Keras / TensorFlow, PyTorch, ทำไมต้องสองตัว</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 4 - ทิศทาง</div>
+              <div class="agenda-title">ภาพรวมของคอร์สนี้</div>
+              <div class="agenda-description">สิ่งที่จะเรียน 15 สัปดาห์ + การบ้าน</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 1: What is Deep Learning? ==================== -->
+
+      <!-- Slide 2: Machine Learning vs Deep Learning -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 1: Deep Learning คืออะไร?</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300"><a href="https://en.wikipedia.org/wiki/Machine_learning" target="_blank" class="underline decoration-dotted">Machine Learning</a></h4>
+              <ul class="space-y-2 text-base">
+                <li>- ให้เครื่องเรียนรู้จากข้อมูล <strong>แทนที่</strong>จะเขียน rule เอง</li>
+                <li>- ต้อง <strong>สร้าง feature</strong> เอง (feature engineering)</li>
+                <li>- ข้อมูลน้อย + model เล็ก = ทำงานได้ดี</li>
+                <li>- ตัวอย่าง: linear regression, decision tree, SVM</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300"><a href="https://en.wikipedia.org/wiki/Deep_learning" target="_blank" class="underline decoration-dotted">Deep Learning</a></h4>
+              <ul class="space-y-2 text-base">
+                <li>- เป็น <strong>subset</strong> ของ ML ที่ใช้ <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank" class="underline decoration-dotted">neural network</a> หลายชั้น</li>
+                <li>- <strong>เรียนรู้ feature เอง</strong> จาก raw data (ไม่ต้องสร้างเอง)</li>
+                <li>- ต้องการ <strong>ข้อมูลมาก + compute แรง</strong></li>
+                <li>- ตัวอย่าง: CNN, RNN, Transformer, GPT</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Deep Learning = Machine Learning + <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank" class="underline decoration-dotted">Neural Network</a> หลายชั้น ("deep")</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Why Deep Learning Now? -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">ทำไม Deep Learning ถึง Hot ตอนนี้?</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="tech-card text-center">
+              <div class="text-5xl mb-4">[Data]</div>
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">ข้อมูลมหาศาล</h4>
+              <p class="text-base">อินเทอร์เน็ต, social media, IoT -- มีข้อมูลให้ฝึกมากกว่าเดิม หลายร้อยเท่า</p>
+            </div>
+            <div class="tech-card text-center">
+              <div class="text-5xl mb-4">[GPU]</div>
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">compute แรงขึ้น</h4>
+              <p class="text-base"><a href="https://en.wikipedia.org/wiki/Graphics_processing_unit" target="_blank" class="underline decoration-dotted">GPU</a> คำนวณ matrix ได้พร้อมกันหลายพันตัว -- เหมาะกับ neural network มาก</p>
+            </div>
+            <div class="tech-card text-center">
+              <div class="text-5xl mb-4">[Algo]</div>
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">algorithm ดีขึ้น</h4>
+              <p class="text-base"><a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank" class="underline decoration-dotted">Backpropagation</a>, <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)" target="_blank" class="underline decoration-dotted">ReLU</a>, <a href="https://en.wikipedia.org/wiki/Dropout_(neural_networks)" target="_blank" class="underline decoration-dotted">Dropout</a>, BatchNorm -- แก้ปัญหา vanishing gradient ได้</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">3 ปัจจัยนี้มารวมกัน = <strong class="text-yellow-300">Deep Learning ยุคใหม่ เริ่มประมาณ 2012</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: What is a Neural Network? -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank" class="underline decoration-dotted">Neural Network</a> คืออะไร?</h2>
+          <div class="tech-card text-center mb-8">
+            <p class="text-2xl font-mono font-bold text-yellow-300">y = f(w * x + b)</p>
+            <p class="text-lg mt-3">นิวรอนหนึ่งตัว = คำนวณ weighted sum แล้วผ่าน activation function</p>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 text-center">
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Input (x)</h4>
+              <p class="text-sm">ข้อมูลที่ป้อนเข้าไป เช่น รูปภาพ 3x3 = 9 pixels = vector ขนาด 9</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Weight (w) + Bias (b)</h4>
+              <p class="text-sm">ตัวเลขที่โมเดลจะ<strong>เรียนรู้</strong>-- ยิ่ง w มาก feature นั้นยิ่งสำคัญ</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">Activation</h4>
+              <p class="text-sm">แปลงผลลัพธ์ให้อยู่ในช่วงที่ต้องการ เช่น <a href="https://en.wikipedia.org/wiki/Sigmoid_function" target="_blank" class="underline decoration-dotted">sigmoid</a> = ช่วง (0,1)</p>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-emerald-200"> شبี้เดียว = "perceptron" / หลายตัวต่อกัน = "neural network"</p>
+        </div>
+      </div>
+
+      <!-- Slide 5: Why "Deep"? -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">ทำไมเรียก "Deep" Learning?</h2>
+          <div class="tech-card text-center mb-8">
+            <p class="text-lg mb-4"> neurone หลายตัว = ชั้นเดียว (shallow) /  neurone หลายชั้น = deep</p>
+            <pre class="font-mono text-sm bg-black/40 rounded-lg p-4 inline-block text-left leading-6">Input     Hidden 1    Hidden 2    Output
+Layer       Layer       Layer       Layer
+ [x1] --> [h1] -----> [h3] ----> [y]
+ [x2] --> [h2] -----> [h4]
+ [x3] --></pre>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-yellow-300 font-bold mb-2">Shallow Network (1 hidden layer)</h4>
+              <p class="text-sm">- แก้ปัญหาที่ <a href="https://en.wikipedia.org/wiki/Linear_separability" target="_blank" class="underline decoration-dotted">linearly separable</a> ได้เท่านั้น</p>
+              <p class="text-sm">- ปัญหา XOR, รูปซับซ้อน = ทำไม่ได้</p>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-yellow-300 font-bold mb-2">Deep Network (หลาย hidden layers)</h4>
+              <p class="text-sm">- ชั้นลึก =  learns feature ระดับสูงขึ้น</p>
+              <p class="text-sm">- รูป: edge -> texture -> part -> object</p>
+              <p class="text-sm">- ข้อความ: word -> phrase -> sentence -> meaning</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">ยิ่งลึก ยิ่ง learn ได้ซับซ้อน -- แต่ก็ยิ่งต้องการ <strong class="text-yellow-300">ข้อมูล + compute</strong> มากขึ้น</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: How Learning Works ==================== -->
+
+      <!-- Slide 6: How does a network learn? -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 2: โมเดล "เรียนรู้" ได้อย่างไร?</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">1. Forward Pass</h4>
+              <p class="text-sm">ใส่ข้อมูล -> โมเดลคำนวณ -> ได้คำตอบ (y^)</p>
+              <p class="text-sm mt-2">ตอนแรก w สุ่ม = คำตอบผิดหมด</p>
+            </div>
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">2. Compute <a href="https://en.wikipedia.org/wiki/Loss_function" target="_blank" class="underline decoration-dotted">Loss</a></h4>
+              <p class="text-sm">วัดว่าคำตอบผิดแค่ไหน</p>
+              <p class="text-sm mt-2">Loss มาก = ผิดมาก, Loss น้อย = ใกล้ถูก</p>
+            </div>
+            <div class="tech-card text-center">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">3. Update Weights</h4>
+              <p class="text-sm">ใช้ <a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank" class="underline decoration-dotted">gradient descent</a> ปรับ w ให้ loss ลดลง</p>
+              <p class="text-sm mt-2">ทำซ้ำ 100-1000 ครั้ง -> loss ค่อยๆ ลด</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-xl font-mono font-bold text-yellow-300">Repeat: Forward -> Loss -> Backward -> Update</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Loss Function -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Loss_function" target="_blank" class="underline decoration-dotted">Loss Function</a>: วัดว่าผิดแค่ไหน</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Regression (ทำนายตัวเลข)</h4>
+              <p class="font-mono text-lg text-center my-3">\(L = \frac{1}{N} \sum (\hat{y}_i - y_i)^2\)</p>
+              <p class="text-sm text-center"><a href="https://en.wikipedia.org/wiki/Mean_squared_error" target="_blank" class="underline decoration-dotted">MSE</a> = ระยะห่างกำลังสองระหว่างทำนาย vs จริง</p>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Classification (ทำนายคลาส)</h4>
+              <p class="font-mono text-lg text-center my-3">\(L = -[y \log \hat{y} + (1-y) \log(1-\hat{y})]\)</p>
+              <p class="text-sm text-center"><a href="https://en.wikipedia.org/wiki/Cross_entropy#Binary_classification" target="_blank" class="underline decoration-dotted">BCE</a> = ทำนายผิดฝั่ง = ลงโทษหนักมาก</p>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg">Goal: ปรับ w, b ให้ L ต่ำที่สุด</p>
+        </div>
+      </div>
+
+      <!-- Slide 8: Gradient Descent -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank" class="underline decoration-dotted">Gradient Descent</a>: ลงเนินหา loss ต่ำสุด</h2>
+          <div class="tech-card text-center mb-8">
+            <p class="text-3xl font-mono font-bold text-yellow-300">\(w \leftarrow w - \eta \cdot \frac{\partial L}{\partial w}\)</p>
+            <p class="mt-3">ขยับ weight ทีละน้อย ตามทิศทางที่ loss ลดลง</p>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 text-center text-sm">
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">\(\frac{\partial L}{\partial w}\)</h4>
+              <p><a href="https://en.wikipedia.org/wiki/Partial_derivative" target="_blank" class="underline decoration-dotted">Partial derivative</a> = ทิศทาง + ความชัน ที่บอกว่า loss จะแยก/ดีขึ้นถ้าขยับ w</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2">\(\eta\) (learning rate)</h4>
+              <p>ก้าวใหญ่ไป = กระโดดข้ามหลุม / ก้าวเล็กไป = ช้ามาก</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-emerald-300 font-bold mb-2"><a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank" class="underline decoration-dotted">Backpropagation</a></h4>
+              <p>ใช้ <a href="https://en.wikipedia.org/wiki/Chain_rule" target="_blank" class="underline decoration-dotted">chain rule</a> คำนวณ <code class="font-mono">\(\frac{\partial L}{\partial w}\)</code> ทุกตัวอัตโนมัติ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Types of Learning -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Types of Deep Learning Tasks</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Supervised Learning</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- มี label (คำตอบ) กำกับทุกจุด</li>
+                <li>- Classification: แมว vs หมา</li>
+                <li>- Regression: ทำนายราคาบ้าน</li>
+                <li>- ใช้ loss: <a href="https://en.wikipedia.org/wiki/Cross_entropy" target="_blank" class="underline decoration-dotted">Cross-Entropy</a>, MSE</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Unsupervised Learning</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- ไม่มี label ให้</li>
+                <li>- Clustering: จัดกลุ่มข้อมูล</li>
+                <li>- Dimensionality Reduction: ลดมิติ</li>
+                <li>- Generative: สร้างข้อมูลใหม่ (GAN, VAE)</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-emerald-300">Self-Supervised Learning</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- สร้าง label จากข้อมูลเอง (pretext task)</li>
+                <li>- BERT, GPT: predict next word</li>
+                <li>- ไม่ต้องมีคน label</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-red-300">Reinforcement Learning</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Agent ลองทำ -> ได้ reward/penalty</li>
+                <li>- AlphaGo, Robotics, Game AI</li>
+                <li>- เรียนจากผลลัพธ์ของการกระทำ</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-6 text-center text-emerald-200">คอร์สนี้เน้น <strong class="text-yellow-300">Supervised Learning</strong> เป็นหลัก</p>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Tools ==================== -->
+
+      <!-- Slide 10: Deep Learning Frameworks -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: เครื่องมือที่จะใช้</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Keras / TensorFlow</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- <a href="https://www.tensorflow.org/" target="_blank" class="underline decoration-dotted">TensorFlow</a> = library จาก Google</li>
+                <li>- <a href="https://keras.io/" target="_blank" class="underline decoration-dotted">Keras</a> = API ที่ใช้ง่าย</li>
+                <li>- เหมาะสำหรับผู้เริ่มต้น , API สำเร็จรูป</li>
+                <li>- <code class="font-mono">model.fit()</code> = เทรนด้วย 1 บรรทัด</li>
+                <li>- ใช้ช่วงครึ่งแรกของคอร์ส (wk 1-8)</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">PyTorch</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- <a href="https://pytorch.org/" target="_blank" class="underline decoration-dotted">PyTorch</a> = library จาก Meta (Facebook)</li>
+                <li>- Pythonic, debug ง่าย</li>
+                <li>- เป็นที่นิยมใน research</li>
+                <li>- เขียน training loop เอง = เข้าใจทุกขั้นตอน</li>
+                <li>- ใช้ช่วงครึ่งหลังของคอร์ส (wk 9-15)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">เริ่มจาก <strong class="text-yellow-300">Keras</strong> (ง่าย) -> ต่อยอด <strong class="text-blue-300">PyTorch</strong> (ยืดหยุ่น)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Keras Quick Look -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Keras: ตัวอย่างโค้ด ( lookahead )</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">import keras
+from keras import layers
+
+# 1. สร้างโมเดล
+model = keras.Sequential([
+    layers.Dense(64, activation='relu',
+                 input_shape=(10,)),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+
+# 2. คอมไพล์
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+# 3. เทรน
+model.fit(X_train, y_train,
+          epochs=10,
+          batch_size=32,
+          validation_split=0.2)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Sequential</strong> =  stacking ชั้นๆ ต่อกัน</p>
+              <p>- <strong>Dense</strong> = ชั้น fully connected (neuron ทุกตัวเชื่อมกับทุกตัว)</p>
+              <p>- <strong>activation='relu'</strong> = ฟังก์ชันที่จะเรียนรู้ในสัปดาห์หน้า</p>
+              <p>- <strong>model.fit()</strong> = ทุกอย่างจัดการให้ (forward, loss, backward, update)</p>
+              <div class="tech-card"><p class="text-sm">[Tip] แค่ 3 ขั้นตอน = สร้าง -> คอมไพล์ -> เทรน -- Keras ทำให้ ML เป็นเรื่องง่าย</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Course Overview ==================== -->
+
+      <!-- Slide 12: What We Will Learn -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Part 4: เราจะเรียนอะไรบ้าง 15 สัปดาห์?</h2>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="tech-card">
+              <h4 class="font-bold text-yellow-300 mb-2">Weeks 1-8 (Keras/TensorFlow)</h4>
+              <ul class="text-sm space-y-1">
+                <li>- <strong>Wk 1:</strong> Introduction to Deep Learning (สัปดาห์นี้)</li>
+                <li>- <strong>Wk 2:</strong> Mathematical building blocks</li>
+                <li>- <strong>Wk 3:</strong> Introduction to Keras/TF</li>
+                <li>- <strong>Wk 4:</strong> Neural networks: Classification/Regression</li>
+                <li>- <strong>Wk 5:</strong> Fundamentals of ML + Keras</li>
+                <li>- <strong>Wk 6:</strong> Deep learning for computer vision</li>
+                <li>- <strong>Wk 7:</strong> Quiz</li>
+                <li>- <strong>Wk 8:</strong> Midterm exam</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="font-bold text-blue-300 mb-2">Weeks 9-15 (PyTorch)</h4>
+              <ul class="text-sm space-y-1">
+                <li>- <strong>Wk 9:</strong> Intro to PyTorch + Perceptron</li>
+                <li>- <strong>Wk 10:</strong> Dataset, DataLoader, classification</li>
+                <li>- <strong>Wk 11:</strong> Timeseries with PyTorch</li>
+                <li>- <strong>Wk 12:</strong> Text: embeddings + sequence models</li>
+                <li>- <strong>Wk 13:</strong> GenAI for text: RNN -> Transformer</li>
+                <li>- <strong>Wk 14:</strong> GenAI for image: GAN + Diffusion</li>
+                <li>- <strong>Wk 15:</strong> Project presentation + Final exam</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Summary & Homework -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">สรุป + การบ้าน</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>สิ่งที่ทำวันนี้</h3>
+              <ul>
+                <li>- Deep Learning = ML + Neural Network หลายชั้น</li>
+                <li>- Neural network คือ weighted sum + activation</li>
+                <li>- เรียนรู้ด้วย loss + <a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank" class="underline decoration-dotted">gradient descent</a> + <a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank" class="underline decoration-dotted">backpropagation</a></li>
+                <li>- เครื่องมือ: Keras (ง่าย) -> PyTorch (ยืดหยุ่น)</li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>การบ้าน (ส่งสัปดาห์หน้า)</h3>
+              <ul>
+                <li>- ติดตั้ง Python + Keras บนเครื่องตัวเอง</li>
+                <li>- รัน <code class="font-mono">uv init --no-package wk01 tensorflow</code> </li>
+                <li>- รัน <code class="font-mono">cd wk01/ </code> </li>
+                <li>- รัน <code class="font-mono">uv add tensorflow </code> + ทดสอบ import</li>
+                <li>- อ่าน Chapter 1: Chollet, F. Deep Learning with Python</li>
+                <li>- ดูวิดีโอ: <a href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank" class="underline decoration-dotted">3Blue1Brown: But what is a Neural Network?</a></li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg text-emerald-200">สัปดาห์หน้า: Mathematical building blocks of neural networks</p>
+        </div>
+      </div>
 
     </div>
 
@@ -65,10 +501,7 @@
         touchEndX: 0,
 
         init() {
-          // นับจำนวนสไลด์ทั้งหมด
           this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
-          
-          // เพิ่ม event listeners
           this.setupKeyboardNavigation();
           this.setupTouchNavigation();
         },
@@ -101,7 +534,7 @@
           document.addEventListener('touchend', (e) => {
             this.touchEndX = e.changedTouches[0].screenX;
             const swipeDistance = 50;
-            
+
             if (this.touchStartX - this.touchEndX > swipeDistance) {
               this.nextSlide();
             } else if (this.touchEndX - this.touchStartX > swipeDistance) {
@@ -114,4 +547,3 @@
     </script>
   </body>
 </html>
-

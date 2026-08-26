@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 7: Practice Quiz - Weeks 1-6">
+    <meta name="keywords" content="Deep Learning, Quiz, Practice, Multiple Choice">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - Week 7: Practice Quiz</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="quiz()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Learning Plan </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentQuestion+1"></span> / <span x-text="totalQuestions"></span>
+      <span class="text-xs ml-2 text-emerald-300" x-show="score !== null" x-text="'Score: ' + score + '/' + totalQuestions"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="prevQuestion()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk07.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextQuestion()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-8 py-20">
+
+      <!-- Title Slide -->
+      <div x-show="currentQuestion === 0 && !started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">Practice Quiz</h1>
+          <div class="text-xl text-white/90 mb-8 font-light">Weeks 1-6: Deep Learning Fundamentals</div>
+          <div class="tech-card mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Instructions</h2>
+            <ul class="space-y-2 text-base">
+              <li>- <strong>24 questions</strong> covering all topics from weeks 1-6</li>
+              <li>- Click on an answer to select it, then click <strong>Check Answer</strong></li>
+              <li>- Green = correct, Red = incorrect with explanation</li>
+              <li>- Your score updates as you go</li>
+              <li>- Use arrow keys or buttons to navigate</li>
+            </ul>
+          </div>
+          <button @click="started = true; currentQuestion = 1"
+                  class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+            Start Quiz
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions -->
+      <template x-for="(q, idx) in questions" :key="idx">
+        <div x-show="currentQuestion === idx + 1 && started" class="gradient-bg flex-col justify-center text-white rounded-2xl p-8" style="min-height:80vh">
+          <div class="max-w-4xl mx-auto">
+            <!-- Question header -->
+            <div class="mb-2 text-emerald-300 text-sm font-mono" x-text="'Question ' + (idx+1) + ' of ' + totalQuestions + ' -- ' + q.topic"></div>
+
+            <!-- Question text -->
+            <div class="text-2xl md:text-3xl font-semibold mb-8 leading-relaxed" x-html="q.question"></div>
+
+            <!-- Answer options -->
+            <div class="space-y-3 mb-8">
+              <template x-for="(opt, oi) in q.options" :key="oi">
+                <button @click="selectAnswer(idx, oi)"
+                        class="w-full text-left p-4 rounded-xl border-2 transition-all text-lg"
+                        :class="getOptionClass(idx, oi)">
+                  <span class="font-mono text-emerald-300 mr-3" x-text="String.fromCharCode(65 + oi) + '.'"></span>
+                  <span x-html="opt"></span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi !== q.answer" class="float-right text-red-400">&#10007;</span>
+                  <span x-show="checked[idx] && answers[idx] !== oi && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                </button>
+              </template>
+            </div>
+
+            <!-- Check / Explanation -->
+            <div x-show="answers[idx] !== null && !checked[idx]" class="mb-6">
+              <button @click="checkAnswer(idx)"
+                      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition">
+                Check Answer
+              </button>
+            </div>
+
+            <div x-show="checked[idx]" class="tech-card border-yellow-400 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xl" x-text="answers[idx] === q.answer ? '&#10003; Correct!' : '&#10007; Incorrect'"></span>
+              </div>
+              <p class="text-sm" x-html="q.explanation"></p>
+            </div>
+
+            <!-- Progress -->
+            <div class="mt-8 text-sm text-white/50">
+              <span x-text="'Answered: ' + answeredCount() + '/' + totalQuestions"></span>
+              <span class="ml-4 text-emerald-300" x-text="'Score: ' + score + '/' + totalQuestions" x-show="score !== null"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Results -->
+      <div x-show="currentQuestion === totalQuestions + 1 && started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl font-bold mb-6">Quiz Complete!</h1>
+          <div class="tech-card mb-8">
+            <div class="text-6xl font-bold mb-4" :class="score >= 20 ? 'text-green-400' : score >= 15 ? 'text-yellow-400' : 'text-red-400'"
+                 x-text="score + ' / ' + totalQuestions"></div>
+            <div class="text-xl mb-4" x-text="score >= 20 ? 'Excellent! You have a strong grasp of the fundamentals.' : score >= 15 ? 'Good job! Review the topics you missed.' : 'Keep studying! Review weeks 1-6 slides.'"></div>
+            <div class="grid md:grid-cols-2 gap-4 text-sm text-left">
+              <div class="tech-card"><strong>Week 1:</strong> Intro to DL</div>
+              <div class="tech-card"><strong>Week 2:</strong> Tensors & Ops</div>
+              <div class="tech-card"><strong>Week 3:</strong> Keras & TF Setup</div>
+              <div class="tech-card"><strong>Week 4:</strong> Classification & Regression</div>
+              <div class="tech-card"><strong>Week 5:</strong> Overfitting & Regularization</div>
+              <div class="tech-card"><strong>Week 6:</strong> Preprocessing</div>
+            </div>
+          </div>
+          <div class="space-x-4">
+            <button @click="resetQuiz()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+              Retake Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function quiz() {
+      return {
+        currentQuestion: 0,
+        started: false,
+        score: null,
+        answers: {},
+        checked: {},
+        totalQuestions: 24,
+        questions: [
+          // === Week 1: Intro to DL ===
+          {
+            topic: "Week 1: Intro to Deep Learning",
+            question: "What is the main difference between traditional machine learning and deep learning?",
+            options: [
+              "Deep learning uses decision trees instead of neural networks",
+              "Deep learning automatically learns features from raw data",
+              "Deep learning does not require any training data",
+              "Deep learning always uses less data than traditional ML"
+            ],
+            answer: 1,
+            explanation: "Deep learning's key advantage is automatic feature extraction from raw data. Traditional ML requires manual feature engineering, while deep learning networks learn relevant features directly from the input."
+          },
+          {
+            topic: "Week 1: Intro to Deep Learning",
+            question: "What are the three factors that have driven the recent growth of deep learning?",
+            options: [
+              "Faster CPUs, more RAM, and better algorithms",
+              "More data, faster hardware (GPUs), and better algorithms",
+              "Cheaper computers, cloud computing, and open-source software",
+              "Government funding, industry investment, and academic research"
+            ],
+            answer: 1,
+            explanation: "The three key drivers are: (1) larger datasets providing more training examples, (2) faster hardware especially GPUs enabling parallel computation, and (3) improved algorithms like better activation functions and regularization."
+          },
+          {
+            topic: "Week 1: Intro to Deep Learning",
+            question: "In a neural network, what does a 'layer' do?",
+            options: [
+              "It stores the training data",
+              "It transforms the input using learned weights",
+              "It only outputs the final prediction",
+              "It removes unnecessary features"
+            ],
+            answer: 1,
+            explanation: "Each layer applies a transformation to its input using learned parameters (weights and biases). This is how the network progressively extracts higher-level features from raw data."
+          },
+          // === Week 2: Tensors & Operations ===
+          {
+            topic: "Week 2: Tensors & Operations",
+            question: "What is a tensor in deep learning?",
+            options: [
+              "A type of neural network architecture",
+              "A multi-dimensional array of numbers",
+              "A loss function used in training",
+              "A method for data augmentation"
+            ],
+            answer: 1,
+            explanation: "A tensor is a multi-dimensional array. A scalar is a 0D tensor, a vector is 1D, a matrix is 2D, and higher dimensions are just called tensors."
+          },
+          {
+            topic: "Week 2: Tensors & Operations",
+            question: "What is the dot product of [1, 2, 3] and [4, 5, 6]?",
+            options: [
+              "[4, 10, 18]",
+              "32",
+              "42",
+              "[5, 7, 9]"
+            ],
+            answer: 2,
+            explanation: "Dot product = (1*4) + (2*5) + (3*6) = 4 + 10 + 18 = 32. The dot product produces a single scalar value."
+          },
+          {
+            topic: "Week 2: Tensors & Operations",
+            question: "In PyTorch, what does <code>requires_grad=True</code> do?",
+            options: [
+              "Makes the tensor immutable",
+              "Converts the tensor to a NumPy array",
+              "Enables automatic differentiation for that tensor",
+              "Moves the tensor to GPU memory"
+            ],
+            answer: 2,
+            explanation: "Setting requires_grad=True tells PyTorch to track all operations on that tensor so it can compute gradients automatically via backpropagation."
+          },
+          {
+            topic: "Week 2: Tensors & Operations",
+            question: "What is broadcasting in tensor operations?",
+            options: [
+              "Sending data from CPU to GPU",
+              "Automatically expanding smaller tensors to match larger ones",
+              "Converting between data types",
+              "Splitting tensors into smaller chunks"
+            ],
+            answer: 1,
+            explanation: "Broadcasting automatically expands tensors with different shapes to make them compatible for element-wise operations. For example, adding a scalar to a vector broadcasts the scalar to match the vector's shape."
+          },
+          // === Week 3: Keras & TF ===
+          {
+            topic: "Week 3: Keras & TensorFlow",
+            question: "What is the correct way to create a project with uv?",
+            options: [
+              "uv create wk03",
+              "uv init --no-package wk03",
+              "uv new wk03",
+              "uv project init wk03"
+            ],
+            answer: 1,
+            explanation: "The correct command is uv init --no-package wk03. The --no-package flag creates the project structure without packaging it as a Python package, which is appropriate for scripts and notebooks."
+          },
+          {
+            topic: "Week 3: Keras & TensorFlow",
+            question: "In Keras, what does the Sequential model do?",
+            options: [
+              "Allows skip connections between layers",
+              "Stacks layers one after another in sequence",
+              "Trains multiple models in parallel",
+              "Creates a recurrent neural network"
+            ],
+            answer: 1,
+            explanation: "The Sequential model is a linear stack of layers where data flows from one layer to the next in order. It's the simplest way to build a neural network in Keras."
+          },
+          {
+            topic: "Week 3: Keras & TensorFlow",
+            question: "What is the purpose of the <code>activation</code> parameter in a Dense layer?",
+            options: [
+              "To initialize the layer's weights",
+              "To add non-linearity to the layer's output",
+              "To set the learning rate",
+              "To determine the batch size"
+            ],
+            answer: 1,
+            explanation: "Activation functions add non-linearity, allowing the network to learn complex patterns. Without them, stacking layers would just be a linear transformation, no matter how deep the network."
+          },
+          {
+            topic: "Week 3: Keras & TensorFlow",
+            question: "In <code>model.compile(optimizer='adam', loss='binary_crossentropy')</code>, what does the loss function do?",
+            options: [
+              "It controls how fast the model trains",
+              "It measures how wrong the model's predictions are",
+              "It determines the number of layers",
+              "It preprocesses the input data"
+            ],
+            answer: 1,
+            explanation: "The loss function quantifies the difference between predicted and actual values. The optimizer then uses this loss to update the model's weights via gradient descent."
+          },
+          // === Week 4: Classification & Regression ===
+          {
+            topic: "Week 4: Classification & Regression",
+            question: "For a binary classification problem, what output layer and activation should you use?",
+            options: [
+              "Dense(10, softmax)",
+              "Dense(1, sigmoid)",
+              "Dense(1, relu)",
+              "Dense(2, linear)"
+            ],
+            answer: 1,
+            explanation: "Binary classification needs 1 output neuron with sigmoid activation, which squashes the output to (0, 1) representing the probability of the positive class."
+          },
+          {
+            topic: "Week 4: Classification & Regression",
+            question: "What is the correct loss function for multi-class classification with one-hot encoded labels?",
+            options: [
+              "mse (Mean Squared Error)",
+              "binary_crossentropy",
+              "categorical_crossentropy",
+              "mae (Mean Absolute Error)"
+            ],
+            answer: 2,
+            explanation: "Categorical cross-entropy is the standard loss for multi-class classification. It measures the difference between the predicted probability distribution and the true one-hot encoded labels."
+          },
+          {
+            topic: "Week 4: Classification & Regression",
+            question: "What does <code>model.predict(X_new).argmax(axis=1)</code> return?",
+            options: [
+              "The confidence of each prediction",
+              "The index of the class with highest probability",
+              "The loss for each sample",
+              "The gradient of the output"
+            ],
+            answer: 1,
+            explanation: "argmax returns the index of the maximum value along axis 1. For multi-class predictions, this gives the predicted class label (the class with the highest probability)."
+          },
+          {
+            topic: "Week 4: Classification & Regression",
+            question: "For regression, what should the output layer look like?",
+            options: [
+              "Dense(1, softmax)",
+              "Dense(10, sigmoid)",
+              "Dense(1) with no activation",
+              "Dense(1, relu)"
+            ],
+            answer: 2,
+            explanation: "Regression needs a linear output (no activation) so the model can predict any real number. Using sigmoid or softmax would incorrectly constrain the output range."
+          },
+          {
+            topic: "Week 4: Classification & Regression",
+            question: "What does <code>model.fit(X, y, epochs=20, validation_split=0.2)</code> do?",
+            options: [
+              "Trains on all data for 20 epochs",
+              "Trains on 80% of data, validates on 20%",
+              "Trains 20 separate models",
+              "Uses 20% of the epochs for validation"
+            ],
+            answer: 1,
+            explanation: "validation_split=0.2 holds out the last 20% of training data for validation. The model trains on the remaining 80% and evaluates on the held-out 20% after each epoch."
+          },
+          // === Week 5: Overfitting & Regularization ===
+          {
+            topic: "Week 5: Overfitting & Regularization",
+            question: "What is overfitting?",
+            options: [
+              "The model is too simple and cannot learn the pattern",
+              "The model memorizes training data but fails on new data",
+              "The model takes too long to train",
+              "The model has too few parameters"
+            ],
+            answer: 1,
+            explanation: "Overfitting occurs when a model learns the training data too well, including noise and irrelevant patterns. It performs great on training data but poorly on unseen data."
+          },
+          {
+            topic: "Week 5: Overfitting & Regularization",
+            question: "What does <code>Dropout(0.3)</code> do during training?",
+            options: [
+              "Removes 30% of the training data",
+              "Randomly sets 30% of neurons to zero in each batch",
+              "Reduces the learning rate by 30%",
+              "Freezes 30% of the model's weights"
+            ],
+            answer: 1,
+            explanation: "Dropout randomly deactivates 30% of neurons during each training step. This prevents the network from relying too heavily on any single neuron, improving generalization."
+          },
+          {
+            topic: "Week 5: Overfitting & Regularization",
+            question: "What does <code>EarlyStopping(patience=5)</code> do?",
+            options: [
+              "Stops training after 5 epochs",
+              "Stops if validation loss hasn't improved for 5 epochs",
+              "Reduces learning rate every 5 epochs",
+              "Saves the model every 5 epochs"
+            ],
+            answer: 1,
+            explanation: "EarlyStopping monitors validation loss and stops training if no improvement is seen for 5 consecutive epochs. It also restores the best weights from the best epoch."
+          },
+          {
+            topic: "Week 5: Overfitting & Regularization",
+            question: "What is the difference between L1 and L2 regularization?",
+            options: [
+              "L1 adds a penalty proportional to weights, L2 adds penalty proportional to weights squared",
+              "L1 is faster than L2",
+              "L1 only works with CNNs, L2 works with all models",
+              "There is no difference, they are the same"
+            ],
+            answer: 0,
+            explanation: "L1 regularization adds |w| to the loss (can produce sparse weights), while L2 adds w^2 (pushes all weights toward zero). L2 is more commonly used in neural networks."
+          },
+          // === Week 6: Preprocessing ===
+          {
+            topic: "Week 6: Preprocessing",
+            question: "Why do you fit the scaler on training data only?",
+            options: [
+              "It's faster to fit on less data",
+              "To prevent data leakage from test set into training",
+              "Test data does not need to be scaled",
+              "The scaler only works with training data format"
+            ],
+            answer: 1,
+            explanation: "Fitting on test data would let information from the test set influence training, creating artificially high test scores. Always use transform() on test data, never fit_transform()."
+          },
+          {
+            topic: "Week 6: Preprocessing",
+            question: "What is the main difference between StandardScaler and MinMaxScaler?",
+            options: [
+              "StandardScaler is faster than MinMaxScaler",
+              "StandardScaler centers data to mean=0, std=1; MinMaxScaler scales to [0,1]",
+              "StandardScaler is for categorical data, MinMaxScaler is for numerical",
+              "There is no difference, they produce the same output"
+            ],
+            answer: 1,
+            explanation: "StandardScaler (z-score) transforms data to have mean 0 and standard deviation 1. MinMaxScaler scales data to a fixed range [0,1]. StandardScaler is generally preferred for neural networks."
+          },
+          {
+            topic: "Week 6: Preprocessing",
+            question: "What does <code>TextVectorization</code> do?",
+            options: [
+              "Translates text between languages",
+              "Converts text strings to integer sequences",
+              "Generates text from a model",
+              "Compresses text to save memory"
+            ],
+            answer: 1,
+            explanation: "TextVectorization converts raw text strings into sequences of integers by building a vocabulary and mapping each word to its index. This is necessary because neural networks can only process numbers."
+          },
+          {
+            topic: "Week 6: Preprocessing",
+            question: "What is one-hot encoding?",
+            options: [
+              "Encoding data using 8 bits",
+              "Converting each category to a binary vector with a single 1",
+              "Randomly flipping features between 0 and 1",
+              "Encoding numerical values as text strings"
+            ],
+            answer: 1,
+            explanation: "One-hot encoding creates a binary vector where only the position corresponding to that category is 1, all others are 0. For example, color=[red, blue] becomes [[1,0], [0,1]]."
+          }
+        ],
+
+        init() {
+          this.totalQuestions = this.questions.length;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        },
+
+        selectAnswer(qIdx, optIdx) {
+          if (this.checked[qIdx]) return;
+          this.answers[qIdx] = optIdx;
+        },
+
+        checkAnswer(qIdx) {
+          if (this.answers[qIdx] === null) return;
+          this.checked[qIdx] = true;
+          this.updateScore();
+        },
+
+        getOptionClass(qIdx, optIdx) {
+          if (!this.checked[qIdx]) {
+            return this.answers[qIdx] === optIdx
+              ? 'border-emerald-400 bg-emerald-400/10'
+              : 'border-white/20 hover:border-white/40';
+          }
+          if (optIdx === this.questions[qIdx].answer) {
+            return 'border-green-400 bg-green-400/10';
+          }
+          if (this.answers[qIdx] === optIdx) {
+            return 'border-red-400 bg-red-400/10';
+          }
+          return 'border-white/10 opacity-40';
+        },
+
+        updateScore() {
+          let s = 0;
+          this.questions.forEach((q, i) => {
+            if (this.checked[i] && this.answers[i] === q.answer) s++;
+          });
+          this.score = s;
+        },
+
+        answeredCount() {
+          return Object.values(this.checked).filter(v => v).length;
+        },
+
+        nextQuestion() {
+          if (this.currentQuestion < this.totalQuestions + 1) {
+            this.currentQuestion++;
+          }
+        },
+
+        prevQuestion() {
+          if (this.currentQuestion > 0) {
+            this.currentQuestion--;
+          }
+        },
+
+        resetQuiz() {
+          this.currentQuestion = 0;
+          this.started = false;
+          this.score = null;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        }
+      };
+    }
+    </script>
+  </body>
+</html>

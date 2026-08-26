@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 5: Evaluation, Overfitting, and Underfitting">
+    <meta name="keywords" content="Deep Learning, Overfitting, Regularization, Dropout, Early Stopping">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - Week 5: Evaluation, Overfitting, and Underfitting</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Learning Plan </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk05.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer">
+
+      <!-- ==================== Title & Roadmap ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight mt-8">
+            Evaluation, Overfitting,<br>and Underfitting
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            validation - generalization - regularization - early stopping
+          </div>
+          <div class="tech-card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Learning Outcomes</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-base">
+              <div>1. Explain train/validation/test split and why each matters</div>
+              <div>2. Diagnose overfitting and underfitting from training curves</div>
+              <div>3. Apply regularization: <a href="https://keras.io/api/layers/regularizers/" target="_blank" class="underline decoration-dotted">L1/L2</a>, <a href="https://keras.io/api/layers/regularizers/#dropout-class" target="_blank" class="underline decoration-dotted">Dropout</a>, <a href="https://keras.io/callbacks/early_stopping/" target="_blank" class="underline decoration-dotted">Early Stopping</a></div>
+              <div>4. Choose the right strategy to improve generalization</div>
+            </div>
+          </div>
+          <div class="text-lg text-white/80">Week 5 -- 1145208 Deep Learning</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-4xl font-semibold mb-10 text-center text-emerald-300">Today's Roadmap</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="agenda-item">
+              <div class="agenda-time">Part 1 - Evaluation</div>
+              <div class="agenda-title">How to measure performance</div>
+              <div class="agenda-description">train/validation/test, cross-validation, learning curves</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 2 - Overfitting</div>
+              <div class="agenda-title">When the model memorizes</div>
+              <div class="agenda-description">symptoms, causes, <a href="https://en.wikipedia.org/wiki/Overfitting" target="_blank" class="underline decoration-dotted">overfitting</a> vs <a href="https://en.wikipedia.org/wiki/Overfitting#Underfitting" target="_blank" class="underline decoration-dotted">underfitting</a></div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 3 - Regularization</div>
+              <div class="agenda-title">Fighting overfitting</div>
+              <div class="agenda-description"><a href="https://keras.io/api/layers/regularizers/" target="_blank" class="underline decoration-dotted">L1/L2</a>, <a href="https://keras.io/api/layers/regularizers/#dropout-class" target="_blank" class="underline decoration-dotted">Dropout</a>, <a href="https://keras.io/callbacks/early_stopping/" target="_blank" class="underline decoration-dotted">Early Stopping</a>, data augmentation</div>
+            </div>
+            <div class="agenda-item">
+              <div class="agenda-time">Part 4 - Wrap up</div>
+              <div class="agenda-title">Summary + Homework</div>
+              <div class="agenda-description">strategy cheat sheet, exercises</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 1: Evaluation ==================== -->
+
+      <!-- Slide 2: Train/Val/Test split -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 1: Why three splits?</h2>
+          <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Train</h4>
+              <p class="text-2xl mb-2">60%</p>
+              <p class="text-sm">Model learns from this data</p>
+              <p class="text-sm text-white/60">weights updated here</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Validation</h4>
+              <p class="text-2xl mb-2">20%</p>
+              <p class="text-sm">Check during training</p>
+              <p class="text-sm text-white/60">tune hyperparameters</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-emerald-300">Test</h4>
+              <p class="text-2xl mb-2">20%</p>
+              <p class="text-sm">Final evaluation only</p>
+              <p class="text-sm text-white/60">never touch during training</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Test set = final exam. Peeking at it = cheating.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Validation split in Keras -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Validation in Keras</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Option 1: validation_split (simple)
+model.fit(X_train, y_train,
+          epochs=50,
+          validation_split=0.2)
+# Last 20% of X_train used as validation
+
+# Option 2: pass validation data (better)
+model.fit(X_train, y_train,
+          epochs=50,
+          validation_data=(X_val, y_val))
+
+# Option 3: K-Fold (most robust)
+from sklearn.model_selection import KFold
+kfold = KFold(n_splits=5)
+for train_idx, val_idx in kfold.split(X_train):
+    model.fit(X_train[train_idx],
+              y_train[train_idx],
+              validation_data=(
+                  X_train[val_idx],
+                  y_train[val_idx]))</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">validation_split=0.2</code> = last 20% is validation</p>
+              <p>- <strong>Warning:</strong> data must not be shuffled before split (Keras uses last 20%)</p>
+              <p>- Better: split manually, then use <code class="font-mono">validation_data</code></p>
+              <p>- <a href="https://scikit-learn.org/stable/modules/cross_validation.html" target="_blank" class="underline decoration-dotted">K-Fold</a>: most robust but slower (trains K models)</p>
+              <div class="tech-card"><p class="text-sm">[Tip] For time series: never shuffle! Use past for train, future for val.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Learning curves -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Reading Learning Curves</h2>
+          <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">Good fit</h4>
+              <p class="font-mono text-sm mb-2">loss ----</p>
+              <p class="font-mono text-sm mb-2">val_loss ----</p>
+              <p class="text-sm">Both decrease, stay close</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-red-300">Overfitting</h4>
+              <p class="font-mono text-sm mb-2">loss ------</p>
+              <p class="font-mono text-sm mb-2">val_loss   / (goes up!)</p>
+              <p class="text-sm">Train good, validation bad</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Underfitting</h4>
+              <p class="font-mono text-sm mb-2">loss  ---- (stays high)</p>
+              <p class="font-mono text-sm mb-2">val_loss ---- (stays high)</p>
+              <p class="text-sm">Both stay high, no learning</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Gap between train and val = overfitting. Both high = underfitting.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Plot code -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Plotting learning curves</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import matplotlib.pyplot as plt
+
+history = model.fit(X_train, y_train,
+                    epochs=50,
+                    validation_split=0.2)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+# Loss
+axes[0].plot(history.history['loss'],
+             label='Train')
+axes[0].plot(history.history['val_loss'],
+             label='Val')
+axes[0].set_title('Loss')
+axes[0].legend()
+
+# Accuracy
+axes[1].plot(history.history['accuracy'],
+             label='Train')
+axes[1].plot(history.history['val_accuracy'],
+             label='Val')
+axes[1].set_title('Accuracy')
+axes[1].legend()
+
+plt.tight_layout()
+plt.show()</pre>
+            <div class="space-y-4 text-base">
+              <p>- Plot both loss and accuracy side by side</p>
+              <p>- <strong>What to look for:</strong></p>
+              <p>- Are both curves going down?</p>
+              <p>- Is the gap between train/val growing?</p>
+              <p>- Is val_loss starting to increase?</p>
+              <p>- <strong>Early stopping point:</strong> when val_loss stops decreasing</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Save best model only: <code class="font-mono">keras.callbacks.ModelCheckpoint('best.keras', save_best_only=True)</code></p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Overfitting & Underfitting ==================== -->
+
+      <!-- Slide 6: Overfitting deep dive -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 2: <a href="https://en.wikipedia.org/wiki/Overfitting" target="_blank" class="underline decoration-dotted">Overfitting</a> -- model memorizes</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Causes</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Model too complex (too many parameters)</li>
+                <li>- Training too long (too many epochs)</li>
+                <li>- Too little training data</li>
+                <li>- Noisy labels in training data</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-red-300">Symptoms</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Train accuracy high, val accuracy low</li>
+                <li>- Train loss low, val loss high</li>
+                <li>- Gap grows with more epochs</li>
+                <li>- Model works on training, fails on new data</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Analogy: student who memorizes answers but can't solve new problems</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Underfitting -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Overfitting#Underfitting" target="_blank" class="underline decoration-dotted">Underfitting</a> -- model too simple</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Causes</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Model too simple (few parameters)</li>
+                <li>- Not enough training epochs</li>
+                <li>- Regularization too strong</li>
+                <li>- Features not informative enough</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Solutions</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Add more layers or neurons</li>
+                <li>- Train longer (more epochs)</li>
+                <li>- Reduce regularization</li>
+                <li>- Add better features</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Both train and val performance are poor. The model hasn't learned the pattern.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Capacity -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_dimension" target="_blank" class="underline decoration-dotted">Model Capacity</a> and the sweet spot</h2>
+          <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Low capacity</h4>
+              <p class="font-mono text-sm mb-2">1 Dense(8)</p>
+              <p class="text-sm">164 parameters</p>
+              <p class="text-sm text-red-300 mt-2">Underfitting</p>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-green-300">Right capacity</h4>
+              <p class="font-mono text-sm mb-2">2 Dense(64)</p>
+              <p class="text-sm">24,960 parameters</p>
+              <p class="text-sm text-green-300 mt-2">Good fit</p>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-red-300">High capacity</h4>
+              <p class="font-mono text-sm mb-2">5 Dense(256)</p>
+              <p class="text-sm">500k+ parameters</p>
+              <p class="text-sm text-red-300 mt-2">Overfitting</p>
+            </div>
+          </div>
+          <div class="tech-card text-center mt-6">
+            <p class="text-lg">Start small, increase until val performance stops improving</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Regularization ==================== -->
+
+      <!-- Slide 9: L1/L2 regularization -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 3: <a href="https://keras.io/api/layers/regularizers/" target="_blank" class="underline decoration-dotted">L1/L2 Regularization</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">from keras import regularizers
+
+model = keras.Sequential([
+    layers.Dense(64, activation='relu',
+                 input_shape=(784,),
+                 kernel_regularizer=
+                   regularizers.l2(0.01)),
+    layers.Dense(64, activation='relu',
+                 kernel_regularizer=
+                   regularizers.l2(0.01)),
+    layers.Dense(10, activation='softmax')
+])</pre>
+            <div class="space-y-4 text-base">
+              <p>- <a href="https://en.wikipedia.org/wiki/Regularization_(mathematics)" target="_blank" class="underline decoration-dotted">Regularization</a> adds penalty to loss function</p>
+              <p>- <a href="https://en.wikipedia/wiki/wiki/Regularization#L2_regularization" target="_blank" class="underline decoration-dotted">L2</a>: \( +\lambda \sum w^2 \) = push weights toward zero</p>
+              <p>- <a href="https://en.wikipedia.org/wiki/Regularization_(mathematics)#L1_regularization" target="_blank" class="underline decoration-dotted">L1</a>: \( +\lambda \sum |w| \) = can make weights exactly zero (sparse)</p>
+              <p>- <code class="font-mono text-yellow-300">0.01</code> = lambda (regularization strength)</p>
+              <p>- Larger lambda = stronger regularization = simpler model</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Dropout -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://keras.io/api/layers/regularizers/#dropout-class" target="_blank" class="underline decoration-dotted">Dropout</a> -- random deactivation</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">model = keras.Sequential([
+    layers.Dense(128, activation='relu',
+                 input_shape=(784,)),
+    layers.Dropout(0.5),  # 50% off
+    layers.Dense(64, activation='relu'),
+    layers.Dropout(0.3),  # 30% off
+    layers.Dense(10, activation='softmax')
+])</pre>
+            <div class="space-y-4 text-base">
+              <p>- During training: randomly set X% of neurons to zero</p>
+              <p>- Forces network to not rely on any single neuron</p>
+              <p>- <strong>Dropout(0.5)</strong>: 50% of neurons randomly off each batch</p>
+              <p>- Only active during training, <strong>not during inference</strong></p>
+              <p>- Like training an ensemble of many smaller networks</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Typical: 0.2-0.5 for Dense layers. 0.1-0.3 for input.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Early Stopping -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://keras.io/callbacks/early_stopping/" target="_blank" class="underline decoration-dotted">Early Stopping</a> -- stop when val stops improving</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">early_stop = keras.callbacks.EarlyStopping(
+    monitor='val_loss',    # what to watch
+    patience=5,            # wait 5 epochs
+    restore_best_weights=True
+)
+
+model.fit(X_train, y_train,
+          epochs=100,       # train "forever"
+          validation_split=0.2,
+          callbacks=[early_stop])</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">monitor='val_loss'</code> = watch validation loss</p>
+              <p>- <code class="font-mono text-yellow-300">patience=5</code> = stop if no improvement for 5 epochs</p>
+              <p>- <code class="font-mono text-yellow-300">restore_best_weights=True</code> = revert to best epoch</p>
+              <p>- Train many epochs, but only keep the best version</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Always use EarlyStopping + ModelCheckpoint together for best results</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: ModelCheckpoint -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://keras.io/callbacks/model_checkpoint/" target="_blank" class="underline decoration-dotted">ModelCheckpoint</a> -- save best model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-6">checkpoint = keras.callbacks.ModelCheckpoint(
+    'best_model.keras',
+    monitor='val_loss',
+    save_best_only=True,  # overwrite only better
+    save_weights_only=False
+)
+
+model.fit(X_train, y_train,
+          epochs=100,
+          validation_split=0.2,
+          callbacks=[checkpoint, early_stop])
+
+# Load best model later
+model = keras.models.load_model(
+    'best_model.keras')</pre>
+            <div class="space-y-4 text-base">
+              <p>- Saves model to file after each epoch</p>
+              <p>- <code class="font-mono text-yellow-300">save_best_only=True</code> = only save if val improved</p>
+              <p>- Without this: final epoch saved (may be overfit!)</p>
+              <p>- <code class="font-mono text-yellow-300">.keras</code> format = full model (architecture + weights + optimizer)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Data Augmentation -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://en.wikipedia.org/wiki/Data_augmentation" target="_blank" class="underline decoration-dotted">Data Augmentation</a> -- more training data</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Image augmentation with Keras
+data_augmentation = keras.Sequential([
+    layers.RandomFlip("horizontal"),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.2),
+    layers.RandomContrast(0.2),
+])
+
+# Use in model
+model = keras.Sequential([
+    data_augmentation,      # <-- first layer
+    layers.Flatten(input_shape=(28,28)),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+# Or use on-the-fly during training
+datagen = keras.preprocessing.image\
+    .ImageDataGenerator(
+        rotation_range=10,
+        width_shift_range=0.1,
+        horizontal_flip=True)</pre>
+            <div class="space-y-4 text-base">
+              <p>- Creates new training samples from existing ones</p>
+              <p>- For images: flip, rotate, zoom, shift, contrast</p>
+              <p>- 1000 original images -> thousands of variations</p>
+              <p>- <strong>Only apply to training, not validation/test</strong></p>
+              <p>- Greatly reduces overfitting when data is limited</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Augmentation = free data. Use it whenever you have less than ~10k images per class</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: All techniques combined -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Putting it all together</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from keras import regularizers
+
+model = keras.Sequential([
+    layers.Dense(128, activation='relu',
+        input_shape=(784,),
+        kernel_regularizer=regularizers.l2(1e-4)),
+    layers.Dropout(0.3),
+    layers.Dense(64, activation='relu',
+        kernel_regularizer=regularizers.l2(1e-4)),
+    layers.Dropout(0.3),
+    layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+callbacks = [
+    keras.callbacks.EarlyStopping(
+        monitor='val_loss', patience=5,
+        restore_best_weights=True),
+    keras.callbacks.ModelCheckpoint(
+        'best.keras', save_best_only=True)
+]
+
+model.fit(X_train, y_train, epochs=200,
+          validation_split=0.2,
+          callbacks=callbacks)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>L2 regularization</strong>: small penalty (1e-4)</p>
+              <p>- <strong>Dropout</strong>: 30% after each hidden layer</p>
+              <p>- <strong>EarlyStopping</strong>: patience=5, restore best</p>
+              <p>- <strong>ModelCheckpoint</strong>: save best to file</p>
+              <p>- Train 200 epochs, but only keep the best version</p>
+              <div class="tech-card"><p class="text-sm">[Tip] Start with this recipe, then tune if needed</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Summary + Homework ==================== -->
+
+      <!-- Slide 15: Strategy cheat sheet -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Strategy Cheat Sheet</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>Overfitting? (gap between train/val)</h3>
+              <ul>
+                <li>- Add <a href="https://keras.io/api/layers/regularizers/#dropout-class" target="_blank" class="underline decoration-dotted">Dropout</a></li>
+                <li>- Add <a href="https://keras.io/api/layers/regularizers/" target="_blank" class="underline decoration-dotted">L2 regularization</a></li>
+                <li>- Reduce model size</li>
+                <li>- Add more training data</li>
+                <li>- <a href="https://en.wikipedia.org/wiki/Data_augmentation" target="_blank" class="underline decoration-dotted">Data augmentation</a></li>
+                <li>- <a href="https://keras.io/callbacks/early_stopping/" target="_blank" class="underline decoration-dotted">Early stopping</a></li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Underfitting? (both metrics poor)</h3>
+              <ul>
+                <li>- Add more layers/neurons</li>
+                <li>- Train longer (more epochs)</li>
+                <li>- Reduce regularization</li>
+                <li>- Better features / preprocessing</li>
+                <li>- Lower learning rate</li>
+                <li>- Check data quality</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="ct-principle">
+              <h3>What we covered</h3>
+              <ul>
+                <li>- Train/validation/test splits</li>
+                <li>- <a href="https://en.wikipedia.org/wiki/Overfitting" target="_blank" class="underline decoration-dotted">Overfitting</a> vs <a href="https://en.wikipedia.org/wiki/Overfitting#Underfitting" target="_blank" class="underline decoration-dotted">Underfitting</a>: how to diagnose</li>
+                <li>- <a href="https://keras.io/api/layers/regularizers/" target="_blank" class="underline decoration-dotted">L1/L2</a> regularization</li>
+                <li>- <a href="https://keras.io/api/layers/regularizers/#dropout-class" target="_blank" class="underline decoration-dotted">Dropout</a></li>
+                <li>- <a href="https://keras.io/callbacks/early_stopping/" target="_blank" class="underline decoration-dotted">EarlyStopping</a> + <a href="https://keras.io/callbacks/model_checkpoint/" target="_blank" class="underline decoration-dotted">ModelCheckpoint</a></li>
+                <li>- <a href="https://en.wikipedia.org/wiki/Data_augmentation" target="_blank" class="underline decoration-dotted">Data augmentation</a></li>
+              </ul>
+            </div>
+            <div class="ct-principle">
+              <h3>Homework (due next week)</h3>
+              <ul>
+                <li>- Take your wk04 Fashion MNIST classifier</li>
+                <li>- Add Dropout(0.3) after each hidden layer</li>
+                <li>- Add EarlyStopping(patience=5)</li>
+                <li>- Plot train/val curves: before and after</li>
+                <li>- Compare: does regularization help val accuracy?</li>
+                <li>- Use <code class="font-mono">uv init --no-package wk05-hw</code></li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-8 text-center text-lg text-emerald-200">Next week: Feature Engineering and preprocessing</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
