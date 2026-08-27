@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 16: ข้อสอบหลังสอบกลางภาค - Weeks 9-15">
+    <meta name="keywords" content="Deep Learning, Quiz, Practice, Multiple Choice, PyTorch, Transformer, GAN">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - Week 16: ข้อสอบหลังสอบกลางภาค</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="quiz()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> Learning Plan </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentQuestion+1"></span> / <span x-text="totalQuestions"></span>
+      <span class="text-xs ml-2 text-emerald-300" x-show="score !== null" x-text="'Score: ' + score + '/' + totalQuestions"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="prevQuestion()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk16.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextQuestion()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-8 py-20">
+
+      <!-- Title Slide -->
+      <div x-show="currentQuestion === 0 && !started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">ข้อสอบหลังสอบกลางภาค</h1>
+          <div class="text-xl text-white/90 mb-8 font-light">สัปดาห์ที่ 9-15: PyTorch, NLP, Transformers, Generative AI</div>
+          <div class="tech-card mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">คำชี้แจง</h2>
+            <ul class="space-y-2 text-base">
+              <li>- <strong>20 ข้อ</strong> ครอบคลุมเนื้อหาจากสัปดาห์ที่ 9-15</li>
+              <li>- คลิกที่ตัวเลือกเพื่อเลือกคำตอบ แล้วกด <strong>ตรวจคำตอบ</strong></li>
+              <li>- เขียว = ถูก, แดง = ผิด พร้อมคำอธิบาย</li>
+              <li>- คะแนนจะอัปเดตให้เห็นทันที</li>
+              <li>- ใช้ปุ่มลูกศรหรือปุ่มนำทางเพื่อเลื่อนไป-กลับ</li>
+            </ul>
+          </div>
+          <button @click="started = true; currentQuestion = 1"
+                  class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+            เริ่มทำข้อสอบ
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions -->
+      <template x-for="(q, idx) in questions" :key="idx">
+        <div x-show="currentQuestion === idx + 1 && started" class="gradient-bg flex-col justify-center text-white rounded-2xl p-8" style="min-height:80vh">
+          <div class="max-w-4xl mx-auto">
+            <!-- Question header -->
+            <div class="mb-2 text-emerald-300 text-sm font-mono" x-text="'ข้อที่ ' + (idx+1) + ' จาก ' + totalQuestions + ' -- ' + q.topic"></div>
+
+            <!-- Question text -->
+            <div class="text-2xl md:text-3xl font-semibold mb-8 leading-relaxed" x-html="q.question"></div>
+
+            <!-- Answer options -->
+            <div class="space-y-3 mb-8">
+              <template x-for="(opt, oi) in q.options" :key="oi">
+                <button @click="selectAnswer(idx, oi)"
+                        class="w-full text-left p-4 rounded-xl border-2 transition-all text-lg"
+                        :class="getOptionClass(idx, oi)">
+                  <span class="font-mono text-emerald-300 mr-3" x-text="String.fromCharCode(65 + oi) + '.'"></span>
+                  <span x-html="opt"></span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi !== q.answer" class="float-right text-red-400">&#10007;</span>
+                  <span x-show="checked[idx] && answers[idx] !== oi && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                </button>
+              </template>
+            </div>
+
+            <!-- Check / Explanation -->
+            <div x-show="answers[idx] !== null && !checked[idx]" class="mb-6">
+              <button @click="checkAnswer(idx)"
+                      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition">
+                ตรวจคำตอบ
+              </button>
+            </div>
+
+            <div x-show="checked[idx]" class="tech-card border-yellow-400 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xl" x-text="answers[idx] === q.answer ? '&#10003; ถูกต้อง!' : '&#10007; ไม่ถูกต้อง'"></span>
+              </div>
+              <p class="text-sm" x-html="q.explanation"></p>
+            </div>
+
+            <!-- Progress -->
+            <div class="mt-8 text-sm text-white/50">
+              <span x-text="'ทำแล้ว: ' + answeredCount() + '/' + totalQuestions"></span>
+              <span class="ml-4 text-emerald-300" x-text="'คะแนน: ' + score + '/' + totalQuestions" x-show="score !== null"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Results -->
+      <div x-show="currentQuestion === totalQuestions + 1 && started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl font-bold mb-6">ทำข้อสอบเสร็จแล้ว!</h1>
+          <div class="tech-card mb-8">
+            <div class="text-6xl font-bold mb-4" :class="score >= 17 ? 'text-green-400' : score >= 13 ? 'text-yellow-400' : 'text-red-400'"
+                 x-text="score + ' / ' + totalQuestions"></div>
+            <div class="text-xl mb-4" x-text="score >= 17 ? 'ยอดเยี่ยม! คุณมีความเข้าใจ PyTorch และ Deep Learning สมัยใหม่เป็นอย่างดี' : score >= 13 ? 'ทำได้ดี! ไปทบทวนหัวข้อที่พลาดอีกครั้ง' : 'พยายามต่อไป! ไปทบทวนสไลด์สัปดาห์ที่ 9-15 อีกครั้ง'"></div>
+            <div class="grid md:grid-cols-2 gap-4 text-sm text-left">
+              <div class="tech-card"><strong>Week 9:</strong> บทนำ PyTorch</div>
+              <div class="tech-card"><strong>Week 10:</strong> Neural Networks ด้วย PyTorch</div>
+              <div class="tech-card"><strong>Week 11:</strong> Time Series ด้วย PyTorch</div>
+              <div class="tech-card"><strong>Week 12:</strong> Text Embeddings</div>
+              <div class="tech-card"><strong>Week 13:</strong> Transformers และ Language Models</div>
+              <div class="tech-card"><strong>Week 14:</strong> GAN และ Diffusion Models</div>
+              <div class="tech-card"><strong>Week 15:</strong> การนำเสนอโครงงาน</div>
+            </div>
+          </div>
+          <div class="space-x-4">
+            <button @click="resetQuiz()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+              ทำข้อสอบอีกครั้ง
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function quiz() {
+      return {
+        currentQuestion: 0,
+        started: false,
+        score: null,
+        answers: {},
+        checked: {},
+        totalQuestions: 20,
+        questions: [
+          // === Week 9: Intro to PyTorch ===
+          {
+            topic: "Week 9: บทนำ PyTorch",
+            question: "ข้อได้เปรียบหลักของ <code>autograd</code> ใน PyTorch คืออะไร?",
+            options: [
+              "ช่วยเพิ่มความเร็วในการฝึกสอน 10 เท่า",
+              "คำนวณ gradients โดยอัตโนมัติผ่าน dynamic computation graphs",
+              "ทดแทนความจำเป็นในการใช้ GPU",
+              "แปลงโค้ด Python เป็น C++"
+            ],
+            answer: 1,
+            explanation: "PyTorch autograd คำนวณ gradients โดยอัตโนมัติโดยใช้ dynamic computation graph การทำงาน-forward แต่ละขั้นจะสร้าง graph ขึ้นมา และ backward() จะเดินทางผ่าน graph เพื่อคำนวณ gradients ผ่าน chain rule"
+          },
+          {
+            topic: "Week 9: บทนำ PyTorch",
+            question: "ใน PyTorch <code>requires_grad=True</code> ทำหน้าที่อะไร?",
+            options: [
+              "ทำให้ tensor ไม่สามารถเปลี่ยนแปลงได้",
+              "เปิดใช้งานการคำนวณ gradients สำหรับ tensor นั้น",
+              "ย้าย tensor ไปยัง GPU",
+              "แปลง tensor เป็น float"
+            ],
+            answer: 1,
+            explanation: "การตั้งค่า requires_grad=True บอกให้ PyTorch ติดตามการทำงานทั้งหมดบน tensor นั้นเพื่อให้สามารถคำนวณ gradients ได้ during backpropagation เป็นขั้นตอนแรกในการสร้าง computation graph"
+          },
+          // === Week 10: PyTorch Neural Networks ===
+          {
+            topic: "Week 10: Neural Networks ด้วย PyTorch",
+            question: "class ใดเป็น base class สำหรับการสร้าง neural networks ใน PyTorch?",
+            options: [
+              "torch.optim.Module",
+              "torch.nn.Module",
+              "torch.nn.Sequential",
+              "torch.autograd.Function"
+            ],
+            answer: 1,
+            explanation: "torch.nn.Module เป็น base class สำหรับ neural networks ทั้งหมดใน PyTorch คุณต้องสร้าง subclass จากมัน กำหนด layers ใน __init__ และ implement ethod forward()"
+          },
+          {
+            topic: "Week 10: Neural Networks ด้วย PyTorch",
+            question: "วัตถุประสงค์ของ <code>optimizer.zero_grad()</code> คืออะไร?",
+            options: [
+              "รีเซ็ต weights ของโมเดล",
+              "ล้าง gradients ที่สะสมไว้ก่อน backward pass แต่ละครั้ง",
+              "หยุดการฝึกสอน",
+              "ย้ายข้อมูลไปยัง GPU"
+            ],
+            answer: 1,
+            explanation: "PyTorch จะสะสม gradients โดยค่าเริ่มต้น zero_grad() จะล้าง gradients จาก iteration ก่อนหน้าเพื่อไม่ให้รบกวน backward pass ปัจจุบัน"
+          },
+          // === Week 11: Timeseries ===
+          {
+            topic: "Week 11: Time Series ด้วย PyTorch",
+            question: "ทำไมไม่ควรสุ่มข้อมูล time series ระหว่างการฝึกสอน?",
+            options: [
+              "การสุ่มทำให้หน่วยความจำเต็ม",
+              "Time series มี temporal dependencies ที่ต้องรักษาไว้",
+              "PyTorch ไม่รองรับการสุ่ม",
+              "การสุ่มทำให้การฝึกสอนช้าลง"
+            ],
+            answer: 1,
+            explanation: "ข้อมูล time series มี temporal dependencies -- ค่าแต่ละค่าขึ้นอยู่กับค่าก่อนหน้า การสุ่มจะทำลายลำดับนี้และให้ข้อมูลจากอนาคตแก่โมเดล ทำให้เกิด data leakage และผลลัพธ์ที่ไม่สมจริง"
+          },
+          {
+            topic: "Week 11: Time Series ด้วย PyTorch",
+            question: "<code>lookback=60</code> ใน time series dataset หมายความว่าอย่างไร?",
+            options: [
+              "ใช้ 60 ขั้นตอนอนาคตเพื่อทำนายอดีต",
+              "ใช้ 60 time steps ก่อนหน้าเป็นอินพุตเพื่อทำนายขั้นตอนถัดไป",
+              "ฝึกสอน 60 epochs",
+              "ใช้ 60 features"
+            ],
+            answer: 1,
+            explanation: "lookback=60 หมายความว่าโมเดลใช้ 60 time steps ก่อนหน้า (หน้าต่าง) เป็นอินพุตเพื่อทำนายค่าถัดไป เป็นการกำหนดว่าโมเดลจะมองย้อนหลังไกลแค่ไหนสำหรับการทำนายแต่ละครั้ง"
+          },
+          // === Week 12: Text Embeddings ===
+          {
+            topic: "Week 12: Text Embeddings",
+            question: "ปัญหาหลักของ one-hot encoding สำหรับข้อความคืออะไร?",
+            options: [
+              "ต้องใช้การคำนวณมากเกินไป",
+              "สร้าง dense vectors",
+              "ไม่สามารถจับ semantic similarity ระหว่างคำได้",
+              "ไม่สามารถจัดการ vocabulary ได้"
+            ],
+            answer: 2,
+            explanation: "One-hot encoding สร้าง sparse vectors ที่คำทุกคู่อยู่ห่างกันเท่ากัน (orthogonal) ไม่สามารถจับได้ว่า 'แมว' และ 'สุนัข' มีความคล้ายคลึงกันมากกว่า 'แมว' และ 'รถ' Word embeddings แก้ปัญหานี้โดยเรียนรู้ dense vectors ที่มีความหมายทางอรรถศาสตร์"
+          },
+          {
+            topic: "Week 12: Text Embeddings",
+            question: "<code>nn.Embedding(vocab_size, embed_dim)</code> ทำหน้าที่อะไร?",
+            options: [
+              "สร้าง one-hot matrix สำหรับ vocabulary",
+              "สร้าง lookup table ที่แปลง word indices เป็น dense vectors",
+              "ฝึกสอน language model",
+              "แบ่งคำ (tokenize) อินพุตข้อความ"
+            ],
+            answer: 1,
+            explanation: "nn.Embedding สร้าง learnable lookup table ที่มีรูปร่าง (vocab_size, embed_dim) เมื่อได้รับ word index จะคืนค่า dense vector ที่สอดคล้องกัน ระหว่างการฝึกสอน vectors เหล่านี้จะถูกอัปเดตเพื่อจับความหมายทางอรรถศาสตร์"
+          },
+          // === Week 13: Transformers ===
+          {
+            topic: "Week 13: Transformers และ Attention",
+            question: "กลไก attention แก้ปัญหาอะไรใน sequence models?",
+            options: [
+              "ลดจำนวน parameters",
+              "ให้โมเดลสามารถโฟกัสไปที่ส่วนที่เกี่ยวข้องของอินพุตโดยไม่คำนึงถึงระยะห่าง",
+              "ทดแทนความจำเป็นในการใช้ embeddings",
+              "กำจัดความจำเป็นในการใช้ backpropagation"
+            ],
+            answer: 1,
+            explanation: "Attention ให้โมเดลสามารถเข้าถึงตำแหน่งใดก็ได้ในลำดับอินพุตโดยตรงโดยไม่คำนึงว่าตำแหน่งจะห่างกันแค่ไหน แก้ปัญหา long-range dependency ที่ RNNs และ LSTMs ต้องเผชิญ"
+          },
+          {
+            topic: "Week 13: Transformers และ Attention",
+            question: "ใน self-attention Q, K และ V คืออะไร?",
+            options: [
+              "Query, Kernel, Vector",
+              "Query, Key, Value",
+              "Quality, Knowledge, Volume",
+              "Quantize, Keep, Verify"
+            ],
+            answer: 1,
+            explanation: "Q (Query), K (Key) และ V (Value) เป็นการ projections สามแบบของอินพุต คะแนนคำนวณจาก softmax(QK^T / sqrt(d_k)) * V Q ถามคำถาม, K จับคู่กับตำแหน่งที่เกี่ยวข้อง และ V ดึงข้อมูลออกมา"
+          },
+          {
+            topic: "Week 13: Transformers และ Attention",
+            question: "ความแตกต่างหลักระหว่าง BERT และ GPT คืออะไร?",
+            options: [
+              "BERT ใช้สำหรับภาพ GPT ใช้สำหรับข้อความ",
+              "BERT เป็น bidirectional (encoder), GPT เป็น unidirectional (decoder)",
+              "BERT มีขนาดใหญ่กว่า GPT",
+              "BERT ใช้ CNN, GPT ใช้ RNN"
+            ],
+            answer: 1,
+            explanation: "BERT ใช้สถาปัตยกรรม encoder และเป็น bidirectional -- มองเห็นบริบททั้งซ้ายและขวา GPT ใช้สถาปัตยกรรม decoder และเป็น autoregressive -- มองเห็นเฉพาะบริบทซ้าย (tokens ก่อนหน้า) BERT เหมาะสำหรับการทำความเข้าใจ, GPT เหมาะสำหรับการสร้าง"
+          },
+          {
+            topic: "Week 13: Transformers และ Attention",
+            question: "Positional encoding ใช้สำหรับอะไรใน Transformers?",
+            options: [
+              "เพื่อลดขนาดโมเดล",
+              "เพื่อเพิ่มข้อมูลลำดับเนื่องจาก attention ไม่คำนึงถึงตำแหน่ง",
+              "เพื่อปรับปรุง input features",
+              "เพื่อเพิ่มความเร็วในการฝึกสอน"
+            ],
+            answer: 1,
+            explanation: "Transformers ประมวลผลทุกตำแหน่งแบบ parallel จึงไม่มีแนวคิดเรื่องลำดับโดยกำเนิด Positional encoding จะเพิ่มข้อมูลตำแหน่ง (โดยใช้ฟังก์ชัน sine/cosine) เพื่อให้โมเดลรู้ลำดับของ tokens ในลำดับ"
+          },
+          // === Week 14: GAN & Diffusion ===
+          {
+            topic: "Week 14: GAN และ Diffusion Models",
+            question: "ใน GAN เป้าหมายของ Generator คืออะไร?",
+            options: [
+              "จำแนกรูปภาพว่าเป็นของจริงหรือของปลอม",
+              "สร้างรูปภาพปลอมที่หลอกล่อ Discriminator",
+              "ลบ noise จากรูปภาพ",
+              "บีบอัดรูปภาพเป็น latent vectors"
+            ],
+            answer: 1,
+            explanation: "เป้าหมายของ Generator คือการสร้างรูปภาพที่สมจริงพอที่จะหลอก Discriminator ให้คิดว่าเป็นของจริง เรียนรู้โดยได้รับ feedback จาก Discriminator เกี่ยวกับความน่าเชื่อถือของผลลัพธ์"
+          },
+          {
+            topic: "Week 14: GAN และ Diffusion Models",
+            question: "'Mode collapse' ใน GANs คืออะไร?",
+            options: [
+              "Discriminator แข็งแกร่งเกินไป",
+              "Generator สร้างเฉพาะประเภทผลลัพธ์บางส่วนแทนที่จะสร้างตัวอย่างที่หลากหลาย",
+              "โมเดล overfit กับข้อมูลฝึกสอน",
+              "การฝึกสอนลู่เกินไป"
+            ],
+            answer: 1,
+            explanation: "Mode collapse เกิดขึ้นเมื่อ Generator เรียนรู้ที่จะสร้างเฉพาะผลลัพธ์บางประเภทที่หลอก Discriminator ได้แทนที่จะเรียนรู้ความหลากหลายทั้งหมดของการแจกแจงข้อมูลฝึกสอน โมเดลจะ 'collapses' ไปยังบาง modes"
+          },
+          {
+            topic: "Week 14: GAN และ Diffusion Models",
+            question: "Diffusion model สร้างรูปภาพได้อย่างไร?",
+            options: [
+              "โดยฝึก GAN ด้วย loss พิเศษ",
+              "โดยเรียนรู้ที่จะกลับกระบวนการ noising ทีละขั้นตอน",
+              "โดยใช้ CNN ขนาดใหญ่เพื่อแปลง random noise",
+              "โดยคัดลอกและวางส่วนหนึ่งของรูปภาพจริง"
+            ],
+            answer: 1,
+            explanation: "Diffusion models ทำงานในสองขั้นตอน: (1) ขั้นตอน-forward ค่อยๆ เพิ่ม noise ให้รูปภาพจนกลายเป็น pure noise, (2) ขั้นตอน-reverse เรียนรู้ที่จะลบ noise ทีละขั้นตอน เริ่มจาก pure noise เพื่อสร้างรูปภาพที่สะอาด"
+          },
+          // === Week 15: Project ===
+          {
+            topic: "Week 15: การนำเสนอโครงงาน",
+            question: "อัตราส่วนที่แนะนำสำหรับการนำเสนอ 15 นาทีคืออะไร?",
+            options: [
+              "30 สไลด์ ใช้เวลาสไลด์ละ 30 วินาที",
+              "15 สไลด์ ใช้เวลาสไลด์ละ 1 นาที",
+              "5 สไลด์ ใช้เวลาสไลด์ละ 3 นาที",
+              "25 สไลด์ ใช้เวลาสไลด์ละ 36 วินาที"
+            ],
+            answer: 1,
+            explanation: "กฎทั่วไปคือ 1 สไลด์ต่อ 1 นาที ดังนั้น 15 สไลด์สำหรับการนำเสนอ 15 นาที จะมีเวลาเพียงพอที่จะอธิบายแต่ละสไลด์โดยไม่เร่งรีบ และยังเหลือเวลาสำหรับการเปลี่ยนสไลด์และถาม-ตอบ"
+          },
+          {
+            topic: "Week 15: การนำเสนอโครงงาน",
+            question: "สิ่งที่สำคัญที่สุดที่ต้องเตรียมสำหรับการสาธิตสดคืออะไร?",
+            options: [
+              "ชุดข้อมูลขนาดใหญ่มากๆ",
+              "วิดีโอสำรองหรือ screenshots เผื่อการสาธิตสดล้มเหลว",
+              "โมเดลที่ซับซ้อนมี many parameters",
+              "สคริปต์ยาวๆ ไว้อ่าน"
+            ],
+            answer: 1,
+            explanation: "การสาธิตสดอาจล้มเหลวจากปัญหาเครือข่าย, ข้อผิดพลาดในการโหลดโมเดล หรือ runtime crashes เตรียมวิดíoสำรองหรือ screenshots ที่แสดงการสาธิตเดียวกันเสมอ แสดงถึงความเป็นมืออาชีพและทำให้การนำเสนอราบรื่น"
+          },
+          // === Django / SSE ===
+          {
+            topic: "Django + SSE Integration",
+            question: "SSE (Server-Sent Events) ทำหน้าที่อะไรใน Django dashboard?",
+            options: [
+              "ส่ง form data จาก client ไปยัง server",
+              "ส่งการอัปเดตแบบ real-time จาก server ไปยัง client",
+              "เข้ารหัสข้อมูลระหว่าง client และ server",
+              "จัดการการเชื่อมต่อ database"
+            ],
+            answer: 1,
+            explanation: "SSE (Server-Sent Events) ให้ server สามารถส่งการอัปเดตแบบ real-time ไปยัง client ผ่านการเชื่อมต่อ HTTP เดียว ในกรณีของเรา SSE จะ streaming ผลการฝึกสอน (epoch, loss, accuracy) จาก Django ไปยังเบราว์เซอร์ขณะโมเดลกำลังฝึกสอน"
+          },
+          {
+            topic: "Django + SSE Integration",
+            question: "ใน PyTorch <code>model.eval()</code> ทำหน้าที่อะไร?",
+            options: [
+              "ลบโมเดลออกจากหน่วยความจำ",
+              "ตั้งค่าโมเดลเป็น evaluation mode (ส่งผลต่อ Dropout, BatchNorm)",
+              "ประเมินโมเดลบนข้อมูลทดสอบโดยอัตโนมัติ",
+              "รีเซ็ต weights ทั้งหมดของโมเดล"
+            ],
+            answer: 1,
+            explanation: "model.eval() เปลี่ยนโมเดลเป็น evaluation mode เปลี่ยนพฤติกรรมของ layers เช่น Dropout (ปิด dropout) และ BatchNorm (ใช้ running statistics แทน batch statistics) ควรเรียกใช้ก่อน inference เพื่อให้ได้ผลลัพธ์ที่สม่ำเสมอ"
+          }
+        ],
+
+        init() {
+          this.totalQuestions = this.questions.length;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        },
+
+        selectAnswer(qIdx, optIdx) {
+          if (this.checked[qIdx]) return;
+          this.answers[qIdx] = optIdx;
+        },
+
+        checkAnswer(qIdx) {
+          if (this.answers[qIdx] === null) return;
+          this.checked[qIdx] = true;
+          this.updateScore();
+        },
+
+        getOptionClass(qIdx, optIdx) {
+          if (!this.checked[qIdx]) {
+            return this.answers[qIdx] === optIdx
+              ? 'border-emerald-400 bg-emerald-400/10'
+              : 'border-white/20 hover:border-white/40';
+          }
+          if (optIdx === this.questions[qIdx].answer) {
+            return 'border-green-400 bg-green-400/10';
+          }
+          if (this.answers[qIdx] === optIdx) {
+            return 'border-red-400 bg-red-400/10';
+          }
+          return 'border-white/10 opacity-40';
+        },
+
+        updateScore() {
+          let s = 0;
+          this.questions.forEach((q, i) => {
+            if (this.checked[i] && this.answers[i] === q.answer) s++;
+          });
+          this.score = s;
+        },
+
+        answeredCount() {
+          return Object.values(this.checked).filter(v => v).length;
+        },
+
+        nextQuestion() {
+          if (this.currentQuestion < this.totalQuestions + 1) {
+            this.currentQuestion++;
+          }
+        },
+
+        prevQuestion() {
+          if (this.currentQuestion > 0) {
+            this.currentQuestion--;
+          }
+        },
+
+        resetQuiz() {
+          this.currentQuestion = 0;
+          this.started = false;
+          this.score = null;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        }
+      };
+    }
+    </script>
+  </body>
+</html>

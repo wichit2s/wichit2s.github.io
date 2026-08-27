@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 12: Deep Learning for Text - Embeddings and Sequence Models">
+    <meta name="keywords" content="Deep Learning, PyTorch, NLP, Word Embeddings, Word2Vec, GloVe, Text Classification">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - สัปดาห์ที่ 12: Text Embeddings</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk12.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer" class="slides-container">
+
+      <!-- ==================== Part 1: Text Basics ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center px-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">Deep Learning for Text</h1>
+          <p class="text-xl text-gray-300 mb-2">สัปดาห์ที่ 12</p>
+          <p class="text-lg text-gray-400 mb-8">Word Embeddings และ Sequence Models</p>
+          <div class="space-y-2 text-left max-w-md mx-auto text-gray-300">
+            <p>1. Text Representation: One-hot, TF-IDF</p>
+            <p>2. Word Embeddings: Word2Vec, GloVe</p>
+            <p>3. PyTorch nn.Embedding</p>
+            <p>4. Text Classification with LSTM</p>
+            <p>5. Sentiment Analysis Example</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Learning Roadmap</h2>
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">1</div>
+              <div class="text-lg font-bold text-yellow-300">Text Basics</div>
+              <div class="text-sm text-gray-400 mt-2">One-hot, TF-IDF, Bag of Words</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">2</div>
+              <div class="text-lg font-bold text-blue-300">Embeddings</div>
+              <div class="text-sm text-gray-400 mt-2">Word2Vec, GloVe, nn.Embedding</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">3</div>
+              <div class="text-lg font-bold text-green-300">Sequence Models</div>
+              <div class="text-sm text-gray-400 mt-2">LSTM/GRU for text classification</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">4</div>
+              <div class="text-lg font-bold text-purple-300">Sentiment Analysis</div>
+              <div class="text-sm text-gray-400 mt-2">IMDB dataset project</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Why Text is Hard -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">ทำไม Text ถึงยาก</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Variable length</strong>: ประโยคยาวสั้นไม่เท่ากัน</p>
+              <p>- <strong>Discrete</strong>: คำเป็น categorical ไม่ใช่ตัวเลข</p>
+              <p>- <strong>Sequential</strong>: ลำดับคำสำคัญ (\"not good\" != \"good\")</p>
+              <p>- <strong>Ambiguous</strong>: คำเดียวกันมีหลายความหมาย</p>
+              <div class="tech-card"><p class="text-sm">[ปัญหา] Machine ไม่เข้าใจคำ = ต้องแปลงคำเป็นตัวเลขก่อน</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Text: variable length, discrete
+texts = [
+    "I love this movie",           # 4 words
+    "This is terrible",            # 3 words
+    "The film was absolutely great" # 5 words
+]
+
+# Problem: NN ต้องการ fixed-size input
+# Solution: Embeddings + Padding
+
+# ลำดับสำคัญ!
+"not good" -> negative
+"good"     -> positive
+"not bad"  -> positive (double negative)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: One-Hot Encoding -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">One-Hot Encoding</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Vocabulary: {"I": 0, "love": 1, "this": 2, "movie": 3}
+
+# One-hot vector (size = vocab_size)
+"I"    -> [1, 0, 0, 0]
+"love" -> [0, 1, 0, 0]
+"this" -> [0, 0, 1, 0]
+"movie"-> [0, 0, 0, 1]
+
+# Problem: sparse, high-dimensional
+# 50K words -> 50K-dimensional vectors!
+
+# All vectors are equidistant
+# (no semantic similarity)
+import torch
+vocab = {"I": 0, "love": 1, "this": 2, "movie": 3}
+one_hot = torch.zeros(4, 4)
+for word, idx in vocab.items():
+    one_hot[idx, idx] = 1.0
+print(one_hot)
+# tensor([[1., 0., 0., 0.],  <- "I"
+#         [0., 1., 0., 0.],  <- "love"
+#         [0., 0., 1., 0.],  <- "this"
+#         [0., 0., 0., 1.]]) <- "movie"</pre>
+            <div class="space-y-4 text-base">
+              <p>- One-hot: vector ที่มี 1 ที่ตำแหน่งของคำ</p>
+              <p>- ขนาดเท่ากับ vocabulary</p>
+              <p>- <strong>ปัญหา</strong>: sparse, ไม่มี semantic meaning</p>
+              <p>- ทุกคำอยู่ห่างกันเท่ากัน</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] One-hot ไม่จับความหมายของคำ = ต้องใช้ embeddings</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: TF-IDF -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://scikit-learn.org/stable/modules/feature_extraction.html#tfidfvectorizer" target="_blank" class="underline decoration-dotted">TF-IDF</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>TF</strong> (Term Frequency): คำนี้บ่อยแค่ไหนใน document</p>
+              <p>- <strong>IDF</strong> (Inverse Document Frequency): คำนี้หายากแค่ไหน</p>
+              <p>- <strong>TF-IDF = TF x IDF</strong>: คำสำคัญได้ค่าสูง</p>
+              <p>- ดีกว่า one-hot เพราะจับ importance</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] "the", "is" ได้ IDF ต่ำ (อยู่ในทุกเอกสาร), คำเฉพาะได้ IDF สูง</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from sklearn.feature_extraction.text import TfidfVectorizer
+
+docs = [
+    "I love this movie",
+    "This movie is great",
+    "I hate this movie"
+]
+
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(docs)
+
+print(vectorizer.get_feature_names_out())
+# ['great' 'hate' 'is' 'love' 'movie' 'this']
+
+print(X.toarray())
+# [[0.   0.   0.   0.82 0.58 0.0 ]  <- "love"
+#  [0.62 0.   0.62 0.   0.44 0.44]  <- "great"
+#  [0.   0.82 0.   0.   0.58 0.0 ]] <- "hate"
+
+# "movie" appears in all docs -> low TF-IDF
+# "love"/"hate" -> high TF-IDF (important)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Embeddings ==================== -->
+
+      <!-- Slide 5: Word Embeddings Concept -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Word Embeddings</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Embedding</strong>: dense vector ที่จับความหมายของคำ</p>
+              <p>- คำที่ความหมายใกล้กัน = vector ใกล้กัน</p>
+              <p>- มิติคงที่ (เช่น 100-300 dimensions)</p>
+              <p>- เรียนรู้จากข้อมูลจำนวนมาก</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] king - man + woman = queen (semantic arithmetic)</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Embedding: dense, low-dimensional
+# "love" -> [0.2, -0.5, 0.8, ..., 0.1]  (300-d)
+# "like" -> [0.3, -0.4, 0.7, ..., 0.2]  (300-d)
+# "hate" -> [-0.7, 0.6, -0.3, ..., -0.5] (300-d)
+
+# Similarity via cosine
+import numpy as np
+
+love = np.array([0.2, -0.5, 0.8, 0.1])
+like = np.array([0.3, -0.4, 0.7, 0.2])
+hate = np.array([-0.7, 0.6, -0.3, -0.5])
+
+def cosine_sim(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+print(f"love-like: {cosine_sim(love, like):.3f}")
+print(f"love-hate: {cosine_sim(love, hate):.3f}")
+# love-like: 0.987 (similar)
+# love-hate: -0.952 (opposite)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Word2Vec -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://radimrehurek.com/gensim/models/word2vec.html" target="_blank" class="underline decoration-dotted">Word2Vec</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Word2Vec: predict context from word
+# "The cat sat on the mat"
+#   -> predict "sat" from ["cat", "on"]
+#   -> or predict "cat" from context ["The", "sat"]
+
+from gensim.models import Word2Vec
+
+sentences = [
+    ["I", "love", "deep", "learning"],
+    ["deep", "learning", "is", "great"],
+    ["I", "love", "natural", "language", "processing"],
+]
+
+model = Word2Vec(sentences, vector_size=100,
+                 window=5, min_count=1)
+
+# Get embedding
+vec = model.wv["love"]
+print(vec.shape)  # (100,)
+
+# Find similar words
+print(model.wv.most_similar("love"))
+# [('deep', 0.85), ('great', 0.72), ...]
+
+# Semantic arithmetic
+result = model.wv.most_similar(
+    positive=['king', 'woman'],
+    negative=['man'])
+# [('queen', 0.92), ...]</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>CBOW</strong>: predict word from context</p>
+              <p>- <strong>Skip-gram</strong>: predict context from word</p>
+              <p>- <code class="font-mono text-yellow-300">vector_size</code>: ขนาด embedding (100-300)</p>
+              <p>- <code class="font-mono text-yellow-300">window</code>: ขนาด context window</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Word2Vec เรียนรู้จาก co-occurrence = คำที่อยู่ด้วยกันมีความหมายใกล้กัน</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: GloVe -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://nlp.stanford.edu/projects/glove/" target="_blank" class="underline decoration-dotted">GloVe</a> (Global Vectors)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>GloVe</strong>: ใช้ global co-occurrence matrix</p>
+              <p>- ต่างจาก Word2Vec ที่ใช้ local context</p>
+              <p>- Pre-trained vectors สำเร็จรูป</p>
+              <p>- ขนาด: 6B tokens, 400K words, 50/100/200/300d</p>
+              <div class="tech-card"><p class="text-sm">[เปรียบเทียบ] Word2Vec เร็วกว่า / GloVe จับ global statistics ได้ดีกว่า</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Load pre-trained GloVe
+import numpy as np
+
+def load_glove(path):
+    embeddings = {}
+    with open(path, 'r', encoding='utf-8') as f:
+        for line in f:
+            values = line.split()
+            word = values[0]
+            vector = np.array(values[1:], dtype='float32')
+            embeddings[word] = vector
+    return embeddings
+
+glove = load_glove('glove.6B.100d.txt')
+
+# Similar words
+def most_similar(word, top_k=5):
+    vec = glove[word]
+    sims = {}
+    for w, v in glove.items():
+        if w != word:
+            sims[w] = np.dot(vec, v) / (
+                np.linalg.norm(vec) * np.linalg.norm(v))
+    return sorted(sims.items(), key=lambda x: -x[1])[:top_k]
+
+print(most_similar("computer"))
+# [('software', 0.85), ('pc', 0.82), ...]</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: nn.Embedding -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html" target="_blank" class="underline decoration-dotted">nn.Embedding</a> in PyTorch</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import torch
+import torch.nn as nn
+
+# Create embedding layer
+vocab_size = 10000
+embed_dim = 128
+
+embedding = nn.Embedding(vocab_size, embed_dim)
+print(embedding.weight.shape)
+# torch.Size([10000, 128])
+
+# Convert words to indices
+word_to_idx = {"I": 0, "love": 1, "deep": 2, "learning": 3}
+sentence = ["I", "love", "deep", "learning"]
+indices = torch.tensor([word_to_idx[w] for w in sentence])
+print(indices)  # tensor([0, 1, 2, 3])
+
+# Get embeddings
+embeds = embedding(indices)
+print(embeds.shape)  # torch.Size([4, 128])
+
+# Use pre-trained GloVe
+def from_pretrained(embeddings_matrix):
+    vocab_size, dim = embeddings_matrix.shape
+    layer = nn.Embedding(vocab_size, dim)
+    layer.weight = nn.Parameter(
+        torch.tensor(embeddings_matrix, dtype=torch.float32),
+        requires_grad=False)  # Freeze weights
+    return layer</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">nn.Embedding(vocab_size, embed_dim)</code>: lookup table</p>
+              <p>- Input: indices (LongTensor)</p>
+              <p>- Output: dense vectors</p>
+              <p>- <code class="font-mono text-yellow-300">requires_grad=False</code>: freeze pre-trained vectors</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ต้อง padding sequences ให้ยาวเท่ากันก่อน</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Text Classification Architecture -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Text Classification Architecture</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Input</strong>: sequence of word indices</p>
+              <p>- <strong>Embedding</strong>: convert to dense vectors</p>
+              <p>- <strong>RNN/LSTM/GRU</strong>: process sequence</p>
+              <p>- <strong>FC + Softmax</strong>: classify</p>
+              <div class="tech-card"><p class="text-sm">[สถาปัตยกรรม] Embedding -> LSTM -> FC -> Sigmoid (binary) / Softmax (multi-class)</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class TextClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim,
+                 hidden_dim, output_dim):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.lstm = nn.LSTM(embed_dim, hidden_dim,
+                           batch_first=True)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x):
+        # x: (batch, seq_len) - word indices
+        embeds = self.embedding(x)
+        # embeds: (batch, seq_len, embed_dim)
+        out, (hn, cn) = self.lstm(embeds)
+        # out: (batch, seq_len, hidden_dim)
+        out = self.fc(hn[-1])
+        # out: (batch, output_dim)
+        return torch.sigmoid(out)
+
+model = TextClassifier(10000, 128, 64, 1)
+# Binary sentiment classification</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Padding and Collate -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Padding และ Collate Function</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import Dataset, DataLoader
+
+class TextDataset(Dataset):
+    def __init__(self, texts, labels, vocab):
+        self.texts = texts
+        self.labels = labels
+        self.vocab = vocab
+
+    def __len__(self):
+        return len(self.texts)
+
+    def __getitem__(self, idx):
+        tokens = self.texts[idx].split()
+        indices = [self.vocab.get(t, 0) for t in tokens]
+        return torch.tensor(indices), self.labels[idx]
+
+def collate_fn(batch):
+    texts, labels = zip(*batch)
+    # Pad sequences to same length
+    texts_padded = pad_sequence(texts, batch_first=True,
+                                 padding_value=0)
+    labels = torch.tensor(labels, dtype=torch.float32)
+    return texts_padded, labels
+
+dataset = TextDataset(texts, labels, vocab)
+loader = DataLoader(dataset, batch_size=32,
+                    collate_fn=collate_fn)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Padding</strong>: เติม 0 ให้ sequences ยาวเท่ากัน</p>
+              <p>- <code class="font-mono text-yellow-300">pad_sequence</code>: pad batch ให้ยาวเท่า max length</p>
+              <p>- <code class="font-mono text-yellow-300">collate_fn</code>: กำหนดวิธีรวม samples เป็น batch</p>
+              <p>- <strong>Attention mask</strong>: บอก model ว่าตำแหน่งไหนเป็น padding</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Padding position ไม่ควร effect prediction = ต้อง mask</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Sequence Models for Text ==================== -->
+
+      <!-- Slide 11: LSTM for Sentiment -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">LSTM for Sentiment Analysis</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class SentimentLSTM(nn.Module):
+    def __init__(self, vocab_size, embed_dim,
+                 hidden_dim, output_dim):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.lstm = nn.LSTM(embed_dim, hidden_dim,
+                           num_layers=2, batch_first=True,
+                           dropout=0.5)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        embeds = self.dropout(self.embedding(x))
+        out, (hn, cn) = self.lstm(embeds)
+        out = self.dropout(out[:, -1, :])
+        return self.fc(out)
+
+# Training
+model = SentimentLSTM(25000, 128, 64, 1)
+criterion = nn.BCEWithLogitsLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+for epoch in range(10):
+    model.train()
+    for batch_text, batch_label in loader:
+        pred = model(batch_text).squeeze()
+        loss = criterion(pred, batch_label)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <strong>Dropout</strong> ป้องกัน overfitting</p>
+              <p>- <code class="font-mono text-yellow-300">BCEWithLogitsLoss</code>: sigmoid + BCE ในที่เดียว</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">out[:, -1, :]</code>: hidden state ตัวสุดท้าย</p>
+              <p>- 2 layers LSTM + dropout=0.5</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ใช้ pre-trained embedding จะเร็วกว่า train จากศูนย์</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: IMDB Dataset -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://ai.stanford.edu/~amaas/data/sentiment/" target="_blank" class="underline decoration-dotted">IMDB Dataset</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>IMDB</strong>: 50K movie reviews (25K train, 25K test)</p>
+              <p>- Binary sentiment: positive / negative</p>
+              <p>- ข้อความยาวไม่เท่ากัน ( averaging 231 words)</p>
+              <p>- Standard benchmark สำหรับ text classification</p>
+              <div class="tech-card"><p class="text-sm">[ข้อมูล] ใช้ vocab 25K words, pad to 256 tokens</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from torchtext.datasets import IMDB
+from torchtext.data.utils import get_tokenizer
+from torchtext.vocab import build_vocab_from_iterator
+
+tokenizer = get_tokenizer('basic_english')
+
+def yield_tokens(data_iter):
+    for text, label in data_iter:
+        yield tokenizer(text)
+
+# Load data
+train_iter, test_iter = IMDB(split=('train', 'test'))
+
+# Build vocab
+vocab = build_vocab_from_iterator(
+    yield_tokens(train_iter),
+    specials=["&lt;unk&gt;", "&lt;pad&gt;"],
+    max_size=25000)
+vocab.set_default_index(vocab["&lt;unk&gt;"])
+
+# Text pipeline
+text_pipeline = lambda x: vocab(tokenizer(x))
+
+# Example
+text = "This movie is great!"
+indices = text_pipeline(text)
+print(indices)  # [123, 456, 789, 1011]</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Training Loop for Text -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Training Loop สำหรับ Text</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">def train_epoch(model, loader, optimizer, criterion):
+    model.train()
+    total_loss = 0
+    for text, label in loader:
+        optimizer.zero_grad()
+        pred = model(text).squeeze()
+        loss = criterion(pred, label.float())
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(
+            model.parameters(), max_norm=1.0)
+        optimizer.step()
+        total_loss += loss.item()
+    return total_loss / len(loader)
+
+def evaluate(model, loader, criterion):
+    model.eval()
+    total_loss = 0
+    correct = 0
+    with torch.no_grad():
+        for text, label in loader:
+            pred = model(text).squeeze()
+            loss = criterion(pred, label.float())
+            total_loss += loss.item()
+            predicted = (pred > 0.5).long()
+            correct += (predicted == label).sum().item()
+    accuracy = correct / len(loader.dataset)
+    return total_loss / len(loader), accuracy
+
+# Run
+for epoch in range(5):
+    loss = train_epoch(model, train_loader, optimizer, criterion)
+    val_loss, acc = evaluate(model, test_loader, criterion)
+    print(f"Epoch {epoch}: loss={loss:.4f} acc={acc:.4f}")</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">clip_grad_norm_</code>: ป้องกัน exploding gradients</p>
+              <p>- วัดทั้ง <strong>loss</strong> และ <strong>accuracy</strong></p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">model.eval()</code> ตอน evaluate</p>
+              <p>- 5-10 epochs พอสำหรับ IMDB</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Gradient clipping สำคัญมากสำหรับ RNN/LSTM</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Evaluation and Visualization -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Evaluation และ Visualization</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report
+
+# Predict
+model.eval()
+all_preds = []
+all_labels = []
+with torch.no_grad():
+    for text, label in test_loader:
+        pred = model(text).squeeze()
+        predicted = (pred > 0.5).long()
+        all_preds.extend(predicted.tolist())
+        all_labels.extend(label.tolist())
+
+# Classification report
+print(classification_report(all_labels, all_preds,
+                           target_names=['Negative', 'Positive']))
+
+# Plot loss curves
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.plot(train_losses, label='Train')
+plt.plot(val_losses, label='Val')
+plt.legend()
+plt.title('Loss')
+
+plt.subplot(1, 2, 2)
+plt.plot(train_accs, label='Train')
+plt.plot(val_accs, label='Val')
+plt.legend()
+plt.title('Accuracy')
+plt.show()
+
+# Predict custom text
+def predict_sentiment(text):
+    model.eval()
+    indices = text_pipeline(text)
+    tensor = torch.tensor([indices])
+    with torch.no_grad():
+        pred = torch.sigmoid(model(tensor)).item()
+    return "Positive" if pred > 0.5 else "Negative"
+
+print(predict_sentiment("This movie is amazing!"))
+# Positive</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <code class="font-mono text-yellow-300">classification_report</code> ดู precision, recall, f1</p>
+              <p>- Plot loss/accuracy curves</p>
+              <p>- สร้าง <strong>predict_sentiment</strong> function</p>
+              <p>- ต้อง preprocessing เหมือนตอน train</p>
+              <div class="tech-card"><p class="text-sm">[เมตริก] Accuracy 85-90% สำหรับ IMDB = ดีแล้ว</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Pre-trained Embeddings -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Pre-trained Embeddings</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import numpy as np
+
+def load_glove(path, vocab, embed_dim):
+    # Create embedding matrix
+    matrix = np.zeros((len(vocab), embed_dim))
+    with open(path, 'r', encoding='utf-8') as f:
+        for line in f:
+            word, vector = line.split(maxsplit=1)
+            if word in vocab:
+                idx = vocab[word]
+                matrix[idx] = np.fromstring(vector, sep=' ')
+    return matrix
+
+# Load GloVe
+glove_matrix = load_glove('glove.6B.100d.txt', vocab, 100)
+
+# Set embedding weights
+model.embedding.weight = nn.Parameter(
+    torch.tensor(glove_matrix, dtype=torch.float32),
+    requires_grad=True)  # Fine-tune
+
+# Or freeze
+model.embedding.weight = nn.Parameter(
+    torch.tensor(glove_matrix, dtype=torch.float32),
+    requires_grad=False)  # ไม่ train ใหม่
+
+# Fine-tuning strategies:
+# 1. Train from scratch: ต้องมีข้อมูลเยอะ
+# 2. Freeze embeddings: ข้อมูลน้อย
+# 3. Fine-tune: ปล่อยให้ train ต่อ (best)</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <strong>GloVe/Word2Vec</strong> สำเร็จรูป</p>
+              <p>- <strong>Freeze</strong>: ไม่ train embeddings (ข้อมูลน้อย)</p>
+              <p>- <strong>Fine-tune</strong>: ปล่อยให้ train ต่อ (ข้อมูลเยอะ)</p>
+              <p>- <strong>Train from scratch</strong>: เริ่มใหม่ทั้งหมด</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] Fine-tuning มักได้ผลดีที่สุดถ้าข้อมูลเพียงพอ</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Django Dashboard ==================== -->
+
+      <!-- Slide 16: Django Dashboard Intro -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://www.djangoproject.com/" target="_blank" class="underline decoration-dotted">Django Dashboard</a> + SSE</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">uv add django torch torchtext
+
+uv run django-admin startproject wk12 .
+uv run manage.py startapp dashboard
+
+# dashboard/views.py
+import json, torch
+from django.http import StreamingHttpResponse
+
+def train(request, model_type):
+    def event_stream():
+        # Build model based on selection
+        if model_type == 'lstm':
+            model = SentimentLSTM(25000, 128, 64, 1)
+        elif model_type == 'gru':
+            model = SentimentGRU(25000, 128, 64, 1)
+
+        criterion = nn.BCEWithLogitsLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+
+        for epoch in range(10):
+            # Train on IMDB subset
+            train_loss = 0
+            for batch_text, batch_label in train_loader:
+                pred = model(batch_text).squeeze()
+                loss = criterion(pred, batch_label.float())
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                train_loss += loss.item()
+
+            # Evaluate
+            val_acc = evaluate(model, test_loader)
+
+            yield f"data: {json.dumps({'epoch': epoch, 'loss': train_loss/len(train_loader), 'acc': val_acc})}\n\n"
+
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Django</strong>: web framework สำหรับ backend</p>
+              <p>- <strong>SSE</strong>: real-time training updates</p>
+              <p>- เลือก model: LSTM, GRU</p>
+              <p>- แสดงผล loss และ accuracy แบบ live</p>
+              <div class="tech-card"><p class="text-sm">[โครงสร้าง] manage.py -> settings.py -> urls.py -> views.py -> templates/</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: SSE Training Stream -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">SSE Training Stream</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from django.http import StreamingHttpResponse
+import json, time
+
+def train_stream(request, model_type):
+    def event_stream():
+        # Simplified training on small subset
+        model = build_model(model_type)
+        criterion = nn.BCEWithLogitsLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+
+        for epoch in range(20):
+            model.train()
+            epoch_loss = 0
+            correct = 0
+            total = 0
+
+            for texts, labels in mini_loader:
+                optimizer.zero_grad()
+                pred = model(texts).squeeze()
+                loss = criterion(pred, labels.float())
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(
+                    model.parameters(), max_norm=1.0)
+                optimizer.step()
+
+                epoch_loss += loss.item()
+                predicted = (pred > 0.5).long()
+                correct += (predicted == labels).sum().item()
+                total += labels.size(0)
+
+            accuracy = correct / total
+            avg_loss = epoch_loss / len(mini_loader)
+
+            # Send update to frontend
+            yield f"data: {json.dumps({\n"
+                  f"  'epoch': {epoch},\n"
+                  f"  'loss': {avg_loss:.4f},\n"
+                  f"  'accuracy': {accuracy:.4f}\n"
+                  f"})}\n\n"
+            time.sleep(0.1)
+
+    resp = StreamingHttpResponse(event_stream(),
+        content_type='text/event-stream')
+    resp['Cache-Control'] = 'no-cache'
+    return resp</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">StreamingHttpResponse</code>: ส่ง data ทีละ epoch</p>
+              <p>- วัดทั้ง <strong>loss</strong> และ <strong>accuracy</strong></p>
+              <p>- <code class="font-mono text-yellow-300">clip_grad_norm_</code>: ป้องกัน exploding gradients</p>
+              <p>- <code class="font-mono text-yellow-300">time.sleep(0.1)</code>: ให้ frontend อ่านทัน</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] SSE = one-way (server -> client), real-time updates</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Frontend Dashboard -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Frontend: Text Classification Dashboard</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">&lt;!-- dashboard/templates/index.html --&gt;
+&lt;div x-data="{ model: 'lstm', training: false }"&gt;
+  &lt;h1&gt;Sentiment Analysis Dashboard&lt;/h1&gt;
+
+  &lt;select x-model="model"&gt;
+    &lt;option value="lstm"&gt;LSTM&lt;/option&gt;
+    &lt;option value="gru"&gt;GRU&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;button @click="startTrain()"&gt;
+    Start Training
+  &lt;/button&gt;
+
+  &lt;div&gt;
+    &lt;p&gt;Epoch: &lt;span x-text="epoch"&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;p&gt;Loss: &lt;span x-text="loss"&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;p&gt;Accuracy: &lt;span x-text="acc"&gt;&lt;/span&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;canvas id="chart" width="420" height="200"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function startTrain() {
+  const es = new EventSource('/train/' + model);
+  es.onmessage = function(e) {
+    const m = JSON.parse(e.data);
+    epoch = m.epoch;
+    loss = m.loss.toFixed(4);
+    acc = m.accuracy.toFixed(4);
+    drawChart(m.epoch, m.loss, m.accuracy);
+  };
+}
+&lt;/script&gt;</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <code class="font-mono text-yellow-300">&lt;select&gt;</code> เลือก LSTM/GRU</p>
+              <p>- แสดง epoch, loss, accuracy แบบ live</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">Canvas</code> วาด loss/accuracy curves</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">EventSource</code> รับ SSE updates</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ใช้ Alpine.js สำหรับ reactive UI</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 5: Summary + Homework ==================== -->
+
+      <!-- Slide 19: Comparison -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 5: เปรียบเทียบ Approaches</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">One-Hot / TF-IDF</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Simple, fast</li>
+                <li>- No semantic meaning</li>
+                <li>- Sparse vectors</li>
+                <li>- Good baseline</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Word Embeddings</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Dense vectors</li>
+                <li>- Semantic similarity</li>
+                <li>- Pre-trained available</li>
+                <li>- Better than one-hot</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">LSTM/GRU + Embedding</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Capture sequence</li>
+                <li>- Best for classification</li>
+                <li>- Handle variable length</li>
+                <li>- State-of-the-art baseline</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-yellow-300 mb-3">Key Takeaways</h3>
+              <ul class="space-y-2 text-base">
+                <li>- Text ต้องแปลงเป็นตัวเลขก่อนใช้กับ NN</li>
+                <li>- One-hot/TF-IDF ง่ายแต่ไม่มี semantic</li>
+                <li>- Word embeddings จับความหมายของคำ</li>
+                <li>- Word2Vec, GloVe: pre-trained vectors</li>
+                <li>- LSTM/GRU จับ sequence ได้ดี</li>
+                <li>- Padding + collate_fn สำหรับ variable length</li>
+              </ul>
+            </div>
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-blue-300 mb-3">Homework</h3>
+              <div class="tech-card">
+                <p class="mb-2">สร้าง LSTM sentiment classifier:</p>
+                <ul class="space-y-1 text-sm">
+                  <li>1. ใช้ IMDB dataset (torchtext)</li>
+                  <li>2. ใช้ pre-trained GloVe embeddings</li>
+                  <li>3. LSTM(128, 2 layers) + Dropout(0.5)</li>
+                  <li>4. Train 5 epochs, Adam lr=1e-3</li>
+                  <li>5. แสดง accuracy > 85%</li>
+                  <li>6. สร้าง predict_sentiment() function</li>
+                  <li>7. บันทึก model ด้วย state_dict()</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- slidesContainer -->
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

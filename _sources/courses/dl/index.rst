@@ -19,30 +19,44 @@
      - **วิธีสอนและกิจกรรมการเรียนรู้**
      - **จำนวนชั่วโมง** (บรรยาย/ปฏิบัติ/ศึกษาด้วยตนเอง)
    * - 1
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk01.html>`_
      - Introduction to deep learning
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 2
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk02.html>`_
      - Mathematical building blocks of neural networks
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 3
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk03.html>`_
      - Introduction to Keras and TensorFlow
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 4
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk04.html>`_
      - Neural networks: Classification and Regression
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 5
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk05.html>`_
      - Fundamentals of machine learning and working with Keras
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 6
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk06.html>`_
      - Introduction to deep learning for computer vision
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 7
+
+       :icon:`fa-solid fa-link` `quiz <../../_static/courses/dl/wk07.html>`_
      - Quiz
      - ฝึกปฏิบัติ
      - 2/2/5
@@ -57,27 +71,45 @@
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 10
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk10.html>`_
      - Neural networks with PyTorch: Dataset, DataLoader และ classification/regression
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 11
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk11.html>`_
      - Deep learning for timeseries with PyTorch
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 12
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk12.html>`_
      - Deep learning for text 1: embeddings และ sequence models
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 13
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk13.html>`_
      - Generative AI for text: language models (RNN → Transformer)
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 14
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk14.html>`_
      - Generative AI for image: GAN และ diffusion models
      - บรรยาย สาธิต ฝึกปฏิบัติ
      - 2/2/5
    * - 15
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk15.html>`_
      - Project Presentation
+     - ฝึกปฏิบัติ
+     - 2/2/5
+   * - 16
+
+       :icon:`fa-solid fa-link` `quiz <../../_static/courses/dl/wk16.html>`_
+     - Post-Midterm Quiz
      - ฝึกปฏิบัติ
      - 2/2/5
    * -

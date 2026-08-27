@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 13: Generative AI for Text - Language Models and Transformers">
+    <meta name="keywords" content="Deep Learning, PyTorch, Transformer, Attention, BERT, GPT, Language Model">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - สัปดาห์ที่ 13: Generative AI for Text</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk13.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer" class="slides-container">
+
+      <!-- ==================== Part 1: Language Model Basics ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center px-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">Generative AI for Text</h1>
+          <p class="text-xl text-gray-300 mb-2">สัปดาห์ที่ 13</p>
+          <p class="text-lg text-gray-400 mb-8">Language Models: RNN to Transformer</p>
+          <div class="space-y-2 text-left max-w-md mx-auto text-gray-300">
+            <p>1. Language Models คืออะไร</p>
+            <p>2. RNN-based Language Models</p>
+            <p>3. Attention Mechanism</p>
+            <p>4. Transformer Architecture</p>
+            <p>5. BERT และ GPT</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Learning Roadmap</h2>
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">1</div>
+              <div class="text-lg font-bold text-yellow-300">Language Models</div>
+              <div class="text-sm text-gray-400 mt-2">Next word prediction, perplexity</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">2</div>
+              <div class="text-lg font-bold text-blue-300">Attention</div>
+              <div class="text-sm text-gray-400 mt-2">Self-attention, multi-head</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">3</div>
+              <div class="text-lg font-bold text-green-300">Transformer</div>
+              <div class="text-sm text-gray-400 mt-2">Encoder-decoder, positional encoding</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">4</div>
+              <div class="text-lg font-bold text-purple-300">BERT & GPT</div>
+              <div class="text-sm text-gray-400 mt-2">Pre-trained models, fine-tuning</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is Language Model -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Language Model คืออะไร</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Language Model</strong>: ทำนายคำถัดไปจาก context</p>
+              <p>- \(P(w_t | w_1, w_2, ..., w_{t-1})\)</p>
+              <p>- เรียนรู้ grammar, facts, reasoning</p>
+              <p>- ใช้ generate text, translate, summarize</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] "The cat sat on the ___" -> "mat" (0.8), "floor" (0.15)</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Language Model: predict next word
+# P("sat" | "The cat") = 0.6
+# P("on" | "The cat sat") = 0.9
+# P("mat" | "The cat sat on the") = 0.8
+
+# Probability chain rule
+P(A, B, C) = P(A) * P(B|A) * P(C|A,B)
+
+# Language model
+P(w1, w2, ..., wn) = P(w1) * P(w2|w1) * ... * P(wn|w1..wn-1)
+
+# Perplexity: lower = better
+# PP = 2^(-1/N * sum(log2(P(wi))))
+
+# Generative process
+# 1. Sample w1 ~ P(w1)
+# 2. Sample w2 ~ P(w2|w1)
+# 3. Repeat until &lt;EOS&gt;</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: RNN Language Model -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">RNN Language Model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class RNNLM(nn.Module):
+    def __init__(self, vocab_size, embed_dim, hidden_dim):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.rnn = nn.RNN(embed_dim, hidden_dim, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, vocab_size)
+
+    def forward(self, x, hidden=None):
+        embeds = self.embedding(x)
+        out, hidden = self.rnn(embeds, hidden)
+        logits = self.fc(out)
+        return logits, hidden
+
+# Training: teacher forcing
+# Input:  ["The", "cat", "sat"]
+# Target: ["cat", "sat", "on"]
+
+model = RNNLM(25000, 128, 256)
+criterion = nn.CrossEntropyLoss()
+
+for epoch in range(10):
+    for batch in loader:
+        input_seq = batch[:, :-1]   # "The cat sat"
+        target_seq = batch[:, 1:]   # "cat sat on"
+
+        logits, _ = model(input_seq)
+        loss = criterion(logits.reshape(-1, vocab_size),
+                        target_seq.reshape(-1))
+        loss.backward()
+        optimizer.step()</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Teacher forcing</strong>: ใช้ target จริงเป็น input</p>
+              <p>- Input shift 1 position จาก target</p>
+              <p>- <code class="font-mono text-yellow-300">CrossEntropyLoss</code>: สำหรับ multi-class classification</p>
+              <p>- Hidden state จำ context ได้</p>
+              <div class="tech-card"><p class="text-sm">[ปัญหา] RNN ลืม long context = ต้องใช้ Attention</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: RNN Limitations -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">ข้อจำกัดของ RNN</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Vanishing gradient</strong>: จำ long context ไม่ได้</p>
+              <p>- <strong>Sequential</strong>: ไม่ parallelize ได้</p>
+              <p>- <strong>Fixed hidden state</strong>: ข้อมูลทั้งหมดอยู่ใน vector เดียว</p>
+              <p>- ต้องแก้ด้วย <strong>Attention</strong></p>
+              <div class="tech-card"><p class="text-sm">[ปัญหา] "The cat, which was very old and wise, sat on the ___" = ลืม "cat"</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># RNN: sequential, slow
+h1 = f(x1, h0)
+h2 = f(x2, h1)
+h3 = f(x3, h2)
+...
+hn = f(xn, hn-1)
+
+# Cannot parallelize!
+# Must compute h1 before h2, h2 before h3...
+
+# Attention: look at all positions
+context = sum(alpha_i * h_i)  # weighted sum
+# alpha_i = attention weight for position i
+
+# Transformer: fully parallel
+# All positions computed simultaneously
+Q, K, V = Linear(X)  # parallel
+attn = softmax(Q @ K.T / sqrt(d)) @ V</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: Attention and Transformer ==================== -->
+
+      <!-- Slide 5: Attention Mechanism -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://arxiv.org/abs/1409.0473" target="_blank" class="underline decoration-dotted">Attention Mechanism</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Attention</strong>: ให้ model "จ้อง" ที่ส่วนที่เกี่ยวข้อง</p>
+              <p>- \( \text{Attention}(Q, K, V) = \text{softmax}(\frac{QK^T}{\sqrt{d_k}})V \)</p>
+              <p>- <strong>Query</strong>: สิ่งที่ค้นหา</p>
+              <p>- <strong>Key</strong>: สิ่งที่เปรียบเทียบ</p>
+              <p>- <strong>Value</strong>: สิ่งที่ดึงออกมา</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] "The cat sat on the mat" -> "sat" จ้องที่ "cat" (0.7), "mat" (0.2)</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import torch
+import torch.nn as nn
+import math
+
+def scaled_dot_product_attention(Q, K, V, mask=None):
+    d_k = Q.size(-1)
+    scores = torch.matmul(Q, K.transpose(-2, -1))
+    scores = scores / math.sqrt(d_k)
+
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, -1e9)
+
+    attn_weights = torch.softmax(scores, dim=-1)
+    output = torch.matmul(attn_weights, V)
+    return output, attn_weights
+
+# Example
+seq_len, d_k = 4, 64
+Q = torch.randn(1, seq_len, d_k)
+K = torch.randn(1, seq_len, d_k)
+V = torch.randn(1, seq_len, d_k)
+
+output, weights = scaled_dot_product_attention(Q, K, V)
+print(weights.shape)  # (1, 4, 4) - attention matrix</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Multi-Head Attention -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html" target="_blank" class="underline decoration-dotted">Multi-Head Attention</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)
+
+    def forward(self, Q, K, V, mask=None):
+        batch_size = Q.size(0)
+
+        # Linear projections
+        Q = self.W_q(Q).view(batch_size, -1,
+                             self.num_heads, self.d_k)
+        K = self.W_k(K).view(batch_size, -1,
+                             self.num_heads, self.d_k)
+        V = self.W_v(V).view(batch_size, -1,
+                             self.num_heads, self.d_k)
+
+        # Transpose: (batch, heads, seq_len, d_k)
+        Q = Q.transpose(1, 2)
+        K = K.transpose(1, 2)
+        V = V.transpose(1, 2)
+
+        # Attention
+        output, weights = scaled_dot_product_attention(Q, K, V, mask)
+
+        # Concat and project
+        output = output.transpose(1, 2).contiguous()
+        output = output.view(batch_size, -1,
+                            self.num_heads * self.d_k)
+        return self.W_o(output)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Multi-head</strong>: หลาย attention heads พร้อมกัน</p>
+              <p>- แต่ละ head จับ pattern ต่างกัน</p>
+              <p>- <code class="font-mono text-yellow-300">d_model // num_heads</code>: ขนาดแต่ละ head</p>
+              <p>- Concatenate แล้ว project ด้วย <code class="font-mono text-yellow-300">W_o</code></p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] 8 heads จับ: syntax, semantics, coreference, etc.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Transformer Encoder -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://arxiv.org/abs/1706.03762" target="_blank" class="underline decoration-dotted">Transformer Encoder</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class TransformerEncoderLayer(nn.Module):
+    def __init__(self, d_model, num_heads, d_ff, dropout):
+        super().__init__()
+        self.self_attn = MultiHeadAttention(d_model, num_heads)
+        self.feed_forward = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.ReLU(),
+            nn.Linear(d_ff, d_model)
+        )
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, mask=None):
+        # Self-attention + residual + norm
+        attn_output = self.self_attn(x, x, x, mask)
+        x = self.norm1(x + self.dropout(attn_output))
+
+        # Feed-forward + residual + norm
+        ff_output = self.feed_forward(x)
+        x = self.norm2(x + self.dropout(ff_output))
+        return x
+
+# Stacking N layers
+class TransformerEncoder(nn.Module):
+    def __init__(self, N=6, d_model=512, heads=8, d_ff=2048):
+        super().__init__()
+        self.layers = nn.ModuleList([
+            TransformerEncoderLayer(d_model, heads, d_ff, 0.1)
+            for _ in range(N)
+        ])
+
+    def forward(self, x, mask=None):
+        for layer in self.layers:
+            x = layer(x, mask)
+        return x</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Residual connection</strong>: x + attn(x)</p>
+              <p>- <strong>LayerNorm</strong>: ปรับค่า output</p>
+              <p>- <strong>Feed-forward</strong>: 2 linear layers + ReLU</p>
+              <p>- <strong>Stack N layers</strong>: typically 6-12 layers</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Residual + LayerNorm ช่วย training ให้เสถียร</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Positional Encoding -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Positional Encoding</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- Transformer ไม่รู้ลำดับคำ (parallel)</p>
+              <p>- ต้องเพิ่ม <strong>position information</strong></p>
+              <p>- ใช้ sinusoidal functions:</p>
+              <p>- \(PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}})\)</p>
+              <p>- \(PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}})\)</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ไม่มี positional encoding = model ไม่รู้ว่า "cat sat" != "sat cat"</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import torch
+import math
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=5000):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len).unsqueeze(1).float()
+        div_term = torch.exp(
+            torch.arange(0, d_model, 2).float() *
+            -(math.log(10000.0) / d_model))
+
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0)  # (1, max_len, d_model)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        # x: (batch, seq_len, d_model)
+        return x + self.pe[:, :x.size(1), :]
+
+# Usage
+pe = PositionalEncoding(d_model=512)
+x = torch.randn(1, 10, 512)  # (batch=1, len=10, dim=512)
+output = pe(x)  # add positional info</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Transformer Decoder -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Transformer Decoder</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class TransformerDecoderLayer(nn.Module):
+    def __init__(self, d_model, num_heads, d_ff, dropout):
+        super().__init__()
+        # Masked self-attention
+        self.self_attn = MultiHeadAttention(d_model, num_heads)
+        # Cross-attention (to encoder)
+        self.cross_attn = MultiHeadAttention(d_model, num_heads)
+        # Feed-forward
+        self.feed_forward = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.ReLU(),
+            nn.Linear(d_ff, d_model)
+        )
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.norm3 = nn.LayerNorm(d_model)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, enc_output, src_mask, tgt_mask):
+        # Masked self-attention
+        attn1 = self.self_attn(x, x, x, tgt_mask)
+        x = self.norm1(x + self.dropout(attn1))
+
+        # Cross-attention
+        attn2 = self.cross_attn(x, enc_output, enc_output, src_mask)
+        x = self.norm2(x + self.dropout(attn2))
+
+        # Feed-forward
+        ff = self.feed_forward(x)
+        x = self.norm3(x + self.dropout(ff))
+        return x</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Masked self-attention</strong>: ไม่ให้เห็นอนาคต</p>
+              <p>- <strong>Cross-attention</strong>: attend ไปที่ encoder output</p>
+              <p>- 3 sub-layers: self-attn, cross-attn, FFN</p>
+              <p>- ใช้สำหรับ text generation (GPT, etc.)</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Causal mask: ป้องกันไม่ให้ตำแหน่งปัจจุบันเห็นตำแหน่งถัดไป</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Full Transformer -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Full Transformer</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class Transformer(nn.Module):
+    def __init__(self, src_vocab, tgt_vocab, d_model=512,
+                 num_heads=8, num_layers=6, d_ff=2048):
+        super().__init__()
+        self.encoder_embed = nn.Embedding(src_vocab, d_model)
+        self.decoder_embed = nn.Embedding(tgt_vocab, d_model)
+        self.pos_encoding = PositionalEncoding(d_model)
+
+        self.encoder = TransformerEncoder(
+            num_layers, d_model, num_heads, d_ff)
+        self.decoder = TransformerDecoder(
+            num_layers, d_model, num_heads, d_ff)
+
+        self.output_proj = nn.Linear(d_model, tgt_vocab)
+
+    def forward(self, src, tgt, src_mask, tgt_mask):
+        # Encode
+        enc_output = self.encoder(
+            self.pos_encoding(self.encoder_embed(src)),
+            src_mask)
+
+        # Decode
+        dec_output = self.decoder(
+            self.pos_encoding(self.decoder_embed(tgt)),
+            enc_output, src_mask, tgt_mask)
+
+        return self.output_proj(dec_output)
+
+# Original "Attention Is All You Need"
+# Encoder: 6 layers, d_model=512, 8 heads
+# Decoder: 6 layers, d_model=512, 8 heads</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Encoder</strong>: ประมวลผล input sequence</p>
+              <p>- <strong>Decoder</strong>: generate output sequence</p>
+              <p>-  originally สำหรับ machine translation</p>
+              <p>- ตอนนี้ใช้กับทุก NLP task</p>
+              <div class="tech-card"><p class="text-sm">[Architectures] Encoder-only (BERT), Decoder-only (GPT), Both (T5)</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Pre-trained Models ==================== -->
+
+      <!-- Slide 11: BERT -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://arxiv.org/abs/1810.04805" target="_blank" class="underline decoration-dotted">BERT</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>BERT</strong>: Bidirectional Encoder Representations from Transformers</p>
+              <p>- <strong>Encoder-only</strong>:  understands context ทั้งสองข้าง</p>
+              <p>- <strong>Pre-training</strong>: MLM + NSP</p>
+              <p>- <strong>Fine-tuning</strong>: เพิ่ม output layer เล็กๆ</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] "The [MASK] sat on the mat" -> predict "cat"</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from transformers import BertTokenizer, BertModel
+
+# Load pre-trained BERT
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
+
+# Tokenize
+text = "The cat sat on the mat"
+inputs = tokenizer(text, return_tensors='pt')
+print(inputs.keys())
+# dict_keys(['input_ids', 'token_type_ids',
+#            'attention_mask'])
+
+# Get embeddings
+with torch.no_grad():
+    outputs = model(**inputs)
+
+last_hidden = outputs.last_hidden_state
+print(last_hidden.shape)  # (1, 8, 768)
+
+# Fine-tuning for classification
+class BertClassifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.bert = BertModel.from_pretrained('bert-base-uncased')
+        self.classifier = nn.Linear(768, 2)
+
+    def forward(self, input_ids, attention_mask):
+        outputs = self.bert(input_ids, attention_mask)
+        pooled = outputs.pooler_output
+        return self.classifier(pooled)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: GPT -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://openai.com/research/better-language-models" target="_blank" class="underline decoration-dotted">GPT</a> (Generative Pre-trained Transformer)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+# Load GPT-2
+tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+model = GPT2LMHeadModel.from_pretrained('gpt2')
+
+# Generate text
+prompt = "The future of AI is"
+input_ids = tokenizer.encode(prompt, return_tensors='pt')
+
+# Generate
+output = model.generate(
+    input_ids,
+    max_length=50,
+    num_return_sequences=1,
+    temperature=0.7,
+    do_sample=True
+)
+
+print(tokenizer.decode(output[0]))
+# "The future of AI is bright. We are seeing more..."
+
+# Temperature: higher = more random
+# Top-k sampling: only consider top k tokens
+# Top-p (nucleus): sample from smallest set with p% mass</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>GPT</strong>: Decoder-only, autoregressive</p>
+              <p>- Train on massive text, generate text</p>
+              <p>- <strong>Temperature</strong>: ควบคุมความ random</p>
+              <p>- <strong>Top-k / Top-p</strong>: จำกัด token ที่เลือก</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] GPT = next word prediction, ไม่ understand meaning</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: BERT vs GPT -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">BERT vs GPT</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>BERT</strong>: Encoder, bidirectional, understanding</p>
+              <p>- <strong>GPT</strong>: Decoder, unidirectional, generation</p>
+              <p>- BERT ดีกว่าสำหรับ: classification, NER, QA</p>
+              <p>- GPT ดีกว่าสำหรับ: text generation, summarization</p>
+              <div class="tech-card"><p class="text-sm">[เปรียบเทียบ] BERT = เข้าใจ / GPT = สร้าง</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># BERT: Encoder (bidirectional)
+Input: "The [MASK] sat on the mat"
+       <-- both directions -->
+Output: "cat" (classification)
+
+# GPT: Decoder (left-to-right)
+Input: "The future of AI is"
+       <-- left to right only -->
+Output: "bright and promising..."
+
+# Use cases:
+# BERT:
+#   - Sentiment analysis
+#   - Named entity recognition
+#   - Question answering
+#   - Text classification
+
+# GPT:
+#   - Story generation
+#   - Code completion
+#   - Summarization
+#   - Chatbots</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Hugging Face -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://huggingface.co/" target="_blank" class="underline decoration-dotted">Hugging Face</a> Transformers</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">pip install transformers torch
+
+from transformers import pipeline
+
+# Sentiment analysis
+classifier = pipeline('sentiment-analysis')
+result = classifier('I love this product!')
+print(result)
+# [{'label': 'POSITIVE', 'score': 0.9998}]
+
+# Text generation
+generator = pipeline('text-generation', model='gpt2')
+result = generator('The future of AI is', max_length=50)
+print(result[0]['generated_text'])
+
+# Translation
+translator = pipeline('translation_en_to_fr')
+result = translator('Hello, how are you?')
+print(result[0]['translation_text'])
+
+# Summarization
+summarizer = pipeline('summarization')
+text = "Long article about AI..."
+result = summarizer(text, max_length=50)
+print(result[0]['summary_text'])</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Hugging Face</strong>: hub ของ pre-trained models</p>
+              <p>- <code class="font-mono text-yellow-300">pipeline()</code>: ใช้งานง่ายใน 2 บรรทัด</p>
+              <p>-  models มากกว่า 100K+ บน Hub</p>
+              <p>-  지원: classification, generation, translation, etc.</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ลอง model ต่างๆ บน huggingface.co/models</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Fine-tuning -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Fine-tuning Transformers</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from transformers import (BertForSequenceClassification,
+                           Trainer, TrainingArguments)
+
+# Load model
+model = BertForSequenceClassification.from_pretrained(
+    'bert-base-uncased', num_labels=2)
+
+# Training arguments
+training_args = TrainingArguments(
+    output_dir='./results',
+    num_train_epochs=3,
+    per_device_train_batch_size=16,
+    per_device_eval_batch_size=64,
+    warmup_steps=500,
+    weight_decay=0.01,
+    logging_dir='./logs',
+    evaluation_strategy='epoch'
+)
+
+# Trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=val_dataset
+)
+
+# Fine-tune!
+trainer.train()
+
+# Save
+model.save_pretrained('./my_bert_model')</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">BertForSequenceClassification</code>: BERT + classifier head</p>
+              <p>- <code class="font-mono text-yellow-300">Trainer</code>: handles training loop</p>
+              <p>- typically 3 epochs พอสำหรับ fine-tuning</p>
+              <p>- <code class="font-mono text-yellow-300">warmup_steps</code>: ค่อยๆ เพิ่ม learning rate</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Fine-tuning ใช้ learning rate เล็กกว่า (2e-5 to 5e-5)</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Django Dashboard ==================== -->
+
+      <!-- Slide 16: Django Dashboard Intro -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://www.djangoproject.com/" target="_blank" class="underline decoration-dotted">Django Dashboard</a> + SSE</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">uv add django torch transformers
+
+uv run django-admin startproject wk13 .
+uv run manage.py startapp dashboard
+
+# dashboard/views.py
+import json, torch
+from django.http import StreamingHttpResponse
+from transformers import (BertForSequenceClassification,
+                           BertTokenizer)
+
+def train(request, model_type):
+    def event_stream():
+        # Load pre-trained model
+        if model_type == 'bert':
+            model = BertForSequenceClassification.from_pretrained(
+                'bert-base-uncased', num_labels=2)
+            tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+        # Fine-tune on sentiment dataset
+        optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+
+        for epoch in range(3):
+            train_loss = 0
+            correct = 0
+            total = 0
+
+            for batch in train_loader:
+                outputs = model(**batch)
+                loss = outputs.loss
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                train_loss += loss.item()
+                predictions = outputs.logits.argmax(-1)
+                correct += (predictions == batch['labels']).sum().item()
+                total += batch['labels'].size(0)
+
+            accuracy = correct / total
+            yield f"data: {json.dumps({'epoch': epoch, 'loss': train_loss/len(train_loader), 'accuracy': accuracy})}\n\n"
+
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Django</strong>: web framework สำหรับ backend</p>
+              <p>- <strong>SSE</strong>: real-time training updates</p>
+              <p>- แสดงผล loss, accuracy แบบ live</p>
+              <p>-  fine-tune BERT on custom dataset</p>
+              <div class="tech-card"><p class="text-sm">[โครงสร้าง] manage.py -> settings.py -> urls.py -> views.py -> templates/</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: SSE Training Stream -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">SSE Training Stream</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from django.http import StreamingHttpResponse
+import json, time
+
+def train_stream(request, model_type):
+    def event_stream():
+        model = load_model(model_type)
+        optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+
+        for epoch in range(5):
+            model.train()
+            epoch_loss = 0
+            correct = 0
+            total = 0
+
+            for batch in mini_loader:
+                optimizer.zero_grad()
+                outputs = model(**batch)
+                loss = outputs.loss
+                loss.backward()
+                optimizer.step()
+
+                epoch_loss += loss.item()
+                preds = outputs.logits.argmax(-1)
+                correct += (preds == batch['labels']).sum().item()
+                total += batch['labels'].size(0)
+
+            accuracy = correct / total
+            avg_loss = epoch_loss / len(mini_loader)
+
+            yield f"data: {json.dumps({\n"
+                  f"  'epoch': {epoch},\n"
+                  f"  'loss': {avg_loss:.4f},\n"
+                  f"  'accuracy': {accuracy:.4f}\n"
+                  f"})}\n\n"
+            time.sleep(0.1)
+
+    resp = StreamingHttpResponse(event_stream(),
+        content_type='text/event-stream')
+    resp['Cache-Control'] = 'no-cache'
+    return resp</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">StreamingHttpResponse</code>: ส่ง data ทีละ epoch</p>
+              <p>- วัดทั้ง <strong>loss</strong> และ <strong>accuracy</strong></p>
+              <p>- <code class="font-mono text-yellow-300">AdamW</code>: optimizer สำหรับ transformers</p>
+              <p>- <code class="font-mono text-yellow-300">time.sleep(0.1)</code>: ให้ frontend อ่านทัน</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] SSE = one-way (server -> client), real-time updates</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Frontend Dashboard -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Frontend: Transformer Dashboard</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">&lt;!-- dashboard/templates/index.html --&gt;
+&lt;div x-data="{ model: 'bert', training: false }"&gt;
+  &lt;h1&gt;Transformer Training Dashboard&lt;/h1&gt;
+
+  &lt;select x-model="model"&gt;
+    &lt;option value="bert"&gt;BERT (Encoder)&lt;/option&gt;
+    &lt;option value="gpt2"&gt;GPT-2 (Decoder)&lt;/option&gt;
+    &lt;option value="t5"&gt;T5 (Encoder-Decoder)&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;button @click="startTrain()"&gt;
+    Start Fine-tuning
+  &lt;/button&gt;
+
+  &lt;div&gt;
+    &lt;p&gt;Epoch: &lt;span x-text="epoch"&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;p&gt;Loss: &lt;span x-text="loss"&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;p&gt;Accuracy: &lt;span x-text="acc"&gt;&lt;/span&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;canvas id="chart" width="420" height="200"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function startTrain() {
+  const es = new EventSource('/train/' + model);
+  es.onmessage = function(e) {
+    const m = JSON.parse(e.data);
+    epoch = m.epoch;
+    loss = m.loss.toFixed(4);
+    acc = m.accuracy.toFixed(4);
+    drawChart(m.epoch, m.loss, m.accuracy);
+  };
+}
+&lt;/script&gt;</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <code class="font-mono text-yellow-300">&lt;select&gt;</code> เลือก BERT/GPT-2/T5</p>
+              <p>- แสดง epoch, loss, accuracy แบบ live</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">Canvas</code> วาด loss/accuracy curves</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">EventSource</code> รับ SSE updates</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ใช้ Alpine.js สำหรับ reactive UI</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 5: Summary + Homework ==================== -->
+
+      <!-- Slide 19: Comparison -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 5: เปรียบเทียบ Models</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">RNN/LSTM</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Sequential processing</li>
+                <li>- Slow training</li>
+                <li>- Short memory</li>
+                <li>- Legacy models</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">Transformer (BERT)</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Bidirectional</li>
+                <li>- Parallel processing</li>
+                <li>- Understanding tasks</li>
+                <li>- State-of-the-art</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">Transformer (GPT)</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Autoregressive</li>
+                <li>- Text generation</li>
+                <li>- Zero-shot/few-shot</li>
+                <li>- Foundation models</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-yellow-300 mb-3">Key Takeaways</h3>
+              <ul class="space-y-2 text-base">
+                <li>- Language model = predict next word</li>
+                <li>- Attention = ให้ model จ้องที่ส่วนที่เกี่ยวข้อง</li>
+                <li>- Transformer = parallel, scalable</li>
+                <li>- BERT = understanding, GPT = generation</li>
+                <li>- Pre-trained + fine-tuning = state-of-the-art</li>
+                <li>- Hugging Face = easy access to models</li>
+              </ul>
+            </div>
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-blue-300 mb-3">Homework</h3>
+              <div class="tech-card">
+                <p class="mb-2">Fine-tune BERT for sentiment analysis:</p>
+                <ul class="space-y-1 text-sm">
+                  <li>1. ใช้ IMDB dataset</li>
+                  <li>2. Load bert-base-uncased</li>
+                  <li>3. Fine-tune 3 epochs, lr=2e-5</li>
+                  <li>4. แสดง accuracy > 90%</li>
+                  <li>5. สร้าง predict_sentiment() function</li>
+                  <li>6. บันทึก model ด้วย save_pretrained()</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- slidesContainer -->
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

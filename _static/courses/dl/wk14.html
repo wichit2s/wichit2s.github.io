@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 14: Generative AI for Image - GAN and Diffusion Models">
+    <meta name="keywords" content="Deep Learning, PyTorch, GAN, Diffusion, Image Generation, DCGAN, Stable Diffusion">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - สัปดาห์ที่ 14: Generative AI for Image</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk14.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer" class="slides-container">
+
+      <!-- ==================== Part 1: GAN Basics ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center px-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">Generative AI for Image</h1>
+          <p class="text-xl text-gray-300 mb-2">สัปดาห์ที่ 14</p>
+          <p class="text-lg text-gray-400 mb-8">GAN และ Diffusion Models</p>
+          <div class="space-y-2 text-left max-w-md mx-auto text-gray-300">
+            <p>1. GAN: Generator vs Discriminator</p>
+            <p>2. DCGAN: Deep Convolutional GAN</p>
+            <p>3. Training GANs</p>
+            <p>4. Diffusion Models</p>
+            <p>5. Stable Diffusion</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Learning Roadmap</h2>
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">1</div>
+              <div class="text-lg font-bold text-yellow-300">GAN Basics</div>
+              <div class="text-sm text-gray-400 mt-2">Generator, Discriminator, minimax</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">2</div>
+              <div class="text-lg font-bold text-blue-300">DCGAN</div>
+              <div class="text-sm text-gray-400 mt-2">Convolutional GAN architecture</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">3</div>
+              <div class="text-lg font-bold text-green-300">Diffusion</div>
+              <div class="text-sm text-gray-400 mt-2">Denoising, sampling, Stable Diffusion</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">4</div>
+              <div class="text-lg font-bold text-purple-300">Practical</div>
+              <div class="text-sm text-gray-400 mt-2">Generate faces, digits, art</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is GAN -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://arxiv.org/abs/1406.2661" target="_blank" class="underline decoration-dotted">GAN</a> (Generative Adversarial Network)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Generator (G)</strong>: สร้างภาพปลอมจาก noise</p>
+              <p>- <strong>Discriminator (D)</strong>: แยกภาพจริง vs ปลอม</p>
+              <p>- แข่งกัน: G สร้างให้เหมือนจริง, D จับให้ได้</p>
+              <p>- ผลลัพธ์: G สร้างภาพเหมือนจริงมาก</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] G สร้างหน้าคนปลอม, D แยกว่าปลอมหรือจริง</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># GAN: two networks competing
+# z (noise) -> [Generator] -> fake_image
+# real_image + fake_image -> [Discriminator] -> real/fake
+
+# Minimax game:
+# min_G max_D V(D,G) =
+#   E[log D(x)] + E[log(1 - D(G(z)))]
+
+# Training:
+# 1. Train D: maximize log(D(x)) + log(1-D(G(z)))
+# 2. Train G: maximize log(D(G(z)))
+
+# At equilibrium:
+# D(x) = 0.5 (can't tell real from fake)
+# G generates perfect images</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: GAN Architecture -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">GAN Architecture</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import torch
+import torch.nn as nn
+
+class Generator(nn.Module):
+    def __init__(self, latent_dim=100, img_dim=784):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(latent_dim, 256),
+            nn.LeakyReLU(0.2),
+            nn.Linear(256, 512),
+            nn.LeakyReLU(0.2),
+            nn.Linear(512, img_dim),
+            nn.Tanh()  # output [-1, 1]
+        )
+    def forward(self, z):
+        return self.net(z)
+
+class Discriminator(nn.Module):
+    def __init__(self, img_dim=784):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(img_dim, 512),
+            nn.LeakyReLU(0.2),
+            nn.Linear(512, 256),
+            nn.LeakyReLU(0.2),
+            nn.Linear(256, 1),
+            nn.Sigmoid()
+        )
+    def forward(self, x):
+        return self.net(x)
+
+# Create models
+G = Generator(latent_dim=100, img_dim=784)
+D = Discriminator(img_dim=784)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Generator</strong>: noise -> image (Tanh output)</p>
+              <p>- <strong>Discriminator</strong>: image -> real/fake (Sigmoid)</p>
+              <p>- <code class="font-mono text-yellow-300">LeakyReLU</code>: ช่วย gradient flow</p>
+              <p>- _size ค่อยๆ เพิ่มขึ้น: 100 -> 256 -> 512 -> 784</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ใช้ LeakyReLU แทน ReLU ใน GANs</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: GAN Training -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Training GANs</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Training loop
+criterion = nn.BCELoss()
+opt_D = torch.optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
+opt_G = torch.optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
+
+for epoch in range(100):
+    for real_imgs, _ in dataloader:
+        batch_size = real_imgs.size(0)
+        real_imgs = real_imgs.view(batch_size, -1)
+
+        # Labels
+        real_labels = torch.ones(batch_size, 1)
+        fake_labels = torch.zeros(batch_size, 1)
+
+        # Train Discriminator
+        z = torch.randn(batch_size, 100)
+        fake_imgs = G(z).detach()
+
+        real_loss = criterion(D(real_imgs), real_labels)
+        fake_loss = criterion(D(fake_imgs), fake_labels)
+        d_loss = (real_loss + fake_loss) / 2
+
+        opt_D.zero_grad()
+        d_loss.backward()
+        opt_D.step()
+
+        # Train Generator
+        z = torch.randn(batch_size, 100)
+        fake_imgs = G(z)
+        g_loss = criterion(D(fake_imgs), real_labels)
+
+        opt_G.zero_grad()
+        g_loss.backward()
+        opt_G.step()</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Step 1</strong>: Train D on real + fake</p>
+              <p>- <strong>Step 2</strong>: Train G (fool D)</p>
+              <p>- <code class="font-mono text-yellow-300">.detach()</code>: ไม่ update G ตอน train D</p>
+              <p>- <code class="font-mono text-yellow-300">betas=(0.5, 0.999)</code>: สำหรับ GANs</p>
+              <div class="tech-card"><p class="text-sm">[ปัญหา] Mode collapse = G สร้างภาพเดิมซ้ำๆ</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: DCGAN ==================== -->
+
+      <!-- Slide 5: DCGAN -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://arxiv.org/abs/1511.06434" target="_blank" class="underline decoration-dotted">DCGAN</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class DCGenerator(nn.Module):
+    def __init__(self, latent_dim=100):
+        super().__init__()
+        self.net = nn.Sequential(
+            # z: (batch, 100, 1, 1)
+            nn.ConvTranspose2d(100, 512, 4, 1, 0),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            # -> (batch, 512, 4, 4)
+
+            nn.ConvTranspose2d(512, 256, 4, 2, 1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            # -> (batch, 256, 8, 8)
+
+            nn.ConvTranspose2d(256, 128, 4, 2, 1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            # -> (batch, 128, 16, 16)
+
+            nn.ConvTranspose2d(128, 3, 4, 2, 1),
+            nn.Tanh()
+            # -> (batch, 3, 32, 32)
+        )
+    def forward(self, z):
+        return self.net(z.view(-1, 100, 1, 1))</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>DCGAN</strong>: Deep Convolutional GAN</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">ConvTranspose2d</code> (upscaling)</p>
+              <p>- <code class="font-mono text-yellow-300">BatchNorm</code>: ช่วยให้ training เสถียร</p>
+              <p>-  no fully-connected layers</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] BatchNorm + ReLU/Tanh = DCGAN guidelines</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: DCGAN Discriminator -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">DCGAN Discriminator</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class DCDiscriminator(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            # (batch, 3, 32, 32)
+            nn.Conv2d(3, 64, 4, 2, 1),
+            nn.LeakyReLU(0.2),
+            # -> (batch, 64, 16, 16)
+
+            nn.Conv2d(64, 128, 4, 2, 1),
+            nn.BatchNorm2d(128),
+            nn.LeakyReLU(0.2),
+            # -> (batch, 128, 8, 8)
+
+            nn.Conv2d(128, 256, 4, 2, 1),
+            nn.BatchNorm2d(256),
+            nn.LeakyReLU(0.2),
+            # -> (batch, 256, 4, 4)
+
+            nn.Conv2d(256, 1, 4, 1, 0),
+            nn.Sigmoid()
+            # -> (batch, 1, 1, 1)
+        )
+    def forward(self, x):
+        return self.net(x).view(-1, 1)
+
+# Usage
+D = DCDiscriminator()
+z = torch.randn(8, 100)
+fake_imgs = G(z)
+pred = D(fake_imgs)  # (8, 1) - real/fake score</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Discriminator</strong>: image -> real/fake score</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">Conv2d</code> (downscaling)</p>
+              <p>- <code class="font-mono text-yellow-300">LeakyReLU(0.2)</code>: ช่วย gradient flow</p>
+              <p>- Output: scalar (0=fake, 1=real)</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ไม่ใช้ BatchNorm ใน Discriminator ของ DCGAN</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: GAN Challenges -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">GAN Challenges</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Mode collapse</strong>: G สร้างภาพเดิมซ้ำๆ</p>
+              <p>- <strong>Training instability</strong>: D ชนะ G หรือ vice versa</p>
+              <p>- <strong>No convergence</strong>: training ไม่ converge</p>
+              <p>- <strong>Evaluation</strong>: วัดคุณภาพภาพยาก</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ใช้ Wasserstein GAN (WGAN) สำหรับ training ที่เสถียรกว่า</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Common issues:
+
+# 1. Mode collapse
+# G generates same image every time
+# Fix: add noise, use WGAN
+
+# 2. Training instability
+# D loss -> 0 (D too strong)
+# G loss -> infinity
+# Fix: lower lr for D, train D less
+
+# 3. No convergence
+# Loss oscillates, never stabilizes
+# Fix: use BatchNorm, adjust architecture
+
+# Evaluation metrics:
+# - FID (Fréchet Inception Distance)
+#   lower = better
+# - IS (Inception Score)
+#   higher = better
+
+# Tips:
+# - Use Adam optimizer
+# - Train D more than G
+# - Add noise to labels</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Diffusion Models ==================== -->
+
+      <!-- Slide 8: Diffusion Concept -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Diffusion Models</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Forward process</strong>: ค่อยๆ เพิ่ม noise จนเป็น Gaussian</p>
+              <p>- <strong>Reverse process</strong>: เรียนรู้ undo noise กลับเป็นภาพ</p>
+              <p>-  training เสถียรกว่า GANs</p>
+              <p>- คุณภาพสูงมาก (Stable Diffusion, DALL-E)</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] ภาพสุนัข -> เพิ่ม noise -> noise -> เรียนรู้ undo -> สร้างสุนัขใหม่</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Diffusion: two processes
+
+# Forward: add noise gradually
+# x_0 -> x_1 -> x_2 -> ... -> x_T (pure noise)
+# q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t)*x_{t-1}, beta_t*I)
+
+# Reverse: learn to denoise
+# x_T -> x_{T-1} -> ... -> x_1 -> x_0 (clean image)
+# p(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t*I)
+
+# Training:
+# 1. Take image x_0
+# 2. Sample random timestep t
+# 3. Add noise: x_t = sqrt(alpha_t)*x_0 + sqrt(1-alpha_t)*eps
+# 4. Predict noise: eps_theta(x_t, t)
+# 5. Loss = MSE(eps, eps_theta(x_t, t))</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: U-Net Architecture -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">U-Net for Diffusion</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class UNet(nn.Module):
+    def __init__(self, in_channels=3, time_dim=256):
+        super().__init__()
+        # Encoder
+        self.enc1 = self.conv_block(in_channels, 64)
+        self.enc2 = self.conv_block(64, 128)
+        self.enc3 = self.conv_block(128, 256)
+
+        # Bottleneck
+        self.bottleneck = self.conv_block(256, 512)
+
+        # Decoder
+        self.dec3 = self.conv_block(512 + 256, 256)
+        self.dec2 = self.conv_block(256 + 128, 128)
+        self.dec1 = self.conv_block(128 + 64, 64)
+
+        # Time embedding
+        self.time_mlp = nn.Sequential(
+            nn.Linear(time_dim, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512)
+        )
+
+    def conv_block(self, in_ch, out_ch):
+        return nn.Sequential(
+            nn.Conv2d(in_ch, out_ch, 3, padding=1),
+            nn.GroupNorm(8, out_ch),
+            nn.GELU()
+        )
+
+    def forward(self, x, t):
+        # x: (batch, 3, H, W)
+        # t: (batch, time_dim)
+        t_emb = self.time_mlp(t)
+        # ... encoder, bottleneck, decoder
+        return noise_pred</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>U-Net</strong>: encoder-decoder with skip connections</p>
+              <p>- <strong>Time embedding</strong>: บอกว่า noise level เท่าไหร่</p>
+              <p>- <code class="font-mono text-yellow-300">GroupNorm</code>: ดีกว่า BatchNorm สำหรับ diffusion</p>
+              <p>- <code class="font-mono text-yellow-300">GELU</code>: activation ที่นิยมใน transformers</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] U-Net ทำนาย noise ที่ต้องลบออก</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Diffusion Training -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Training Diffusion Model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">def train_diffusion(model, dataloader, epochs=100):
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+
+    for epoch in range(epochs):
+        for images, _ in dataloader:
+            batch_size = images.size(0)
+
+            # Sample random timestep
+            t = torch.randint(0, T, (batch_size,))
+
+            # Add noise
+            noise = torch.randn_like(images)
+            alpha_t = alphas[t].view(-1, 1, 1, 1)
+            alpha_bar_t = alphas_cumprod[t].view(-1, 1, 1, 1)
+
+            noisy_images = torch.sqrt(alpha_bar_t) * images + \
+                          torch.sqrt(1 - alpha_bar_t) * noise
+
+            # Predict noise
+            noise_pred = model(noisy_images, t)
+
+            # Loss
+            loss = F.mse_loss(noise_pred, noise)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+# alphas, alphas_cumprod = schedule for noise</pre>
+            <div class="space-y-4 text-base">
+              <p>- Sample random timestep <code class="font-mono text-yellow-300">t</code></p>
+              <p>- Add noise: \(x_t = \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1-\bar{\alpha}_t} \epsilon\)</p>
+              <p>- Predict noise: \(\epsilon_\theta(x_t, t)\)</p>
+              <p>- Loss = MSE(predicted noise, actual noise)</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Simple loss function = MSE เท่านั้น!</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Sampling -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Sampling (Generation)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">@torch.no_grad()
+def sample(model, num_samples, image_size):
+    # Start from pure noise
+    x = torch.randn(num_samples, 3, image_size, image_size)
+
+    for t in reversed(range(T)):
+        # Predict noise
+        noise_pred = model(x, torch.tensor([t]))
+
+        # Denoise
+        alpha_t = alphas[t]
+        alpha_bar_t = alphas_cumprod[t]
+        beta_t = betas[t]
+
+        # Remove noise
+        x = (1 / torch.sqrt(alpha_t)) * \
+            (x - (beta_t / torch.sqrt(1 - alpha_bar_t)) * noise_pred)
+
+        # Add noise (except at t=0)
+        if t > 0:
+            noise = torch.randn_like(x)
+            x = x + torch.sqrt(beta_t) * noise
+
+    return x
+
+# Generate 16 images
+samples = sample(model, 16, 32)
+save_image(samples, 'generated.png', nrow=4)</pre>
+            <div class="space-y-4 text-base">
+              <p>- เริ่มจาก noise ล้วน</p>
+              <p>- ค่อยๆ ลบ noise ทีละ step</p>
+              <p>-  <code class="font-mono text-yellow-300">reversed(range(T))</code>: จาก T ถึง 0</p>
+              <p>- เพิ่ม noise เล็กน้อยเพื่อ diversity</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Sampling ช้ากว่า GAN (หลายร้อย steps)</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Stable Diffusion -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://huggingface.co/runwayml/stable-diffusion-v1-5" target="_blank" class="underline decoration-dotted">Stable Diffusion</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Latent Diffusion</strong>: ทำงานใน latent space (ไม่ใช่ pixel space)</p>
+              <p>- <strong>VAE</strong>: บีบอัดภาพเป็น latent representation</p>
+              <p>- <strong>Text Encoder</strong>: CLIP สำหรับ text condition</p>
+              <p>- เร็วกว่า diffusion แบบเดิมมาก</p>
+              <div class="tech-card"><p class="text-sm">[Architectures] VAE + U-Net + CLIP = Stable Diffusion</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from diffusers import StableDiffusionPipeline
+
+# Load Stable Diffusion
+pipe = StableDiffusionPipeline.from_pretrained(
+    "runwayml/stable-diffusion-v1-5",
+    torch_dtype=torch.float16
+)
+pipe = pipe.to("cuda")
+
+# Generate from text prompt
+prompt = "a photo of an astronaut riding a horse"
+image = pipe(prompt, num_inference_steps=50).images[0]
+image.save("astronaut.png")
+
+# Steps:
+# 1. Text -> CLIP -> text embeddings
+# 2. Random noise in latent space
+# 3. U-Net denoise with text condition
+# 4. VAE decode latent -> image
+
+# Parameters:
+# - num_inference_steps: 20-50 (more = better)
+# - guidance_scale: 7.5 (higher = follow prompt more)
+# - seed: random seed for reproducibility</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Diffusion vs GAN -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Diffusion vs GAN</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>GAN</strong>: เร็ว,  training ยาก, mode collapse</p>
+              <p>- <strong>Diffusion</strong>: ช้า, training ง่าย, คุณภาพสูง</p>
+              <p>- GAN: inference step เดียว</p>
+              <p>- Diffusion: หลายร้อย steps</p>
+              <div class="tech-card"><p class="text-sm">[สรุป] GAN = เร็วแต่ยาก / Diffusion = ช้าแต่ง่ายและดี</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Comparison:
+#                 GAN        Diffusion
+# Speed:          Fast       Slow
+# Training:       Hard       Easy
+# Quality:        Good       Excellent
+# Diversity:      Low        High
+# Mode collapse:  Yes        No
+# Evaluation:     FID        FID/IS
+
+# Use cases:
+# GAN:
+# - Real-time generation
+# - Style transfer
+# - Super-resolution
+
+# Diffusion:
+# - Text-to-image
+# - Image editing
+# - Inpainting
+# - Video generation</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Practical Example -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">ตัวอย่าง: Generate MNIST Digits</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+# Load MNIST
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize([0.5], [0.5])
+])
+dataset = datasets.MNIST('./data', train=True,
+                         download=True, transform=transform)
+loader = DataLoader(dataset, batch_size=128, shuffle=True)
+
+# DCGAN for MNIST
+G = DCGenerator(latent_dim=100)
+D = DCDiscriminator()
+criterion = nn.BCELoss()
+opt_G = torch.optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
+opt_D = torch.optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
+
+# Train
+for epoch in range(50):
+    for real_imgs, _ in loader:
+        batch_size = real_imgs.size(0)
+        real_imgs = real_imgs.view(batch_size, -1)
+
+        # Train D
+        z = torch.randn(batch_size, 100)
+        fake_imgs = G(z).detach()
+        d_loss = criterion(D(real_imgs), torch.ones(batch_size, 1)) + \
+                 criterion(D(fake_imgs), torch.zeros(batch_size, 1))
+        opt_D.zero_grad()
+        d_loss.backward()
+        opt_D.step()
+
+        # Train G
+        z = torch.randn(batch_size, 100)
+        fake_imgs = G(z)
+        g_loss = criterion(D(fake_imgs), torch.ones(batch_size, 1))
+        opt_G.zero_grad()
+        g_loss.backward()
+        opt_G.step()</pre>
+            <div class="space-y-4 text-base">
+              <p>- MNIST: 28x28 grayscale digits</p>
+              <p>- DCGAN: simple but effective</p>
+              <p>- 50 epochs พอสำหรับ MNIST</p>
+              <p>- ผลลัพธ์: ภาพ digit ปลอมที่เหมือนจริง</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] เริ่มจาก MNIST ก่อนไป CIFAR-10/ CelebA</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Django Dashboard ==================== -->
+
+      <!-- Slide 15: Django Dashboard Intro -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://www.djangoproject.com/" target="_blank" class="underline decoration-dotted">Django Dashboard</a> + SSE</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">uv add django torch torchvision
+
+uv run django-admin startproject wk14 .
+uv run manage.py startapp dashboard
+
+# dashboard/views.py
+import json, torch
+from django.http import StreamingHttpResponse
+
+def train(request, model_type):
+    def event_stream():
+        if model_type == 'gan':
+            G = Generator()
+            D = Discriminator()
+        elif model_type == 'dcgan':
+            G = DCGenerator()
+            D = DCDiscriminator()
+
+        criterion = nn.BCELoss()
+        opt_G = torch.optim.Adam(G.parameters(), lr=0.0002)
+        opt_D = torch.optim.Adam(D.parameters(), lr=0.0002)
+
+        for epoch in range(50):
+            # Training loop
+            # ...
+
+            # Generate sample images
+            with torch.no_grad():
+                z = torch.randn(16, 100)
+                fake_imgs = G(z)
+
+            yield f"data: {json.dumps({'epoch': epoch, 'd_loss': d_loss.item(), 'g_loss': g_loss.item(), 'images': fake_imgs.tolist()})}\n\n"
+
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Django</strong>: web framework สำหรับ backend</p>
+              <p>- <strong>SSE</strong>: real-time training updates</p>
+              <p>- แสดงผล loss และ generate images</p>
+              <p>- เลือก model: GAN, DCGAN</p>
+              <div class="tech-card"><p class="text-sm">[โครงสร้าง] manage.py -> settings.py -> urls.py -> views.py -> templates/</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: SSE Training Stream -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">SSE Training Stream</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from django.http import StreamingHttpResponse
+import json, time
+
+def train_stream(request, model_type):
+    def event_stream():
+        G, D = build_models(model_type)
+        criterion = nn.BCELoss()
+        opt_G = torch.optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
+        opt_D = torch.optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
+
+        for epoch in range(100):
+            # Simplified training
+            batch_size = 64
+
+            # Train D
+            z = torch.randn(batch_size, 100)
+            fake_imgs = G(z).detach()
+            d_loss = criterion(D(fake_imgs), torch.zeros(batch_size, 1))
+
+            opt_D.zero_grad()
+            d_loss.backward()
+            opt_D.step()
+
+            # Train G
+            z = torch.randn(batch_size, 100)
+            fake_imgs = G(z)
+            g_loss = criterion(D(fake_imgs), torch.ones(batch_size, 1))
+
+            opt_G.zero_grad()
+            g_loss.backward()
+            opt_G.step()
+
+            # Generate samples
+            with torch.no_grad():
+                z = torch.randn(4, 100)
+                samples = G(z).view(-1, 1, 28, 28)
+                samples = (samples + 1) / 2  # denormalize
+
+            yield f"data: {json.dumps({\n"
+                  f"  'epoch': {epoch},\n"
+                  f"  'd_loss': {d_loss.item():.4f},\n"
+                  f"  'g_loss': {g_loss.item():.4f},\n"
+                  f"  'samples': samples.numpy().tolist()\n"
+                  f"})}\n\n"
+            time.sleep(0.05)
+
+    resp = StreamingHttpResponse(event_stream(),
+        content_type='text/event-stream')
+    resp['Cache-Control'] = 'no-cache'
+    return resp</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">StreamingHttpResponse</code>: ส่ง data ทีละ epoch</p>
+              <p>- ส่งทั้ง <strong>d_loss</strong>, <strong>g_loss</strong>, และ <strong>samples</strong></p>
+              <p>- Generate images ทุก epoch</p>
+              <p>- <code class="font-mono text-yellow-300">time.sleep(0.05)</code>: ให้ frontend อ่านทัน</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] SSE = one-way (server -> client), real-time updates</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Frontend Dashboard -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Frontend: GAN Dashboard</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">&lt;!-- dashboard/templates/index.html --&gt;
+&lt;div x-data="{ model: 'gan', training: false }"&gt;
+  &lt;h1&gt;GAN Training Dashboard&lt;/h1&gt;
+
+  &lt;select x-model="model"&gt;
+    &lt;option value="gan"&gt;Vanilla GAN&lt;/option&gt;
+    &lt;option value="dcgan"&gt;DCGAN&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;button @click="startTrain()"&gt;
+    Start Training
+  &lt;/button&gt;
+
+  &lt;div&gt;
+    &lt;p&gt;Epoch: &lt;span x-text="epoch"&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;p&gt;D Loss: &lt;span x-text="dLoss"&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;p&gt;G Loss: &lt;span x-text="gLoss"&gt;&lt;/span&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Generated images grid --&gt;
+  &lt;div class="grid grid-cols-4 gap-2"&gt;
+    &lt;template x-for="img in samples"&gt;
+      &lt;img :src="img" class="w-full" /&gt;
+    &lt;/template&gt;
+  &lt;/div&gt;
+
+  &lt;canvas id="lossChart" width="420" height="200"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function startTrain() {
+  const es = new EventSource('/train/' + model);
+  es.onmessage = function(e) {
+    const m = JSON.parse(e.data);
+    epoch = m.epoch;
+    dLoss = m.d_loss.toFixed(4);
+    gLoss = m.g_loss.toFixed(4);
+    samples = m.samples;
+    drawLossChart(m.epoch, m.d_loss, m.g_loss);
+  };
+}
+&lt;/script&gt;</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <code class="font-mono text-yellow-300">&lt;select&gt;</code> เลือก GAN/DCGAN</p>
+              <p>- แสดง epoch, d_loss, g_loss แบบ live</p>
+              <p>- แสดง generated images grid</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">Canvas</code> วาด loss curves</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ใช้ Alpine.js สำหรับ reactive UI</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 5: Summary + Homework ==================== -->
+
+      <!-- Slide 18: Comparison -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 5: เปรียบเทียบ Models</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">Vanilla GAN</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Simple architecture</li>
+                <li>- Training ยาก</li>
+                <li>- Mode collapse</li>
+                <li>- เร็ว</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">DCGAN</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Convolutional layers</li>
+                <li>- Training ง่ายกว่า</li>
+                <li>- คุณภาพดี</li>
+                <li>- นิยมใช้</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">Diffusion</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- Training ง่ายมาก</li>
+                <li>- คุณภาพสูงสุด</li>
+                <li>- ช้า</li>
+                <li>- State-of-the-art</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-yellow-300 mb-3">Key Takeaways</h3>
+              <ul class="space-y-2 text-base">
+                <li>- GAN = Generator vs Discriminator</li>
+                <li>- DCGAN = Convolutional GAN (ดีกว่า)</li>
+                <li>- Diffusion = ค่อยๆ ลบ noise</li>
+                <li>- Stable Diffusion = Latent Diffusion + CLIP</li>
+                <li>- GAN เร็ว / Diffusion ดี</li>
+                <li>- ใช้ Hugging Face สำหรับ pre-trained models</li>
+              </ul>
+            </div>
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-blue-300 mb-3">Homework</h3>
+              <div class="tech-card">
+                <p class="mb-2">สร้าง DCGAN สำหรับ MNIST:</p>
+                <ul class="space-y-1 text-sm">
+                  <li>1. ใช้ MNIST dataset</li>
+                  <li>2. DCGAN: ConvTranspose2d + Conv2d</li>
+                  <li>3. Train 50 epochs</li>
+                  <li>4. แสดง generated digits 16 ภาพ</li>
+                  <li>5. Plot d_loss และ g_loss</li>
+                  <li>6. บันทึก model ด้วย state_dict()</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- slidesContainer -->
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

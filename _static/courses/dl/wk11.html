@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 11: Deep Learning for Timeseries with PyTorch">
+    <meta name="keywords" content="Deep Learning, PyTorch, Timeseries, RNN, LSTM, Sequence Models">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - สัปดาห์ที่ 11: Timeseries with PyTorch</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk11.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer" class="slides-container">
+
+      <!-- ==================== Part 1: Timeseries Basics ==================== -->
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center px-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">Deep Learning for Timeseries</h1>
+          <p class="text-xl text-gray-300 mb-2">สัปดาห์ที่ 11</p>
+          <p class="text-lg text-gray-400 mb-8">PyTorch: RNN, LSTM, และ Sequence Models</p>
+          <div class="space-y-2 text-left max-w-md mx-auto text-gray-300">
+            <p>1. Timeseries Data คืออะไร</p>
+            <p>2. Windowing และ Sliding Window</p>
+            <p>3. PyTorch Dataset สำหรับ Timeseries</p>
+            <p>4. RNN และ LSTM</p>
+            <p>5. Training Loop สำหรับ Sequence</p>
+            <p>6. ตัวอย่างจริง: Temperature Prediction</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Roadmap -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-8 text-emerald-300 text-center">Learning Roadmap</h2>
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">1</div>
+              <div class="text-lg font-bold text-yellow-300">Timeseries Basics</div>
+              <div class="text-sm text-gray-400 mt-2">Time series, trends, seasonality</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">2</div>
+              <div class="text-lg font-bold text-blue-300">PyTorch Dataset</div>
+              <div class="text-sm text-gray-400 mt-2">Windowing, DataLoader, normalization</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">3</div>
+              <div class="text-lg font-bold text-green-300">RNN & LSTM</div>
+              <div class="text-sm text-gray-400 mt-2">Recurrent networks for sequences</div>
+            </div>
+            <div class="tech-card text-center p-6">
+              <div class="text-4xl mb-3">4</div>
+              <div class="text-lg font-bold text-purple-300">Practical Example</div>
+              <div class="text-sm text-gray-400 mt-2">Temperature prediction project</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is Timeseries -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Timeseries Data คืออะไร</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Time series</strong>: ข้อมูลที่เรียงตามเวลา</p>
+              <p>- ตัวอย่าง: ราคาหุ้น, อุณหภูมิ, ยอดขาย, sensor data</p>
+              <p>- แต่ละค่ามี <strong>dependency</strong> กับค่าก่อนหน้า</p>
+              <p>- ต่างจาก tabular data ที่ไม่เรียงตามลำดับ</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ห้ามสุ่ม (shuffle) ข้อมูล time series เพราะลำดับเวลาสำคัญ!</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">Time:   0    1    2    3    4    5
+Value: [10] [12] [15] [13] [18] [20]
+        |    |    |    |    |    |
+        v    v    v    v    v    v
+       trend upward
+
+# Python representation
+import pandas as pd
+data = [10, 12, 15, 13, 18, 20]
+ts = pd.Series(data,
+  index=pd.date_range('2024-01-01',
+    periods=6, freq='D'))
+print(ts)
+# 2024-01-01    10
+# 2024-01-02    12
+# 2024-01-03    15
+# ...</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Trends and Seasonality -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Trends และ Seasonality</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Trend</strong>: แนวโน้มระยะยาว (up/down/flat)</p>
+              <p>- <strong>Seasonality</strong}: รูปแบบที่เกิดซ้ำเป็นรอบ (รายวัน/รายสัปดาห์/รายปี)</p>
+              <p>- <strong>Noise</strong>: ความผันผวนแบบสุ่ม</p>
+              <p>- <strong>Stationary</strong>: ค่าเฉลี่ยและ variance คงที่</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] Stationary data ทำนายง่ายกว่า อาจต้อง differencing หรือ log transform ก่อน</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Decompose time series
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+result = seasonal_decompose(ts, model='additive',
+                            period=7)
+result.plot()
+
+# Components:
+# - trend:     [10, 12, 14, 16, 18, 20, 22]
+# - seasonal:  [0, +2, +1, -2, +1, +3, -1]
+# - residual:  [0, -1,  0, +1, -1,  0, +1]
+
+# Make stationary
+ts_diff = ts.diff().dropna()  # differencing</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Windowing -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Windowing: Sliding Window</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Windowing</strong>: ใช้ค่าที่ผ่านมาทำนายค่าในอนาคต</p>
+              <p>- <code class="font-mono text-yellow-300">lookback</code>: จำนวน step ย้อนหลัง</p>
+              <p>- <code class="font-mono text-yellow-300">delay</code>: จำนวน step ที่จะทำนาย</p>
+              <p>- <code class="font-mono text-yellow-300">stride</code>: ระยะห่างระหว่าง sample</p>
+              <div class="tech-card"><p class="text-sm">[ตัวอย่าง] lookback=5 หมายถึง ใช้ 5 วันก่อนหน้าทำนายวันถัดไป</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Data: [10, 12, 15, 13, 18, 20, 22, 25]
+# lookback=3, delay=1
+
+# Sample 1: [10, 12, 15] -> 13
+# Sample 2: [12, 15, 13] -> 18
+# Sample 3: [15, 13, 18] -> 20
+# Sample 4: [13, 18, 20] -> 22
+# Sample 5: [18, 20, 22] -> 25
+
+def create_dataset(data, lookback, delay):
+    X, y = [], []
+    for i in range(len(data) - lookback - delay):
+        X.append(data[i:i+lookback])
+        y.append(data[i+lookback+delay-1])
+    return np.array(X), np.array(y)
+
+X, y = create_dataset(data, 3, 1)
+# X = [[10,12,15], [12,15,13], ...]
+# y = [13, 18, ...]</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 2: PyTorch for Timeseries ==================== -->
+
+      <!-- Slide 5: PyTorch Dataset -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">PyTorch Dataset สำหรับ Timeseries</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import torch
+from torch.utils.data import Dataset, DataLoader
+import numpy as np
+
+class TimeSeriesDataset(Dataset):
+    def __init__(self, data, lookback):
+        self.data = torch.FloatTensor(data)
+        self.lookback = lookback
+
+    def __len__(self):
+        return len(self.data) - self.lookback
+
+    def __getitem__(self, idx):
+        x = self.data[idx:idx+self.lookback]
+        y = self.data[idx+self.lookback]
+        return x, y
+
+# Usage
+data = np.array([10,12,15,13,18,20,22,25,28,30])
+dataset = TimeSeriesDataset(data, lookback=3)
+loader = DataLoader(dataset, batch_size=2,
+                    shuffle=False)  # ไม่ shuffle!
+
+for X_batch, y_batch in loader:
+    print(X_batch.shape, y_batch.shape)
+    # torch.Size([2, 3]) torch.Size([2])</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">Dataset</code>: กำหนดวิธีดึงข้อมูลแต่ละ sample</p>
+              <p>- <code class="font-mono text-yellow-300">DataLoader</code>: จัด batching และ iteration</p>
+              <p>- <strong>ห้าม shuffle!</strong> ต้องรักษาลำดับเวลา</p>
+              <p>- ข้อมูลต้องเป็น <code class="font-mono text-yellow-300">Tensor</code> หรือ <code class="font-mono text-yellow-300">numpy array</code></p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ต้อง normalize ก่อนสร้าง Dataset (MinMaxScaler หรือ StandardScaler)</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Normalization -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Normalization สำหรับ Timeseries</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from sklearn.preprocessing import MinMaxScaler
+
+# Normalize data
+scaler = MinMaxScaler()
+data_scaled = scaler.fit_transform(
+    data.reshape(-1, 1)).flatten()
+
+# Split train/test (ห้ามสุ่ม!)
+train_size = int(len(data_scaled) * 0.8)
+train_data = data_scaled[:train_size]
+test_data = data_scaled[train_size - lookback:]
+
+# Create datasets
+train_dataset = TimeSeriesDataset(train_data, lookback)
+test_dataset = TimeSeriesDataset(test_data, lookback)
+
+# Denormalize predictions
+pred_original = scaler.inverse_transform(
+    pred_scaled.reshape(-1, 1))</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>MinMaxScaler</strong>: ปรับค่าอยู่ระหว่าง [0, 1]</p>
+              <p>- <strong>StandardScaler</strong>: ปรับค่าให้ mean=0, std=1</p>
+              <p>- <strong>ห้าม fit บน test data!</strong> ต้อง fit บน train เท่านั้น</p>
+              <p>- เก็บ scaler ไว้ denormalize ผลทำนาย</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] Data leakage = ใช้ข้อมูลอนาคตตอน train ทำให้ผลทำนายดีเกินจริง</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: RNN Basics -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://pytorch.org/docs/stable/generated/torch.nn.RNN.html" target="_blank" class="underline decoration-dotted">RNN</a> (Recurrent Neural Network)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- RNN มี <strong>memory</strong> (hidden state) ที่ส่งต่อระหว่าง time step</p>
+              <p>- \(h_t = \tanh(W_{ih} x_t + b_{ih} + W_{hh} h_{t-1} + b_{hh})\)</p>
+              <p>- <strong>Vanilla RNN</strong>: มีปัญหา <strong>vanishing gradient</strong></p>
+              <p>- จำได้ระยะสั้น ลืมระยะยาว</p>
+              <div class="tech-card"><p class="text-sm">[ปัญหา] RNN จำ long-term dependencies ได้ไม่ดี = ต้องใช้ LSTM/GRU</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import torch.nn as nn
+
+class SimpleRNN(nn.Module):
+    def __init__(self, input_size, hidden_size,
+                 output_size):
+        super().__init__()
+        self.rnn = nn.RNN(input_size, hidden_size,
+                          batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        # x: (batch, seq_len, input_size)
+        out, hn = self.rnn(x)
+        # out: (batch, seq_len, hidden_size)
+        out = self.fc(out[:, -1, :])
+        return out
+
+model = SimpleRNN(input_size=1, hidden_size=32,
+                  output_size=1)
+print(model)
+# SimpleRNN(
+#   (rnn): RNN(1, 32, batch_first=True)
+#   (fc): Linear(32, 1)
+# )</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: LSTM -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html" target="_blank" class="underline decoration-dotted">LSTM</a> (Long Short-Term Memory)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class LSTMModel(nn.Module):
+    def __init__(self, input_size, hidden_size,
+                 num_layers, output_size):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size,
+                           num_layers=num_layers,
+                           batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        # x: (batch, seq_len, input_size)
+        out, (hn, cn) = self.lstm(x)
+        # out: (batch, seq_len, hidden_size)
+        out = self.fc(out[:, -1, :])
+        return out
+
+model = LSTMModel(input_size=1, hidden_size=64,
+                  num_layers=2, output_size=1)
+print(model)
+# LSTMModel(
+#   (lstm): LSTM(1, 64, num_layers=2,
+#                batch_first=True)
+#   (fc): Linear(64, 1)
+# )</pre>
+            <div class="space-y-4 text-base">
+              <p>- LSTM มี <strong>cell state</strong> ที่ช่วยจำ long-term dependencies</p>
+              <p>- มี 3 gates: <strong>forget</strong>, <strong>input</strong>, <strong>output</strong></p>
+              <p>- <code class="font-mono text-yellow-300">num_layers</code>: จำนวน LSTM layers ซ้อนกัน</p>
+              <p>- <code class="font-mono text-yellow-300">out[:, -1, :]</code>: ใช้ hidden state ตัวสุดท้าย</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] LSTM ดีกว่า RNN สำหรับข้อมูลที่มี long-term dependencies</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Training Loop for Timeseries -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Training Loop สำหรับ Timeseries</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">model = LSTMModel(input_size=1, hidden_size=64,
+                  num_layers=2, output_size=1)
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(100):
+    model.train()
+    train_loss = 0
+    for X_batch, y_batch in train_loader:
+        X_batch = X_batch.unsqueeze(-1)  # (B, T, 1)
+        y_batch = y_batch.unsqueeze(-1)  # (B, 1)
+
+        pred = model(X_batch)
+        loss = criterion(pred, y_batch)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        train_loss += loss.item()
+
+    # Evaluate
+    model.eval()
+    with torch.no_grad():
+        test_loss = 0
+        for X_batch, y_batch in test_loader:
+            X_batch = X_batch.unsqueeze(-1)
+            pred = model(X_batch)
+            test_loss += criterion(pred, y_batch.unsqueeze(-1)).item()
+
+    if epoch % 10 == 0:
+        print(f"Epoch {epoch}: "
+              f"train={train_loss/len(train_loader):.4f} "
+              f"test={test_loss/len(test_loader):.4f}")</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">unsqueeze(-1)</code>: เพิ่มมิติ input_size = 1</p>
+              <p>- <strong>ห้าม shuffle</strong> ใน DataLoader</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">MSELoss</code> สำหรับ regression</p>
+              <p>- ต้อง <code class="font-mono text-yellow-300">model.eval()</code> ตอน evaluate</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] เปรียบเทียบ train/test loss เพื่อดู overfitting</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: GRU -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://pytorch.org/docs/stable/generated/torch.nn.GRU.html" target="_blank" class="underline decoration-dotted">GRU</a> (Gated Recurrent Unit)</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- GRU: เวอร์ชันที่ง่ายกว่า LSTM</p>
+              <p>- มี 2 gates: <strong>reset</strong> และ <strong>update</strong></p>
+              <p>- เร็วกว่า LSTM, ผลลัพธ์ใกล้เคียงกัน</p>
+              <p>- ใช้เมื่อ dataset ไม่ใหญ่มาก</p>
+              <div class="tech-card"><p class="text-sm">[เปรียบเทียบ] LSTM จำได้ดีกว่า / GRU เร็วกว่า ขึ้นกับปัญหา</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class GRUModel(nn.Module):
+    def __init__(self, input_size, hidden_size,
+                 num_layers, output_size):
+        super().__init__()
+        self.gru = nn.GRU(input_size, hidden_size,
+                          num_layers=num_layers,
+                          batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        out, hn = self.gru(x)
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Comparison:
+# RNN:   1 gate,  fastest,  worst memory
+# GRU:   2 gates, fast,     good balance
+# LSTM:  3 gates, slower,   best memory</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 3: Practical Examples ==================== -->
+
+      <!-- Slide 11: Temperature Dataset -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://www.kaggle.com/datasets/mnassrib/jena-climate" target="_blank" class="underline decoration-dotted">Jena Climate Dataset</a></h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- ข้อมูลอุณหภูมิจาก Max Planck Institute, Germany</p>
+              <p>- 14 features, ทุก 10 นาที, ปี 2009-2016</p>
+              <p>- ทำนาย <strong>temperature</strong> จากค่าที่ผ่านมา</p>
+              <p>- ตัวอย่างจริงที่ใช้บ่อยใน textbooks</p>
+              <div class="tech-card"><p class="text-sm">[ข้อมูล] 420,485 ช่วงเวลา,  contiene NaN values</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import pandas as pd
+
+df = pd.read_csv('jena_climate_2009_2016.csv')
+print(df.head())
+#              Date Time  p (mbar)  T (degC)  ...
+# 0  01.01.2009 00:10    996.52     -8.02
+# 1  01.01.2009 00:20    996.51     -8.41
+# ...
+
+# Select temperature column
+temp = df['T (degC)'].values
+
+# Visualize
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12, 4))
+plt.plot(temp[:1440])  # 10 days
+plt.xlabel('Time (10 min intervals)')
+plt.ylabel('Temperature (C)')
+plt.title('Jena Temperature')
+plt.show()</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Full Example Setup -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">ตัวอย่าง: Jena Temperature Prediction</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">import numpy as np
+import torch
+from torch.utils.data import Dataset, DataLoader
+from sklearn.preprocessing import MinMaxScaler
+
+# Load and preprocess
+df = pd.read_csv('jena_climate_2009_2016.csv')
+temp = df['T (degC)'].values.astype(np.float32)
+
+# Normalize
+scaler = MinMaxScaler()
+temp_scaled = scaler.fit_transform(
+    temp.reshape(-1, 1)).flatten()
+
+# Train/test split (chronological!)
+train_size = 200000
+train_data = temp_scaled[:train_size]
+test_data = temp_scaled[train_size-60:]
+
+# Dataset
+class TimeSeriesDataset(Dataset):
+    def __init__(self, data, lookback):
+        self.data = torch.FloatTensor(data)
+        self.lookback = lookback
+    def __len__(self):
+        return len(self.data) - self.lookback
+    def __getitem__(self, i):
+        return (self.data[i:i+self.lookback],
+                self.data[i+self.lookback])
+
+LOOKBACK = 60
+train_ds = TimeSeriesDataset(train_data, LOOKBACK)
+test_ds = TimeSeriesDataset(test_data, LOOKBACK)
+train_loader = DataLoader(train_ds, 256, shuffle=False)
+test_loader = DataLoader(test_ds, 256, shuffle=False)</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>lookback=60</strong>: ใช้ 60 step (10 ชั่วโมง) ทำนาย step ถัดไป</p>
+              <p>- ข้อมูล train 200K, test ~220K</p>
+              <p>- <strong>shuffle=False</strong> สำหรับ train และ test</p>
+              <p>- ต้องทำ normalization ก่อน split</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ห้าม fit scaler บน test data!</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: LSTM Training -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Train LSTM Model</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">class LSTM(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.lstm = nn.LSTM(1, 64, 2, batch_first=True)
+        self.fc = nn.Linear(64, 1)
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        return self.fc(out[:, -1, :])
+
+model = LSTM()
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+for epoch in range(20):
+    model.train()
+    train_loss = 0
+    for X_b, y_b in train_loader:
+        X_b = X_b.unsqueeze(-1)  # (B, T, 1)
+        pred = model(X_b)
+        loss = criterion(pred, y_b.unsqueeze(-1))
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        train_loss += loss.item()
+
+    model.eval()
+    test_loss = 0
+    with torch.no_grad():
+        for X_b, y_b in test_loader:
+            X_b = X_b.unsqueeze(-1)
+            pred = model(X_b)
+            test_loss += criterion(pred, y_b.unsqueeze(-1)).item()
+
+    print(f"Epoch {epoch}: "
+          f"train={train_loss/len(train_loader):.5f} "
+          f"test={test_loss/len(test_loader):.5f}")</pre>
+            <div class="space-y-4 text-base">
+              <p>- LSTM(1, 64, 2): input=1, hidden=64, layers=2</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">Adam</code> optimizer, lr=0.001</p>
+              <p>- 20 epochs พอสำหรับ demo</p>
+              <p>- ดู train/test loss เทียบกัน</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ถ้า test loss สูงกว่า train มาก = overfitting ลองเพิ่ม dropout</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Evaluation and Visualization -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Evaluation และ Visualization</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">model.eval()
+with torch.no_grad():
+    X_test = test_loader.dataset.data
+    X_test = X_test.unsqueeze(-1).unsqueeze(0)
+    pred_scaled = model(X_test).squeeze().numpy()
+
+# Denormalize
+pred = scaler.inverse_transform(
+    pred_scaled.reshape(-1, 1)).flatten()
+actual = scaler.inverse_transform(
+    test_loader.dataset.data.numpy()[
+        LOOKBACK:].reshape(-1, 1)).flatten()
+
+# Plot
+plt.figure(figsize=(12, 4))
+plt.plot(actual, label='Actual')
+plt.plot(pred, label='Predicted')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Temperature (C)')
+plt.title('LSTM Prediction vs Actual')
+plt.show()
+
+# Metrics
+from sklearn.metrics import mean_absolute_error
+mae = mean_absolute_error(actual, pred)
+print(f"MAE: {mae:.2f} C")</pre>
+            <div class="space-y-4 text-base">
+              <p>- ต้อง <code class="font-mono text-yellow-300">model.eval()</code> ก่อน evaluate</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">torch.no_grad()</code> ประหยัด memory</p>
+              <p>- Denormalize กลับเป็นค่าจริงก่อน plot</p>
+              <p>- ใช้ MAE (Mean Absolute Error) เป็นเมตริก</p>
+              <div class="tech-card"><p class="text-sm">[เมตริก] MAE ยิ่งต่ำยิ่งดี, 0 หมายถึงทำนายตรงเป๊ะ</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Multi-step Prediction -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Multi-step Prediction</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Single-step</strong>: ทำนาย 1 ค่าถัดไป</p>
+              <p>- <strong>Multi-step</strong>: ทำนายหลายค่าล่วงหน้า</p>
+              <p>- ใช้ผลทำนายป้อนกลับเป็น input</p>
+              <p>- ยิ่งนาน ยิ่งผิดพลาดมากขึ้น</p>
+              <div class="tech-card"><p class="text-sm">[ปัญหา] Error accumulation: ความผิดพลาดสะสมตามจำนวน step</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># Single-step: predict next 1
+pred_1 = model(last_window)  # 1 value
+
+# Multi-step: predict next N
+def predict_multi(model, last_window, n_steps):
+    preds = []
+    current = last_window.clone()
+    for _ in range(n_steps):
+        with torch.no_grad():
+            pred = model(current.unsqueeze(0)
+                        .unsqueeze(-1))
+        preds.append(pred.item())
+        # Shift and append prediction
+        current = torch.cat([
+            current[1:], pred.squeeze()
+        ])
+    return preds
+
+preds = predict_multi(model, test_window, 10)
+print(preds)
+# [12.3, 12.5, 12.8, 13.1, 13.4, ...]</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 4: Django Dashboard ==================== -->
+
+      <!-- Slide 16: Django Dashboard Intro -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center"><a href="https://www.djangoproject.com/" target="_blank" class="underline decoration-dotted">Django Dashboard</a> + SSE</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">uv add django torch scikit-learn
+
+uv run django-admin startproject wk11 .
+uv run manage.py startapp dashboard
+
+# wk11/urls.py
+from django.urls import path, include
+urlpatterns = [
+    path('', include('dashboard.urls')),
+]
+
+# dashboard/views.py
+import json, torch, torch.nn as nn
+from django.http import StreamingHttpResponse
+
+MODELS = {
+    'rnn':  lambda: nn.RNN(1, 32, 1, batch_first=True),
+    'lstm': lambda: nn.LSTM(1, 32, 1, batch_first=True),
+    'gru':  lambda: nn.GRU(1, 32, 1, batch_first=True),
+}
+
+def train_stream(request, model_type):
+    def event_stream():
+        model = MODELS[model_type]()
+        fc = nn.Linear(32, 1)
+        criterion = nn.MSELoss()
+        optimizer = torch.optim.Adam(
+            list(model.parameters()) + list(fc.parameters()), lr=0.01)
+        for epoch in range(51):
+            # ... training loop ...
+            yield f"data: {json.dumps({'epoch': epoch, 'loss': loss.item()})}\n\n"
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>Django</strong>: web framework สำหรับ backend</p>
+              <p>- <strong>SSE</strong> (Server-Sent Events): real-time streaming</p>
+              <p>- เลือก model type: RNN, LSTM, GRU</p>
+              <p>- แต่ละ model train แยกกัน แสดงผล real-time</p>
+              <div class="tech-card"><p class="text-sm">[โครงสร้าง] manage.py -> settings.py -> urls.py -> views.py -> templates/</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: SSE Training Stream -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">SSE Training Stream</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">from django.http import StreamingHttpResponse
+import json, time
+
+def train(request, model_type):
+    def event_stream():
+        # Load data (simplified)
+        X = torch.tensor([[0,0],[0,1],[1,0],[1,1]],
+                         dtype=torch.float32)
+        y = torch.tensor([[0],[1],[1],[0]],
+                         dtype=torch.float32)
+
+        # Build model based on selection
+        if model_type == 'rnn':
+            net = nn.RNN(2, 16, 1, batch_first=True)
+        elif model_type == 'lstm':
+            net = nn.LSTM(2, 16, 1, batch_first=True)
+        else:
+            net = nn.GRU(2, 16, 1, batch_first=True)
+
+        fc = nn.Linear(16, 1)
+        criterion = nn.BCELoss()
+        optimizer = torch.optim.Adam(
+            list(net.parameters()) + list(fc.parameters()),
+            lr=0.05)
+
+        for epoch in range(201):
+            out, _ = net(X.unsqueeze(0))
+            pred = torch.sigmoid(fc(out[:, -1, :]))
+            loss = criterion(pred, y)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            yield f"data: {json.dumps({'epoch': epoch, 'loss': loss.item(), 'pred': pred.squeeze().tolist()})}\n\n"
+            time.sleep(0.02)
+
+        yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
+    resp = StreamingHttpResponse(event_stream(),
+        content_type='text/event-stream')
+    resp['Cache-Control'] = 'no-cache'
+    return resp</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">StreamingHttpResponse</code>: ส่ง data ทีละ epoch</p>
+              <p>- <code class="font-mono text-yellow-300">event_stream()</code>: generator function</p>
+              <p>- แต่ละ line เป็น <code class="font-mono text-yellow-300">data: {...}\n\n</code> format</p>
+              <p>- Client ใช้ <code class="font-mono text-yellow-300">EventSource</code> รับข้อมูล</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] SSE = one-way (server -> client), ไม่ต้อง bidirectional</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Frontend Dashboard -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Frontend: Canvas Visualization</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">&lt;!-- dashboard/templates/index.html --&gt;
+&lt;div x-data="{ model: 'lstm', training: false }"&gt;
+  &lt;select x-model="model"&gt;
+    &lt;option value="rnn"&gt;RNN&lt;/option&gt;
+    &lt;option value="lstm"&gt;LSTM&lt;/option&gt;
+    &lt;option value="gru"&gt;GRU&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;button @click="startTrain()"&gt;
+    Start Training
+  &lt;/button&gt;
+  &lt;canvas id="chart" width="420" height="200"&gt;
+  &lt;/canvas&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function startTrain() {
+  const es = new EventSource('/train/' + model);
+  es.onmessage = function(e) {
+    const m = JSON.parse(e.data);
+    drawLoss(m.epoch, m.loss);
+    drawPred(m.pred);
+  };
+}
+&lt;/script&gt;</pre>
+            <div class="space-y-4 text-base">
+              <p>- ใช้ <code class="font-mono text-yellow-300">&lt;select&gt;</code> เลือก model type</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">&lt;canvas&gt;</code> แสดงผล loss curve</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">EventSource</code> รับ SSE updates</p>
+              <p>- วาด loss ทุก epoch แบบ real-time</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ใช้ Alpine.js สำหรับ reactive UI, ไม่ต้อง React/Vue</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Part 5: Summary + Homework ==================== -->
+
+      <!-- Slide 19: Comparison -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Part 5: เปรียบเทียบ Models</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-yellow-300">RNN</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- เร็วที่สุด</li>
+                <li>- จำระยะสั้นได้</li>
+                <li>- Vanishing gradient</li>
+                <li>- ไม่แนะนำสำหรับ production</li>
+              </ul>
+            </div>
+            <div class="tech-card border-yellow-400">
+              <h4 class="text-xl font-bold mb-3 text-blue-300">LSTM</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- จำ long-term ได้ดี</li>
+                <li>- 3 gates (forget/input/output)</li>
+                <li>- เร็วพอสมควร</li>
+                <li>- แนะนำเป็น default choice</li>
+              </ul>
+            </div>
+            <div class="tech-card">
+              <h4 class="text-xl font-bold mb-3 text-green-300">GRU</h4>
+              <ul class="space-y-2 text-sm">
+                <li>- เร็วกว่า LSTM</li>
+                <li>- 2 gates (reset/update)</li>
+                <li>- ผลลัพธ์ใกล้เคียง LSTM</li>
+                <li>- ดีสำหรับ dataset ขนาดกลาง</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Summary + Homework -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-16">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">Summary + Homework</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-yellow-300 mb-3">Key Takeaways</h3>
+              <ul class="space-y-2 text-base">
+                <li>- Timeseries data มี dependency ตามลำดับเวลา</li>
+                <li>- ต้อง normalize ก่อน train</li>
+                <li>- ห้าม shuffle ข้อมูล time series</li>
+                <li>- Windowing แปลง time series เป็น supervised learning</li>
+                <li>- LSTM/GRU จำ long-term dependencies ได้</li>
+                <li>- ต้อง evaluate บน test set ที่ไม่เคยเห็น</li>
+              </ul>
+            </div>
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold text-blue-300 mb-3">Homework</h3>
+              <div class="tech-card">
+                <p class="mb-2">สร้าง LSTM model สำหรับทำนายอุณหภูมิ:</p>
+                <ul class="space-y-1 text-sm">
+                  <li>1. ใช้ Jena Climate dataset</li>
+                  <li>2. lookback = 60 (10 ชั่วโมง)</li>
+                  <li>3. LSTM(1, 32, 1) + Linear</li>
+                  <li>4. Train 20 epochs, Adam lr=0.001</li>
+                  <li>5. แสดงผล MAE และ plot prediction vs actual</li>
+                  <li>6. บันทึก model ด้วย state_dict()</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- slidesContainer -->
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
