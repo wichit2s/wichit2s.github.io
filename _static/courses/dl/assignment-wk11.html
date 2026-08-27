@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 11: การบ้าน - Timeseries LSTM Dashboard">
+    <meta name="keywords" content="Deep Learning, Assignment, LSTM, Timeseries, Django, SSE">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning - สัปดาห์ที่ 11: การบ้าน Timeseries LSTM Dashboard</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/dl/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./assignment-wk11.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div x-ref="slidesContainer" class="slides-container">
+
+      <!-- Slide 0: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center px-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">การบ้านสัปดาห์ที่ 11</h1>
+          <p class="text-xl text-gray-300 mb-2">Timeseries LSTM Dashboard</p>
+          <p class="text-lg text-gray-400 mb-8">สร้าง Django dashboard สำหรับทำนายข้อมูลอนุกรมเวลาด้วย LSTM</p>
+          <div class="space-y-2 text-left max-w-md mx-auto text-gray-300">
+            <p>1. ข้อกำหนดโครงงาน</p>
+            <p>2. โครงสร้าง Django project</p>
+            <p>3. สิ่งที่ต้องทำใน ml/train.py</p>
+            <p>4. หน้า landing page</p>
+            <p>5. วิธีรันและตรวจสอบ</p>
+            <p>6. การส่งงาน</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Requirements -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">ข้อกำหนดโครงงาน</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>โมเดล</strong>: LSTM สำหรับทำนายอุณหภูมิ (หรือข้อมูลอนุกรมเวลาอื่น)</p>
+              <p>- <strong>ข้อมูล</strong>: ใช้ sliding window — เปลี่ยนข้อมูลอนุกรมเวลาเป็น supervised learning</p>
+              <p>- <strong>Train/Val split</strong>: แบ่งข้อมูลฝึกสอนและตรวจสอบ</p>
+              <p>- <strong>Dashboard</strong>: SSE streaming แสดง loss, ผลทำนายแบบ real-time</p>
+              <p>- <strong>หน้า landing</strong>: แสดง รหัสนักศึกษา และ ชื่อ-นามสกุล (hardcoded)</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ใช้ Django + PyTorch LSTM เท่านั้น ห้ามใช้ TensorFlow</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># ผลลัพธ์ที่คาดหวัง:
+
+1. เริ่ม server แล้วเห็นหน้า landing page
+   ที่มีรหัสนักศึกษาและชื่อ-นามสกุล
+
+2. กดปุ่ม "เริ่มฝึกสอน" แล้วเห็น
+   - ค่า loss ลดลงแบบ real-time
+   - กราฟ training loss อัปเดตทุก epoch
+
+3. หลังฝึกสอนเสร็จ แสดงผลลัพธ์
+   - กราฟ predicted vs actual values
+   - ค่า MSE/RMSE บน validation set
+
+4. หน้า landing page แสดงรหัสและชื่อ
+   ของนักศึกษาที่ทำโครงงาน</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Django Project Structure -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">โครงสร้าง Django Project</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">DL69/wk11/
+├── pyproject.toml           # uv project, Python 3.13
+├── manage.py
+├── mysite/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── dashboard/
+│   ├── __init__.py
+│   ├── apps.py
+│   ├── views.py             # SSE streaming endpoint
+│   ├── urls.py              # / → index, /train/ → SSE
+│   ├── ml/
+│   │   ├── __init__.py
+│   │   └── train.py         # ★ นักศึกษาเขียนโค้ดตรงนี้
+│   ├── templates/
+│   │   └── dashboard/
+│   │       └── index.html    # ★ ใส่รหัสและชื่อตรงนี้
+│   └── static/
+│       └── dashboard/
+│           └── (ผลลัพธ์จาก train.py)
+└── data/                     # ชุดข้อมูลอนุกรมเวลา</pre>
+            <div class="space-y-4 text-base">
+              <p>- <code class="font-mono text-yellow-300">pyproject.toml</code>: กำหนด dependencies สำหรับ <code class="font-mono">uv sync</code></p>
+              <p>- <code class="font-mono text-yellow-300">dashboard/ml/train.py</code>: ไฟล์หลักที่นักศึกษาต้องเขียน</p>
+              <p>- <code class="font-mono text-yellow-300">dashboard/templates/dashboard/index.html</code>: หน้า landing page</p>
+              <p>- <code class="font-mono text-yellow-300">data/</code>: ใส่ข้อมูลอนุกรมเวลา (เช่น CSV อุณหภูมิ)</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ห้ามลบหรือแก้ไขไฟล์ที่ไม่ได้ระบุว่าต้องแก้ — ใช้ไฟล์เดิมที่ให้มา</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What to implement in train.py -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">สิ่งที่ต้องทำใน ml/train.py</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">def train(on_progress=None):
+    """
+    on_progress(epoch, loss, val_loss) → เรียกทุก epoch
+    """
+    import torch
+    import torch.nn as nn
+
+    # 1. โหลดข้อมูลอนุกรมเวลา
+    #    data = read_csv('data/temperature.csv')
+
+    # 2. Sliding window → supervised learning
+    #    window_size = 24  (เช่น 24 ชั่วโมงย้อนหลัง)
+    #    X[i] = data[i:i+window_size]
+    #    y[i] = data[i+window_size]
+
+    # 3. Train/Val split (80/20)
+
+    # 4. สร้างโมเดล LSTM
+    class LSTMModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.lstm = nn.LSTM(input_size=1,
+                              hidden_size=64,
+                              num_layers=2,
+                              batch_first=True)
+            self.fc = nn.Linear(64, 1)
+
+        def forward(self, x):
+            out, _ = self.lstm(x)
+            return self.fc(out[:, -1, :])
+
+    # 5. Training loop
+    for epoch in range(num_epochs):
+        # forward, loss, backward, step
+        # เรียก on_progress(epoch, loss, val_loss)
+        pass
+
+    # 6. บันทึกผลลัพธ์
+    #    - predicted vs actual plot → PNG
+    #    - training loss curve → PNG</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>ข้อ 1</strong>: โหลดข้อมูล CSV แล้วแปลงเป็น sliding window</p>
+              <p>- <strong>ข้อ 2</strong>: สร้าง LSTM model ด้วย <code class="font-mono text-yellow-300">nn.LSTM</code></p>
+              <p>- <strong>ข้อ 3</strong>: Training loop พร้อม train/val split</p>
+              <p>- <strong>ข้อ 4</strong>: เรียก <code class="font-mono text-yellow-300">on_progress(epoch, loss, val_loss)</code> ทุก epoch</p>
+              <p>- <strong>ข้อ 5</strong>: บันทึกกราฟ predicted vs actual เป็น PNG</p>
+              <div class="tech-card"><p class="text-sm">[เคล็ดลับ] ดู code ตัวอย่างจาก wk11.html slides เป็นแนวทาง</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Landing Page -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">หน้า Landing Page</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5">&lt;!-- dashboard/templates/dashboard/index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="th"&gt;
+&lt;head&gt;
+  &lt;title&gt;Timeseries LSTM Dashboard&lt;/title&gt;
+  &lt;script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"&gt;&lt;/script&gt;
+  &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body x-data="{ training: false, epoch: 0, loss: 0, valLoss: 0 }"&gt;
+
+  &lt;!-- ★ ใส่รหัสนักศึกษาและชื่อ-นามสกุลตรงนี้ --&gt;
+  &lt;h1&gt;รหัสนักศึกษา: 69000000&lt;/h1&gt;
+  &lt;h2&gt;ชื่อ-นามสกุล: ชื่อ นามสกุล&lt;/h2&gt;
+
+  &lt;button @click="startTraining()"&gt;
+    เริ่มฝึกสอน
+  &lt;/button&gt;
+
+  &lt;p&gt;Epoch: &lt;span x-text="epoch"&gt;&lt;/span&gt;&lt;/p&gt;
+  &lt;p&gt;Loss: &lt;span x-text="loss"&gt;&lt;/span&gt;&lt;/p&gt;
+  &lt;p&gt;Val Loss: &lt;span x-text="valLoss"&gt;&lt;/span&gt;&lt;/p&gt;
+
+  &lt;canvas id="chart"&gt;&lt;/canvas&gt;
+
+  &lt;script&gt;
+  function startTraining() {
+    training = true;
+    const es = new EventSource('/train/');
+    es.onmessage = function(e) {
+      const m = JSON.parse(e.data);
+      epoch = m.epoch;
+      loss = m.loss.toFixed(4);
+      valLoss = m.val_loss.toFixed(4);
+      drawChart(m.epoch, m.loss, m.val_loss);
+    };
+  }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>รหัสนักศึกษา</strong>: เปลี่ยน <code class="font-mono text-yellow-300">69000000</code> เป็นรหัสจริง</p>
+              <p>- <strong>ชื่อ-นามสกุล</strong>: เปลี่ยน <code class="font-mono text-yellow-300">ชื่อ นามสกุล</code> เป็นชื่อจริง</p>
+              <p>- ปุ่ม <strong>"เริ่มฝึกสอน"</strong> เชื่อมกับ SSE endpoint</p>
+              <p>- แสดงทั้ง training loss และ validation loss</p>
+              <p>- ใช้ <code class="font-mono text-yellow-300">Canvas</code> หรือ <code class="font-mono text-yellow-300">Chart.js</code> สำหรับกราฟ</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ห้ามลบ student ID และชื่อออกจากหน้า — ต้องเห็นชัดเจนเมื่อเปิดหน้า</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: How to Run -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">วิธีรันและตรวจสอบ</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># 1. Clone repo และ checkout branch
+git clone &lt;DL69-repo&gt;
+cd DL69
+git checkout wk11
+
+# 2. ติดตั้ง dependencies
+uv sync
+
+# 3. รัน server
+uv run manage.py runserver
+
+# 4. เปิดเบราว์เซอร์
+#    http://127.0.0.1:8000/
+#    → เห็นรหัสนักศึกษาและชื่อ
+#    → กด "เริ่มฝึกสอน"
+#    → เห็น loss, val_loss อัปเดตแบบ real-time
+#    → หลังฝึกเสร็จ เห็น predicted vs actual plot
+
+# 5. ตรวจสอบไฟล์ผลลัพธ์
+ls dashboard/static/dashboard/
+#    → loss_curve.png
+#    → prediction_plot.png</pre>
+            <div class="space-y-4 text-base">
+              <p>- <strong>ขั้นตอนที่ 1</strong>: Clone repo แล้ว checkout branch <code class="font-mono text-yellow-300">wk11</code></p>
+              <p>- <strong>ขั้นตอนที่ 2</strong>: รัน <code class="font-mono text-yellow-300">uv sync</code> เพื่อติดตั้ง dependencies</p>
+              <p>- <strong>ขั้นตอนที่ 3</strong>: รัน <code class="font-mono text-yellow-300">uv run manage.py runserver</code></p>
+              <p>- <strong>ขั้นตอนที่ 4</strong>: เปิด <code class="font-mono text-yellow-300">http://127.0.0.1:8000/</code></p>
+              <p>- <strong>ขั้นตอนที่ 5</strong>: ตรวจสอบว่าหน้า landing แสดงรหัสและชื่อ</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ต้องรันได้ด้วย uv sync + uv run manage.py runserver เท่านั้น</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Submission -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">การส่งงาน</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>Branch name</strong>: <code class="font-mono text-yellow-300">wk11</code></p>
+              <p>- <strong>Repo</strong>: DL69 (GitHub repository ของนักศึกษา)</p>
+              <p>- สร้าง branch ใหม่จาก main</p>
+              <p>- Commit โค้ดทั้งหมดลง branch <code class="font-mono text-yellow-300">wk11</code></p>
+              <p>- Push ขึ้น GitHub</p>
+              <p>- แจ้ง URL ของ repo ให้อาจารย์</p>
+              <div class="tech-card"><p class="text-sm">[สำคัญ] ห้าม commit ไฟล์ data ขนาดใหญ่ (&gt;10MB) — ใช้ .gitignore</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># สร้างและ push branch
+git checkout -b wk11
+git add .
+git commit -m "wk11: Timeseries LSTM Dashboard"
+git push origin wk11
+
+# โครงสร้างไฟล์ที่ต้องมี
+DL69/wk11/
+├── pyproject.toml
+├── manage.py
+├── mysite/
+├── dashboard/
+│   ├── views.py
+│   ├── ml/train.py       ← โค้ดที่เขียน
+│   └── templates/
+│       └── dashboard/
+│           └── index.html ← ใส่รหัส+ชื่อ
+└── data/
+    └── temperature.csv   ← ข้อมูล
+
+# ตรวจสอบก่อนส่ง
+uv sync
+uv run manage.py runserver
+# → หน้า landing แสดงรหัสและชื่อ
+# → กดเริ่มฝึกสอน → SSE ทำงาน
+# → ได้ prediction_plot.png</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Grading Rubric -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 py-14">
+          <h2 class="text-3xl font-semibold mb-6 text-emerald-300 text-center">เกณฑ์การให้คะแนน</h2>
+          <div class="grid md:grid-cols-2 gap-6 items-start">
+            <div class="space-y-4 text-base">
+              <p>- <strong>โมเดลถูกต้อง (30%)</strong>: LSTM + sliding window ทำงานได้</p>
+              <p>- <strong>SSE Streaming (20%)</strong>: ฝึกสอนแบบ real-time ได้</p>
+              <p>- <strong>หน้า landing (15%)</strong>: แสดงรหัสและชื่อชัดเจน</p>
+              <p>- <strong>ผลลัพธ์ (15%)</strong>: predicted vs actual plot, MSE/RMSE</p>
+              <p>- <strong>โค้ดสะอาด (10%)</strong>: โครงสร้างดี, มี docstring</p>
+              <p>- <strong>รันได้จริง (10%)</strong>: uv sync + runserver ไม่ error</p>
+              <div class="tech-card"><p class="text-sm">[คะแนนรวม] 100% = คะแนนการบ้านสัปดาห์ที่ 11</p></div>
+            </div>
+            <pre class="font-mono text-xs md:text-sm bg-black/40 rounded-xl p-5 overflow-x-auto leading-5"># ตรวจสอบก่อนส่ง:
+
+# 1. uv sync สำเร็จ?
+uv sync
+
+# 2. server รันได้?
+uv run manage.py runserver
+
+# 3. หน้า landing แสดงรหัส+ชื่อ?
+#    เปิด http://127.0.0.1:8000/
+
+# 4. SSE ทำงาน?
+#    กด "เริ่มฝึกสอน" แล้วเห็น
+#    epoch, loss, val_loss อัปเดต
+
+# 5. ผลลัพธ์ครบถ้วน?
+#    - loss_curve.png มีอยู่
+#    - prediction_plot.png มีอยู่
+
+# 6. Branch ชื่อ wk11?
+git branch
+#    → * wk11</pre>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- slidesContainer -->
+
+    <script>
+      function slideshow() {
+        return {
+          currentSlide: 0,
+          totalSlides: 0,
+          touchStartX: 0,
+          touchEndX: 0,
+
+          init() {
+            this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+            this.setupKeyboardNavigation();
+            this.setupTouchNavigation();
+          },
+
+          nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+          },
+
+          previousSlide() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+          },
+
+          setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+              } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.previousSlide();
+              }
+            });
+          },
+
+          setupTouchNavigation() {
+            document.addEventListener('touchstart', (e) => {
+              this.touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+              this.touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = 50;
+
+              if (this.touchStartX - this.touchEndX > swipeDistance) {
+                this.nextSlide();
+              } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+                this.previousSlide();
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

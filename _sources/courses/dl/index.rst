@@ -11,111 +11,117 @@
 ====================
 
 .. list-table:: แผนการจัดการเรียนรู้รายสัปดาห์ (ภาคการศึกษา 1/2566)
-   :widths: 8 42 25 25
+   :widths: 8 52 15 25
    :header-rows: 1
 
    * - **สัปดาห์ที่**
      - **สาระ/เนื้อหาการเรียนรู้**
-     - **วิธีสอนและกิจกรรมการเรียนรู้**
-     - **จำนวนชั่วโมง** (บรรยาย/ปฏิบัติ/ศึกษาด้วยตนเอง)
+     - **บรรยาย/สาธิต(ชม.)**
+     - **ศึกษาด้วยตนเอง(ชม.)/การบ้าน**
    * - 1
+     - Introduction to deep learning
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk01.html>`_
-     - Introduction to deep learning
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 2
+     - Mathematical building blocks of neural networks
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk02.html>`_
-     - Mathematical building blocks of neural networks
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 3
+     - Introduction to Keras and TensorFlow
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk03.html>`_
-     - Introduction to Keras and TensorFlow
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 4
+     - Neural networks: Classification and Regression
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk04.html>`_
-     - Neural networks: Classification and Regression
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 5
+     - Fundamentals of machine learning and working with Keras
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk05.html>`_
-     - Fundamentals of machine learning and working with Keras
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 6
-
-       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk06.html>`_
      - Introduction to deep learning for computer vision
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk07.html>`_
+     - 2/2
+     - 5
    * - 7
+     - Quiz
 
        :icon:`fa-solid fa-link` `quiz <../../_static/courses/dl/wk07.html>`_
-     - Quiz
-     - ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 8
      - **สอบกลางภาค**
-     - สอบ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 9
+     - Introduction to PyTorch (tensors, autograd) และ simple perceptron (`torch.nn` , training loop)
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk09.html>`_
-     - Introduction to PyTorch (tensors, autograd) และ simple perceptron (`torch.nn` , training loop)
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
+
+       :icon:`fa-solid fa-file-code` `assignment <../../_static/courses/dl/assignment-wk09.html>`_
    * - 10
+     - Neural networks with PyTorch: Dataset, DataLoader และ classification/regression
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk10.html>`_
-     - Neural networks with PyTorch: Dataset, DataLoader และ classification/regression
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 11
+     - Deep learning for timeseries with PyTorch
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk11.html>`_
-     - Deep learning for timeseries with PyTorch
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
+
+       :icon:`fa-solid fa-file-code` `assignment <../../_static/courses/dl/assignment-wk11.html>`_
    * - 12
+     - Deep learning for text 1: embeddings และ sequence models
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk12.html>`_
-     - Deep learning for text 1: embeddings และ sequence models
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 13
+     - Generative AI for text: language models (RNN → Transformer)
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk13.html>`_
-     - Generative AI for text: language models (RNN → Transformer)
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
+
+       :icon:`fa-solid fa-file-code` `assignment <../../_static/courses/dl/assignment-wk13.html>`_
    * - 14
+     - Generative AI for image: GAN และ diffusion models
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk14.html>`_
-     - Generative AI for image: GAN และ diffusion models
-     - บรรยาย สาธิต ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 15
+     - Project Presentation
 
        :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk15.html>`_
-     - Project Presentation
-     - ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * - 16
+     - Post-Midterm Quiz
 
        :icon:`fa-solid fa-link` `quiz <../../_static/courses/dl/wk16.html>`_
-     - Post-Midterm Quiz
-     - ฝึกปฏิบัติ
-     - 2/2/5
+     - 2/2
+     - 5
    * -
      - **รวมจำนวนชั่วโมง**
-     -
-     - **30/30/75**
+     - **30/30**
+     - **75**
 
 แผนการประเมินผลการเรียนรู้
 ==========================
