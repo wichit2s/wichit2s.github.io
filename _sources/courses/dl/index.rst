@@ -72,6 +72,8 @@
      - 5
 
        :icon:`fa-solid fa-file-code` `assignment <../../_static/courses/dl/assignment-wk09.html>`_
+
+       :icon:`fa-solid fa-file-code` `prj-template-zip <../../_static/courses/dl/dl-wk09-django-template.zip>`_
    * - 10
      - Neural networks with PyTorch: Dataset, DataLoader และ classification/regression
 
@@ -86,6 +88,8 @@
      - 5
 
        :icon:`fa-solid fa-file-code` `assignment <../../_static/courses/dl/assignment-wk11.html>`_
+
+       :icon:`fa-solid fa-file-code` `prj-template-zip <../../_static/courses/dl/dl-wk11-django-template.zip>`_
    * - 12
      - Deep learning for text 1: embeddings และ sequence models
 
@@ -100,6 +104,8 @@
      - 5
 
        :icon:`fa-solid fa-file-code` `assignment <../../_static/courses/dl/assignment-wk13.html>`_
+
+       :icon:`fa-solid fa-file-code` `prj-template-zip <../../_static/courses/dl/dl-wk13-django-template.zip>`_
    * - 14
      - Generative AI for image: GAN และ diffusion models
 
@@ -109,7 +115,7 @@
    * - 15
      - Project Presentation
 
-       :icon:`fa-solid fa-link` `slides <../../_static/courses/dl/wk15.html>`_
+       :icon:`fa-solid fa-link` `โครงงานรายวิชา <../../_static/courses/dl/wk15.html>`_
      - 2/2
      - 5
    * - 16
