@@ -112,10 +112,19 @@
                   </p>
                 </div>
               </div>
-              <div class="pt-2">
+              <div class="pt-2 space-y-2">
                 <span class="text-xs text-slate-400">🔗 เจาะลึกโครงสร้าง Data Layer เพิ่มเติม:</span>
                 <a href="https://docs.flutter.dev/app-architecture/case-study/data-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
-                  https://docs.flutter.dev/app-architecture/case-study/data-layer 🚀
+                  📖 Flutter Data Layer Case Study — docs.flutter.dev
+                </a>
+                <a href="https://docs.flutter.dev/app-architecture/case-study" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                  📖 Compass App Architecture Overview — docs.flutter.dev
+                </a>
+                <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                  💻 Compass App Source Code — GitHub
+                </a>
+                <a href="https://docs.flutter.dev/app-architecture/guide" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                  📖 App Architecture Guide — docs.flutter.dev
                 </a>
               </div>
             </div>
@@ -143,8 +152,10 @@
               สำหรับการพัฒนาแอปพลิเคชัน Compass เราเลือกใช้แพ็กเกจ <strong>`dio`</strong> ซึ่งเป็นคลังไลบรารีเครือข่ายยอดนิยมที่มีลูกเล่นขั้นสูง เช่น การตั้งค่า Base Options, การแนบไฟล์ และการทำ Interceptors ดักจับข้อมูลอัตโนมัติ [5]:
             </p>
             <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 font-mono text-green-300">
-              <p class="text-slate-400"># เพิ่มไลบรารี dio เข้าสู่โปรเจกต์ Flutter:</p>
+              <p class="text-slate-400"># ขั้นตอนที่ 1: เพิ่มไลบรารี dio เข้าสู่โปรเจกต์ Flutter:</p>
               <p class="mt-1">$ <span class="text-white">flutter pub add dio</span></p>
+              <p class="text-slate-400 mt-2"># ขั้นตอนที่ 2: ตรวจสอบเวอร์ชันที่ติดตั้งใน pubspec.yaml</p>
+              <p class="mt-1">$ <span class="text-white">cat pubspec.yaml | grep dio</span></p>
             </div>
             <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-3">
               <h4 class="font-bold text-yellow-300">💡 แนวทางปฏิบัติดีที่สุด (Best Practice):</h4>
@@ -152,18 +163,45 @@
                 แนะนำให้จัดสร้างอินสแตนซ์ของ Dio เป็นแบบ <strong>Singleton</strong> เพื่อความสะดวกคงที่ในการจัดการชุดคอนฟิกูเรชันหลัก เช่น พอร์ตเส้นทางฐาน (Base URL) และจำกัดระยะเวลาดึงข้อมูล (Timeout Limits) ร่วมกันทั่วแอปพลิเคชัน [6]:
               </p>
               <div class="bg-slate-990 p-3 rounded-lg font-mono text-[11px] text-blue-300 overflow-x-auto">
-                final options = BaseOptions(<br/>
-                &nbsp;&nbsp;baseUrl: 'http://localhost:8000/api', <span class="text-slate-500">// Django Server API Port</span><br/>
+                <p class="text-slate-400">// lib/data/services/dio_client.dart</p>
+                <p class="text-blue-400">import <span class="text-white">'package:dio/dio.dart'</span>;</p>
+                <p class="mt-2">final options = BaseOptions(<br/>
+                &nbsp;&nbsp;baseUrl: <span class="text-red-300">'http://localhost:8000/api'</span>, <span class="text-slate-500">// Django Server API Port</span><br/>
                 &nbsp;&nbsp;connectTimeout: Duration(seconds: 5), <span class="text-slate-500">// ระยะเวลาเชื่อมต่อระบบสูงสุด</span><br/>
                 &nbsp;&nbsp;receiveTimeout: Duration(seconds: 3), <span class="text-slate-500">// ระยะเวลารอคอยรับข้อมูล</span><br/>
+                &nbsp;&nbsp;headers: {<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-red-300">'Content-Type'</span>: <span class="text-red-300">'application/json'</span>,<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-red-300">'Accept'</span>: <span class="text-red-300">'application/json'</span>,<br/>
+                &nbsp;&nbsp;},<br/>
                 );<br/>
+                <br/>
+                <span class="text-slate-400">// สร้าง Instance เดียวใช้ร่วมทั่วแอป</span><br/>
                 final dio = Dio(options);
               </div>
             </div>
-            <div class="pt-1">
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+              <h4 class="font-bold text-green-300">📋 โครงสร้างไฟล์ที่แนะนำ:</h4>
+              <p class="font-mono text-[10px] text-slate-300">
+                lib/<br/>
+                └── data/<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── services/<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── dio_client.dart &nbsp;&nbsp;<span class="text-slate-500">// Dio Instance Config</span><br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── api_client.dart &nbsp;&nbsp;&nbsp;<span class="text-slate-500">// API Methods</span><br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── secure_storage.dart <span class="text-slate-500">// Token Storage</span><br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;└── repositories/<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── booking_repository.dart
+              </p>
+            </div>
+            <div class="pt-1 space-y-1">
               <span class="text-xs text-slate-400">🔗 ดูรายละเอียดปลั๊กอิน dio เพิ่มเติม:</span>
-              <a href="https://pub.dev/packages/dio" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition inline-block ml-1">
-                https://pub.dev/packages/dio 🚀
+              <a href="https://pub.dev/packages/dio" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📦 dio Package — pub.dev
+              </a>
+              <a href="https://pub.dev/documentation/dio/latest/dio/dio-library.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 dio API Documentation — pub.dev
+              </a>
+              <a href="https://github.com/cfug/dio/blob/main/dio/README.md" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                💻 dio GitHub Repository & Examples
               </a>
             </div>
           </div>
@@ -203,10 +241,30 @@
               <p class="text-slate-400 pt-1"># ตรวจความพร้อมของ CORS + endpoints ด้วย HTTPie ก่อนเขียนแอป</p>
               <p>$ <span class="text-white">http :8000/.well-known/openid-configuration</span></p>
             </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+              <h4 class="font-bold text-yellow-300">🛠️ ขั้นตอนติดตั้ง CORS ที่ฝั่ง Django (ถ้ายังไม่ได้ทำในสัปดาห์ที่ 12):</h4>
+              <div class="bg-slate-900/90 p-2.5 rounded-lg font-mono text-[10px] text-green-300 space-y-0.5">
+                <p class="text-slate-400"># 1. ติดตั้งแพ็กเกจ django-cors-headers</p>
+                <p>$ <span class="text-white">uv add django-cors-headers</span></p>
+                <p class="text-slate-400 pt-1"># 2. เพิ่มใน INSTALLED_APPS ของ settings.py</p>
+                <p class="text-white">'corsheaders',</p>
+                <p class="text-slate-400 pt-1"># 3. เพิ่ม Middleware (วางไว้ก่อน CommonMiddleware)</p>
+                <p class="text-white">'corsheaders.middleware.CorsMiddleware',</p>
+                <p class="text-slate-400 pt-1"># 4. กำหนดอนุญาตให้ Flutter Web เข้าถึงได้ (settings.py)</p>
+                <p class="text-white">CORS_ALLOWED_ORIGINS = [<span class="text-red-300">'http://localhost:3000'</span>]</p>
+                <p class="text-white">CORS_ALLOW_CREDENTIALS = True</p>
+              </div>
+            </div>
             <div class="bg-yellow-500/10 rounded-xl p-4 border border-yellow-500/20">
               <h4 class="font-bold text-yellow-300 mb-1">🔗 ศึกษากลไกความรอบคอบ CORS บนเว็บ (MDN):</h4>
               <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
-                https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS 🚀
+                📖 CORS — MDN Web Docs
+              </a>
+              <a href="https://github.com/adamchainz/django-cors-headers" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
+                📦 django-cors-headers — GitHub
+              </a>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
+                ⚠️ CORS Error Reference — MDN
               </a>
             </div>
           </div>
@@ -226,28 +284,42 @@
             <p>
               เราจะสร้างคลาสวิศวกรรมข้อมูลจำเพาะชื่อ <code class="bg-white/10 px-1 py-0.5 rounded text-yellow-300">ApiClient</code> จัดให้อยู่ในชั้น <strong>Service Layer</strong> เพื่อเป็นศูนย์กลางติดต่อสื่อสารอินเทอร์เน็ตในการยิง API แลกเปลี่ยนค่าดิบ [1, 2]:
             </p>
-            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-64 leading-relaxed">
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-72 leading-relaxed">
               <p class="text-slate-400">// lib/data/services/api_client.dart</p>
               <p class="text-blue-400">import <span class="text-white">'package:dio/dio.dart'</span>;</p>
               <p class="text-blue-400">class <span class="text-yellow-300">ApiClient</span> {</p>
               <p class="pl-4">final Dio _dio;</p>
               <p class="pl-4">ApiClient({required Dio dio}) : _dio = dio;</p>
               <p class="text-slate-400 pl-4 mt-2">// ยิงคำขอดึงข้อมูลดิบจากเซิร์ฟเวอร์แบบไร้สถานะ (Stateless HTTP GET)</p>
-              <p class="pl-4">Future&lt;Response&lt;T&gt;&gt; <span class="text-yellow-300">get</span>&lt;T&gt;(String path) async {</p>
-              <p class="pl-8">return _dio.get&lt;T&gt;(path);</p>
+              <p class="pl-4">Future&lt;Response&lt;T&gt;&gt; <span class="text-yellow-300">get</span>&lt;T&gt;(String path, {Map&lt;String, dynamic&gt;? queryParameters}) async {</p>
+              <p class="pl-8">return _dio.get&lt;T&gt;(path, queryParameters: queryParameters);</p>
               <p class="pl-4">}</p>
-              <p class="pl-4 mt-1">Future&lt;Response&lt;T&gt;&gt; <span class="text-yellow-300">post</span>&lt;T&gt;(String path, dynamic data) async {</p>
+              <p class="pl-4 mt-1">Future&lt;Response&lt;T&gt;&gt; <span class="text-yellow-300">post</span>&lt;T&gt;(String path, {dynamic data}) async {</p>
               <p class="pl-8">return _dio.post&lt;T&gt;(path, data: data);</p>
               <p class="pl-4">}</p>
               <p class="pl-4 mt-1">Future&lt;Response&lt;T&gt;&gt; <span class="text-yellow-300">delete</span>&lt;T&gt;(String path) async {</p>
               <p class="pl-8">return _dio.delete&lt;T&gt;(path);</p>
               <p class="pl-4">}</p>
+              <p class="pl-4 mt-1">Future&lt;Response&lt;T&gt;&gt; <span class="text-yellow-300">put</span>&lt;T&gt;(String path, {dynamic data}) async {</p>
+              <p class="pl-8">return _dio.put&lt;T&gt;(path, data: data);</p>
+              <p class="pl-4">}</p>
               <p class="text-blue-400">}</p>
             </div>
-            <div>
-              <span class="text-xs text-slate-400">🔗 ดูโค้ด ApiClient ของโครงการตัวอย่างทางการบน GitHub:</span>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+              <h4 class="font-bold text-green-300">📘 หลักการออกแบบ ApiClient (Design Principles):</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li><strong>ไร้สถานะ (Stateless):</strong> ไม่เก็บข้อมูลผู้ใช้หรือ Token ภายในคลาส</li>
+                <li><strong>Generic Methods:</strong> ใช้ <code class="bg-white/10 px-1 rounded text-yellow-300">&lt;T&gt;</code> เพื่อรองรับทุกชนิดข้อมูลที่แปลงกลับ</li>
+                <li><strong>รับ Dio ผ่าน Constructor:</strong> เพื่อให้ส่ง Interceptor หรือ Fake Dio ในการเทสต์ได้</li>
+              </ul>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400">🔗 ดูโค้ด ApiClient ของโครงการตัวอย่างทางการบน GitHub และเอกสาร:</span>
               <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1 truncate">
-                https://github.com/flutter/samples/tree/main/compass_app 🚀
+                💻 Compass App Official — github.com/flutter/samples
+              </a>
+              <a href="https://docs.flutter.dev/app-architecture/case-study/data-layer#services" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 Services Layer Guide — docs.flutter.dev
               </a>
             </div>
           </div>
@@ -281,10 +353,40 @@
                 พฤติกรรมการควบคุมลักษณะนี้ช่วยให้สามารถเขียนประโยคควบคุมสวิตช์เงื่อนไข (Switch Case Statement) ในการตรวจดูสถานะสิทธิ์ได้อย่างรวดเร็วและปลอดภัยแบบไร้ช่องโหว่ [9].
               </p>
             </div>
-            <div>
-              <span class="text-xs text-slate-400">🔗 ศึกษารายละเอียดแนวคิด Result Design Pattern ทางการ:</span>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-60 leading-relaxed">
+              <p class="text-slate-400">// lib/utils/result.dart — นิยามคลาส Result ด้วย sealed class (Dart 3)</p>
+              <p class="text-blue-400">sealed class <span class="text-yellow-300">Result</span>&lt;T&gt; {</p>
+              <p class="pl-4">const Result();</p>
+              <p class="pl-4 text-slate-400">// ฟังก์ชันโรงงาน (Factory) สร้างสถานะสำเร็จ</p>
+              <p class="pl-4">factory Result.ok(T value) =&gt; Ok(value);</p>
+              <p class="pl-4 text-slate-400">// ฟังก์ชันโรงงานสร้างสถานะผิดพลาด</p>
+              <p class="pl-4">factory Result.error(Exception error) =&gt; Failure(error);</p>
+              <p class="mt-2 text-blue-400">class <span class="text-yellow-300">Ok</span>&lt;T&gt; extends Result&lt;T&gt; {</p>
+              <p class="pl-8">final T value;</p>
+              <p class="pl-8">const Ok(this.value);</p>
+              <p class="pl-4">}</p>
+              <p class="text-blue-400 mt-1">class <span class="text-yellow-300">Failure</span>&lt;T&gt; extends Result&lt;T&gt; {</p>
+              <p class="pl-8">final Exception error;</p>
+              <p class="pl-8">const Failure(this.error);</p>
+              <p class="pl-4">}</p>
+              <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+              📌 <strong>วิธีใช้งานใน ViewModel:</strong><br/>
+              <p class="font-mono text-[10px] mt-1 text-green-300">
+                switch (result) {<br/>
+                &nbsp;&nbsp;case Result.ok(): <span class="text-slate-400">// แสดงข้อมูล</span><br/>
+                &nbsp;&nbsp;case Result.error(): <span class="text-slate-400">// แสดงข้อผิดพลาด</span><br/>
+                }
+              </p>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400">🔗 ศึกษารายละเอียดแนวคิด Result Design Pattern และ sealed class ทางการ:</span>
               <a href="https://docs.flutter.dev/app-architecture/design-patterns/result" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
-                https://docs.flutter.dev/app-architecture/design-patterns/result 🚀
+                📖 Result Pattern — docs.flutter.dev
+              </a>
+              <a href="https://dart.dev/language/class-modifiers#sealed" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Dart Sealed Class Modifiers — dart.dev
               </a>
             </div>
           </div>
@@ -327,8 +429,24 @@
               <p class="text-slate-400"># 🧪 ทดสอบ endpoint เดียวกันด้วย HTTPie ก่อนเขียนโค้ด Dart</p>
               <p class="text-white">$ http :8000/api/bookings/ "Authorization: Bearer &lt;access_token&gt;"</p>
             </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-2">
+              <h4 class="font-bold text-green-300">📘 ขั้นตอนปฏิบัติ (Step-by-Step):</h4>
+              <ol class="list-decimal list-inside space-y-1 text-slate-300">
+                <li><strong>สร้าง Model โมเดล</strong> <code class="bg-white/10 px-1 rounded text-yellow-300">BookingSummary</code> พร้อม factory <code class="bg-white/10 px-1 rounded text-yellow-300">fromJson()</code></li>
+                <li><strong>เรียก Method</strong> <code class="bg-white/10 px-1 rounded text-green-300">fetchBookings()</code> จาก ApiClient</li>
+                <li><strong>ตรวจสอบ</strong> <code class="bg-white/10 px-1 rounded text-green-300">statusCode == 200</code> ว่าได้รับการตอบสนองสำเร็จ</li>
+                <li><strong>แปลง JSON</strong> ด้วย <code class="bg-white/10 px-1 rounded text-green-300">.map().toList()</code> เข้าสู่ List ของ Domain Model</li>
+                <li><strong>ห่อด้วย</strong> <code class="bg-white/10 px-1 rounded text-green-300">Result.ok()</code> เพื่อส่งต่อให้ Repository</li>
+              </ol>
+            </div>
             <div class="bg-blue-900/40 rounded-xl p-3 border border-blue-500/20 text-xs">
               💡 <strong>คำแนะนำเชิงปฏิบัติ:</strong> การประมวลผลดึงค่า JSON จะตอบกลับสถานะเรียบร้อยผ่านทางรหัส <strong>HTTP 200 OK</strong> สกัดชุดโครงร่างมาห่อไว้ในกล่อง <code class="text-green-300">Result.ok</code> ทันที [10].
+            </div>
+            <div class="pt-1">
+              <span class="text-xs text-slate-400">🔗 อ้างอิงเพิ่มเติม:</span>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 HTTP 200 OK — MDN Web Docs
+              </a>
             </div>
           </div>
         </div>
@@ -361,13 +479,38 @@
               <p class="pl-8">return Result.error(e);</p>
               <p class="pl-4">}</p>
               <p class="text-blue-400">}</p>
+              <p class="text-slate-400 pl-4 mt-2">// lib/data/services/api_client.dart (POST Booking Method)</p>
+              <p class="text-blue-400">Future&lt;Result&lt;BookingSummary&gt;&gt; <span class="text-yellow-300">createBooking</span>(Map&lt;String, dynamic&gt; data) async {</p>
+              <p class="pl-4">try {</p>
+              <p class="pl-8">final response = await _dio.post(<span class="text-red-300">'/bookings/'</span>, data: data);</p>
+              <p class="pl-8">if (response.statusCode == 201) {</p>
+              <p class="pl-12">return Result.ok(BookingSummary.fromJson(response.data));</p>
+              <p class="pl-8">} else {</p>
+              <p class="pl-12">return Result.error(Exception(<span class="text-red-300">'Failed to create booking'</span>));</p>
+              <p class="pl-8">}</p>
+              <p class="pl-4">} on Exception catch (e) {</p>
+              <p class="pl-8">return Result.error(e);</p>
+              <p class="pl-4">}</p>
+              <p class="text-blue-400">}</p>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-yellow-300 text-[10px] md:text-[11px] leading-relaxed">
               <p class="text-slate-400"># 🧪 ทดสอบคำสั่งลบด้วย HTTPie (ต้องได้กลับมา 200 หรือ 204 No Content)</p>
               <p class="text-white">$ http DELETE :8000/api/bookings/1/ "Authorization: Bearer &lt;access_token&gt;"</p>
+              <p class="text-slate-400 pt-1"># 🧪 ทดสอบการสร้างข้อมูลด้วย POST (ต้องได้กลับมา 201 Created)</p>
+              <p class="text-white">$ http POST :8000/api/bookings/ destination_name="Chiang Mai" price:=2500 "Authorization: Bearer &lt;access_token&gt;"</p>
             </div>
             <div class="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-xs">
               ⚠️ <strong>คำชี้แจง:</strong> การลบทริปจะเดินทางเริ่มจากการสไลด์หน้าจอปัดทิ้ง (Dismissible Widget Event) ฝั่ง UI แล้วส่งพาสมาให้เลเยอร์ข้อมูลเพื่อส่งคำสั่งไปทำลายสถิติฝั่ง Backend ของ Django และรายงานสถานะกลับ [9, 11].
+            </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-green-300 mb-1">📘 รหัสสถานะ HTTP ที่ควรรู้:</h4>
+              <p class="text-slate-300"><code class="bg-white/10 px-1 rounded text-green-300">200 OK</code> — สำเร็จ &nbsp;•&nbsp; <code class="bg-white/10 px-1 rounded text-green-300">201 Created</code> — สร้างข้อมูลสำเร็จ &nbsp;•&nbsp; <code class="bg-white/10 px-1 rounded text-blue-300">204 No Content</code> — สำเร็จแต่ไม่มีข้อมูล &nbsp;•&nbsp; <code class="bg-white/10 px-1 rounded text-red-300">401 Unauthorized</code> — Token หมดอายุ &nbsp;•&nbsp; <code class="bg-white/10 px-1 rounded text-red-300">404 Not Found</code> — ไม่พบ endpoint</p>
+            </div>
+            <div class="pt-1">
+              <span class="text-xs text-slate-400">🔗 อ้างอิง:</span>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 HTTP Response Status Codes — MDN Web Docs
+              </a>
             </div>
           </div>
         </div>
@@ -449,23 +592,32 @@
             <p>
               สถาปัตยกรรมระดับ Production ต้องการความยืดหยุ่นในการสลับเปลี่ยนสภาพแวดล้อมทำโครงงาน (Environments) เราจึงเริ่มจากการออกแบบสัญญากลางหรืออินเทอร์เฟซฐานด้วยคำสั่ง **`abstract class`** เพื่อกำหนดพฤติกรรมการทำงานของข้อมูลที่ทุกสภาพแวดล้อมต้องเขียนรองรับเหมือนกัน:
             </p>
-            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
-              <p class="text-slate-400">// lib/data/repositories/booking.dart (สัญญาฐานร่วมกัน)</p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed overflow-y-auto max-h-56">
+              <p class="text-slate-400">// lib/domain/repositories/booking_repository.dart (สัญญาฐานร่วมกัน)</p>
               <p class="text-blue-400">import <span class="text-white">'package:compass_booking_app/domain/models/booking.dart'</span>;</p>
               <p class="text-blue-400">import <span class="text-white">'package:compass_booking_app/utils/result.dart'</span>;</p>
               <p class="mt-2 text-blue-400">abstract class <span class="text-yellow-300">BookingRepository</span> {</p>
               <p class="pl-4">Future&lt;Result&lt;List&lt;BookingSummary&gt;&gt;&gt; <span class="text-yellow-300">loadBookings</span>();</p>
+              <p class="pl-4">Future&lt;Result&lt;BookingSummary&gt;&gt; <span class="text-yellow-300">create</span>(BookingSummary booking);</p>
               <p class="pl-4">Future&lt;Result&lt;void&gt;&gt; <span class="text-yellow-300">delete</span>(int id);</p>
               <p class="text-blue-400">}</p>
             </div>
-            <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-slate-300 text-xs space-y-1">
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-slate-300 text-xs space-y-2">
               <h4 class="font-bold text-yellow-300">💡 ทำไมต้องออกแบบแบบ Abstract Class?</h4>
-              <p>ช่วยให้เราเขียนแอปแยกเลเยอร์ได้ง่าย โดยเลเยอร์ UI ด้านบนไม่จำเป็นต้องรู้ว่าข้อมูลมาจากไหน รู้เพียงสัญญาการมีอยู่ของคำสั่งเรียกใช้งานเท่านั้น และทำให้สลับไปเทสด้วย Fake คลาสจำลองได้สะดวกรวดเร็ว</p>
+              <ul class="list-disc list-inside space-y-1">
+                <li>ช่วยให้เราเขียนแอปแยกเลเยอร์ได้ง่าย โดยเลเยอร์ UI ด้านบนไม่จำเป็นต้องรู้ว่าข้อมูลมาจากไหน</li>
+                <li>รู้เพียงสัญญาการมีอยู่ของคำสั่งเรียกใช้งานเท่านั้น</li>
+                <li>ทำให้สลับไปเทสด้วย Fake คลาสจำลองได้สะดวกรวดเร็ว (Loose Coupling)</li>
+                <li>รองรับการเพิ่มแหล่งข้อมูลใหม่ (เช่น SQLite) โดยไม่ต้องแก้ UI</li>
+              </ul>
             </div>
-            <div class="pt-1">
-              <span class="text-xs text-slate-400">🔗 ศึกษาหลักการจัดทำคลังข้อมูลของแอปพลิเคชัน Compass:</span>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400">🔗 ศึกษาหลักการจัดทำคลังข้อมูลและ Dependency Inversion:</span>
               <a href="https://docs.flutter.dev/app-architecture/case-study/data-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1 truncate">
-                https://docs.flutter.dev/app-architecture/case-study/data-layer 🚀
+                📖 Compass Data Layer — docs.flutter.dev
+              </a>
+              <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 Dependency Inversion Principle — Wikipedia
               </a>
             </div>
           </div>
@@ -487,6 +639,7 @@
             </p>
             <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-56 leading-relaxed">
               <p class="text-slate-400">// lib/data/repositories/booking_repository_remote.dart (ระบบรันงานจริง)</p>
+              <p class="text-blue-400">import <span class="text-white">'../../domain/repositories/booking_repository.dart'</span>;</p>
               <p class="text-blue-400">class <span class="text-yellow-300">BookingRepositoryRemote</span> implements <span class="text-yellow-300">BookingRepository</span> {</p>
               <p class="pl-4">final ApiClient _apiClient; <span class="text-slate-500">// รับตัวติดต่อ Service เครือข่ายผ่าน Constructor</span></p>
               <p class="pl-4">BookingRepositoryRemote({required ApiClient apiClient}) : _apiClient = apiClient;</p>
@@ -504,10 +657,20 @@
               <p class="pl-4">Future&lt;Result&lt;void&gt;&gt; <span class="text-yellow-300">delete</span>(int id) async =&gt; _apiClient.deleteBooking(id);</p>
               <p class="text-blue-400">}</p>
             </div>
-            <div class="pt-1">
-              <span class="text-xs text-slate-400 block mb-1">🔗 ตรวจสอบสลักโค้ดการแยก Local & Remote เพิ่มเติมของแอปพลิเคชันต้นแบบ Compass:</span>
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+              <h4 class="font-bold text-yellow-300 mb-1">🔀 Local vs Remote Repository:</h4>
+              <p class="text-slate-300">
+                <strong class="text-green-300">BookingRepositoryRemote</strong> — ดึงข้อมูลจริงจาก Django Backend ผ่าน ApiClient<br/>
+                <strong class="text-blue-300">BookingRepositoryLocal</strong> — ใช้ข้อมูลจำลอง (Mock Data) จากไฟล์/หน่วยความจำ ใช้ตอนพัฒนา UI ที่ยังไม่มี Backend หรือเขียน Unit Test โดยใช้ <code class="bg-white/10 px-1 rounded">FakeBookingRepository</code>
+              </p>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400 block mb-1">🔗 ตรวจสอบสลักโค้ดการแยก Local & Remote เพิ่มเติมของแอปพลิเคชันต้นแบบ Compass และตัวอย่าง Repository Pattern:</span>
               <a href="https://github.com/flutter/samples/tree/main/compass_app/app/lib/data/repositories/booking" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
-                https://github.com/flutter/samples/tree/main/compass_app/app/lib/data/repositories/booking 🚀
+                💻 Compass Repositories — github.com/flutter/samples
+              </a>
+              <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 The Clean Architecture — Uncle Bob
               </a>
             </div>
           </div>
@@ -536,22 +699,37 @@
                 <div class="bg-green-900/40 border border-green-500/30 px-3 py-1.5 rounded">🧩 Pure Domain Model (Immutable Object)</div>
               </div>
             </div>
-            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
-              <p class="text-slate-400">// คลาสโครงสร้างข้อมูลที่มีคุณสมบัติคงที่ (Immutable Domain Model)</p>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed overflow-y-auto max-h-60">
+              <p class="text-slate-400">// lib/domain/models/booking_summary.dart — คลาสโครงสร้างข้อมูลที่มีคุณสมบัติคงที่ (Immutable Domain Model)</p>
               <p class="text-blue-400">class <span class="text-yellow-300">BookingSummary</span> {</p>
               <p class="pl-4">final int id;</p>
               <p class="pl-4">final String destinationName;</p>
               <p class="pl-4">final double price;</p>
-              <p class="pl-4">BookingSummary({required this.id, required this.destinationName, required this.price});</p>
+              <p class="pl-4">final String? imageUrl; <span class="text-slate-500">// ฟิลด์เสริมจาก Domain Logic</span></p>
+              <p class="pl-4">BookingSummary({required this.id, required this.destinationName, required this.price, this.imageUrl});</p>
               <p class="text-slate-400 pl-4 mt-1.5">// ตัวถอดค่าจาก JSON Map สรุปแปลงผลอย่างแม่นยำ</p>
               <p class="pl-4">factory BookingSummary.fromJson(Map&lt;String, dynamic&gt; json) =&gt;</p>
-              <p class="pl-8">BookingSummary(id: json[<span class="text-red-300">'id'</span>], destinationName: json[<span class="text-red-300">'destination_name'</span>], price: json[<span class="text-red-300">'price'</span>].toDouble());</p>
+              <p class="pl-8">BookingSummary(id: json[<span class="text-red-300">'id'</span>], destinationName: json[<span class="text-red-300">'destination_name'</span>], price: json[<span class="text-red-300">'price'</span>].toDouble(), imageUrl: json[<span class="text-red-300">'image_url'</span>] as String?);</p>
               <p class="text-blue-400">}</p>
             </div>
-            <div class="pt-1 text-center">
-              <span class="text-xs text-slate-400">🔗 ศึกษารูปแบบสถาปัตยกรรมโมเดลระบายข้อมูลเพิ่มเติม:</span>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-2">
+              <h4 class="font-bold text-green-300">📘 ทำไมต้องแยก API Model ออกจาก Domain Model?</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li><strong>กัน UI ไม่พัง:</strong> เมื่อ Backend เปลี่ยนชื่อฟิลด์ เราแก้เฉพาะ mapping.dart ไม่ต้องแก้ Views</li>
+                <li><strong>เป็นอิสระจากภายนอก:</strong> Domain Model ไม่มี dependency กับ dio/http หรือ JSON</li>
+                <li><strong>รองรับ Logic ของแอป:</strong> เพิ่ม computed property เช่น <code class="bg-white/10 px-1 rounded text-yellow-300">fullName</code>, <code class="bg-white/10 px-1 rounded text-yellow-300">formattedPrice</code></li>
+              </ul>
+            </div>
+            <div class="pt-1 space-y-1 text-center">
+              <span class="text-xs text-slate-400 block">🔗 ศึกษารูปแบบสถาปัตยกรรมโมเดลระบายข้อมูลเพิ่มเติม:</span>
               <a href="https://docs.flutter.dev/app-architecture/case-study/data-layer#domain-models" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
-                https://docs.flutter.dev/app-architecture/case-study/data-layer#domain-models 🚀
+                📖 Domain Models — docs.flutter.dev
+              </a>
+              <a href="https://docs.flutter.dev/data-and-backend/serialization/json" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 JSON Serialization in Flutter — docs.flutter.dev
+              </a>
+              <a href="https://pub.dev/packages/json_serializable" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📦 json_serializable (Code Generation) — pub.dev
               </a>
             </div>
           </div>
@@ -580,10 +758,22 @@
                   <li><strong>บำรุงรักษาระบบติดขัด:</strong> หาก API โครงสร้างเปลี่ยน โค้ดฝั่งหน้าจอ View ทั้งแอปจะล่มทันที</li>
                 </ul>
               </div>
-              <div>
+              <div class="bg-green-900/20 p-4 rounded-xl border border-green-500/20 space-y-2 text-xs">
+                <h4 class="font-bold text-green-300">✅ กฎการเชื่อมโยงระหว่างเลเยอร์ที่ถูกต้อง (Rules of Engagement):</h4>
+                <p class="font-mono text-[10px] text-slate-300 leading-relaxed">
+                  View ↔ ViewModel ↔ Repository ↔ Service (ApiClient)
+                </p>
+                <p class="text-slate-300">
+                  <strong>ทิศทางการไหลของข้อมูล:</strong> UI ส่งคำสั่ง → ViewModel เรียก Repository → Repository ใช้ Service ดึงข้อมูลดิบ → แปลงเป็น Domain Model → ส่งกลับผ่าน Result
+                </p>
+              </div>
+              <div class="space-y-1">
                 <span class="text-xs text-slate-400 block">🔗 เจาะลึกการจัดโครงสร้าง Layered Architecture (Flutter Docs):</span>
                 <a href="https://docs.flutter.dev/app-architecture/case-study/data-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1 truncate">
-                  https://docs.flutter.dev/app-architecture/case-study/data-layer 🚀
+                  📖 Compass Data Layer — docs.flutter.dev
+                </a>
+                <a href="https://docs.flutter.dev/app-architecture/guide" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                  📖 App Architecture Guide — docs.flutter.dev
                 </a>
               </div>
             </div>
@@ -633,6 +823,47 @@
             <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500/20 text-xs text-center">
               💡 <strong>ทางเลือกที่ดีที่สุดของทีม Flutter:</strong> นำแพ็กเกจระดับความน่าเชื่อถือสูงอย่าง <strong>`flutter_secure_storage`</strong> มาเขียนครอบการประมวลผล เพื่อเรียกใช้คำสั่งความมั่นคงร่วมกันแบบข้ามค่ายได้ทันที
             </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-2">
+              <h4 class="font-bold text-green-300">📋 เปรียบเทียบวิธีจัดเก็บ Token ใน Flutter:</h4>
+              <table class="w-full text-left text-[10px] md:text-[11px] text-slate-300">
+                <thead>
+                  <tr class="text-slate-400 border-b border-white/10">
+                    <th class="py-1 pr-2">วิธี</th>
+                    <th class="py-1 pr-2">ความปลอดภัย</th>
+                    <th class="py-1">ข้อควรระวัง</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                  <tr>
+                    <td class="py-1 pr-2 font-mono">SharedPreferences</td>
+                    <td class="py-1 pr-2 text-red-300">ต่ำ ❌</td>
+                    <td class="py-1">ไม่ได้เข้ารหัส เก็บเป็น Text เปล่า</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 pr-2 font-mono">flutter_secure_storage</td>
+                    <td class="py-1 pr-2 text-green-300">สูง ✅</td>
+                    <td class="py-1">ใช้ Keychain (iOS) / Keystore (Android)</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 pr-2 font-mono">Hive / Isar</td>
+                    <td class="py-1 pr-2 text-yellow-300">กลาง ⚠️</td>
+                    <td class="py-1">เหมาะกับข้อมูลทั่วไป ไม่ใช่ Token</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pt-1">
+              <span class="text-xs text-slate-400 block">🔗 อ้างอิงความปลอดภัยการจัดเก็บข้อมูล:</span>
+              <a href="https://developer.android.com/training/articles/keystore" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
+                📖 Android Keystore System — developer.android.com
+              </a>
+              <a href="https://developer.apple.com/documentation/security/keychain_services" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Apple Keychain Services — developer.apple.com
+              </a>
+              <a href="https://owasp.org/www-project-mobile-top-10/" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 OWASP Mobile Top 10 — owasp.org
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -653,6 +884,9 @@
             <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-green-300 text-xs">
               <p class="text-slate-400"># 1. รันคำสั่งเพิ่มคลังความมั่นคงเข้าระบบโปรเจกต์ Flutter:</p>
               <p>$ <span class="text-white">flutter pub add flutter_secure_storage</span></p>
+              <p class="text-slate-400 pt-2"># 2. (Android เท่านั้น) ตั้งค่า minSdkVersion ≥ 18</p>
+              <p class="text-white"># android/app/build.gradle → minSdkVersion 18</p>
+              <p class="text-slate-400 pt-2"># 3. (macOS) เปิด Keychain Sharing ใน Xcode ตาม README ของแพ็กเกจ</p>
             </div>
             <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-52 leading-relaxed">
               <p class="text-slate-400">// lib/data/services/secure_storage_service.dart</p>
@@ -665,12 +899,29 @@
               <p class="pl-4">Future&lt;String?&gt; read(String key) async =&gt; await _storage.read(key: key);</p>
               <p class="pl-4 text-slate-400">// ทำลายข้อมูลในระบบเพื่อใช้ลบตอนล็อกเอาต์ออกจากหน้าจอ</p>
               <p class="pl-4">Future&lt;void&gt; delete(String key) async =&gt; await _storage.delete(key: key);</p>
+              <p class="pl-4 text-slate-400">// เคลียร์ Token ทั้งหมดเมื่อล็อกเอาต์</p>
+              <p class="pl-4">Future&lt;void&gt; clearAll() async =&gt; await _storage.deleteAll();</p>
               <p class="text-blue-400">}</p>
             </div>
-            <div class="pt-1 text-center">
-              <span class="text-xs text-slate-400">🔗 ดูโครงร่างคลาสฉบับทางการบนฐานข้อมูลผับเดฟ:</span>
-              <a href="https://pub.dev/packages/flutter_secure_storage" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
-                https://pub.dev/packages/flutter_secure_storage 🚀
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+              📌 <strong>ตัวอย่างการใช้งานจริงใน Auth Flow:</strong>
+              <p class="font-mono text-[10px] mt-1 text-green-300">
+                await storage.write(<span class="text-red-300">'access_token'</span>, accessToken);<br/>
+                await storage.write(<span class="text-red-300">'refresh_token'</span>, refreshToken);<br/>
+                await storage.write(<span class="text-red-300">'id_token'</span>, idToken);<br/>
+                <span class="text-slate-400">// เมื่อล็อกเอาต์: </span>await storage.clearAll();
+              </p>
+            </div>
+            <div class="pt-1 space-y-1 text-center">
+              <span class="text-xs text-slate-400 block">🔗 ดูโครงร่างคลาสฉบับทางการและคู่มือการติดตั้งแพลตฟอร์ม:</span>
+              <a href="https://pub.dev/packages/flutter_secure_storage" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📦 flutter_secure_storage — pub.dev
+              </a>
+              <a href="https://github.com/juliansteenbakker/flutter_secure_storage" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                💻 flutter_secure_storage GitHub (Platform Setup Guide)
+              </a>
+              <a href="https://pub.dev/packages/openid_client" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📦 openid_client (OIDC Flow) — pub.dev
               </a>
             </div>
           </div>
@@ -686,10 +937,11 @@
           <h2 class="text-3xl font-bold mt-4 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
             แนบ Token อัตโนมัติด้วยระบบ dio Interceptors 📡
           </h2>
-          <div class="space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">
-            <p>
-              เพื่อไม่ให้นักศึกษาต้องพิมพ์แนบ Access Token ลงในส่วนหัวของคำขอ API ทุกๆ เส้นทางด้วยตนเอง เราจะนำกลไก **`Interceptors`** ของแพ็กเกจ `dio` มาตั้งดักจับเพื่อสแกนและแนบข้อมูลสิทธิ์เข้าถึงลงไปให้โดยอัตโนมัติก่อนส่งข้อความออกอินเทอร์เน็ต:
-            </p>
+            <div>
+              <p>
+                เพื่อไม่ให้นักศึกษาต้องพิมพ์แนบ Access Token ลงในส่วนหัวของคำขอ API ทุกๆ เส้นทางด้วยตนเอง เราจะนำกลไก <strong>`Interceptors`</strong> ของแพ็กเกจ `dio` มาตั้งดักจับเพื่อสแกนและแนบข้อมูลสิทธิ์เข้าถึงลงไปให้โดยอัตโนมัติก่อนส่งข้อความออกอินเทอร์เน็ต:
+              </p>
+            </div>
             <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
               <p class="text-slate-400">// lib/data/services/api_interceptors.dart</p>
               <p class="text-blue-400">class <span class="text-yellow-300">AuthInterceptor</span> extends <span class="text-yellow-300">Interceptor</span> {</p>
@@ -706,10 +958,27 @@
               <p class="pl-4">}</p>
               <p class="text-blue-400">}</p>
             </div>
-            <div class="pt-1 text-center">
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+              🔗 <strong>วิธีผูก Interceptor เข้ากับ Dio Instance:</strong>
+              <p class="font-mono text-[10px] mt-1 text-green-300">
+                dio.interceptors.add(AuthInterceptor(storage)); <span class="text-slate-400">// ตอนสร้าง Dio ใน dio_client.dart</span>
+              </p>
+            </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-yellow-300 mb-1">🎯 วงจรการทำงานของ Interceptor (Lifecycle Hooks):</h4>
+              <p class="font-mono text-[10px] text-slate-300 leading-relaxed">
+                <strong class="text-blue-300">onRequest</strong> → ก่อนส่งคำขอ (แนบ Token, Log)<br/>
+                <strong class="text-green-300">onResponse</strong> → หลังได้รับคำตอบ (แปลงข้อมูล, Cache)<br/>
+                <strong class="text-red-300">onError</strong> → เมื่อเกิดข้อผิดพลาด (Retry, Refresh Token)
+              </p>
+            </div>
+            <div class="pt-1 space-y-1 text-center">
               <span class="text-xs text-slate-400">🔗 เจาะลึกการดักจับ Interceptors ของแพ็กเกจ dio:</span>
-              <a href="https://pub.dev/packages/dio" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-1">
-                https://pub.dev/packages/dio 🚀
+              <a href="https://pub.dev/packages/dio" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📦 dio Package (Interceptors Section) — pub.dev
+              </a>
+              <a href="https://docs.flutter.dev/app-architecture/design-patterns" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Flutter Design Patterns — docs.flutter.dev
               </a>
             </div>
           </div>
@@ -752,10 +1021,28 @@
             <div class="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-xs">
               🔁 <strong>อัปเดตจากสัปดาห์ที่ 12:</strong> endpoint กู้คืนสิทธิ์คือ OIDC Token Endpoint <code class="text-yellow-300">POST /token/</code> ของ django-oidc-provider (grant_type=refresh_token) — ไม่ใช่ /api/token/refresh/ แบบ Simple JWT อีกต่อไป
             </div>
-            <div class="pt-1 text-center">
-              <span class="text-xs text-slate-400 block">🔗 เจาะลึกวงจรการกู้สิทธิ์ Token ที่ตรวจพบจากระบบทดสอบของจริงในโครงการ Compass:</span>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+              <h4 class="font-bold text-green-300">⚙️ เงื่อนไขที่ต้องมีก่อน Auto-Refresh ทำงาน:</h4>
+              <ol class="list-decimal list-inside space-y-1 text-slate-300">
+                <li>ต้องมี <code class="bg-white/10 px-1 rounded text-yellow-300">refresh_token</code> เก็บไว้ใน Secure Storage</li>
+                <li>ต้องรู้ <code class="bg-white/10 px-1 rounded text-yellow-300">client_id</code> ของแอปที่ลงทะเบียนกับ OIDC Server</li>
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">_refreshDio</code> ต้องเป็น Dio Instance ที่ไม่มี AuthInterceptor กัน loop วนซ้ำ</li>
+                <li>POST ไปที่ Token Endpoint แล้วบันทึก <code class="bg-white/10 px-1 rounded text-yellow-300">access_token</code> ใหม่กลับ</li>
+              </ol>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400 block">🔗 เจาะลึกวงจรการกู้สิทธิ์ Token และอ้างอิง OIDC Flow:</span>
               <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5 truncate">
-                https://github.com/flutter/samples/tree/main/compass_app 🚀
+                💻 Compass App — github.com/flutter/samples
+              </a>
+              <a href="https://openid.net/specs/openid-connect-core-1_0.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 OIDC Core Spec — openid.net
+              </a>
+              <a href="https://django-oidc-provider.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 django-oidc-provider Docs — readthedocs.io
+              </a>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 HTTP 401 Unauthorized — MDN
               </a>
             </div>
           </div>
@@ -783,10 +1070,16 @@
                 <li>รันระบบ API บนคอมพิวเตอร์และเชื่อมมือถือส่วนตัวเพื่อจำลองสถานการณ์ความมั่นคงในห้องปฏิบัติการจริงนอกเวลา</li>
               </ul>
             </div>
-            <div class="pt-2 text-center">
+            <div class="pt-2 space-y-1 text-center">
               <span class="text-xs text-slate-400 block mb-0.5">🔗 คู่มือและข้อมูลสนับสนุนการจัดทำสถาปัตยกรรมระดับโปร (Flutter App Architecture):</span>
-              <a href="https://docs.flutter.dev/app-architecture/guide" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
-                https://docs.flutter.dev/app-architecture/guide 🚀
+              <a href="https://docs.flutter.dev/app-architecture/guide" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 App Architecture Guide — docs.flutter.dev
+              </a>
+              <a href="https://docs.flutter.dev/testing" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Flutter Testing — docs.flutter.dev
+              </a>
+              <a href="https://docs.flutter.dev/app-architecture/design-patterns/result" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Result Pattern Recap — docs.flutter.dev
               </a>
             </div>
           </div>

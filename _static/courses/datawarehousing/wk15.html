@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk15.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Week 15: Production Agentic AI<br>
+            <span class="text-yellow-300">&amp; Final Project</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Agentic Views, Production Workflows, and the Grand Finale
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Final Presentation</h2>
+            <div class="flex items-center justify-center gap-4">
+              <div class="bg-yellow-400 text-yellow-900 font-bold px-6 py-2 rounded-lg shadow-lg">
+                The Agentic E-Commerce Platform
+              </div>
+            </div>
+            <p class="mt-4 text-center text-white/80 italic">
+              "'Ask your warehouse anything' — a platform that answers natural-language questions."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">Learning Outcomes</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>Design Agentic Views (AV-SQL) to decompose complex analytical queries</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>Explain the components of a production-grade agentic AI workflow</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>Integrate the full stack: DW → Semantic Layer → AI Agent → answers</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>Present the final "Agentic E-Commerce Platform" project</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Journey Recap -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">เดินทางมาไกล — Recap ทั้งเทอม</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <ol class="space-y-3 text-lg">
+              <li>1. 🏗️ <strong>พื้นฐาน DW:</strong> 3NF, Inmon &amp; Kimball, Star Schema</li>
+              <li>2. 🥇 <strong>Medallion/Cloud:</strong> Bronze → Silver → Gold, Lakehouse</li>
+              <li>3. ⚙️ <strong>ETL/ELT:</strong> ท่อส่งข้อมูล + CDC + คุณภาพข้อมูล</li>
+              <li>4. 📐 <strong>Semantic Layer:</strong> นิยามเมตริกที่ทุกคนเห็นตรงกัน</li>
+              <li>5. 📊 <strong>OLAP &amp; AI:</strong> วิเคราะห์หลายมิติ + เพิ่มประสิทธิภาพด้วย ML</li>
+              <li>6. 🤖 <strong>Agents:</strong> Self-healing pipeline และการทำงานอัตโนมัติ</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Agentic Views (AV-SQL) -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Agentic Views (AV-SQL)</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6 leading-relaxed">การตอบคำถามภาษาธรรมชาติด้วย SQL บน schema ขนาดใหญ่ทำได้ยาก — <strong>AV-SQL</strong> แก้ด้วยการสร้าง View แบบโมดูลาร์ที่ Agent สร้างและใช้ซ้ำได้</p>
+            <div class="grid md:grid-cols-3 gap-4 text-lg">
+              <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+                <p class="font-bold text-yellow-300 mb-1">1. Question Rewriting</p>
+                <p class="text-sm">แปลคำถามคลุมเครือให้ชัด (เช่น "ลูกค้าที่ใช้งาน" = active_today)</p>
+              </div>
+              <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+                <p class="font-bold text-yellow-300 mb-1">2. View Generation</p>
+                <p class="text-sm">สร้าง CTE/View ย่อยจาก schema → ลดความซับซ้อนของ Join</p>
+              </div>
+              <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+                <p class="font-bold text-yellow-300 mb-1">3. Iterative Validation</p>
+                <p class="text-sm">รันตรวจสอบ syntax และผลลัพธ์ แก้จนถูกต้อง</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 text-sm italic">
+            งานวิจัย: <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline">AV-SQL: Agentic Views</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Full Stack Architecture -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8">สถาปัตยกรรมทั้งระบบ (End-to-End)</h1>
+          <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-sm font-bold">
+            <div class="bg-white/10 p-4 rounded-xl text-center">Sources<br><span class="font-normal text-white/60">CRM, Web, WMS</span></div>
+            <div class="text-xl">→</div>
+            <div class="bg-white/10 p-4 rounded-xl text-center">Lakehouse<br><span class="font-normal text-white/60">Bronze→Silver→Gold</span></div>
+            <div class="text-xl">→</div>
+            <div class="bg-yellow-500 text-yellow-900 p-4 rounded-xl text-center">Semantic Layer<br><span class="font-normal">เมตริก &amp; Views</span></div>
+            <div class="text-xl">→</div>
+            <div class="bg-white/10 p-4 rounded-xl text-center">AI Agent<br><span class="font-normal text-white/60">LLM + Tools</span></div>
+            <div class="text-xl">→</div>
+            <div class="bg-white/10 p-4 rounded-xl text-center">Answer<br><span class="font-normal text-white/60">Natural Language</span></div>
+          </div>
+          <ul class="mt-8 space-y-2 text-left text-lg bg-white/10 p-6 rounded-2xl border border-white/20">
+            <li>• 🤖 <strong>BI + AI ใช้เลเยอร์เดียวกัน</strong> → ตัวเลขตรงกันเสมอ</li>
+            <li>• 🛡️ <strong>Governance</strong>: สิทธิ์, lineage, คุณภาพข้อมูล อยู่ทุกชั้น</li>
+            <li>• ⚙️ <strong>Agentic Loop</strong>: วางแผน → ใช้เครื่องมือ → ตรวจผล → ปรับปรุง</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 6: Production-Grade Workflow -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">Production-Grade Agentic AI</h1>
+          <p class="text-xl mb-8 text-white/90">จากโค้ด demo สู่ระบบที่พร้อมใช้จริง ต้องมีองค์ประกอบเหล่านี้</p>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400">
+              <h3 class="text-2xl font-bold mb-2 text-green-300">Reliability</h3>
+              <ul class="text-lg space-y-1">
+                <li>• ตรวจผลลัพธ์และ fallback เมื่อ AI ผิดพลาด</li>
+                <li>• Retry + circuit breaker</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-blue-400">
+              <h3 class="text-2xl font-bold mb-2 text-blue-300">Observability</h3>
+              <ul class="text-lg space-y-1">
+                <li>• Log, trace และ monitoring ทุกขั้นตอน</li>
+                <li>• เห็นเหตุผลที่ Agent ตัดสินใจ</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-purple-400">
+              <h3 class="text-2xl font-bold mb-2 text-purple-300">Security &amp; Privacy</h3>
+              <ul class="text-lg space-y-1">
+                <li>• จำกัดสิทธิ์, Mask ข้อมูล PII</li>
+                <li>• ป้องกัน Prompt Injection</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-yellow-400">
+              <h3 class="text-2xl font-bold mb-2 text-yellow-300">Cost &amp; Scale</h3>
+              <ul class="text-lg space-y-1">
+                <li>• ควบคุมค่า LLM ต่อคำถาม</li>
+                <li>• Cache คำตอบซ้ำ, จัดคิวงาน</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            อ่านเพิ่มเติม: <a href="https://arxiv.org/abs/2512.08769" class="text-yellow-300 underline">A Practical Guide for Production-Grade Agentic AI Workflows</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Active Learning 1 - Prepare the Pitch -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            Workshop (30 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">เตรียมบทนำเสนอโครงการ</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-6">วางโครงสร้างการนำเสนอ "Agentic E-Commerce Platform" ของคุณ:</p>
+            <div class="space-y-4 text-lg">
+              <div><strong>1.</strong> ปัญหาทางธุรกิจที่แก้ได้ (Why?)</div>
+              <div><strong>2.</strong> สถาปัตยกรรมที่สร้าง (How?) — ตั้งแต่ DW ถึง AI Agent</div>
+              <div><strong>3.</strong> รีวิวงจรและผลลัพธ์ (Demo) — ถามคำถามภาษาธรรมชาติ</div>
+              <div><strong>4.</strong> คุณภาพ/Governance + สิ่งที่ได้เรียนรู้ (Key Takeaways)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Solution 1 - Presentation Structure -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">โครงสร้างการนำเสนอ</h1>
+          <div class="space-y-4 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-blue-400">
+              <p class="text-lg font-bold">1. Business Problem &amp; Requirement</p>
+              <p class="text-sm">อธิบายว่ายอดขาย/สต็อก/ลูกค้าที่วิเคราะห์ได้ช่วยตัดสินใจอย่างไร</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-400">
+              <p class="text-lg font-bold">2. Data &amp; Architecture</p>
+              <p class="text-sm">Medallion layers, Semantic Layer, และวิธีที่ Agent เชื่อมต่อ</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-yellow-400">
+              <p class="text-lg font-bold">3. Live Demo</p>
+              <p class="text-sm">ให้ AI ตอบคำถาม 2–3 ข้อแบบเรียลไทม์ เพื่อพิสูจน์ว่าทำงานจริง</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-purple-400">
+              <p class="text-lg font-bold">4. Quality, Governance &amp; Learnings</p>
+              <p class="text-sm">อธิบายการรับประกันความถูกต้องและสิ่งที่จะพัฒนาในอนาคต</p>
+            </div>
+          </div>
+          <div class="mt-8 p-5 bg-green-500/20 rounded-2xl border border-green-400 text-lg">
+            💡 <strong>เคล็ดลับ:</strong> เน้น "Story" ว่า AI เปลี่ยนข้อมูลให้เป็นการตัดสินใจอย่างไร ไม่ใช่แค่โชว์โค้ด
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Active Learning 2 - Craft Demo Questions -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            กิจกรรมกลุ่ม (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ออกแบบคำถาม Natural Language ที่ดี</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-6">จงออกแบบคำถามภาษาธรรมชาติ 3 ข้อที่ Agent ของคุณตอบได้ และสะท้อนคุณค่าทางธุรกิจ:</p>
+            <div class="space-y-4 text-lg">
+              <div><strong>1.</strong> คำถามที่ถามถึง <strong>แนวโน้ม</strong> (เช่น "ยอดขายไตรมาส 3 ปีนี้เทียบกับปีที่แล้วเป็นอย่างไร?")</div>
+              <div><strong>2.</strong> คำถามที่เจาะ <strong>มิติย่อย</strong> (เช่น "สินค้าหมวดไหนขายดีที่สุดในภาคเหนือ?")</div>
+              <div><strong>3.</strong> คำถามที่ต้อง <strong>หลาย join</strong> (เช่น "ลูกค้าที่ซื้อซ้ำมีกำไรเฉลี่ยเท่าไหร่?")</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Solution 2 - Good Demo Questions -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">ตัวอย่าง Demo Questions</h1>
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-2 text-blue-300">แนวโน้ม (Trend)</h3>
+              <p class="text-lg italic">"ยอดขายปีนี้เทียบกับปีที่แล้วตามเดือนเป็นอย่างไร?"</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-2 text-green-300">มิติ (Dimension)</h3>
+              <p class="text-lg italic">"หมวดสินค้าใดมีกำไรสูงสุดในแต่ละภาค?"</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-2 text-purple-300">เจาะลึก (Join)</h3>
+              <p class="text-lg italic">"ลูกค้ากลุ่มซื้อซ้ำ (Repeat Buyers) มีมูลค่าการสั่งซื้อเฉลี่ยเท่าไหร่?"</p>
+            </div>
+          </div>
+          <div class="mt-8 p-5 bg-purple-600/20 rounded-2xl border border-purple-400 text-lg text-left">
+            🎯 <strong>เกณฑ์คำถามที่ดี:</strong> ต้องเฉพาะเจาะจง วัดผลได้ และสามารถตรวจสอบความถูกต้องของคำตอบได้
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Final Project Rubric -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">เกณฑ์การประเมิน Final Project</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <div class="space-y-4 text-lg">
+              <div class="flex items-start gap-4 border-b border-white/10 pb-3">
+                <span class="bg-yellow-400 text-yellow-900 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">D</span>
+                <span><strong>Data &amp; Architecture:</strong> Star Schema/Semantic Layer ถูกต้อง ตรงกับ use-case</span>
+              </div>
+              <div class="flex items-start gap-4 border-b border-white/10 pb-3">
+                <span class="bg-blue-400 text-blue-900 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">E</span>
+                <span><strong>Engineering:</strong> Pipeline, quality checks, ETL/ELT ทำงานจริง</span>
+              </div>
+              <div class="flex items-start gap-4 border-b border-white/10 pb-3">
+                <span class="bg-green-400 text-green-900 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">A</span>
+                <span><strong>AI Agent:</strong> ตอบภาษาธรรมชาติถูกต้อง ใช้ Semantic Layer/Agentic Views</span>
+              </div>
+              <div class="flex items-start gap-4">
+                <span class="bg-purple-400 text-purple-900 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">P</span>
+                <span><strong>Presentation &amp; Insight:</strong> อธิบายและสื่อสารคุณค่าทางธุรกิจได้ดี</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Course Wrap-up -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">บทสรุปทั้งรายวิชา</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">1. คลังข้อมูลคือรากฐานของการตัดสินใจด้วยข้อมูลและ AI</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">2. หลักการออกแบบ (Star Schema, Semantic Layer) สำคัญไม่แพ้เครื่องมือ</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">3. AI เอเจนต์กำลังปฏิวัติวิธีที่เราสร้างและใช้ข้อมูล</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-purple-400">4. ข้อมูลคุณภาพ + ธรรมาภิบาล = พลังที่ยั่งยืน</div>
+          </div>
+          <div class="mt-12 bg-white/10 p-6 rounded-2xl border border-white/20 text-2xl font-bold">
+            🎓 ขอบคุณและขอแสดงความยินดีทุกคน! &quot;เส้นทางนี้เป็นการเดินทางจากข้อมูลดิบสู่ปัญญาประดิษฐ์&quot;
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Thank You / Questions -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-8">Thank You &amp;<br><span class="text-yellow-300">Questions?</span></h1>
+          <p class="text-2xl text-white/90 mb-10 font-light italic">
+            "Data is the new oil — but only AI-agents and a solid warehouse turn it into value."
+          </p>
+          <div class="flex flex-col items-center gap-4">
+            <a href="../../../courses/datawarehousing/index.html" class="bg-yellow-400 text-yellow-900 font-bold px-8 py-4 rounded-2xl shadow-2xl hover:bg-yellow-300 transition text-xl">
+              กลับสู่หน้าหลักรายวิชา
+            </a>
+            <p class="text-white/70 text-sm mt-4">ขอให้ทุกโครงการประสบความสำเร็จ! 🚀</p>
+          </div>
+        </div>
+      </div>
+
+      <!--
+### <strong>References & Resources for Week 15:</strong>
+
+*   <strong>Agentic Views:</strong> [AV-SQL: Agentic Views (arXiv)](https://arxiv.org/abs/2512.08769)
+*   <strong>Production-Grade Agentic AI:</strong> [A Practical Guide (arXiv)](https://arxiv.org/abs/2512.08769)
+*   <strong>Agentic AI for Data Engineering:</strong> [IJIRCT](https://doi.org/10.47059/ijirct.2024.v12i03.009)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

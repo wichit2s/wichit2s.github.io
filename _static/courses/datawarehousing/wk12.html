@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk12.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Week 12: OLAP<br>
+            <span class="text-yellow-300">Multi-Dimensional Analysis</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Slicing, Dicing &amp; Drilling Down into Business Data
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Project Milestone</h2>
+            <div class="flex items-center justify-center gap-4">
+              <div class="bg-yellow-400 text-yellow-900 font-bold px-6 py-2 rounded-lg shadow-lg">
+                Build a Dashboard &amp; Test OLAP Analysis
+              </div>
+            </div>
+            <p class="mt-4 text-center text-white/80 italic">
+              "Turn data into insight — slice it, dice it, drill into it."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">Learning Outcomes</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>Explain OLAP concepts: cubes, measures, and hierarchies</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>Differentiate OLAP operations: slice, dice, roll-up, drill-down</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>Compare MOLAP, ROLAP, and HOLAP engines</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>Build a dashboard applying OLAP analysis on the project data</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: OLTP vs OLAP Refresher -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center">OLTP vs OLAP</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-blue-400">
+              <h2 class="text-2xl font-bold mb-4 text-blue-300">OLTP (Transactional)</h2>
+              <ul class="space-y-3 text-lg">
+                <li>• 📝 <strong>งาน:</strong> บันทึกธุรกรรมรายวัน (สั่งซื้อ, โอนเงิน)</li>
+                <li>• ⚡ <strong>คำสั่ง:</strong> INSERT/UPDATE/DELETE สั้นๆ</li>
+                <li>• 👤 <strong>ผู้ใช้:</strong> พนักงานปฏิบัติการ (high concurrency)</li>
+                <li>• 🎯 <strong>จุดเน้น:</strong> ความเร็วและความถูกต้อง</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-yellow-400">
+              <h2 class="text-2xl font-bold mb-4 text-yellow-300">OLAP (Analytical)</h2>
+              <ul class="space-y-3 text-lg">
+                <li>• 📊 <strong>งาน:</strong> วิเคราะห์ยอดรวม แนวโน้ม และความสัมพันธ์</li>
+                <li>• 🔍 <strong>คำสั่ง:</strong> SELECT ซับซ้อนบนข้อมูลปริมาณมาก</li>
+                <li>• 🔬 <strong>ผู้ใช้:</strong> นักวิเคราะห์, ผู้บริหาร, AI</li>
+                <li>• 🎯 <strong>จุดเน้น:</strong> ความเร็วตอบคำถามวิเคราะห์</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 bg-blue-600/30 p-5 rounded-2xl border border-blue-400 text-center text-xl">
+            💡 คลังข้อมูล (DW) ถูกออกแบบมาเพื่อ OLAP โดยเฉพาะ
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: The OLAP Cube -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">แนวคิด OLAP Cube</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6 leading-relaxed">OLAP Cube คือการมองข้อมูลหลายมิติ โดยแต่ละ "เซลล์" เก็บค่าของ <strong>เมตริก (Measure)</strong> ที่ตรงกับค่ามิติจำนวนหนึ่ง</p>
+            <div class="grid md:grid-cols-3 gap-4 text-center text-lg">
+              <div class="bg-yellow-400 text-yellow-900 p-4 rounded-xl font-bold">เวลา (Time)<br><span class="font-normal text-sm">ปี/ไตรมาส/เดือน</span></div>
+              <div class="bg-green-400 text-green-900 p-4 rounded-xl font-bold">สินค้า (Product)<br><span class="font-normal text-sm">หมวด/ยี่ห้อ/ชื่อ</span></div>
+              <div class="bg-blue-400 text-blue-900 p-4 rounded-xl font-bold">ที่ตั้ง (Location)<br><span class="font-normal text-sm">ภาค/จังหวัด/เมือง</span></div>
+            </div>
+            <p class="mt-6 text-lg italic text-center">แต่ละมิติมี <strong>ลำดับชั้น (Hierarchy)</strong> ที่ใช้ย่อ/ขยายมุมมองได้</p>
+          </div>
+          <div class="mt-8 text-sm italic">
+            อ่านเพิ่มเติม: <a href="https://en.wikipedia.org/wiki/OLAP_cube" class="text-yellow-300 underline">OLAP Cube</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: OLAP Operations -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">OLAP Operations</h1>
+          <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-blue-400">
+              <h3 class="text-2xl font-bold mb-2 text-blue-300">Slicing 🔪</h3>
+              <p class="text-lg">ตัด "ชิ้น" หนึ่งมิติให้คงที่ เช่น ดูยอดขายเฉพาะ <strong>เดือนมกราคม</strong> เท่านั้น</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400">
+              <h3 class="text-2xl font-bold mb-2 text-green-300">Dicing 🎲</h3>
+              <p class="text-lg">เลือกชุดย่อยของหลายมิติ เช่น ยอดขายสินค้าหมวด "อิเล็กทรอนิกส์" ภาคเหนือ ใน Q1</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-yellow-400">
+              <h3 class="text-2xl font-bold mb-2 text-yellow-300">Roll-up / Drill-down 🔍</h3>
+              <p class="text-lg">ย่อระดับ (เดือน→ปี) หรือขยายระดับ (ปี→เดือน) ตามลำดับชั้น</p>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-purple-400">
+              <h3 class="text-2xl font-bold mb-2 text-purple-300">Pivot / Rotate 🔄</h3>
+              <p class="text-lg">หมุนแกนเพื่อดูมิติใหม่บนแถว/คอลัมน์ แบบ Pivot Table</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Active Learning 1 - OLAP Scenario -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            กิจกรรมกลุ่ม (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ระบุ OLAP Operation</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-6">จากข้อมูลยอดขายสามมิติ (เวลา, สินค้า, ที่ตั้ง) จงระบุว่าแต่ละคำถามใช้ operation ใด:</p>
+            <div class="space-y-4 text-lg">
+              <div class="bg-gray-50 p-4 rounded-xl"><strong>คำถาม A:</strong> "ดูยอดขายของเดือนกันยายนทั้งหมด"</div>
+              <div class="bg-gray-50 p-4 rounded-xl"><strong>คำถาม B:</strong> "เปรียบเทียบยอดขายสินค้าหมวด 'เครื่องดื่ม' ภาคกลาง ระหว่าง Q1 ถึง Q2"</div>
+              <div class="bg-gray-50 p-4 rounded-xl"><strong>คำถาม C:</strong> "จากยอดขายปี 2025 รวม → อยากเห็นแยกเป็นรายเดือน"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Solution 1 - OLAP Answers -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลย: Operations</h1>
+          <div class="space-y-4 text-left">
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-blue-400">
+              <p class="text-lg font-bold">คำถาม A → Slicing 🔪</p>
+              <p class="text-sm">ตัดเพียงมิติเวลาให้คงที่ที่ "กันยายน" มองทุกสินค้าและที่ตั้ง</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-green-400">
+              <p class="text-lg font-bold">คำถาม B → Dicing 🎲</p>
+              <p class="text-sm">เลือกชุดย่อยหลายมิติ: หมวด=เครื่องดื่ม, ที่ตั้ง=ภาคกลาง, เวลา=Q1–Q2</p>
+            </div>
+            <div class="bg-white/10 p-5 rounded-2xl border-l-8 border-purple-400">
+              <p class="text-lg font-bold">คำถาม C → Drill-down 🔍</p>
+              <p class="text-sm">ขยายลำดับชั้นเวลาจากปีลงสู่เดือน (Roll-up คือไปทางตรงข้าม)</p>
+            </div>
+          </div>
+          <div class="mt-8 p-5 bg-green-500/20 rounded-2xl border border-green-400 text-lg text-left">
+            💡 <strong>ตัวช่วย:</strong> จำง่ายๆ — <strong>Slice</strong>=ตัดชิ้นเดียวคงไว้, <strong>Dice</strong>=เลือกหลายช่อง, <strong>Drill</strong>=ขยาย/ย่อรายละเอียด
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Part 2 Title - OLAP Engines -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">Part 2: OLAP Engines</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-3xl font-bold mb-4 italic">"Choose the right engine for the job"</h2>
+            <p class="text-xl mb-6">MOLAP, ROLAP, HOLAP — แต่ละแบบต่างกันที่วิธีจัดเก็บและประมวลผล</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: MOLAP / ROLAP / HOLAP -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8">MOLAP vs ROLAP vs HOLAP</h1>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl border-t-8 border-purple-500">
+              <h3 class="text-2xl font-bold mb-3 text-purple-600">MOLAP</h3>
+              <p class="text-sm mb-4 font-bold">Multidimensional OLAP</p>
+              <ul class="text-xs space-y-2">
+                <li>• เก็บใน Cube จำเพาะ (Array)</li>
+                <li>• ✅ ตอบเร็วมาก, คำนวณล่วงหน้า</li>
+                <li>• ❌ ข้อมูลจำกัด, ใช้พื้นที่มาก</li>
+                <li>• 🔧 เช่น Essbase, SSAS</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl border-t-8 border-green-500">
+              <h3 class="text-2xl font-bold mb-3 text-green-600">ROLAP</h3>
+              <p class="text-sm mb-4 font-bold">Relational OLAP</p>
+              <ul class="text-xs space-y-2">
+                <li>• ใช้ตารางสัมพันธ์ (SQL)</li>
+                <li>• ✅ รองรับข้อมูลมหาศาล</li>
+                <li>• ❌ ช้ากว่า MOLAP</li>
+                <li>• 🔧 เช่น ClickHouse, BigQuery</li>
+              </ul>
+            </div>
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl border-t-8 border-yellow-500">
+              <h3 class="text-2xl font-bold mb-3 text-yellow-600">HOLAP</h3>
+              <p class="text-sm mb-4 font-bold">Hybrid OLAP</p>
+              <ul class="text-xs space-y-2">
+                <li>• ผสม MOLAP + ROLAP</li>
+                <li>• ✅ สรุปใน Cube, รายละเอียดใน RDBMS</li>
+                <li>• 🎯 สมดุลระหว่างความเร็วและขนาด</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            อ่านเพิ่มเติม: <a href="https://en.wikipedia.org/wiki/Online_analytical_processing" class="text-yellow-300 underline">OLAP (Wikipedia)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Star Schema & OLAP -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Star Schema &amp; OLAP</h1>
+          <p class="text-xl mb-8 text-white/90">Star Schema ถูกออกแบบมาให้เหมาะกับการทำ OLAP โดยตรง</p>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <div class="flex justify-center gap-6 text-center text-sm font-bold">
+              <div class="bg-blue-400 text-blue-900 p-4 rounded-xl">Time Dim<br><span class="font-normal text-xs">PK: date_key</span></div>
+              <div class="bg-green-400 text-green-900 p-4 rounded-xl">Product Dim<br><span class="font-normal text-xs">PK: product_key</span></div>
+              <div class="bg-yellow-400 text-yellow-900 p-4 rounded-2xl ring-4 ring-yellow-200">FACT<br>Sales<br><span class="font-normal text-xs">FK×3 + measures</span></div>
+              <div class="bg-purple-400 text-purple-900 p-4 rounded-xl">Store Dim<br><span class="font-normal text-xs">PK: store_key</span></div>
+            </div>
+            <ul class="mt-8 space-y-2 text-lg">
+              <li>• <strong>Fact Table</strong> เก็บเมตริก (amount, quantity) + FK ไปยังมิติ</li>
+              <li>• <strong>Dimension Tables</strong> เก็บรายละเอียดและลำดับชั้น (denormalized)</li>
+              <li>• ✅ Joins น้อย → Query OLAP รวดเร็ว</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: SQL for OLAP -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">SQL วิเคราะห์ข้อมูลแบบ OLAP</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 text-left border border-white/20">
+            <p class="text-sm mb-4 text-white/60">ใช้ GROUP BY ร่วมกับฟังก์ชัน Window / ROLLUP / CUBE:</p>
+            <pre class="bg-black/40 p-5 rounded-xl text-green-300 text-sm overflow-x-auto"><code>-- Slicing: เฉพาะเดือนมกราคม
+SELECT region, SUM(amount) AS revenue
+FROM fct_orders f JOIN dim_store s ON f.store_key = s.store_key
+WHERE f.order_date BETWEEN '2025-01-01' AND '2025-01-31'
+GROUP BY region;
+
+-- Roll-up: ยอดขายตามปี + หมวด (ด้วย ROLLUP)
+SELECT YEAR(order_date), category, SUM(amount)
+FROM fct_orders f JOIN dim_product p ON f.product_key = p.product_key
+GROUP BY ROLLUP(YEAR(order_date), category);</code></pre>
+          </div>
+          <div class="mt-6 text-sm italic">
+            ฝึกฝน: <a href="https://mode.com/sql-tutorial/" class="text-yellow-300 underline">Mode SQL Tutorial</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Active Learning 2 - Build a Query -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            Workshop (30 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">Dashboards กับ OLAP Queries</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-6">สร้างแดชบอร์ดเบื้องต้นจากตาราง Gold ของโครงการ และเขียนคำสั่ง OLAP:</p>
+            <div class="space-y-4 text-lg">
+              <div><strong>1.</strong> เขียนคำสั่งเพื่อทำ <strong>Slice</strong> เฉพาะเดือนที่มียอดขายสูงสุด</div>
+              <div><strong>2.</strong> ใช้ <strong>ROLLUP</strong> เพื่อดูยอดขายรวมตามหมวดสินค้าและปี</div>
+              <div><strong>3.</strong> เลือกเครื่องมือ (Looker Studio, Metabase, Grafana, Tableau) และวาด 1 แผนภูมิ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Solution 2 - Dashboard Design -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">แนวทาง: Dashboard Design</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-3 text-yellow-300">แผนภูมิแนะนำ</h3>
+              <ul class="text-lg space-y-2">
+                <li>• 📈 <strong>Line:</strong> แนวโน้มยอดขายตามเวลา</li>
+                <li>• 🥧 <strong>Pie/Donut:</strong> สัดส่วนรายได้ตามหมวด</li>
+                <li>• 🗺️ <strong>Map:</strong> ยอดขายตามภูมิภาค</li>
+                <li>• 📊 <strong>Bar:</strong> เปรียบเทียบสินค้า/สาขา</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-3 text-blue-300">การออกแบบที่ดี</h3>
+              <ul class="text-lg space-y-2">
+                <li>• 🎯 เริ่มจากคำถามธุรกิจที่ชัดเจน</li>
+                <li>• 🔗 ให้ผู้ใช้ Drill-down ได้ (คลิกปี → เดือน)</li>
+                <li>• 🧹 ลดสิ่งรบกวน เน้น KPI สำคัญ</li>
+                <li>• 🤖 เชื่อม Semantic Layer เพื่อตัวเลขตรงกัน</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 p-5 bg-green-500/20 rounded-2xl border border-green-400 text-lg text-left">
+            🚀 <strong>Project (Phase):</strong> ส่งมอบแดชบอร์ดที่ใช้ SLICE/DICE/ROLL-UP พร้อมเชื่อมกับข้อมูลโครงการ
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Modern OLAP - ClickHouse -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">Modern OLAP: ClickHouse</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6 leading-relaxed">ClickHouse เป็นฐานข้อมูล <strong>Columnar OLAP</strong> ยอดนิยมสำหรับการวิเคราะห์แบบเรียลไทม์บนข้อมูลขนาดใหญ่</p>
+            <ul class="space-y-3 text-lg">
+              <li>• 📦 <strong>Column-Oriented:</strong> อ่านเฉพาะคอลัมน์ที่ต้องการ → เร็วมาก</li>
+              <li>• ⚡ <strong>Aggregation Engine:</strong> เก่งคำสั่ง GROUP BY ขนาดใหญ่</li>
+              <li>• 🎯 <strong>Real-time:</strong> รองรับข้อมูลสตรีมมิ่งเพื่อ dashboard สด</li>
+            </ul>
+          </div>
+          <div class="mt-8 text-sm italic">
+            เรียนเพิ่ม: <a href="https://tinybird.co/clickhouse-course" class="text-yellow-300 underline">ClickHouse Developer Course</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Summary & Next Steps -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">Week 12 Summary</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">1. OLAP วิเคราะห์ข้อมูลหลายมิติผ่าน Cube และลำดับชั้น</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">2. Slicing/Dicing/Drill-down ช่วยเจาะมุมมองได้หลากหลาย</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">3. Star Schema + Columnar (ClickHouse) เหมาะกับ OLAP มาก</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-purple-400">4. Dashboard คือผลงานที่แสดงทักษะ OLAP ของคุณ</div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: AI-powered Query Optimization &amp; Forecasting!
+          </div>
+        </div>
+      </div>
+
+      <!--
+### <strong>References & Resources for Week 12:</strong>
+
+*   <strong>OLAP Concepts:</strong> [OLAP - Wikipedia](https://en.wikipedia.org/wiki/Online_analytical_processing)
+*   <strong>OLAP Cube:</strong> [OLAP Cube - Wikipedia](https://en.wikipedia.org/wiki/OLAP_cube)
+*   <strong>ClickHouse:</strong> [ClickHouse Developer Course - Tinybird](https://tinybird.co/clickhouse-course)
+*   <strong>SQL Tutorial:</strong> [Mode SQL Tutorial](https://mode.com/sql-tutorial/)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

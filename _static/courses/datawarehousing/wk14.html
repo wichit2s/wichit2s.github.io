@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning with Pytorch">
+    <meta name="keywords" content="DSSI, Deep Learning, Pytorch, MCP, Model Context Protocol">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/datawarehousing/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk14.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+      <!-- Slide 1: Title -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8">
+            Week 14: AI Agents in<br>
+            <span class="text-yellow-300">Data Engineering</span>
+          </h1>
+          <div class="text-xl text-white/90 mb-8 font-light">
+            Self-Healing Pipelines &amp; Autonomous Data Operations
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-white/20">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Project Milestone</h2>
+            <div class="flex items-center justify-center gap-4">
+              <div class="bg-yellow-400 text-yellow-900 font-bold px-6 py-2 rounded-lg shadow-lg">
+                Build a Basic AI Agent for Pipeline Monitoring
+              </div>
+            </div>
+            <p class="mt-4 text-center text-white/80 italic">
+              "From reactive alerts to proactive, self-healing data infrastructure."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Learning Outcomes -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10">Learning Outcomes</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">1</div>
+                <span>Explain what an AI agent is and how it differs from a simple script</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">2</div>
+                <span>Design agent workflows for monitoring and error handling in pipelines</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">3</div>
+                <span>Implement a self-healing loop using LLM + tools + metadata</span>
+              </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center text-green-900 font-bold mt-1">4</div>
+                <span>Evaluate AI agents for cost, safety, and auditability in production</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: What is an AI Agent? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-8 text-yellow-300">AI Agent คืออะไร?</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 text-left">
+            <p class="text-xl mb-6 leading-relaxed">AI Agent คือระบบที่ใช้ LLM เป็น "สมอง" ในการคิด วางแผน แล้วเรียกใช้ <strong>เครื่องมือ (Tools)</strong> เพื่อทำงานให้สำเร็จ — ต่างจากสคริปต์ที่ทำตามกฎตายตัว</p>
+            <div class="grid md:grid-cols-3 gap-4 text-center text-lg">
+              <div class="bg-white/10 p-5 rounded-2xl border border-white/20">
+                <p class="font-bold text-yellow-300">🧠 Reason</p>
+                <p class="text-sm">วิเคราะห์บริบทและวางแผน</p>
+              </div>
+              <div class="bg-white/10 p-5 rounded-2xl border border-white/20">
+                <p class="font-bold text-yellow-300">🔧 Use Tools</p>
+                <p class="text-sm">เรียก SQL/API/สคริปต์</p>
+              </div>
+              <div class="bg-white/10 p-5 rounded-2xl border border-white/20">
+                <p class="font-bold text-yellow-300">🔄 Iterate</p>
+                <p class="text-sm">ตรวจผลและปรับจนสำเร็จ</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 p-5 bg-purple-600/20 rounded-2xl border border-purple-400 text-left text-lg">
+            ⚙️ <strong>Agentic Loop:</strong> Perceive → Decide → Act → Observe → (Repeat)
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Agent vs Script -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full">
+          <h1 class="text-4xl font-bold mb-8 text-center">Script vs AI Agent</h1>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-gray-400">
+              <h2 class="text-2xl font-bold mb-4 text-gray-300">สคริปต์ (Script)</h2>
+              <ul class="space-y-3 text-lg">
+                <li>• 📝 ทำตาม Rule ที่เขียนตายตัว</li>
+                <li>• ⚠️ ล้มเหลวเมื่อเจอสถานการณ์ไม่คาดคิด</li>
+                <li>• 🧑‍💻 ต้องมีคนมาแก้เมื่อ schema เปลี่ยน</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-8 rounded-2xl border-l-8 border-yellow-400">
+              <h2 class="text-2xl font-bold mb-4 text-yellow-300">AI Agent</h2>
+              <ul class="space-y-3 text-lg">
+                <li>• 🤖 เข้าใจบริบทและปรับตัวได้</li>
+                <li>• 🛠️ เรียกเครื่องมือและเขียน fix เอง</li>
+                <li>• 🔁 เรียนรู้จาก metadata / ประวัติ</li>
+                <li>• ⚡ แต่ต้องมี "ขอบเขตและเฝ้าดู" เสมอ</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Self-Healing Pipelines -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">Self-Healing Pipelines</h1>
+          <p class="text-xl mb-8 text-white/90">ท่อส่งข้อมูลที่ตรวจจับปัญหา กู้คืน และรายงานผลเองได้โดยไม่ต้องรอคน</p>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 text-left border border-white/20">
+            <div class="space-y-4">
+              <div class="flex items-center gap-4 bg-red-500/20 p-4 rounded-xl">
+                <span class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">1</span>
+                <div><strong>Detect:</strong> Monitoring Agent ตรวจพบ schema drift / พื้นที่เต็ม / ข้อมูลสูญหาย</div>
+              </div>
+              <div class="flex items-center gap-4 bg-blue-500/20 p-4 rounded-xl">
+                <span class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">2</span>
+                <div><strong>Diagnose:</strong> LLM วิเคราะห์สาเหตุจาก Log และ Metadata</div>
+              </div>
+              <div class="flex items-center gap-4 bg-green-500/20 p-4 rounded-xl">
+                <span class="bg-green-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">3</span>
+                <div><strong>Heal:</strong> Agent สร้าง/ใช้ SQL fix, เรียก retry, หรือแจ้ง escalate เมื่อทำเองไม่ได้</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Agent Architecture -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8">สถาปัตยกรรม Pipeline Agent</h1>
+          <div class="flex flex-col md:flex-row justify-center items-center gap-6 text-sm font-bold">
+            <div class="bg-white/10 p-4 rounded-xl text-center">Monitoring<br>Agent<span class="block font-normal text-white/60">ตรวจจับผิดปกติ</span></div>
+            <div class="text-2xl">→</div>
+            <div class="bg-white/10 p-4 rounded-xl text-center">LLM Planner<span class="block font-normal text-white/60">วางแผนแก้ไข</span></div>
+            <div class="text-2xl">→</div>
+            <div class="bg-white/10 p-4 rounded-xl text-center">Tool Executor<span class="block font-normal text-white/60">รัน SQL/API</span></div>
+            <div class="text-2xl">→</div>
+            <div class="bg-yellow-500 text-yellow-900 p-4 rounded-xl text-center">Metadata<br>Repository<span class="block font-normal">บันทึก lineage</span></div>
+          </div>
+          <ul class="mt-8 space-y-2 text-left text-lg bg-white/10 p-6 rounded-2xl border border-white/20">
+            <li>• <strong>Metadata:</strong> ข้อมูลอธิบาย schema, lineage, คุณภาพ — "หน่วยความจำ" ของ Agent</li>
+            <li>• <strong>Tools:</strong> SQL runner, API client, alert notifier — "มือ" ของ Agent</li>
+            <li>• <strong>Guardrails:</strong> จำกัดสิทธิ์และสโคปที่ Agent กระทำได้</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 7: Active Learning 1 - Design an Agent -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            Workshop (25 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ออกแบบ Self-Healing Agent</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-6 italic">"ระหว่างรัน ELT ตอนเที่ยงคืน ไฟล์ CSV ที่ส่งมาจากทีมขายมีคอลัมน์ใหม่เพิ่มเข้ามา — pipeline ล้มเหลว"</p>
+            <div class="space-y-4 text-lg">
+              <div><strong>1.</strong> Agent จะ "ตรวจจับ" ปัญหานี้ได้จากอะไร?</div>
+              <div><strong>2.</strong> ควรให้ Agent แก้เองหรือไม่? ต้องมีขอบเขตอะไร?</div>
+              <div><strong>3.</strong> ออกแบบลำดับขั้นตอนของ Agent แบบ Step-by-step</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Solution 1 - Schema Drift Handling -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">เฉลย: Schema Drift Handling</h1>
+          <div class="bg-white/10 p-8 rounded-3xl text-left border border-white/20">
+            <ol class="space-y-4 text-xl">
+              <li>✅ <strong>Detect:</strong> เปรียบเทียบ schema ของไฟล์ขาเข้ากับ <strong>Data Contract / Metadata</strong> → พบคอลัมน์ใหม่ <code>loyalty_tier</code></li>
+              <li>✅ <strong>Classify:</strong> LLM ตรวจว่าเป็นโคลัมน์ "เพิ่ม" (Additive) หรือ "เปลี่ยน" (Breaking)</li>
+              <li>✅ <strong>Act:</strong> Agent รัน <code>ALTER TABLE</code> หรืออัปเดต transformation แล้ว retry</li>
+              <li>✅ <strong>Audit:</strong> บันทึกการเปลี่ยนแปลงใน lineage + แจ้งเตือนทีม<br>
+                ❌ <strong>Escalate:</strong> ถ้าคอลัมน์ตั้งชื่อไม่ชัดหรือลบฟิลด์เดิม → ยกให้มนุษย์ตัดสิน</li>
+            </ol>
+            <div class="mt-6 p-4 bg-purple-600/20 border-l-4 border-purple-400 italic">
+              "กฎเหล็ก: ให้ Agent แก้ไขได้เฉพาะงาน <strong>ย้อนกลับได้ (reversible)</strong> และอยู่ในสโคปที่ตกลง"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Part 2 Title - Building & Safeguarding -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-6xl font-bold mb-6 leading-tight mt-8 text-yellow-300">Part 2: Building &amp; Safeguarding Agents</h1>
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-10 border border-white/20 text-left">
+            <h2 class="text-3xl font-bold mb-4 italic">"Autonomy with guardrails"</h2>
+            <p class="text-xl mb-6">สร้าง Agent ให้ทำงานเองได้ แต่ต้องปลอดภัย ตรวจสอบได้ และควบคุมต้นทุนได้</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Tools & Frameworks -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">เครื่องมือสร้าง Agent</h1>
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl border-t-8 border-purple-500">
+              <h3 class="text-2xl font-bold mb-3 text-purple-600">LangChain / LangGraph</h3>
+              <p class="text-sm">สร้าง Agentic workflow เชื่อม LLM กับเครื่องมือ จัดการ State และ Loop</p>
+            </div>
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl border-t-8 border-green-500">
+              <h3 class="text-2xl font-bold mb-3 text-green-600">CrewAI / AutoGen</h3>
+              <p class="text-sm">สร้างทีม Agent หลายตัวทำงานร่วมกัน (Orchestration)</p>
+            </div>
+            <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-xl border-t-8 border-blue-500">
+              <h3 class="text-2xl font-bold mb-3 text-blue-600">dbt + Great Expectations</h3>
+              <p class="text-sm">คู่มือคุณภาพข้อมูลที ่Agent ใช้ตรวจ/แก้ไข transformation</p>
+            </div>
+          </div>
+          <div class="mt-8 text-sm italic">
+            อ่านเพิ่มเติม: <a href="https://docs.langchain.com/" class="text-yellow-300 underline">LangChain Documentation</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Guardrails & Safety -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-yellow-300">Guardrails &amp; Safety</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-green-400">
+              <h3 class="text-2xl font-bold mb-2 text-green-300">Constraints</h3>
+              <ul class="text-lg space-y-1">
+                <li>• จำกัดสโคปการแก้ที่ Agent ทำได้</li>
+                <li>• ไม่อนุญาต DROP / DELETE โดยไม่ได้รับอนุมัติ</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-blue-400">
+              <h3 class="text-2xl font-bold mb-2 text-blue-300">Observability</h3>
+              <ul class="text-lg space-y-1">
+                <li>• บันทึกทุกการกระทำ (Audit Trail)</li>
+                <li>• แสดง lineage และเหตุผลการตัดสินใจ</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-yellow-400">
+              <h3 class="text-2xl font-bold mb-2 text-yellow-300">Cost Control</h3>
+              <ul class="text-lg space-y-1">
+                <li>• ตั้งวงเงิน / จำนวน iteration สูงสุด</li>
+                <li>• จำกัดขนาด context และ expense ต่อ task</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border-l-8 border-red-400">
+              <h3 class="text-2xl font-bold mb-2 text-red-300">Human-in-the-loop</h3>
+              <ul class="text-lg space-y-1">
+                <li>• งานเสี่ยงสูง → รออนุมัติมนุษย์</li>
+                <li>• มี Kill-switch และ Rollback เสมอ</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Active Learning 2 - Review an Agent -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8 w-full">
+          <div class="inline-block bg-yellow-400 text-yellow-900 font-black px-6 py-2 rounded-full text-2xl mb-6 shadow-lg uppercase">
+            กิจกรรมกลุ่ม (20 นาที)
+          </div>
+          <h1 class="text-5xl font-bold mb-8">ประเมิน Agent ของคุณ</h1>
+          <div class="bg-white text-gray-900 rounded-3xl p-8 text-left border border-white/30 shadow-2xl">
+            <p class="text-xl mb-6">ทีมของคุณสร้าง Agent ตรวจจับข้อผิดพลาด pipeline ให้โครงการ E-Commerce จงตรวจสอบ:</p>
+            <div class="space-y-4 text-lg">
+              <div><strong>1.</strong> Agent ตรวจพบข้อผิดพลาดใดบ้าง? (เซฟวงจรไหน?)</div>
+              <div><strong>2.</strong> มีความเสี่ยงอะไรที่ Agent "เผลอทำ" หากตั้งค่าไม่ดี?</div>
+              <div><strong>3.</strong> กำหนด Human-in-the-loop ตรงจุดใดบ้าง?</div>
+              <div><strong>4.</strong> จะพิสูจน์ว่า Agent "คุ้มค่าต้นทุน" ได้อย่างไร?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Solution 2 - Agent Evaluation -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-8 w-full text-center">
+          <h1 class="text-4xl font-bold mb-8 text-green-300 underline">แนวทางประเมิน Agent</h1>
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-3 text-yellow-300">Maturity Level</h3>
+              <ul class="text-lg space-y-1">
+                <li>• <strong>L1:</strong> Alert (แจ้งเตือนคน)</li>
+                <li>• <strong>L2:</strong> Auto-diagnose (วินิจฉัยเอง)</li>
+                <li>• <strong>L3:</strong> Auto-heal ลำดับต่ำ (retry, fix เล็ก)</li>
+                <li>• <strong>L4:</strong> Auto-heal อัตโนมัติเต็มรูปแบบ</li>
+              </ul>
+            </div>
+            <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+              <h3 class="text-2xl font-bold mb-3 text-blue-300">Metrics</h3>
+              <ul class="text-lg space-y-1">
+                <li>• <strong>MTTR</strong> (เวลากู้คืนเฉลี่ย) ลดลงแค่ไหน</li>
+                <li>• <strong>% Success</strong> ของการแก้ที่ Agent ทำสำเร็จ</li>
+                <li>• <strong>False Repair</strong> ที่ Agent แก้แล้วแย่ลง</li>
+                <li>• <strong>Cost per Incident</strong> เทียบกับค่าใช้จ่ายเดิม</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-8 p-5 bg-green-500/20 rounded-2xl border border-green-400 text-lg text-left">
+            🚀 <strong>Project (Phase):</strong> พัฒนา AI Agent พื้นฐานที่ตรวจจับและรายงานข้อผิดพลาด pipeline ของคุณ (เริ่มจาก L1/L2 ก่อน)
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Summary & Next Steps -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-8">
+          <h1 class="text-5xl font-bold mb-10 text-blue-300 underline underline-offset-8">Week 14 Summary</h1>
+          <div class="grid gap-4 text-left">
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-yellow-400">1. AI Agent = LLM + Tools + Metadata ที่ทำงานแบบวนรอบ (Agentic Loop)</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-blue-400">2. Self-Healing Pipeline ตรวจจับ → วินิจฉัย → กู้คืนเองได้</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-green-400">3. ต้องมี Guardrails, Observability และ Human-in-the-loop</div>
+            <div class="bg-white/10 p-4 rounded-xl border-l-4 border-purple-400">4. เริ่มจากระดับง่าย (Alert) ค่อยพัฒนาเป็น Auto-heal</div>
+          </div>
+          <div class="mt-12 text-2xl font-black bg-white text-blue-900 px-10 py-4 rounded-full shadow-2xl inline-block animate-pulse">
+            Next Week: Production Agentic AI &amp; Final Project!
+          </div>
+        </div>
+      </div>
+
+      <!--
+### <strong>References & Resources for Week 14:</strong>
+
+*   <strong>Agentic AI for Data Engineering:</strong> [IJIRCT - Agentic AI](https://doi.org/10.47059/ijirct.2024.v12i03.009)
+*   <strong>Production-Grade Agentic AI:</strong> [A Practical Guide (arXiv)](https://arxiv.org/abs/2512.08769)
+*   <strong>Agent Frameworks:</strong> [LangChain](https://docs.langchain.com/), [CrewAI](https://www.crewai.com/)
+
+-->
+    </div>
+    <script>
+    function slideshow() {
+    return {
+    currentSlide: 0,
+    totalSlides: 0,
+    touchStartX: 0,
+    touchEndX: 0,
+
+    init() {
+    this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+    this.setupKeyboardNavigation();
+    this.setupTouchNavigation();
+    },
+
+    nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    },
+
+    previousSlide() {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    },
+
+    setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    this.nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    this.previousSlide();
+    }
+    });
+    },
+
+    setupTouchNavigation() {
+    document.addEventListener('touchstart', (e) => {
+    this.touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+    this.touchEndX = e.changedTouches[0].screenX;
+    const swipeDistance = 50;
+
+    if (this.touchStartX - this.touchEndX > swipeDistance) {
+    this.nextSlide();
+    } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+    this.previousSlide();
+    }
+    });
+    }
+    }
+    }
+    </script>
+  </body>
+</html>

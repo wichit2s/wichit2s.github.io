@@ -122,10 +122,27 @@
               </ul>
             </div>
           </div>
-          <div class="mt-6 p-3 bg-blue-900/30 rounded-xl border border-blue-500/20 text-xs">
-            <span class="text-slate-400 block mb-1">🔗 เอกสารสอนติดตั้งและสไตล์กล่องป้อนข้อความระดับมาตรฐาน (Flutter Cookbook):</span>
-            <a href="https://docs.flutter.dev/cookbook/forms/text-input" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
-              https://docs.flutter.dev/cookbook/forms/text-input 🚀
+          <div class="mt-6 p-4 bg-white/5 rounded-xl border border-white/10 text-xs">
+            <h4 class="font-bold text-green-300 mb-2">📘 สรุปการตัดสินใจเลือกวิดเจ็ต (Decision Guide):</h4>
+            <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+              <li><strong class="text-blue-300">TextField:</strong> ใช้เมื่อรับข้อมูลเดี่ยวไม่ต้องการ validation เช่น ช่องค้นหา (Search Bar) หรือตัวกรองทริปแบบเรียลไทม์</li>
+              <li><strong class="text-green-300">TextFormField:</strong> ใช้เมื่ออยู่ในฟอร์มที่ต้องตรวจสอบความถูกต้อง เช่น ช่องล็อกอิน ลงทะเบียน หรือเพิ่มข้อมูลทริป</li>
+              <li>ทั้งคู่ใช้ <code class="bg-white/10 px-1 rounded text-yellow-300">TextEditingController</code> ร่วมกันได้เหมือนกัน</li>
+            </ul>
+          </div>
+          <div class="mt-3 space-y-1">
+            <span class="text-xs text-slate-400 block mb-1">🔗 เอกสารและบทเรียนอ้างอิง (Flutter Cookbook):</span>
+            <a href="https://docs.flutter.dev/cookbook/forms/text-input" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+              📖 Text Input & InputDecoration — docs.flutter.dev
+            </a>
+            <a href="https://api.flutter.dev/flutter/material/TextFormField-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+              📖 TextFormField API Reference — api.flutter.dev
+            </a>
+            <a href="https://api.flutter.dev/flutter/material/TextField-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+              📖 TextField API Reference — api.flutter.dev
+            </a>
+            <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+              📖 Form Validation Cookbook — docs.flutter.dev
             </a>
           </div>
         </div>
@@ -163,12 +180,24 @@
               <p class="pl-4">}</p>
               <p class="text-blue-300">}</p>
             </div>
+            <div class="pt-2 border-t border-white/10 text-xs space-y-1">
+              <h4 class="font-bold text-green-300">📋 วิธีใช้ TextEditingController ในสถานการณ์ต่าง ๆ:</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li><strong>อ่านค่า:</strong> <code class="bg-white/10 px-1 rounded text-yellow-300">_controller.text</code></li>
+                <li><strong>อัปเดตค่า:</strong> <code class="bg-white/10 px-1 rounded text-yellow-300">_controller.text = 'ค่าใหม่'</code></li>
+                <li><strong>ล้างข้อมูล:</strong> <code class="bg-white/10 px-1 rounded text-yellow-300">_controller.clear()</code></li>
+                <li><strong>เลือกข้อความ:</strong> <code class="bg-white/10 px-1 rounded text-yellow-300">_controller.selection = TextSelection(...)</code></li>
+              </ul>
+            </div>
             <div class="pt-2 border-t border-white/10 flex justify-between flex-wrap gap-2 text-xs">
               <a href="https://docs.flutter.dev/cookbook/forms/retrieve-input" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
                 🔗 บทเรียนดึงข้อความจาก TextField (Retrieve value) 🚀
               </a>
               <a href="https://docs.flutter.dev/cookbook/forms/text-field-changes" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
                 🔗 บทเรียนตรวจดักฟังพฤติกรรมเปลี่ยนค่าพิมพ์ (Handle changes) 🚀
+              </a>
+              <a href="https://api.flutter.dev/flutter/widgets/TextEditingController-class.html" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition">
+                🔗 TextEditingController API 🚀
               </a>
             </div>
           </div>
@@ -194,8 +223,27 @@
                   เมื่อพิมพ์ชื่อผู้ใช้เสร็จเรียบร้อยและกดยืนยันปุ่มส่งบนแป้นพิมพ์ (เช่น <code class="text-blue-300">textInputAction: TextInputAction.next</code>) เราสามารถเขียนรหัสย้ายโฟกัสข้ามพาสไปหาช่องรหัสผ่านได้ทันทีดังนี้:
                 </p>
                 <div class="font-mono text-[10px] md:text-xs text-green-300 bg-slate-950 p-2.5 rounded">
-                  FocusScope.of(context).requestFocus(_passwordFocusNode);
+                  // 1. ประกาศ FocusNode สำหรับช่องรหัสผ่าน<br/>
+                  final FocusNode _passwordFocusNode = FocusNode();<br/>
+                  <br/>
+                  // 2. ผูก textInputAction กับ onFieldSubmitted<br/>
+                  TextFormField(<br/>
+                  &nbsp;&nbsp;textInputAction: TextInputAction.next,<br/>
+                  &nbsp;&nbsp;onFieldSubmitted: (_) =&gt; FocusScope.of(context)<br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;.requestFocus(_passwordFocusNode),<br/>
+                  );<br/>
+                  <br/>
+                  // 3. ผูก FocusNode เข้ากับช่องถัดไป<br/>
+                  TextFormField(focusNode: _passwordFocusNode);
                 </div>
+              </div>
+              <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+                <h4 class="font-bold text-green-300 mb-1">💡 Best Practices เรื่อง Focus:</h4>
+                <ul class="list-disc list-inside space-y-1 text-slate-300">
+                  <li>อย่าลืม <code class="bg-white/10 px-1 rounded text-yellow-300">_passwordFocusNode.dispose()</code> ใน <code class="bg-white/10 px-1 rounded text-yellow-300">dispose()</code></li>
+                  <li>ช่องสุดท้ายในฟอร์มใช้ <code class="bg-white/10 px-1 rounded text-yellow-300">TextInputAction.done</code> เพื่อปิดคีย์บอร์ด</li>
+                  <li>ใช้ <code class="bg-white/10 px-1 rounded text-yellow-300">FocusScope.of(context).unfocus()</code> เพื่อปิดคีย์บอร์ดทั้งหมด</li>
+                </ul>
               </div>
             </div>
             <!-- Inline SVG Diagram representing keyboard shift focus -->
@@ -220,7 +268,10 @@
               <div class="mt-4 pt-2 text-center border-t border-white/10 w-full text-xs">
                 <span class="text-slate-400 block mb-0.5">🔗 คู่มือและชุดคำสั่งควบคุม Focus ในช่องรับข้อความ:</span>
                 <a href="https://docs.flutter.dev/cookbook/forms/focus" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
-                  https://docs.flutter.dev/cookbook/forms/focus 🚀
+                  📖 Managing Focus — docs.flutter.dev
+                </a>
+                <a href="https://api.flutter.dev/flutter/widgets/FocusNode-class.html" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                  📖 FocusNode API — api.flutter.dev
                 </a>
               </div>
             </div>
@@ -294,15 +345,15 @@
               ฟังก์ชัน <strong class="text-yellow-300">`validator`</strong> จะทำงานดักตรวจสอบสายตัวอักษรดิบที่ผู้ใช้งานพิมพ์เข้าสู่กล่องกรอก หากข้อมูลถูกต้องครบถ้วนตามกฎระบบ ฟังก์ชันจะต้องคืนค่ากลับเป็น <code class="text-green-300">null</code> แต่หากตรวจพบค่าผิดกฎ ให้พ่นส่งกลับเป็นข้อความ <code class="text-red-300">String ผลลัพธ์เตือนภัย</code> ทันที [3]:
             </p>
             <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
-              <p class="text-slate-400">// การเขียนเงื่อนไขคัดกรองความมั่นคงของกล่องอีเมล (Email Validator)</p>
+              <p class="text-slate-400">// 1. การเขียนเงื่อนไขคัดกรองความมั่นคงของกล่องอีเมล (Email Validator)</p>
               <p class="text-blue-400">TextFormField(</p>
               <p class="pl-4">decoration: const InputDecoration(labelText: <span class="text-red-300">'อีเมลแอดเดรส'</span>),</p>
               <p class="pl-4 text-yellow-300">validator: (value) {</p>
-              <p class="pl-8 text-slate-400">// 1. ตรวจช่องว่างข้อมูล</p>
+              <p class="pl-8 text-slate-400">// ตรวจช่องว่างข้อมูล</p>
               <p class="pl-8">if (value == null || value.isEmpty) {</p>
               <p class="pl-12">return <span class="text-red-300">'กรุณากรอกอีเมลสะกดจริง'</span>;</p>
               <p class="pl-8">}</p>
-              <p class="pl-8 text-slate-400">// 2. ตรวจสอบเงื่อนไขรูปแบบอีเมลด้วยนิพจน์ Regular Expression (Regex)</p>
+              <p class="pl-8 text-slate-400">// ตรวจสอบเงื่อนไขรูปแบบอีเมลด้วยนิพจน์ Regular Expression (Regex)</p>
               <p class="pl-8">if (!RegExp(r<span class="text-red-300">'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'</span>).hasMatch(value)) {</p>
               <p class="pl-12">return <span class="text-red-300">'รูปแบบโครงสร้างอีเมลไม่ถูกต้อง'</span>;</p>
               <p class="pl-8">}</p>
@@ -310,10 +361,36 @@
               <p class="pl-4">},</p>
               <p class="text-blue-400">);</p>
             </div>
-            <div class="pt-1">
-              <span class="text-xs text-slate-400">🔗 ดูโครงร่างคู่มือการทำแบบฟอร์มตรวจสอบสิทธิ์ทั้งหมด (Flutter Cookbook):</span>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+              <p class="text-slate-400">// 2. การตรวจรหัสผ่านกำหนดความยาวขั้นต่ำ (Password Length Validator)</p>
+              <p class="text-blue-400">validator: (value) {</p>
+              <p class="pl-8">if (value == null || value.isEmpty) {</p>
+              <p class="pl-12">return <span class="text-red-300">'กรุณากรอกรหัสผ่าน'</span>;</p>
+              <p class="pl-8">}</p>
+              <p class="pl-8">if (value.length &lt; 8) {</p>
+              <p class="pl-12">return <span class="text-red-300">'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร'</span>;</p>
+              <p class="pl-8">}</p>
+              <p class="pl-8">return null;</p>
+              <p class="pl-4">},</p>
+            </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-yellow-300 mb-1">💡 เคล็ดลับ (Pro Tips):</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li>ใช้ <code class="bg-white/10 px-1 rounded">autovalidateMode: AutovalidateMode.onUserInteraction</code> เพื่อตรวจสอบอัตโนมัติหลังผู้ใช้พิมพ์</li>
+                <li>แยก Validator เป็นฟังก์ชันสแตนด์อโลน (เช่น <code class="bg-white/10 px-1 rounded">String? validateEmail(String?)</code>) เพื่อนำไปใช้ Test ซ้ำได้</li>
+                <li>ไม่ควรตรวจสอบซับซ้อนใน Widget ตรง ๆ — ย้ายลอจิกออกไปที่ util หรือ domain layer</li>
+              </ul>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400">🔗 ดูโครงร่างคู่มือการทำแบบฟอร์มตรวจสอบสิทธิ์และอ้างอิงเพิ่มเติม (Flutter Cookbook):</span>
               <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5 truncate">
-                https://docs.flutter.dev/cookbook/forms/validation 🚀
+                📖 Form Validation Cookbook — docs.flutter.dev
+              </a>
+              <a href="https://docs.flutter.dev/cookbook/forms/text-field-changes" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 Handle Text Field Changes — docs.flutter.dev
+              </a>
+              <a href="https://pub.dev/packages/flutter_form_builder" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📦 flutter_form_builder (ตัวช่วยสร้าง Form) — pub.dev
               </a>
             </div>
           </div>
@@ -353,6 +430,8 @@
               <p class="pl-4">onPressed: () {</p>
               <p class="pl-8 text-slate-400">// รันตรวจเช็คฟอร์มประมวลผล หากข้อมูลผ่านเกณฑ์ทั้งหมด</p>
               <p class="pl-8">if (<span class="text-yellow-300">_formKey.currentState!.validate()</span>) {</p>
+              <p class="pl-12 text-slate-400">// เรียก onSaved เพื่อให้ TextFormField แต่ละช่องเก็บค่าลงตัวแปร</p>
+              <p class="pl-12">_formKey.currentState!.save();</p>
               <p class="pl-12 text-slate-400">// 🟢 เรียกส่งลอจิก ViewModel ดึงค่าไปรันประมวลผลเซิร์ฟเวอร์ต่อ</p>
               <p class="pl-12">ScaffoldMessenger.of(context).showSnackBar(</p>
               <p class="pl-16">const SnackBar(content: Text(<span class="text-red-300">'กำลังประมวลผลข้อมูลลงทะเบียน...'</span>)),</p>
@@ -361,6 +440,23 @@
               <p class="pl-4">},</p>
               <p class="pl-4">child: const Text(<span class="text-red-300">'สมัครสมาชิก'</span>),</p>
               <p class="text-blue-400">);</p>
+            </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-green-300 mb-1">🔑 ความต่างระหว่าง validate() กับ save():</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">validate()</code> → ตรวจสอบความถูกต้อง คืนค่า <code class="bg-white/10 px-1 rounded text-green-300">bool</code> (true = ผ่าน)</li>
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">save()</code> → เรียก callback <code class="bg-white/10 px-1 rounded text-green-300">onSaved</code> ของทุกช่องเพื่อบันทึกค่าลงตัวแปร/โมเดล</li>
+                <li>ใช้งานคู่กัน: <code class="bg-white/10 px-1 rounded">if (validate()) { save(); submit(); }</code></li>
+              </ul>
+            </div>
+            <div class="pt-1 text-center">
+              <span class="text-xs text-slate-400 block mb-0.5">🔗 อ้างอิงเพิ่มเติม:</span>
+              <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Form Validation — docs.flutter.dev
+              </a>
+              <a href="https://api.flutter.dev/flutter/widgets/FormState-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 FormState API (validate, save, reset) — api.flutter.dev
+              </a>
             </div>
           </div>
         </div>
@@ -396,10 +492,41 @@
                 <div class="border-t border-white/10 pt-2 text-[11px]">
                   <span class="text-slate-400 block mb-0.5">🔗 ดูรายละเอียดโปรเจกต์และเปรียบเทียบชุดเทสจากโปรเจกต์ต้นแบบ Compass:</span>
                   <a href="https://github.com/flutter/samples/tree/main/compass_app" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
-                    https://github.com/flutter/samples/tree/main/compass_app 🚀
+                    💻 Compass App — github.com/flutter/samples
                   </a>
                 </div>
               </div>
+            </div>
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] overflow-y-auto max-h-56 leading-relaxed">
+              <p class="text-slate-400">// lib/ui/auth/screens/register_screen.dart (โครงร่างเริ่มต้น)</p>
+              <p class="text-blue-400">class <span class="text-yellow-300">_RegisterFormState</span> extends State&lt;RegisterForm&gt; {</p>
+              <p class="pl-4">final _formKey = GlobalKey&lt;FormState&gt;();</p>
+              <p class="pl-4">final _usernameController = TextEditingController();</p>
+              <p class="pl-4">final _emailController = TextEditingController();</p>
+              <p class="pl-4 mt-2 text-blue-400">@override</p>
+              <p class="pl-4">void dispose() {</p>
+              <p class="pl-8">_usernameController.dispose(); _emailController.dispose();</p>
+              <p class="pl-8">super.dispose();</p>
+              <p class="pl-4">}</p>
+              <p class="pl-4 mt-2 text-blue-400">@override</p>
+              <p class="pl-4">Widget build(BuildContext context) =&gt; Form(</p>
+              <p class="pl-8">key: _formKey,</p>
+              <p class="pl-8">child: Column(children: [</p>
+              <p class="pl-12 text-slate-400">// TextFormField 3 ช่อง: Username / Email / Password</p>
+              <p class="pl-12 text-slate-400">// + ElevatedButton สมัครสมาชิก</p>
+              <p class="pl-8">]),</p>
+              <p class="pl-4">);</p>
+              <p class="text-blue-400">}</p>
+            </div>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-green-300 mb-1">📘 ขั้นตอนปฏิบัติ (Step-by-Step):</h4>
+              <ol class="list-decimal list-inside space-y-1 text-slate-300">
+                <li>สร้าง <code class="bg-white/10 px-1 rounded">GlobalKey&lt;FormState&gt;</code> และ <code class="bg-white/10 px-1 rounded">TextEditingController</code> 3 ตัว</li>
+                <li>เขียน <code class="bg-white/10 px-1 rounded text-yellow-300">validator</code> สำหรับ Username (ไม่ว่าง), Email (Regex), Password (≥8 ตัว)</li>
+                <li>ใช้ <code class="bg-white/10 px-1 rounded text-yellow-300">autovalidateMode.onUserInteraction</code> เพื่อตรวจอัตโนมัติ</li>
+                <li>ปุ่มกดเรียก <code class="bg-white/10 px-1 rounded text-yellow-300">validate() + save()</code> แล้วส่งต่อ ViewModel</li>
+                <li>อย่าลืม <code class="bg-white/10 px-1 rounded text-yellow-300">dispose()</code> controller ทุกตัว</li>
+              </ol>
             </div>
           </div>
         </div>
@@ -492,6 +619,9 @@
               <p class="pl-8">labelText: <span class="text-red-300">'อีเมลผู้ใช้'</span>,</p>
               <p class="pl-8">hintText: <span class="text-red-300">'example@email.com'</span>,</p>
               <p class="pl-8">prefixIcon: const Icon(Icons.email_outlined),</p>
+              <p class="pl-8">suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: () =&gt; _emailController.clear()),</p>
+              <p class="pl-8 text-slate-400">// สถานะข้อผิดพลาด (แสดงอัตโนมัติเมื่อ validator คืนค่า String)</p>
+              <p class="pl-8">errorStyle: TextStyle(color: Colors.red.shade300, fontSize: 12),</p>
               <p class="pl-8 text-slate-400">// การตกแต่งเส้นขอบสไตล์กล่องมน (OutlineInputBorder)</p>
               <p class="pl-8">border: const OutlineInputBorder(</p>
               <p class="pl-12">borderRadius: BorderRadius.all(Radius.circular(12.0)),</p>
@@ -503,10 +633,26 @@
               <p class="pl-4">),</p>
               <p class="text-blue-400">);</p>
             </div>
-            <div class="pt-1 text-center">
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-green-300 mb-1">💡 คุณสมบัติ InputDecoration ที่ควรรู้:</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">labelText</code> — ป้ายกำกับลอยตัว (Floating Label) เลื่อนขึ้นเมื่อโฟกัส</li>
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">hintText</code> — ข้อความตัวอย่าง (Placeholder) ในกล่อง</li>
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">prefixIcon / suffixIcon</code> — ไอคอนนำหน้า / ต่อท้าย (เช่น ปุ่มล้าง, ตาดูรหัส)</li>
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">errorText / errorStyle</code> — แสดงข้อความผิดพลาดพร้อมสี (จัดการอัตโนมัติด้วย validator)</li>
+                <li><code class="bg-white/10 px-1 rounded text-yellow-300">helperText</code> — ข้อความช่วยเหลือใต้ช่องกรอก</li>
+              </ul>
+            </div>
+            <div class="pt-1 space-y-1">
               <span class="text-xs text-slate-400">🔗 ดูรูปแบบและการตกแต่งกล่องข้อความระดับมาตรฐานเพิ่มเติม (Flutter Documentation):</span>
               <a href="https://docs.flutter.dev/cookbook/forms/text-input" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5 truncate">
-                https://docs.flutter.dev/cookbook/forms/text-input 🚀
+                📖 Text Input — docs.flutter.dev
+              </a>
+              <a href="https://api.flutter.dev/flutter/material/InputDecoration-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 InputDecoration API — api.flutter.dev
+              </a>
+              <a href="https://m3.material.io/components/text-fields" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block truncate">
+                📖 Material 3 Text Fields — m3.material.io
               </a>
             </div>
           </div>
@@ -546,10 +692,34 @@
             <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500/20 text-xs">
               💡 <strong>ข้อสังเกตความเสถียร:</strong> การใช้ <code class="text-yellow-300">ScaffoldMessenger.of(context)</code> เป็นกลไกใหม่ที่ทำงานแยกอิสระจากสิทธิ์ควบคุม State ของ Scaffold เดิม ส่งผลให้ระบบทำงานได้อย่างต่อเนื่องแม้ผู้ใช้กดปิดหน้าจอดังกล่าวไปแล้ว.
             </div>
-            <div class="pt-1 text-center">
-              <span class="text-xs text-slate-400">🔗 ดูรายละเอียดคู่มือสอนแสดงข้อความความสำเร็จผ่าน SnackBar (Flutter Cookbook):</span>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-green-300 mb-1">🎨 รูปแบบ SnackBar ตามสถานะ (State Variants):</h4>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] text-slate-300">
+                <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-2">
+                  <strong class="text-green-300">✅ สำเร็จ</strong><br/>
+                  <code class="text-[9px]">backgroundColor: Colors.green</code>
+                </div>
+                <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-2">
+                  <strong class="text-red-300">❌ ผิดพลาด</strong><br/>
+                  <code class="text-[9px]">backgroundColor: Colors.red</code>
+                </div>
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-2">
+                  <strong class="text-blue-300">ℹ️ ข้อมูล</strong><br/>
+                  <code class="text-[9px]">backgroundColor: Colors.blueGrey</code>
+                </div>
+              </div>
+              <p class="mt-2 text-slate-400">กำหนดด้วย property <code class="bg-white/10 px-1 rounded text-yellow-300">behavior: SnackBarBehavior.floating</code> เพื่อให้เป็นป้ายลอยมุมมนสวยงาม</p>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400">🔗 ดูรายละเอียดคู่มือสอนแสดงข้อความความสำเร็จผ่าน SnackBar และแนวทาง Material Design:</span>
               <a href="https://docs.flutter.dev/cookbook/design/snackbars" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block mt-0.5">
-                https://docs.flutter.dev/cookbook/design/snackbars 🚀
+                📖 SnackBar Cookbook — docs.flutter.dev
+              </a>
+              <a href="https://api.flutter.dev/flutter/material/SnackBar-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 SnackBar API — api.flutter.dev
+              </a>
+              <a href="https://m3.material.io/components/snackbar" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Material 3 Snackbar — m3.material.io
               </a>
             </div>
           </div>
@@ -700,16 +870,24 @@
             <p>
               แม้ว่าข้อมูลจะผ่านการดักกรองจากโค้ดเครื่องหน้าบ้าน (Client-Side Validation) สำเร็จ แต่อาจเกิดข้อผิดพลาดในการประมวลผลฝั่งเซิร์ฟเวอร์หลังบ้าน เช่น **"อีเมลซ้ำซ้อน" (Email Already Exists)** หรือ **"รหัสผ่านไม่ผ่านเกณฑ์วิเคราะห์จริง"** ในรูปโครงสร้างข้อมูล JSON:
             </p>
-            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed">
+            <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[11px] leading-relaxed overflow-y-auto max-h-60">
               <p class="text-slate-400">// ปรับปรุง ViewModel ให้อัปเดต UI เมื่อได้รับข้อผิดพลาดรหัส HTTP 400 จาก Django</p>
               <p class="text-blue-400">class <span class="text-yellow-300">LoginViewModel</span> extends ChangeNotifier {</p>
               <p class="pl-4">String? _serverErrorMessage;</p>
+              <p class="pl-4">bool _isLoading = false;</p>
               <p class="pl-4">String? get serverErrorMessage =&gt; _serverErrorMessage;</p>
+              <p class="pl-4">bool get isLoading =&gt; _isLoading;</p>
               <p class="pl-4 mt-2">Future&lt;void&gt; submitLogin(String email, String password) async {</p>
+              <p class="pl-8">_isLoading = true;</p>
+              <p class="pl-8">_serverErrorMessage = null;</p>
+              <p class="pl-8">notifyListeners();</p>
               <p class="pl-8">final result = await _authRepo.login(email, password);</p>
+              <p class="pl-8">_isLoading = false;</p>
               <p class="pl-8">if (result is Error) {</p>
               <p class="pl-12">_serverErrorMessage = result.error.message; <span class="text-slate-400">// ดึงข้อความล้มเหลวจากเซิร์ฟเวอร์ [6]</span></p>
               <p class="pl-12">notifyListeners(); <span class="text-slate-400">// สั่งสแกนและพ่นสีแดงเตือนบนหน้าจอ View [7]</span></p>
+              <p class="pl-8">} else {</p>
+              <p class="pl-12">notifyListeners(); <span class="text-slate-400">// สำเร็จ → นำทางไปหน้า Home</span></p>
               <p class="pl-8">}</p>
               <p class="pl-4">}</p>
               <p class="text-blue-400">}</p>
@@ -717,10 +895,30 @@
             <div class="bg-slate-900/90 p-3 rounded-xl border border-white/10 font-mono text-yellow-300 text-[10px] md:text-[11px] leading-relaxed">
               <p class="text-slate-400"># 🧪 จำลองข้อผิดพลาดฝั่ง server ด้วย HTTPie (backend: uv run manage.py runserver)</p>
               <p class="text-white">$ http POST :8000/api/bookings/ destination_name="" price=-5</p>
-              <p class="pl-8 text-slate-400">↳ HTTP/1.1 400 Bad Request → {"price": ["Ensure this value is greater than 0."]}</p>
+              <p class="pl-8 text-slate-300">↳ HTTP/1.1 400 Bad Request → {"price": ["Ensure this value is greater than 0."]}</p>
+              <p class="text-slate-400 pt-1"># แสดงข้อความ error บน UI ด้วย Flutter:</p>
+              <p class="text-white">if (viewModel.serverErrorMessage != null) {</p>
+              <p class="pl-4 text-white">Text(viewModel.serverErrorMessage!, style: TextStyle(color: Colors.red));</p>
+              <p class="text-white">}</p>
             </div>
             <div class="bg-yellow-500/10 rounded-xl p-3 border border-yellow-500/20 text-xs">
               ⚠️ <strong>กฎเหล็กความปลอดภัย:</strong> นักศึกษาต้องเขียนสคริปต์ให้ดักเช็คค่าตอบรับ <code class="text-yellow-300">result.serverErrorMessage</code> หากไม่เป็นว่างเปล่า (Null) ให้ดึงไปแสดงผลแบบกล่องเตือน หรือพ่นลงป้ายกำกับข้อผิดพลาดของช่องนั้นๆ โดยด่วน.
+            </div>
+            <div class="bg-blue-900/30 p-3 rounded-xl border border-blue-500/20 text-xs">
+              📌 <strong>ตัวอย่าง HTTP Status Code ที่มักพบบน Django DRF:</strong><br/>
+              <code class="text-green-300">200 OK</code> / <code class="text-green-300">201 Created</code> / <code class="text-red-300">400 Bad Request</code> / <code class="text-red-300">401 Unauthorized</code> / <code class="text-red-300">403 Forbidden</code> / <code class="text-red-300">404 Not Found</code> / <code class="text-red-300">500 Server Error</code>
+            </div>
+            <div class="pt-1 space-y-1 text-center">
+              <span class="text-xs text-slate-400 block">🔗 ข้อมูลสนับสนุนการรับมือข้อผิดพลาดจาก REST API:</span>
+              <a href="https://www.django-rest-framework.org/api-guide/exceptions/" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 DRF Exceptions — django-rest-framework.org
+              </a>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 HTTP 400 Bad Request — MDN
+              </a>
+              <a href="https://docs.flutter.dev/app-architecture/case-study/ui-layer" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Flutter UI Layer Case Study — docs.flutter.dev
+              </a>
             </div>
           </div>
         </div>
@@ -745,24 +943,63 @@
                 <p class="text-[11px] text-slate-300">
                   จำกัดขอบเขตข้อมูลที่นักท่องเที่ยวสามารถจองได้ (เช่น เลือกจุดหมายปลายทาง ทริปเมืองโตเกียว ลอนดอน) สามารถแนบฟังก์ชันตรวจสอบคุณค่า <code class="text-yellow-200">validator</code> ได้เหมือนช่องพิมพ์ทั่วไป.
                 </p>
+                <div class="bg-slate-900/80 rounded-lg p-2 font-mono text-[9px] text-green-300 leading-relaxed">
+                  DropdownButtonFormField&lt;String&gt;(<br/>
+                  &nbsp;&nbsp;items: destinations,<br/>
+                  &nbsp;&nbsp;onChanged: (v) =&gt; _dest = v!,<br/>
+                  &nbsp;&nbsp;validator: (v) =&gt; v == null<br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;? <span class="text-red-300">'เลือกจุดหมาย'</span> : null,<br/>
+                  );
+                </div>
               </div>
               <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                 <span class="text-green-300 font-bold text-xs block border-b border-white/10 pb-1">☑️ CheckboxListTile</span>
                 <p class="text-[11px] text-slate-300">
                   ให้ยืนยันเงื่อนไขความสอดคล้องหรือความประสงค์พิเศษเพิ่มเติม (เช่น ต้องการไกด์นำเดินทางผู้เชี่ยวชาญภาษาไทย) บันทึกและควบคุมเป็นพารามิเตอร์ประเภท boolean ในระบบ View.
                 </p>
+                <div class="bg-slate-900/80 rounded-lg p-2 font-mono text-[9px] text-green-300 leading-relaxed">
+                  CheckboxListTile(<br/>
+                  &nbsp;&nbsp;value: _needGuide,<br/>
+                  &nbsp;&nbsp;onChanged: (v) =&gt; setState(() =&gt; _needGuide = v!),<br/>
+                  &nbsp;&nbsp;title: const Text(<span class="text-red-300">'ต้องการไกด์'</span>),<br/>
+                  );
+                </div>
               </div>
               <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                 <span class="text-purple-300 font-bold text-xs block border-b border-white/10 pb-1">🔛 SwitchListTile</span>
                 <p class="text-[11px] text-slate-300">
                   สวิตช์สำหรับเปิด/ปิดฟังก์ชันการทำงานบางอย่างแบบทันที เช่น เปิดปิดสิทธิ์การรับรายงานด่วนทริปลดราคาพิเศษผ่านกลไกระบบ Notification ในอุปกรณ์เคลื่อนที่.
                 </p>
+                <div class="bg-slate-900/80 rounded-lg p-2 font-mono text-[9px] text-green-300 leading-relaxed">
+                  SwitchListTile(<br/>
+                  &nbsp;&nbsp;value: _notify,<br/>
+                  &nbsp;&nbsp;onChanged: (v) =&gt; setState(() =&gt; _notify = v!),<br/>
+                  &nbsp;&nbsp;title: const Text(<span class="text-red-300">'รับการแจ้งเตือน'</span>),<br/>
+                  );
+                </div>
               </div>
             </div>
-            <div class="pt-1 text-center">
-              <span class="text-xs text-slate-400">🔗 ดูรูปแบบคู่มือประยุกต์จัดทำ Form ยืนยันสิทธิ์ชนิดต่างๆ (Flutter Cookbook):</span>
-              <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition inline-block ml-1">
-                https://docs.flutter.dev/cookbook/forms/validation 🚀
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs">
+              <h4 class="font-bold text-green-300 mb-1">💡 เคล็ดลับการใช้งาน:</h4>
+              <ul class="list-disc list-inside space-y-1 text-slate-300">
+                <li>ทุกวิดเจ็ตประเภท Selection ที่อยู่ใน <code class="bg-white/10 px-1 rounded text-yellow-300">Form</code> ยังถูกรวมอยู่ใน <code class="bg-white/10 px-1 rounded text-yellow-300">_formKey.currentState!.validate()</code></li>
+                <li>เก็บค่าจาก <code class="bg-white/10 px-1 rounded text-yellow-300">onChanged</code> ลงตัวแปร State ก่อนส่งต่อ ViewModel</li>
+                <li>DropDownButtonFormField ต้องกำหนด <code class="bg-white/10 px-1 rounded text-yellow-300">items</code> เป็น List ของ <code class="bg-white/10 px-1 rounded text-yellow-300">DropdownMenuItem</code></li>
+              </ul>
+            </div>
+            <div class="pt-1 space-y-1">
+              <span class="text-xs text-slate-400 block">🔗 ดูรูปแบบคู่มือประยุกต์จัดทำ Form ยืนยันสิทธิ์ชนิดต่างๆ และเอกสารวิดเจ็ต:</span>
+              <a href="https://docs.flutter.dev/cookbook/forms/validation" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Form Validation — docs.flutter.dev
+              </a>
+              <a href="https://api.flutter.dev/flutter/material/DropdownButtonFormField-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 DropdownButtonFormField API — api.flutter.dev
+              </a>
+              <a href="https://api.flutter.dev/flutter/material/CheckboxListTile-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 CheckboxListTile API — api.flutter.dev
+              </a>
+              <a href="https://api.flutter.dev/flutter/material/SwitchListTile-class.html" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 SwitchListTile API — api.flutter.dev
               </a>
             </div>
           </div>
@@ -829,16 +1066,75 @@
                 <li><strong>Widget Testing:</strong> เขียนโปรแกรมวาดและทดสอบสกรีน UI เพื่อทดลองคลิกสุ่มตรวจสอบการสะท้อนสถานะ (State) โดยอัตโนมัติ [13, 14]</li>
               </ul>
             </div>
-            <div class="pt-2 text-center">
+            <div class="pt-2 space-y-1">
               <span class="text-xs text-slate-400 block mb-0.5">🔗 คู่มือประเมินความปลอดภัยและการบริหารค่า Dependency ในสถาปัตยกรรม Flutter ล่วงหน้า:</span>
-              <a href="https://docs.flutter.dev/app-architecture/case-study/dependency-injection" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition">
-                https://docs.flutter.dev/app-architecture/case-study/dependency-injection 🚀
+              <a href="https://docs.flutter.dev/app-architecture/case-study/dependency-injection" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Dependency Injection — docs.flutter.dev
+              </a>
+              <a href="https://docs.flutter.dev/testing" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📖 Flutter Testing — docs.flutter.dev
+              </a>
+              <a href="https://pub.dev/packages/provider" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline font-semibold transition block">
+                📦 provider Package — pub.dev
               </a>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- สไลด์ที่ 19: ตัวอย่างโค้ดสมบูรณ์ ฟอร์มลงทะเบียนที่รวบรวมทุกแนวคิด -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-8 absolute inset-0 transition-all duration-500 transform" x-show="currentSlide === 19">
+        <div class="max-w-5xl mx-auto w-full">
+          <span class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Slide 19 • Complete Form Example
+          </span>
+          <h2 class="text-3xl font-bold mt-3 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
+            ตัวอย่างโค้ดสมบูรณ์: ฟอร์มลงทะเบียนแบบครบวงจร 🧩
+          </h2>
+          <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-3">
+            รวบรวมทุกแนวคิดที่เรียนมาในสัปดาห์นี้ (Form, GlobalKey, Controller, Validator, InputDecoration, Password Toggle, SnackBar, unfocus) ในไฟล์เดียวที่รันได้จริง:
+          </p>
+          <div class="bg-slate-900/95 p-4 rounded-xl border border-white/10 font-mono text-green-300 text-[10px] md:text-[11px] overflow-y-auto max-h-72 leading-relaxed">
+            <p class="text-blue-400">// lib/ui/auth/register_screen.dart — Full registration form</p>
+            <p class="text-blue-400">class <span class="text-yellow-300">_RegisterScreenState</span> extends State&lt;RegisterScreen&gt; {</p>
+            <p class="pl-4">final _formKey = GlobalKey&lt;FormState&gt;();</p>
+            <p class="pl-4">final _username = TextEditingController();</p>
+            <p class="pl-4">final _email = TextEditingController();</p>
+            <p class="pl-4">final _password = TextEditingController();</p>
+            <p class="pl-4">final _passwordFocus = FocusNode();</p>
+            <p class="pl-4">bool _obscurePassword = true;</p>
+            <p class="pl-4 mt-2">@override</p>
+            <p class="pl-4">void dispose() {</p>
+            <p class="pl-8">_username.dispose(); _email.dispose(); _password.dispose(); _passwordFocus.dispose();</p>
+            <p class="pl-8">super.dispose();</p>
+            <p class="pl-4">}</p>
+            <p class="pl-4 mt-2">void _submit() {</p>
+            <p class="pl-8">if (!_formKey.currentState!.validate()) return;</p>
+            <p class="pl-8">_formKey.currentState!.save();</p>
+            <p class="pl-8 text-slate-400">// เรียก ViewModel → Repository → API (MVVM)</p>
+            <p class="pl-8">context.read&lt;RegisterViewModel&gt;().register(</p>
+            <p class="pl-12">username: _username.text,</p>
+            <p class="pl-12">email: _email.text,</p>
+            <p class="pl-12">password: _password.text,</p>
+            <p class="pl-8">);</p>
+            <p class="pl-4">}</p>
+            <p class="pl-4 mt-2">Widget build(BuildContext context) =&gt; GestureDetector(</p>
+            <p class="pl-8">onTap: () =&gt; FocusScope.of(context).unfocus(),</p>
+            <p class="pl-8">child: Form(</p>
+            <p class="pl-12">key: _formKey,</p>
+            <p class="pl-12">autovalidateMode: AutovalidateMode.onUserInteraction,</p>
+            <p class="pl-12">child: Column(children: [</p>
+            <p class="pl-16 text-slate-400">// TextFormField (username/email) + obscure password ...</p>
+            <p class="pl-12">]),</p>
+            <p class="pl-8">),</p>
+            <p class="pl-4">);</p>
+            <p class="text-blue-400">}</p>
+          </div>
+          <div class="bg-blue-900/30 p-4 rounded-xl border border-blue-500/20 text-xs mt-3">
+            📌 <strong>Challenge ขยายผล:</strong> ลองเพิ่ม TextFormField ยืนยันรหัสผ่าน (Confirm Password) โดย validator ต้องเช็คว่าค่าตรงกับ <code class="text-yellow-300">_password.text</code> หรือไม่ — ถ้าต่างกันให้พ่นข้อความ <code class="text-red-300">'รหัสผ่านไม่ตรงกัน'</code>
+          </div>
+        </div>
+      </div>
 
     </div>
 

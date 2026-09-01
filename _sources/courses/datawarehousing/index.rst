@@ -67,26 +67,38 @@
      - **Phase 3:** สร้างท่อส่งข้อมูลจากไฟล์ Raw (Bronze) ไปยังตาราง Silver
      - `ETL vs ELT Shift <https://www.rivery.io/blog/etl-vs-elt/>`_
    * - 10
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk10.html>`_
      - **คุณภาพและธรรมาภิบาล**: การทำ Data Profiling และ Master Data Management (MDM)
      - สร้างการตรวจสอบคุณภาพข้อมูล (Data Quality Checks) อัตโนมัติในท่อส่งข้อมูล
      - `OpenMetadata Context Layer <https://open-metadata.org/>`_
    * - 11
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk11.html>`_
      - **เลเยอร์ความหมาย (Semantic Layer)**: การรวมตรรกะธุรกิจเพื่อให้ AI และผู้ใช้เห็นข้อมูลตรงกัน
      - พัฒนา Semantic Layer (เช่น dbt หรือ Looker) สำหรับโครงการ
      - `Semantic Layer Architecture <https://www.databricks.com/blog/semantic-layer-architecture-components-design-patterns-and-ai-integration>`_
    * - 12
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk12.html>`_
      - **การวิเคราะห์หลายมิติ (OLAP)**: การทำ Slicing, Dicing และ Drilling down บนชุดข้อมูล
      - สร้างแดชบอร์ดเบื้องต้นเพื่อทดสอบการวิเคราะห์แบบ OLAP
      - `ClickHouse Developer Course <https://tinybird.co/clickhouse-course>`_
    * - 13
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk13.html>`_
      - **การเพิ่มประสิทธิภาพด้วย AI**: การใช้ ML สำหรับ Query Optimization และพยากรณ์ปริมาณงาน
      - **Phase 4:** นำผลพยากรณ์จาก ML มาช่วยปรับขนาดทรัพยากรคลาวด์ในโครงการ
      - `AI-Driven DW Innovations <https://doi.org/10.37745/ejcsit.2013/vol13n52185194>`_
    * - 14
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk14.html>`_
      - **AI เอเจนต์ในวิศวกรรมข้อมูล**: การสร้างท่อส่งข้อมูลที่เยียวยาตัวเองได้ (Self-healing Pipelines)
      - พัฒนา AI เอเจนต์พื้นฐานเพื่อตรวจจับข้อผิดพลาดใน Pipeline ของโครงการ
      - `Agentic AI for Data Engineering <https://doi.org/10.47059/ijirct.2024.v12i03.009>`_
    * - 15
+
+       :icon:`fa-solid fa-link` `slides <../../_static/courses/datawarehousing/wk15.html>`_
      - **เวิร์กโฟลว์ AI ระดับการผลิต**: การใช้ **Agentic Views** และการนำเสนอโครงการสุดท้าย
      - นำเสนอ "The Agentic E-Commerce Platform" ที่สามารถตอบคำถามภาษาธรรมชาติได้
      - `AV-SQL: Agentic Views <https://arxiv.org/abs/2512.08769>`_

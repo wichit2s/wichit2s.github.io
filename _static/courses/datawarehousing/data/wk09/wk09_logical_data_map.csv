@@ -1,0 +1,7 @@
+target_table,target_column,source,transformation_rule,example
+dim_customer,customer_key,generated,Surrogate key: ROW_NUMBER() + 1000,1001
+dim_customer,email,orders_raw.customer_email,LOWER(TRIM(email)),somchai@example.com
+dim_customer,full_name,orders_raw.full_name,INITCAP(TRIM(full_name)),Somchai Jaidee
+dim_customer,city,orders_raw.address,"REGEXP_EXTRACT(address,'Bangkok')",Bangkok
+fact_orders,order_amount,orders_raw.order_amount,"CAST(NULLIF(amount,'') AS DECIMAL) where >0 else NULL",250.75
+fact_orders,status,orders_raw.status,UPPER(TRIM(status)) -> mapped to Silver dimension,SHIPPED
