@@ -35,66 +35,75 @@ Workshop in Health Informatics
      - วิธีการสอนและสื่อที่ใช้
    * - 1
      - **Introduction to Health Informatics Data Pre-processing**
-       
+
        - Working with CSV, JSON
        - Data pre-processing
        - Saving intermediate work
        - Introduction to offline Jupyter Notebook
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์
 
        * `สไลด์ <../../_static/courses/healthinfo/wk01.html>`_
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week01-preprocessing.ipynb>`_
    * - 2
      - **Data Linking and Aggregation**
-       
+
        - การเชื่อมโยงข้อมูลจากหลายชุดข้อมูล
        - Group by / having
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
        * `สไลด์ <../../_static/courses/healthinfo/wk02.html>`_
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week01-aggregation.ipynb>`_
    * - 3
      - **Finding Insights with pandas**
-       
+
        - การวิเคราะห์และค้นหาข้อมูลเชิงลึกด้วย pandas Library
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
        * `สไลด์ <../../_static/courses/healthinfo/wk03.html>`_
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week03-insights.ipynb>`_
+       * `แบบทดสอบทบทวน wk01-03 (20 ข้อ) <../../_static/courses/healthinfo/wk01_03_quiz.html>`_
+
    * - 4
      - **Big Data Infrastructure**
-       
+
        - ETL process, data pipeline, data lake
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
        * `สไลด์ <../../_static/courses/healthinfo/wk04.html>`_
    * - 5
      - **Relational Database & SQL (Part 1)**
-       
+
        - Relational database & database schema
        - column type, SELECT statement, LIMIT
        - primary key, SQLite, SQL INSERT
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
        * `สไลด์ <../../_static/courses/healthinfo/wk05.html>`_
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week05-sql-basics.ipynb>`_
    * - 6
      - **Data Warehouse & SQL Queries**
-       
+
        - Data warehouse & Basic database design
        - SQL WHERE (AND, OR, NOT, NULL)
        - AS ALIAS, ORDER BY, MIN, MAX, AVG, COUNT, DISTINCT
        - DATE, LIKE, IN, BETWEEN
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
        * `สไลด์ <../../_static/courses/healthinfo/wk06.html>`_
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week06-sql-queries.ipynb>`_
    * - 7
      - **Advanced Database Design & Joins**
-       
+
        - ER diagram, FOREIGN key
        - SQL JOIN (INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN, SELF JOIN)
        - Dot notation, UNION, GROUP BY, HAVING
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
 
@@ -102,12 +111,15 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week07-joins.ipynb>`_
    * - 8
      - **Finding Insights with SQL**
-       
+
        - การสืบค้นและค้นหาข้อมูลสุขภาพเชิงลึกด้วยคำสั่ง SQL
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
+
+       * `สไลด์ <../../_static/courses/healthinfo/wk08.html>`_
    * - 9
      - **สอบกลางภาค**
-       
+
        - การสอบวัดผลกลางภาคเรียน
      - การสอบปฏิบัติงาน/ทฤษฎีในชั้นเรียน
 
@@ -116,11 +128,12 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week09-midterm-review.ipynb>`_
    * - 10
      - **Health Information Ethics and Regulations**
-       
+
        - กฎหมายและจริยธรรมที่เกี่ยวข้องกับการจัดการข้อมูลสุขภาพ
        - Data privacy, security, PII
        - พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล (PDPA) และมาตรฐาน HIPAA
        - นโยบายคลาวด์กลางด้านสาธารณสุข
+
      - บรรยาย: PowerPoint และค้นคว้าข้อมูลเกี่ยวกับกฎหมาย PDPA, HIPAA
 
 
@@ -128,10 +141,11 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week10-ethics-pii-audit.ipynb>`_
    * - 11
      - **Health Care Data Standards**
-       
+
        - มาตรฐานข้อมูลสุขภาพสากล
        - OMOP Common Data Model, HL7 FHIR
        - รหัสมาตรฐานสากล ICD-10
+
      - บรรยาย: PowerPoint และค้นคว้าข้อมูลจาก สปสช. Data Dictionary
 
 
@@ -139,9 +153,10 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week11-data-standards.ipynb>`_
    * - 12
      - **Finding Insights from Big Data (Part 1)**
-       
+
        - การใช้งานระบบ Google BigQuery (หรือ DuckDB แบบออฟไลน์สำหรับ self-study)
        - การวิเคราะห์ข้อมูลผู้ป่วยจำลองที่สร้างจาก PySynthea (Python-native, แทน Synthea Java เดิม)
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Google BigQuery และ PySynthea
 
 
@@ -149,8 +164,9 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week12-bigdata-part1.ipynb>`_
    * - 13
      - **Finding Insights from Big Data (Part 2)**
-       
+
        - การวิเคราะห์ข้อมูลผู้ป่วยจำลองบนรูปแบบ OMOP Common Data Model
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Synthetic Patient Data in OMOP (สังเคราะห์ด้วย PySynthea)
 
 
@@ -158,9 +174,10 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week13-omop-insights.ipynb>`_
    * - 14
      - **Techniques when dealing with Big Data**
-       
+
        - Big Data manipulation techniques
        - Table view, table update, and Permission management
+
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Synthetic Patient Data
 
 
@@ -168,18 +185,18 @@ Workshop in Health Informatics
        * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week14-bigdata-techniques.ipynb>`_
    * - 15
      - **Project Consultation**
-       
+
        - การให้คำปรึกษาโครงงานกลุ่มของนักศึกษา
        - หัวข้อ: การสร้าง ER diagram จาก สปสช. Data Dictionary
      - การทำโครงงานกลุ่มและการให้คำปรึกษาโดยอาจารย์ผู้สอน
    * - 16
      - **Project Presentation**
-       
+
        - การนำเสนอโครงงานกลุ่มวิเคราะห์ข้อมูลสุขภาพของนักศึกษา
      - การนำเสนอผลงานกลุ่มและการอภิปรายร่วมกันในชั้นเรียน
    * - 17
      - **สอบปลายภาค**
-       
+
        - การสอบวัดผลสัมฤทธิ์ปลายภาคเรียน
      - การสอบภาคปฏิบัติและทฤษฎีปลายภาค
 

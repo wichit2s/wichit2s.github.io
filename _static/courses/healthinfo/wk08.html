@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Week 8 Finding Insights with SQL">
+    <meta name="keywords" content="Health Informatics, SQL Insights, Subquery, CTE, CASE WHEN, Window Functions, Cohort, SQLite">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 8 — Finding Insights with SQL</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+    <div class="home flex items-center gap-4"><a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm"><span class="hover:text-blue-700"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg></span><span class="py-3 mt-2"> แผนการเรียนรู้ </span></a></div>
+    <div class="slide-counter"><span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span></div>
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="mx-auto flex items-center gap-4"><a href="./wk08.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm"><svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></a></div>
+      <button id="nextSlide" @click="nextSlide()" class="next-slide"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div x-ref="slidesContainer" class="relative w-full min-h-screen overflow-hidden">
+
+      <!-- 0 Cover -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform active">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <span class="bg-cyan-500/30 text-cyan-200 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">AMMS 302 | Week 8</span>
+          <h2 class="text-5xl font-bold mt-4 mb-4">Finding Insights with SQL</h2>
+          <p class="text-xl text-white/90 mb-2 font-light">การสืบค้นเชิงลึกด้วย SQL</p>
+          <p class="text-lg text-white/70 mb-6">Subquery · CTE · CASE WHEN · Window (ROW_NUMBER/RANK) · Cohort · Time Trends</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-left max-w-2xl mx-auto">
+            <h3 class="text-center text-yellow-300 font-semibold mb-3">🎯 เป้าหมายคาบนี้</h3>
+            <ul class="list-disc list-inside text-sm space-y-1.5 text-white/90">
+              <li>เปลี่ยนคำถามเชิงคลินิก → query ได้ (เช่น "หญิงเบาหวานควบคุมไม่ได้กี่คน?")</li>
+              <li>เขียน <code class="bg-black/30 px-1 rounded">IN / EXISTS / correlated</code>, <code class="bg-black/30 px-1 rounded">CASE WHEN</code>, <code class="bg-black/30 px-1 rounded">WITH (CTE)</code>, <code class="bg-black/30 px-1 rounded">ROW_NUMBER / RANK / AVG OVER()</code> ได้ (CLO2)</li>
+              <li>สืบค้นเชิงลึกบน <code class="bg-black/30 px-1 rounded">healthinfo.db</code> (patients ⨯ prescriptions) พร้อม sanity-check จำนวนแถว ทุกครั้ง</li>
+            </ul>
+            <h3 class="text-center text-yellow-300 font-semibold mt-4 mb-2">🗺️ Learning Path</h3>
+            <div class="flex justify-center items-center gap-1 text-[11px]">
+              <span class="bg-white/10 px-2 py-1 rounded">สไลด์ 2–3<br/>คำถาม→query</span><span class="text-yellow-300">→</span>
+              <span class="bg-white/10 px-2 py-1 rounded">สไลด์ 4–9<br/>เครื่องมือใหม่</span><span class="text-yellow-300">→</span>
+              <span class="bg-emerald-500/20 border border-emerald-600 px-2 py-1 rounded">สไลด์ 10–11<br/>Insight จริง</span><span class="text-yellow-300">→</span>
+              <span class="bg-yellow-400/20 border border-yellow-500 px-2 py-1 rounded">Lab + Cheat<br/>สไลด์ 13–14</span>
+            </div>
+          </div>
+          <div class="text-sm text-white/60 mt-4">ต่อจาก <code class="bg-black/30 px-1 rounded">healthinfo.db</code> สัปดาห์ 5–7 — มี patients + prescriptions พร้อมแล้ว</div>
+        </div>
+      </div>
+
+      <!-- 1 TOC -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-4">สารบัญ — ข้ามไปหัวข้อที่ต้องการ</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-left text-xs">
+            <button @click="currentSlide=2" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">01 · Why Insights</div>คำถาม→query</button>
+            <button @click="currentSlide=3" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">02 · Subquery</div>IN / scalar</button>
+            <button @click="currentSlide=4" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">03 · NOT IN Trap</div>vs EXISTS / anti-join</button>
+            <button @click="currentSlide=5" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">04 · Correlated</div>เทียบ JOIN</button>
+            <button @click="currentSlide=6" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">05 · CASE WHEN</div>Bucket HbA1c/BP</button>
+            <button @click="currentSlide=7" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">06 · CTE (WITH)</div>อ่านง่าย reuse</button>
+            <button @click="currentSlide=8" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">07 · ROW_NUMBER</div>RANK / DENSE</button>
+            <button @click="currentSlide=9" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">08 · Window Agg</div>AVG OVER()</button>
+            <button @click="currentSlide=10" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">09 · Cohort</div>หลายเงื่อนไข</button>
+            <button @click="currentSlide=11" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">10 · Time Trends</div>strftime + GROUP</button>
+            <button @click="currentSlide=12" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">11 · Pipeline</div>8→10 ขั้น</button>
+            <button @click="currentSlide=13" class="bg-emerald-500/20 hover:bg-emerald-500/30 p-3 rounded-xl"><div class="text-emerald-300 font-bold">12 · Lab 🧪</div>+ HW</button>
+            <button @click="currentSlide=14" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">13 · Cheat Sheet</div>รวมแพทเทิร์น</button>
+            <button @click="currentSlide=15" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl"><div class="text-yellow-300 font-bold">14 · อ้างอิง</div>Specs & Docs</button>
+          </div>
+          <div class="bg-black/30 rounded-xl p-3 mt-4 text-xs text-left">📚 สเปกตลอดคาบ: <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">SELECT</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#subquery" target="_blank">Subquery</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_with.html" target="_blank">WITH (CTE)</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/windowfunctions.html" target="_blank">Window Functions</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#case" target="_blank">CASE</a></div>
+        </div>
+      </div>
+
+      <!-- 2 Why -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">01 · ทำไม "Insights" ต้องมากกว่า SELECT ธรรมดา?</h2>
+          <p class="text-sm text-white/80 mb-4 text-left indent-8">ผู้บริหารไม่ได้ถาม "SELECT * คืออะไร" แต่ถาม <em>"กลุ่มเสี่ยงไหนเพิ่มขึ้น คลินิกไหนแพงสุด ใครยังไม่ได้ยา?"</em> — ต้องรวม WHERE + JOIN + GROUP + ตรรกะซ้อน</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">🩺 3 คำถามจริงบน healthinfo.db</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">คำถาม</th><th class="border border-white/10 p-1">ต้องใช้อะไร</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">หญิง HbA1c&gt;9 มีกี่คน และได้ยา Metformin ไหม?</td><td class="border border-white/10 p-1">JOIN + CASE + subquery</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">Top-3 รายจ่ายยาสูงสุดต่อคน (ต่อเพศ)</td><td class="border border-white/10 p-1">GROUP BY + window RANK</td></tr>
+                  <tr><td class="border border-white/10 p-1">ผู้ป่วยที่ <em>ยังไม่เคย</em> ได้ยาเลย</td><td class="border border-white/10 p-1">NOT EXISTS / anti-join</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 ทุกคำถาม = ประกอบร่างบท 5–7 + บทนี้  — ไม่ใช่ syntax ใหม่ทั้งหมด</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🔁 สูตรคิด 6 ขั้น (ขยายจาก wk09)</h3>
+              <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-0.5">
+                <div class="bg-white/10 rounded p-1">1. output คอลัมน์อะไร?</div>
+                <div class="bg-white/10 rounded p-1">2. ตารางไหนมี? → FROM / JOIN</div>
+                <div class="bg-white/10 rounded p-1">3. กรองแถว → WHERE (เทียบ wk06)</div>
+                <div class="bg-blue-900/40 rounded p-1">4. ซ้อน/แบ่งกลุ่ม → subquery / CASE / GROUP</div>
+                <div class="bg-purple-900/40 rounded p-1">5. จัดอันดับ/หน้าต่าง → window</div>
+                <div class="bg-yellow-400/20 rounded p-1">6. เรียง/ตัด → ORDER BY / LIMIT + นับ COUNT เช็ค!</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-4 text-xs text-left">🔗 เทียบ pandas: <code class="bg-black/30 px-1 rounded">df.query</code> + <code class="bg-black/30 px-1 rounded">groupby().rank()</code> = window · <code class="bg-black/30 px-1 rounded">merge</code> = JOIN — แต่ SQL ทำงานใน DB ได้เลย</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=3" class="hover:text-white">ถัดไป: Subquery →</button></div>
+        </div>
+      </div>
+
+      <!-- 3 Subquery -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">02 · Subquery — query ซ้อน query</h2>
+          <p class="text-sm text-white/80 mb-3">Scalar (1 ค่า) · List (หลายค่า IN) · Table (FROM) — วงเล็บ = นิพจน์</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- Scalar: เทียบค่าเฉลี่ยทั้ง รพ.
+SELECT hn, hba1c
+FROM patients
+WHERE hba1c > (SELECT AVG(hba1c) FROM patients);
+
+-- List: คนที่มียา Metformin (จาก prescriptions)
+SELECT hn FROM patients
+WHERE patient_id IN (
+  SELECT patient_id FROM prescriptions
+  WHERE drug='Metformin'
+);</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 IN = OR ยาวแบบอ่านง่าย (wk06) แต่คราวนี้ลิสต์มาจาก SELECT จริง</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Table subquery (FROM)</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- หา avg ต่อ drug ก่อน แล้วค่อยกรอง
+SELECT drug, avg_cost FROM (
+  SELECT drug, AVG(cost_thb) AS avg_cost
+  FROM prescriptions GROUP BY drug
+) WHERE avg_cost > 50;</pre>
+              <div class="bg-black/40 rounded p-2 mt-2 text-[11px]">ต้องตั้ง alias ให้ derived table: <code class="bg-black/30 px-1 rounded">FROM (SELECT …) AS t</code></div>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">ช้าเมื่อ:</span> subquery ใน WHERE ไม่ correlated แต่รันซ้ำทุกแถว — พิจารณา CTE (สไลด์ 06)</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#subquery" target="_blank">Subquery expressions</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_subqueries.asp" target="_blank">W3Schools Subquery</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=2" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=4" class="hover:text-white">ถัดไป: NOT IN trap →</button></div>
+        </div>
+      </div>
+
+      <!-- 4 NOT IN trap -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">03 · NOT IN กับดัก NULL vs EXISTS / Anti-JOIN</h2>
+          <p class="text-sm text-white/80 mb-3">หา "ไม่มี" — 3 วิธี เทียบความปลอดภัย: NOT IN ⚠️ / NOT EXISTS ✅ / LEFT IS NULL ✅</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- อยากได้: คนที่ "ไม่เคย" ได้ยา
+-- ⚠️ เสี่ยง 0 แถวถ้าลิสต์มี NULL
+SELECT hn FROM patients
+WHERE patient_id NOT IN (
+  SELECT patient_id FROM prescriptions
+); -- ถ้า prescriptions.patient_id มี NULL → 0 แถว!
+
+-- ✅ ปลอดภัย
+SELECT hn FROM patients p
+WHERE NOT EXISTS (
+  SELECT 1 FROM prescriptions r
+  WHERE r.patient_id = p.patient_id
+);</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">เทียบ 3 แบบ</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">วิธี</th><th class="border border-white/10 p-1">NULL-safe?</th><th class="border border-white/10 p-1">อ่านง่าย?</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1 font-mono">NOT IN (SELECT…)</td><td class="border border-white/10 p-1 text-red-300">❌ ถ้ามี NULL → 0</td><td class="border border-white/10 p-1">สั้น</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">NOT EXISTS</td><td class="border border-white/10 p-1 text-emerald-300">✅</td><td class="border border-white/10 p-1">ต้อง correlated</td></tr>
+                  <tr><td class="border border-white/10 p-1 font-mono">LEFT … WHERE r.id IS NULL</td><td class="border border-white/10 p-1 text-emerald-300">✅</td><td class="border border-white/10 p-1">anti-join (wk07)</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 สูตร: เจอ "ไม่มี/ไม่เคย" → นึก EXISTS / anti-join ก่อน NOT IN</div>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px] mt-2">-- anti-join เทียบ wk07 สไลด์ 04
+SELECT p.hn FROM patients p
+LEFT JOIN prescriptions r ON r.patient_id=p.patient_id
+WHERE r.rx_id IS NULL;</pre>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#in" target="_blank">IN / NOT IN</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#exists" target="_blank">EXISTS</a> · สัปดาห์ 6: NULL logic</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=3" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=5" class="hover:text-white">ถัดไป: Correlated →</button></div>
+        </div>
+      </div>
+
+      <!-- 5 Correlated -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">04 · Correlated Subquery vs JOIN</h2>
+          <p class="text-sm text-white/80 mb-3">Correlated = อ้างตารางนอก (รันต่อแถว) — มักเขียนใหม่เป็น JOIN/CTE ได้เร็วกว่า</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- Correlated: ค่าใช้จ่าย > ค่าเฉลี่ยของตัวเองต่อ drug
+SELECT p.hn, r.drug, r.cost_thb
+FROM prescriptions r
+JOIN patients p ON p.patient_id=r.patient_id
+WHERE r.cost_thb > (
+  SELECT AVG(cost_thb) FROM prescriptions
+  WHERE drug = r.drug   -- ← อ้าง r ข้างนอก
+);</pre>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">ระวัง:</span> correlated = รัน subquery ทุกแถว → ช้าเมื่อตารางใหญ่</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">Rewrite เป็น JOIN + GROUP BY</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">WITH avg_by_drug AS (
+  SELECT drug, AVG(cost_thb) avg_c FROM prescriptions
+  GROUP BY drug
+)
+SELECT p.hn, r.drug, r.cost_thb
+FROM prescriptions r
+JOIN avg_by_drug a USING(drug)
+JOIN patients p ON p.patient_id=r.patient_id
+WHERE r.cost_thb > a.avg_c;</pre>
+              <div class="bg-emerald-900/20 border border-emerald-700 rounded p-2 mt-2 text-[11px]">✅ อ่านง่าย + รันครั้งเดียว — นี่คือพลัง CTE (สไลด์ถัดไป)</div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 เทียบ pandas: <code class="bg-black/30 px-1 rounded">df.groupby('drug').transform('mean')</code> = correlated avg</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">SELECT — correlated subquery</a> · โน้ต wk07: JOIN + GROUP เร็วกว่าบ่อยครั้ง</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=4" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=6" class="hover:text-white">ถัดไป: CASE →</button></div>
+        </div>
+      </div>
+
+      <!-- 6 CASE -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">05 · CASE WHEN — Bucket ค่าทางคลินิก</h2>
+          <p class="text-sm text-white/80 mb-3">IF ใน SQL — ทำหมวด HbA1c / BP / cost tier แล้ว GROUP ต่อได้ทันที</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT hn, hba1c,
+  CASE
+    WHEN hba1c IS NULL THEN 'ยังไม่ได้วัด'
+    WHEN hba1c < 6.5 THEN 'ปกติ'
+    WHEN hba1c < 7.0 THEN 'เฝ้าระวัง'
+    WHEN hba1c < 9.0 THEN 'คุมไม่ได้'
+    ELSE 'วิกฤต ≥9'
+  END AS a1c_bucket
+FROM patients LIMIT 5;
+
+-- ใช้ใน GROUP BY ได้เลย
+SELECT a1c_bucket, COUNT(*) n
+FROM (SELECT CASE WHEN … END AS a1c_bucket FROM patients)
+GROUP BY a1c_bucket;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">BP staging (AHA)</h3>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">CASE
+  WHEN systolic_bp >= 180 THEN 'วิกฤต'
+  WHEN systolic_bp >= 140 THEN 'สูง'
+  WHEN systolic_bp >= 120 THEN 'ค่อนข้างสูง'
+  ELSE 'ปกติ'
+END AS bp_stage</pre>
+              <table class="w-full border-collapse text-[11px] mt-2">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">a1c</th><th class="border border-white/10 p-1">bucket</th></tr></thead>
+                <tbody><tr><td class="border border-white/10 p-1">5.8</td><td class="border border-white/10 p-1">ปกติ</td></tr><tr class="bg-white/5"><td class="border border-white/10 p-1">7.2</td><td class="border border-white/10 p-1">คุมไม่ได้</td></tr><tr><td class="border border-white/10 p-1">NULL</td><td class="border border-white/10 p-1">ยังไม่ได้วัด</td></tr></tbody>
+              </table>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 CASE + COUNT = cross-tab — เทียบ pandas <code class="bg-black/30 px-1 rounded">pd.cut()</code></div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#case" target="_blank">CASE expression</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_case.asp" target="_blank">W3Schools CASE</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=5" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=7" class="hover:text-white">ถัดไป: CTE →</button></div>
+        </div>
+      </div>
+
+      <!-- 7 CTE -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">06 · CTE (WITH) — ตั้งชื่อ subquery ให้อ่านรู้เรื่อง</h2>
+          <p class="text-sm text-white/80 mb-3">Subquery ยาว → ตั้งชื่อบนสุด → SELECT หลักอ่านสั้น — reuse ได้หลายครั้ง</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">WITH clean AS (
+  SELECT patient_id, hn, gender, hba1c
+  FROM patients
+  WHERE hba1c IS NOT NULL
+    AND birth_date LIKE '____-__-__'
+), spend AS (
+  SELECT patient_id,
+         SUM(cost_thb) total, COUNT(*) n_rx
+  FROM prescriptions GROUP BY patient_id
+)
+SELECT c.hn, c.hba1c, s.total
+FROM clean c
+LEFT JOIN spend s USING(patient_id)
+ORDER BY s.total DESC NULLS LAST LIMIT 5;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">เทียบ Subquery vs CTE</h3>
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <div class="bg-red-900/20 border border-red-700 rounded p-2"><div class="font-bold text-red-300">Nested ❌</div><code class="font-mono text-[10px]">SELECT … FROM (SELECT … FROM (SELECT …))</code><br/>วงเล็บ 3 ชั้น อ่านยาก</div>
+                <div class="bg-emerald-900/20 border border-emerald-700 rounded p-2"><div class="font-bold text-emerald-300">CTE ✅</div><code class="font-mono text-[10px]">WITH a AS (…), b AS (…) SELECT … FROM a JOIN b</code><br/>เรียงบน→ล่าง อ่านเป็นขั้น</div>
+              </div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-3">💡 CTE + CASE = โค้ด insight 10–20 บรรทัดยังอ่านรู้เรื่อง — ตรงกับ pipeline ETL สัปดาห์ 4</div>
+              <div class="bg-black/40 rounded p-2 mt-2 text-[11px]">CTE ซ้ำได้: <code class="bg-black/30 px-1 rounded">WITH t AS (…) SELECT … FROM t UNION ALL SELECT … FROM t</code></div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_with.html" target="_blank">WITH clause (CTE)</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_cte.asp" target="_blank">W3Schools CTE</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=6" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=8" class="hover:text-white">ถัดไป: Window RANK →</button></div>
+        </div>
+      </div>
+
+      <!-- 8 Window Rank -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">07 · ROW_NUMBER / RANK / DENSE_RANK</h2>
+          <p class="text-sm text-white/80 mb-3">Top-N ต่อกลุ่ม (per gender / per drug) — ไม่ต้อง GROUP แล้ว self-join ให้วุ่น</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- Top-3 ค่าใช้จ่ายต่อคน "ต่อเพศ"
+WITH spend AS (
+  SELECT patient_id, SUM(cost_thb) total
+  FROM prescriptions GROUP BY patient_id
+)
+SELECT p.gender, p.hn, s.total,
+  ROW_NUMBER() OVER(PARTITION BY p.gender
+                    ORDER BY s.total DESC) rn,
+  RANK()       OVER(PARTITION BY p.gender
+                    ORDER BY s.total DESC) rk
+FROM spend s JOIN patients p USING(patient_id)
+-- กรอง Top-3 ต่อเพศ
+-- WHERE rn <=3  ❌ ใช้ใน outer query!
+;
+SELECT * FROM (
+  SELECT …, ROW_NUMBER() OVER(…) rn FROM …
+) WHERE rn <= 3;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">total</th><th class="border border-white/10 p-1">ROW_NUMBER</th><th class="border border-white/10 p-1">RANK</th><th class="border border-white/10 p-1">DENSE</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">103</td><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">1</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">103</td><td class="border border-white/10 p-1">2</td><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">1</td></tr>
+                  <tr><td class="border border-white/10 p-1">77</td><td class="border border-white/10 p-1">3</td><td class="border border-white/10 p-1">3</td><td class="border border-white/10 p-1">2</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-black/40 rounded p-2 mt-2 text-[11px]">ROW_NUMBER: ไม่ซ้ำ · RANK: ซ้ำแล้วข้าม · DENSE: ซ้ำไม่ข้าม</div>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">❌:</span> <code class="bg-black/30 px-1 rounded">WHERE ROW_NUMBER() … &lt;=3</code> ใน SELECT เดียวกันไม่ได — ต้องห่อ subquery/CTE</div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/windowfunctions.html" target="_blank">Window Functions</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_window.asp" target="_blank">W3Schools Window</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=7" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=9" class="hover:text-white">ถัดไป: Window Agg →</button></div>
+        </div>
+      </div>
+
+      <!-- 9 Window Agg -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">08 · Window Aggregates — AVG OVER()</h2>
+          <p class="text-sm text-white/80 mb-3">อยากได้รายแถว + ค่าเฉลี่ยกลุ่มในแถวเดียวกัน — GROUP BY ทำไม่ได้ ต้อง OVER()</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- เทียบรายจ่ายยาต่อคน vs ค่าเฉลี่ยเพศเดียวกัน
+WITH spend AS (
+  SELECT patient_id, SUM(cost_thb) total FROM prescriptions
+  GROUP BY patient_id
+)
+SELECT p.hn, p.gender, s.total,
+  AVG(s.total) OVER(PARTITION BY p.gender) avg_by_gender,
+  s.total - AVG(s.total) OVER(PARTITION BY p.gender) diff,
+  AVG(s.total) OVER() avg_all   -- ทั้ง รพ.
+FROM spend s JOIN patients p USING(patient_id)
+ORDER BY diff DESC LIMIT 5;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">GROUP BY vs Window</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">วิธี</th><th class="border border-white/10 p-1">ได้กี่แถว</th><th class="border border-white/10 p-1">ใช้เมื่อ</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1 font-mono">GROUP BY gender</td><td class="border border-white/10 p-1">2 แถว</td><td class="border border-white/10 p-1">สรุปกลุ่ม</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1 font-mono">AVG() OVER(PARTITION BY…)</td><td class="border border-white/10 p-1">103 แถวเดิม</td><td class="border border-white/10 p-1">เทียบรายคนกับค่าเฉลี่ย</td></tr>
+                </tbody>
+              </table>
+              <div class="bg-black/40 rounded p-2 mt-2 text-center text-[11px]">OVER() = "หน้าต่าง" มองเห็นกลุ่ม แต่ไม่ยุบแถว</div>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 เทียบ pandas: <code class="bg-black/30 px-1 rounded">df.groupby('gender')['total'].transform('mean')</code></div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/windowfunctions.html#partitionby_clause" target="_blank">PARTITION BY</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/windowfunctions.html#frame_spec" target="_blank">Frame spec</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=8" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=10" class="hover:text-white">ถัดไป: Cohort →</button></div>
+        </div>
+      </div>
+
+      <!-- 10 Cohort -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">09 · Cohort Insights — รวมทุกเครื่องมือ</h2>
+          <p class="text-sm text-white/80 mb-3">ตัวอย่าง: "หญิง อายุ≥60, HbA1c≥7, มี HTN (BP≥140), ไม่เคยได้ Metformin" — query เดียวตอบได้</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">WITH base AS (
+  SELECT patient_id, hn, gender,
+    CAST((julianday('now')-julianday(birth_date))/365.25 AS INT) age,
+    hba1c, systolic_bp
+  FROM patients
+  WHERE gender='หญิง' AND hba1c >= 7
+    AND systolic_bp >= 140
+    AND birth_date LIKE '____-__-__'
+)
+SELECT b.hn, b.age, b.hba1c, b.systolic_bp
+FROM base b
+WHERE NOT EXISTS (
+  SELECT 1 FROM prescriptions r
+  WHERE r.patient_id=b.patient_id
+    AND r.drug='Metformin'
+)
+ORDER BY b.hba1c DESC LIMIT 10;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">เทคนิคที่ใช้</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>อายุ: <code class="bg-black/30 px-1 rounded">julianday</code> (wk06) + กรอง <code class="bg-black/30 px-1 rounded">LIKE '____-__-__'</code> ตัดวันที่ผิดรูป</li>
+                <li>หลายเงื่อนไข: <code class="bg-black/30 px-1 rounded">AND</code> + วงเล็บ (wk06 สไลด์ 04)</li>
+                <li>ไม่มี Metformin: <code class="bg-black/30 px-1 rounded">NOT EXISTS</code> (สไลด์ 03) — ปลอดภัยกว่า NOT IN</li>
+                <li>CTE: <code class="bg-black/30 px-1 rounded">base</code> ให้อ่านเป็นขั้น — ขยายต่อเป็น CASE/window ได้</li>
+              </ul>
+              <div class="bg-emerald-900/20 border border-emerald-700 rounded p-2 mt-3 text-[11px]">✅ นับ sanity-check ก่อนส่ง: <code class="bg-black/30 px-1 rounded">SELECT COUNT(*) FROM base</code> เทียบหลัง NOT EXISTS</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=9" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=11" class="hover:text-white">ถัดไป: Time Trends →</button></div>
+        </div>
+      </div>
+
+      <!-- 11 Time -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">10 · Time Trends — เดือน/ปี + CASE</h2>
+          <p class="text-sm text-white/80 mb-3">SQLite ไม่มี DATE type — ใช้ <code class="bg-black/30 px-1 rounded">strftime</code> ตัดเดือน แล้ว GROUP/CASE ต่อ</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">-- เทรนด์ผู้ป่วยใหม่ต่อเดือน (จาก birth_date เป็น proxy)
+SELECT strftime('%Y-%m', birth_date) AS ym,
+       COUNT(*) n_new,
+       AVG(hba1c) avg_a1c
+FROM patients
+WHERE birth_date LIKE '____-__-__'
+GROUP BY ym
+ORDER BY ym LIMIT 6;
+
+-- ผูกกับ bucket
+SELECT ym,
+  SUM(CASE WHEN a1c_bucket='วิกฤต ≥9' THEN 1 ELSE 0 END) n_critical
+FROM (SELECT strftime('%Y-%m',birth_date) ym,
+  CASE WHEN hba1c>=9 THEN 'วิกฤต ≥9' ELSE 'อื่น' END a1c_bucket
+  FROM patients WHERE birth_date LIKE '____-__-__')
+GROUP BY ym;</pre>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">ใช้กับ prescriptions (มีวันที่จริง)</h3>
+              <p class="text-[11px] text-white/70">ถ้าเพิ่มคอลัมน์ <code class="bg-black/30 px-1 rounded">rx_date TEXT ISO8601</code> ใน prescriptions (HW wk07) →</p>
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[11px]">SELECT strftime('%Y-%m', rx_date) ym,
+       drug, SUM(cost_thb) spend
+FROM prescriptions
+WHERE rx_date BETWEEN '2025-01-01' AND '2025-12-31'
+GROUP BY ym, drug
+ORDER BY ym, spend DESC;</pre>
+              <div class="bg-yellow-400/20 text-yellow-200 p-2 rounded text-[11px] mt-2">💡 Cross-tab: CASE inside SUM = Pivot แนวนอน — เทียบ pandas <code class="bg-black/30 px-1 rounded">pivot_table</code></div>
+            </div>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">📚 <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_datefunc.html" target="_blank">Date/Time</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_aggfunc.html" target="_blank">Aggregates + CASE</a></div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=10" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=12" class="hover:text-white">ถัดไป: Pipeline →</button></div>
+        </div>
+      </div>
+
+      <!-- 12 Pipeline -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">11 · Pipeline 10 ขั้นฉบับ Insights</h2>
+          <p class="text-sm text-white/80 mb-3">เพิ่ม CTE/Window ลงใน pipeline 8 ขั้นเดิม (wk07) — จำลำดับจริงที่เครื่องทำ</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-black/40 rounded-xl p-3 text-center text-[11px] space-y-0.5">
+              <div class="bg-blue-900/40 rounded p-1">1 WITH clean AS (…)  — CTE</div>
+              <div class="text-white/40">↓ 2 FROM base c</div>
+              <div class="bg-blue-900/40 rounded p-1">3 JOIN spend s ON …</div>
+              <div class="text-white/40">↓ 4 WHERE hba1c ≥7</div>
+              <div class="bg-emerald-900/40 rounded p-1">5 GROUP BY gender</div>
+              <div class="text-white/40">↓ 6 HAVING COUNT&gt;2</div>
+              <div class="bg-purple-900/40 rounded p-1">7 SELECT … CASE … , AVG() OVER() …</div>
+              <div class="text-white/40">↓ 8 WINDOW (PARTITION/ORDER)</div>
+              <div class="bg-yellow-400/20 rounded p-1">9 ORDER BY spend DESC</div>
+              <div class="text-white/40">↓ 10 LIMIT 5</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <pre class="bg-black/40 text-green-400 p-3 rounded-xl font-mono text-[10px]">WITH clean AS (
+  SELECT patient_id, hn, gender, hba1c
+  FROM patients WHERE hba1c IS NOT NULL
+)
+SELECT gender,
+  CASE WHEN hba1c>=9 THEN 'วิกฤต' ELSE 'อื่น' END bucket,
+  COUNT(*) n,
+  AVG(hba1c) avg_a1c,
+  RANK() OVER(PARTITION BY gender ORDER BY AVG(hba1c) DESC) rnk
+FROM clean
+GROUP BY gender, bucket
+HAVING COUNT(*) > 1
+ORDER BY gender, rnk LIMIT 5;</pre>
+              <div class="bg-red-900/20 border border-red-700 rounded p-2 mt-2 text-[11px]"><span class="font-bold text-red-300">กับดัก:</span> HAVING ใช้ alias จาก SELECT ไม่ได้ — ต้องซ้ำนิพจน์หรือห่อ CTE</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=11" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=13" class="hover:text-white">ถัดไป: Workflow →</button></div>
+        </div>
+      </div>
+
+      <!-- 13 Workflow -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">12 · Workflow — ใช้ healthinfo.db ต่อ</h2>
+          <p class="text-sm text-white/80 mb-3">ไม่สร้าง DB ใหม่ — ถ้าลบให้รัน <code class="bg-black/30 px-1 rounded">week05-sql-basics.ipynb</code> + <code class="bg-black/30 px-1 rounded">week07-joins.ipynb</code> ใหม่ก่อน</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-left text-xs">
+            <div class="bg-emerald-900/30 border border-emerald-700 rounded-2xl p-4">
+              <h3 class="font-bold text-emerald-300 mb-2">⭐ A: Jupyter</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">uv run jupyter lab
+import sqlite3, pandas as pd
+con=sqlite3.connect("healthinfo.db")
+pd.read_sql("""
+ WITH spend AS (
+  SELECT patient_id, SUM(cost_thb) total
+  FROM prescriptions GROUP BY patient_id)
+ SELECT p.hn, s.total,
+  RANK() OVER(ORDER BY s.total DESC) rnk
+ FROM spend s JOIN patients p USING(patient_id)
+ LIMIT 5""", con)</pre>
+            </div>
+            <div class="bg-blue-900/30 border border-blue-700 rounded-2xl p-4">
+              <h3 class="font-bold text-blue-300 mb-2">B: DB Browser</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">scoop install sqlitebrowser
+Open Database → healthinfo.db
+Execute SQL → Run (รองรับ WITH + Window
+ตั้งแต่ SQLite 3.25)</pre>
+              <a class="text-cyan-300 underline text-[11px]" href="https://sqlitebrowser.org/about/" target="_blank">sqlitebrowser.org/about</a>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">C: CLI</h3>
+              <pre class="bg-black/40 text-green-400 p-2 rounded-xl font-mono text-[10px]">scoop install sqlite
+sqlite3 healthinfo.db
+sqlite> SELECT sqlite_version();
+ -- ≥3.25 window OK, ≥3.39 FULL JOIN OK
+sqlite> .quit</pre>
+              <a class="text-cyan-300 underline text-[11px]" href="https://www.sqlite.org/cli.html" target="_blank">sqlite.org/cli</a>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=12" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=14" class="hover:text-white">ถัดไป: Lab 🧪 →</button></div>
+        </div>
+      </div>
+
+      <!-- 14 Lab -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">13 · Lab สัปดาห์ที่ 8 🧪</h2>
+          <p class="text-sm text-white/80 mb-3">ฝึกบน <code class="bg-black/40 px-1 rounded">healthinfo.db</code>  — ไม่ต้อง notebook ใหม่ (ใช้ healthinfo.db ต่อ) — ส่งภารกิจในระบบ LMS ตามประกาศ</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📋 ภารกิจ ↔ สไลด์</h3>
+              <table class="w-full border-collapse text-[11px]">
+                <thead class="bg-black/30 text-yellow-200"><tr><th class="border border-white/10 p-1">#</th><th class="border border-white/10 p-1">ภารกิจ</th><th class="border border-white/10 p-1">สไลด์</th></tr></thead>
+                <tbody>
+                  <tr><td class="border border-white/10 p-1">1</td><td class="border border-white/10 p-1">Subquery IN: คนได้ยา Metformin + นับ COUNT เช็ค</td><td class="border border-white/10 p-1">02</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">2</td><td class="border border-white/10 p-1">NOT EXISTS / anti-join: คนไม่เคยได้ยาเลย (เทียบ NOT IN trap)</td><td class="border border-white/10 p-1">03</td></tr>
+                  <tr><td class="border border-white/10 p-1">3</td><td class="border border-white/10 p-1">CASE WHEN: bucket HbA1c → GROUP นับต่อ bucket</td><td class="border border-white/10 p-1">05</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">4</td><td class="border border-white/10 p-1">CTE: clean + spend แล้ว LEFT JOIN + ORDER BY total</td><td class="border border-white/10 p-1">06</td></tr>
+                  <tr><td class="border border-white/10 p-1">5</td><td class="border border-white/10 p-1">Window: Top-3 รายจ่ายสูงสุด <em>ต่อเพศ</em> (ROW_NUMBER PARTITION)</td><td class="border border-white/10 p-1">07</td></tr>
+                  <tr class="bg-white/5"><td class="border border-white/10 p-1">6</td><td class="border border-white/10 p-1">Cohort: หญิง ≥60 + HbA1c≥7 + BP≥140 + NOT Metformin (สไลด์ 09)</td><td class="border border-white/10 p-1">09</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">✅ Self-check + HW</h3>
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>IN vs EXISTS ให้ count เท่ากัน</li>
+                <li>CASE bucket รวม COUNT = 103 คนครบ</li>
+                <li>CTE รันได้ไม่ error (SQLite ≥3.25)</li>
+                <li>WindowTop-3 ต่อเพศ ได้ 6 แถว (3+3) — RN 1–3 ต่อกลุ่ม</li>
+              </ul>
+              <div class="bg-emerald-900/30 border border-emerald-700 rounded p-2 mt-3 text-[11px]"><strong>Homework 8:</strong> สร้าง insight ใหม่ 1 ข้อ (เช่น "ชายวิกฤต≥9 ที่จ่ายแพงกว่าค่าเฉลี่ยเพศ") เขียนด้วย CTE + Window + CASE พร้อมอธิบาย 3 บรรทัดว่าตอบคำถามอะไร — ส่ง .sql หรือ screenshot + COUNT()</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=13" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=15" class="hover:text-white">ถัดไป: Cheat →</button></div>
+        </div>
+      </div>
+
+      <!-- 15 Cheat -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">14 · Cheat Sheet — Insights Queries</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-[11px] border-collapse">
+              <thead class="bg-black/40 text-yellow-200"><tr><th class="border border-white/10 p-1.5">แพทเทิร์น</th><th class="border border-white/10 p-1.5">Syntax</th><th class="border border-white/10 p-1.5">ใช้เมื่อ</th><th class="border border-white/10 p-1.5">ตัวอย่างคลินิก</th></tr></thead>
+              <tbody class="text-white/90">
+                <tr><td class="border border-white/10 p-1.5 font-bold">IN subquery</td><td class="border border-white/10 p-1.5 font-mono">WHERE id IN (SELECT…)</td><td class="border border-white/10 p-1.5">ลิสต์มาจาก DB</td><td class="border border-white/10 p-1.5">ได้ Metformin</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">NOT EXISTS</td><td class="border border-white/10 p-1.5 font-mono">WHERE NOT EXISTS (SELECT 1…)</td><td class="border border-white/10 p-1.5">หา "ไม่มี"</td><td class="border border-white/10 p-1.5">ยังไม่จ่ายยา</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">CASE</td><td class="border border-white/10 p-1.5 font-mono">CASE WHEN … THEN … END</td><td class="border border-white/10 p-1.5">bucket</td><td class="border border-white/10 p-1.5">HbA1c / BP stage</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">CTE</td><td class="border border-white/10 p-1.5 font-mono">WITH t AS (…) SELECT…</td><td class="border border-white/10 p-1.5">อ่านง่าย reuse</td><td class="border border-white/10 p-1.5">clean + spend</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">ROW_NUMBER</td><td class="border border-white/10 p-1.5 font-mono">ROW_NUMBER() OVER(PARTITION BY … ORDER BY …)</td><td class="border border-white/10 p-1.5">Top-N ต่อกลุ่ม ไม่ซ้ำ</td><td class="border border-white/10 p-1.5">Top-3 ต่อเพศ</td></tr>
+                <tr class="bg-white/5"><td class="border border-white/10 p-1.5 font-bold">RANK</td><td class="border border-white/10 p-1.5 font-mono">RANK() OVER(…)</td><td class="border border-white/10 p-1.5">ซ้ำแล้วข้าม</td><td class="border border-white/10 p-1.5">จัดอันดับยาแพง</td></tr>
+                <tr><td class="border border-white/10 p-1.5 font-bold">AVG OVER</td><td class="border border-white/10 p-1.5 font-mono">AVG(col) OVER(PARTITION BY …)</td><td class="border border-white/10 p-1.5">เทียบรายคน vs กลุ่ม</td><td class="border border-white/10 p-1.5">แพงกว่าค่าเฉลี่ยเพศ</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-black/30 rounded-xl p-2 mt-3 text-xs text-left">Golden rules: วงเล็บ IN ชัดเจน · NOT IN หลีกเมื่อมี NULL → EXISTS · CTE อ่านบน→ล่าง · Window ต้องห่อก่อน WHERE · CASE ครอบ NULL ก่อน</div>
+          <div class="flex justify-between items-center w-full max-w-2xl mx-auto mt-4 text-xs text-white/60"><button @click="currentSlide=14" class="hover:text-white">◀ ก่อนหน้า</button><button @click="currentSlide=1" class="hover:text-white">🏠 สารบัญ</button><button @click="currentSlide=16" class="hover:text-white">ถัดไป: อ้างอิง →</button></div>
+        </div>
+      </div>
+
+      <!-- 16 References -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex flex-col justify-center items-center text-white p-4 md:p-6 lg:p-8 absolute inset-0 transition-all duration-500 transform">
+        <div class="text-center max-w-5xl w-full mx-auto px-4 md:px-6">
+          <h2 class="text-4xl font-bold mb-2">15 · แหล่งอ้างอิงทางการ</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-xs">
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-yellow-300 mb-2">📘 SQLite</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_select.html" target="_blank">SELECT</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#subquery" target="_blank">Subquery</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#exists" target="_blank">EXISTS</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_expr.html#case" target="_blank">CASE</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_with.html" target="_blank">WITH (CTE)</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/windowfunctions.html" target="_blank">Window Functions</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/lang_datefunc.html" target="_blank">Date/Time</a></li>
+                <li><a class="text-cyan-300 underline" href="https://www.sqlite.org/windowfunctions.html#partitionby_clause" target="_blank">PARTITION BY</a> · <a class="text-cyan-300 underline" href="https://www.sqlite.org/changes.html" target="_blank">Release history (window ≥3.25)</a></li>
+              </ul>
+              <h3 class="font-bold text-yellow-300 mt-3 mb-2">🐍 Python</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90"><li><a class="text-cyan-300 underline" href="https://docs.python.org/3/library/sqlite3.html" target="_blank">sqlite3</a> · <a class="text-cyan-300 underline" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html" target="_blank">pandas groupby vs SQL</a></li></ul>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-4">
+              <h3 class="font-bold text-cyan-300 mb-2">🛠️ เสริม</h3>
+              <ul class="list-disc list-inside space-y-1 text-white/90">
+                <li><a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_subqueries.asp" target="_blank">W3Schools Subquery</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_case.asp" target="_blank">CASE</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_window.asp" target="_blank">Window</a> · <a class="text-cyan-300 underline" href="https://www.w3schools.com/sql/sql_cte.asp" target="_blank">CTE</a></li>
+                <li>Schema จริง: <a class="text-cyan-300 underline" href="https://mimic.mit.edu/docs/iv/modules/hosp/" target="_blank">MIMIC-IV hosp</a> · <a class="text-cyan-300 underline" href="https://ohdsi.github.io/CommonDataModel/cdm54.html" target="_blank">OMOP CDM</a></li>
+              </ul>
+              <h3 class="font-bold text-cyan-300 mt-3 mb-2">📬 ติดต่อ</h3>
+              <p class="text-white/90">ดร.วิชิต สมบัติ — wichit.s@ubu.ac.th</p>
+              <p class="text-white/60 mt-2">คาบหน้า: <strong>สอบกลางภาค (Week 9)</strong> — ทบทวน wk05–08 + cheat sheets!</p>
+            </div>
+          </div>
+          <div class="text-sm font-semibold text-yellow-300 mt-4">Next: <a class="underline text-cyan-300" href="./wk09.html">Week 9 — สอบกลางภาค (Review & Exam Guide)</a> · Prev: <a class="underline text-cyan-300" href="./wk07.html">Week 7 — Joins</a></div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    function slideshow(){return{currentSlide:0,totalSlides:0,touchStartX:0,touchEndX:0,
+      init(){this.totalSlides=this.$refs.slidesContainer.querySelectorAll('.slide').length;this.setupKeyboardNavigation();this.setupTouchNavigation();},
+      nextSlide(){this.currentSlide=(this.currentSlide+1)%this.totalSlides;},
+      previousSlide(){this.currentSlide=(this.currentSlide-1+this.totalSlides)%this.totalSlides;},
+      setupKeyboardNavigation(){document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();this.nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();this.previousSlide();}});},
+      setupTouchNavigation(){document.addEventListener('touchstart',(e)=>{this.touchStartX=e.changedTouches[0].screenX;});document.addEventListener('touchend',(e)=>{this.touchEndX=e.changedTouches[0].screenX;const d=50;if(this.touchStartX-this.touchEndX>d)this.nextSlide();else if(this.touchEndX-this.touchStartX>d)this.previousSlide();});}}}
+    </script>
+  </body>
+</html>

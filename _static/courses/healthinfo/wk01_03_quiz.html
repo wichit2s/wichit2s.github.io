@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Quiz Weeks 1-3">
+    <meta name="keywords" content="Health Informatics, Quiz, Practice, Multiple Choice, wk01, wk02, wk03">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop in Health Informatics - Quiz 1-3</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="quiz()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentQuestion+1"></span> / <span x-text="totalQuestions"></span>
+      <span class="text-xs ml-2 text-emerald-300" x-show="score !== null" x-text="'คะแนน: ' + score + '/' + totalQuestions"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="prevQuestion()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk03.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextQuestion()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-8 py-20">
+
+      <!-- Title Slide -->
+      <div x-show="currentQuestion === 0 && !started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">ข้อสอบทบทวน</h1>
+          <div class="text-xl text-white/90 mb-8 font-light">สัปดาห์ที่ 1-3: Health Informatics พื้นฐาน · Toolchain · pandas</div>
+          <div class="tech-card mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">คำชี้แจง</h2>
+            <ul class="space-y-2 text-base">
+              <li>- <strong>20 ข้อ</strong> ครอบคลุม wk01 (บทนำ+Toolchain+CSV/JSON), wk02 (Linking/Join/GroupBy/PySynthea), wk03 (pandas Querying/Aggregation)</li>
+              <li>- คลิกที่ตัวเลือกเพื่อเลือกคำตอบ แล้วกด <strong>ตรวจคำตอบ</strong></li>
+              <li>- เขียว = ถูก, แดง = ผิด พร้อมคำอธิบาย</li>
+              <li>- คะแนนจะอัปเดตให้เห็นทันที</li>
+              <li>- ใช้ปุ่มลูกศรหรือปุ่มนำทางเพื่อเลื่อนไป-กลับ</li>
+            </ul>
+          </div>
+          <button @click="started = true; currentQuestion = 1"
+                  class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+            เริ่มทำข้อสอบ
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions -->
+      <template x-for="(q, idx) in questions" :key="idx">
+        <div x-show="currentQuestion === idx + 1 && started" class="gradient-bg flex-col justify-center text-white rounded-2xl p-8" style="min-height:80vh">
+          <div class="max-w-4xl mx-auto">
+            <!-- Question header -->
+            <div class="mb-2 text-emerald-300 text-sm font-mono" x-text="'ข้อที่ ' + (idx+1) + ' จาก ' + totalQuestions + ' -- ' + q.topic"></div>
+
+            <!-- Question text -->
+            <div class="text-2xl md:text-3xl font-semibold mb-8 leading-relaxed" x-html="q.question"></div>
+
+            <!-- Answer options -->
+            <div class="space-y-3 mb-8">
+              <template x-for="(opt, oi) in q.options" :key="oi">
+                <button @click="selectAnswer(idx, oi)"
+                        class="w-full text-left p-4 rounded-xl border-2 transition-all text-lg"
+                        :class="getOptionClass(idx, oi)">
+                  <span class="font-mono text-emerald-300 mr-3" x-text="String.fromCharCode(65 + oi) + '.'"></span>
+                  <span x-html="opt"></span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi !== q.answer" class="float-right text-red-400">&#10007;</span>
+                  <span x-show="checked[idx] && answers[idx] !== oi && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                </button>
+              </template>
+            </div>
+
+            <!-- Check / Explanation -->
+            <div x-show="answers[idx] !== null && !checked[idx]" class="mb-6">
+              <button @click="checkAnswer(idx)"
+                      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition">
+                ตรวจคำตอบ
+              </button>
+            </div>
+
+            <div x-show="checked[idx]" class="tech-card border-yellow-400 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xl" x-text="answers[idx] === q.answer ? '&#10003; ถูกต้อง!' : '&#10007; ไม่ถูกต้อง'"></span>
+              </div>
+              <p class="text-sm" x-html="q.explanation"></p>
+            </div>
+
+            <!-- Progress -->
+            <div class="mt-8 text-sm text-white/50">
+              <span x-text="'ทำแล้ว: ' + answeredCount() + '/' + totalQuestions"></span>
+              <span class="ml-4 text-emerald-300" x-text="'คะแนน: ' + score + '/' + totalQuestions" x-show="score !== null"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Results -->
+      <div x-show="currentQuestion === totalQuestions + 1 && started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl font-bold mb-6">ทำข้อสอบเสร็จแล้ว!</h1>
+          <div class="tech-card mb-8">
+            <div class="text-6xl font-bold mb-4" :class="score >= 16 ? 'text-green-400' : score >= 12 ? 'text-yellow-400' : 'text-red-400'"
+                 x-text="score + ' / ' + totalQuestions"></div>
+            <div class="text-xl mb-4" x-text="score >= 16 ? 'ยอดเยี่ยม! พื้นฐานแน่นพร้อมลุย SQL/BigQuery' : score >= 12 ? 'ทำได้ดี! ทบทวนจุดพลาดจาก wk01-03 อีกครั้ง' : 'พยายามต่อ! กลับไปทบทวนสไลด์ wk01-wk03'"></div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm text-left">
+              <div class="tech-card"><strong>สัปดาห์ 1:</strong> บทนำ Health Informatics · Informed&Assisted · Scoop/uv/FHIR · CSV/JSON/pandas</div>
+              <div class="tech-card"><strong>สัปดาห์ 2:</strong> Siloed Data · Inner/Left Join · pd.merge · groupby/agg · HAVING · MIMIC/PySynthea</div>
+              <div class="tech-card"><strong>สัปดาห์ 3:</strong> Series/DataFrame · Boolean/.loc · Missing/Validation · Split-Apply-Combine · HbA1c</div>
+            </div>
+          </div>
+          <div class="space-x-4">
+            <button @click="resetQuiz()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+              ทำข้อสอบอีกครั้ง
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function quiz() {
+      return {
+        currentQuestion: 0,
+        started: false,
+        score: null,
+        answers: {},
+        checked: {},
+        totalQuestions: 20,
+        questions: [
+          // === WK01: Health Informatics Intro (7) ===
+          {
+            topic: "สัปดาห์ 1: นิยาม Health Informatics",
+            question: "ตาม Greenes &amp; Shortliffe (1990) ใน wk01 สารสนเทศสุขภาพ (Health Informatics) เน้นอะไรมากกว่าแค่คอมพิวเตอร์?",
+            options: [
+              "การประกอบคอมพิวเตอร์ให้เร็วขึ้น",
+              "กระบวนการคิดเชิงปัญญา การประมวลผลข้อมูล และการสื่อสารเพื่อให้เกิด Data plus Meaning",
+              "การเขียนโปรแกรมเกม",
+              "การซ่อมฮาร์ดแวร์"
+            ],
+            answer: 1,
+            explanation: "wk01 สไลด์ 2: Health Informatics = Data plus Meaning เน้น cognitive processes, data processing, communication ไม่ใช่แค่คอมพิวเตอร์ Greenes & Shortliffe 1990"
+          },
+          {
+            topic: "สัปดาห์ 1: Informed &amp; Assisted",
+            question: "ตัวอย่าง &quot;Informed&quot; ที่ถูกต้องใน wk01 คืออะไร?",
+            options: [
+              "แอปแจ้งเตือนกินยาตามนัด",
+              "แพทย์เห็นประวัติแพ้ยาและยาเดิมทันทีก่อนสั่งยา",
+              "เซิร์ฟเวอร์ประมวลผลเร็วขึ้น",
+              "การติดตั้ง Scoop"
+            ],
+            answer: 1,
+            explanation: "wk01 สไลด์ 4: Informed = ส่งข้อมูลที่ถูกต้องถึงผู้ใช้ถูกเวลาถูกแบบ (เช่น เห็นแพ้ยา/ยาเดิมก่อนสั่งยา) ส่วน Assisted = ระบบช่วยทุ่นแรง (เช่น แอปเตือนกินยา)"
+          },
+          {
+            topic: "สัปดาห์ 1: ขอบเขต",
+            question: "Clinical Informatics, Public Health Informatics, Consumer Health Informatics ต่างกันอย่างไร?",
+            options: [
+              "เหมือนกันทั้งหมด",
+              "Clinical = สนับสนุนวินิจฉัย/รักษา (EHR/CPOE/CDSS), Public = เฝ้าระวังระบาดวิทยาประชากร, Consumer = PHR/อุปกรณ์สวมใส่ให้ผู้ป่วยดูแลตนเอง",
+              "Clinical = ขายยา, Public = ทำบัญชี",
+              "เป็นชื่อเดียวกันของ AI"
+            ],
+            answer: 1,
+            explanation: "wk01 สไลด์ 5: 3 scopes ตามสไลด์ — Clinical (EHR/CPOE/CDSS), Public Health (เฝ้าระวังโรคระดับประชากร), Consumer (PHR/wearable)"
+          },
+          {
+            topic: "สัปดาห์ 1: ปัญหาข้อมูล",
+            question: "Garbage In, Garbage Out (wk01 สไลด์ 7) หมายถึงอะไร?",
+            options: [
+              "ถังขยะล้น",
+              "ถ้าป้อนข้อมูลช้า/ผิดพลาด คุณภาพการวิเคราะห์ก็ลดทันที",
+              "ต้องทิ้งคอมพิวเตอร์",
+              "ใช้ AI แล้วไม่ต้องสนใจข้อมูล"
+            ],
+            answer: 1,
+            explanation: "wk01 สไลด์ 7-8: Inadequate Quality — ป้อนช้า/ผิดพลาด → ผลวิเคราะห์ลดทันที (GIGO) คู่กับ Insufficient Usage (กองข้อมูลไว้ไม่วิเคราะห์)"
+          },
+          {
+            topic: "สัปดาห์ 1: Toolchain",
+            question: "ทำไม wk01 ให้ใช้ Scoop + uv + tietai-synthea แทน pip/conda + Synthea Java เดิม?",
+            options: [
+              "เพราะเท่กว่า",
+              "Scoop เลี่ยง .exe แบบเดิม, uv (Rust) เร็ว 10-100× ล็อกเวอร์ชันด้วย uv.lock, PySynthea (tietai-synthea) เป็น Python-native ไม่ต้อง Java/JVM",
+              "เพื่อใช้ RAM มากขึ้น",
+              "บังคับใช้ Linux เท่านั้น"
+            ],
+            answer: 1,
+            explanation: "wk01 สไลด์ 7-11: Scoop ติดตั้ง CLI, uv จัดการ venv/lock รวดเร็ว, uv add jupyterlab pandas faker tietai-synthea แล้ว uv run jupyter lab — PySynthea รันออฟไลน์ด้วย uv run synthea -p 10"
+          },
+          {
+            topic: "สัปดาห์ 1: CSV vs JSON",
+            question: "patients_data.csv กับ patient_fhir_demo.json ต่างกันอย่างไร (wk01 สไลด์ 13)?",
+            options: [
+              "เหมือนกัน",
+              "CSV = ตาราง Tabular มีโครงสร้างชัดเจน (เช่น MIMIC-IV), JSON = กึ่งโครงสร้าง Key-Value ซ้อนได้ (เช่น HL7 FHIR Bundle)",
+              "JSON ใช้กับรูปภาพเท่านั้น",
+              "CSV เร็วกว่าเสมอ"
+            ],
+            answer: 1,
+            explanation: "wk01 สไลด์ 13-16: CSV ตารางแถว/คอลัมน, JSON Semi-structured เหมาะซ้อนข้อมูลและส่งข้ามระบบ (FHIR) ต้องใช้ pd.read_csv vs json.load / pd.json_normalize"
+          },
+          {
+            topic: "สัปดาห์ 1: pandas เบื้องต้น",
+            question: "คำสั่งใดใน wk01 ใช้ตรวจมิติ/ชนิดข้อมูลและแปลง JSON ซ้อนเป็นตาราง?",
+            options: [
+              "df.shape + df.dtypes และ pd.json_normalize(record, record_path=['entry'])",
+              "print('hello')",
+              "DROP TABLE",
+              "SELECT *"
+            ],
+            answer: 0,
+            explanation: "wk01 สไลด์ 14-16: df.shape/(แถว,คอลัมน์), df.dtypes, df.head() และ pd.json_normalize สำหรับคลี่ Nested FHIR Bundle เป็น DataFrame"
+          },
+          // === WK02: Linking & Aggregation (7) ===
+          {
+            topic: "สัปดาห์ 2: Data Linking",
+            question: "ทำไมข้อมูลสุขภาพมักเป็น Siloed Data และต้องทำ Data Linking?",
+            options: [
+              "เพราะข้อมูลอยู่รวมกันแล้ว",
+              "ประวัติคนไข้กับใบสั่งยาถูกเก็บแยกกัน ต้องเชื่อมด้วยคีย์ร่วม (practice_code) เพื่อบูรณาการและทำ Cohort Analysis",
+              "เพื่อลบข้อมูลทิ้ง",
+              "เพื่อเข้ารหัส WiFi"
+            ],
+            answer: 1,
+            explanation: "wk02 สไลด์ 1: Siloed Data — ประวัติ/ใบสั่งยาแยกกัน ต้อง link ด้วย practice_code เพื่อ Patient Integration และจัดลำดับความสำคัญ (Prioritization)"
+          },
+          {
+            topic: "สัปดาห์ 2: Join",
+            question: "Inner Join vs Left Join ใน pd.merge บน practice_code ต่างกันอย่างไร?",
+            options: [
+              "เหมือนกัน",
+              "Inner = เก็บเฉพาะคีย์ที่ตรงกันทั้งสองฝั่ง, Left = เก็บฝั่งซ้ายทั้งหมด แม้ไม่มีคู่ฝั่งขวา (ได้ NaN)",
+              "Inner = ลบทั้งหมด",
+              "Left = ลบฝั่งซ้าย"
+            ],
+            answer: 1,
+            explanation: "wk02 สไลด์ 2 &amp; 7: inner ต้องตรงกันทั้งคู่จึงเก็บ, left รักษา df_prescriptions ทั้งหมด คลินิกไม่มีทะเบียนจะได้ NaN"
+          },
+          {
+            topic: "สัปดาห์ 2: pd.merge",
+            question: "พารามิเตอร์ suffixes=('_rx','_reg') ใน pd.merge มีไว้ทำไม?",
+            options: [
+              "เพื่อเพิ่มความสวยงาม",
+              "แยกคอลัมน์ชื่อซ้ำ เช่น date_rx (ใบสั่งยา) vs date_reg (ทะเบียนคลินิก) ป้องกันสับสน",
+              "เพื่อลบข้อมูล",
+              "เพื่อเรียงลำดับ"
+            ],
+            answer: 1,
+            explanation: "wk02 สไลด์ 7: suffixes แยกคอลัมน์ซ้ำหลัง merge (เช่น date) ให้เป็น _rx vs _reg"
+          },
+          {
+            topic: "สัปดาห์ 2: GroupBy",
+            question: "practice_stats = df_linked.groupby('practice_name').agg(total_spend=('actual_cost','sum'), ...) ทำงานแบบใด?",
+            options: [
+              "สุ่มข้อมูล",
+              "Split-Apply-Combine: แยกตามคลินิก → ประมวล sum/mean/count → รวมเป็นตารางสรุป",
+              "ลบคลินิก",
+              "ส่งอีเมล"
+            ],
+            answer: 1,
+            explanation: "wk02 สไลด์ 8: groupby().agg() คือ Split-Apply-Combine: total_spend=sum, average_price=mean, total_prescriptions=count"
+          },
+          {
+            topic: "สัปดาห์ 2: HAVING",
+            question: "การกรองแบบ HAVING ใน pandas ทำอย่างไร (wk02 สไลด์ 9)?",
+            options: [
+              "WHERE ก่อน groupby",
+              "กรองหลังจัดกลุ่มแล้ว เช่น practice_stats[practice_stats['total_prescriptions'] > 1000]",
+              "ใช้ DELETE",
+              "ใช้ ORDER BY ก่อน"
+            ],
+            answer: 1,
+            explanation: "wk02 สไลด์ 9: HAVING = กรองหลัง agg ห้ามกรองผลรวมใน WHERE ก่อน groupby จะบกพร่องตรรกะ จากนั้น sort_values(by='total_spend')"
+          },
+          {
+            topic: "สัปดาห์ 2: Open Data &amp; Synthetic",
+            question: "PhysioNet / MIMIC / Zenodo และ PySynthea ต่างกันอย่างไร?",
+            options: [
+              "เหมือนกันทั้งหมด",
+              "PhysioNet/MIMIC/Zenodo = คลังข้อมูลจริง de-identified ต้องผ่าน CITI ก่อนใช้, PySynthea (tietai-synthea) = สังเคราะห์ FHIR R4 Bundle แบบ Python-native ไม่ต้อง Java ใช้ uv add tietai-synthea",
+              "MIMIC ใช้ไม่ได้",
+              "PySynthea ใช้ Java เท่านั้น"
+            ],
+            answer: 1,
+            explanation: "wk02 สไลด์ 3-4: PhysioNet (MIT), MIMIC-III/IV ICU, Zenodo Sensors ต้อง CITI, PySynthea สังเคราะห์ออฟไลน์ FHIR: from synthea import Generator / uv run synthea -p 10"
+          },
+          {
+            topic: "สัปดาห์ 2: Self-study",
+            question: "คำสั่งตรวจสอบ PySynthea หลังติดตั้งถูกต้องคืออะไร?",
+            options: [
+              "uv run synthea -p 10 --state \"California\" และ uv run python -c \"import synthea; print(synthea.__version__)\"",
+              "scoop --version",
+              "pip freeze",
+              "SELECT * FROM FHIR"
+            ],
+            answer: 0,
+            explanation: "wk02 สไลด์ 4 ท้าย: ทดสอบ uv run python -c \"import synthea; print(...)\" และดู ./output/fhir/ แล้วฝึก pd.json_normalize"
+          },
+          // === WK03: pandas Querying (6) ===
+          {
+            topic: "สัปดาห์ 3: Series vs DataFrame",
+            question: "Series vs DataFrame ใน wk03 ต่างกันอย่างไร?",
+            options: [
+              "เหมือนกัน",
+              "Series = 1 มิติ (คอลัมน์เดียว มี Index เช่น ความดันรายบุคคล Timeseries), DataFrame = 2 มิติ ตารางแถว×คอลัมน์มี Index 2 แกน (EHR)",
+              "Series = รูปภาพ",
+              "DataFrame = เสียง"
+            ],
+            answer: 1,
+            explanation: "wk03 สไลด์ 3: Series 1D (เช่น อายุ), DataFrame 2D tabular (เช่น อายุ+เพศ+ยา) พร้อม Index"
+          },
+          {
+            topic: "สัปดาห์ 3: EDA",
+            question: "หลัง pd.read_csv('prescriptions.csv') ควรตรวจอะไรก่อน (wk03 สไลด์ 5)?",
+            options: [
+              "ปิดเครื่อง",
+              ".info() (ชนิด/Null), .shape (มิติ), .describe() (สถิติเลข), df.isnull().sum() (Null ต่อคอลัมน์)",
+              "ลบไฟล์",
+              "ส่งไลน์"
+            ],
+            answer: 1,
+            explanation: "wk03 สไลด์ 5: .info/.shape/.describe + isnull().sum() เพื่อกัน Garbage In Garbage Out"
+          },
+          {
+            topic: "สัปดาห์ 3: Boolean Indexing",
+            question: "ข้อใดคือวิธีกรองที่ยืดหยุ่นกว่าใน wk03?",
+            options: [
+              "df[df['AGE']>=18]",
+              "df.loc[mask] เพราะเลือกแถวและคอลัมน์พร้อมกันได้อย่างปลอดภัย (เช่น df.loc[metformin_mask])",
+              "ใช้ Excel",
+              "พิมพ์ด้วยมือ"
+            ],
+            answer: 1,
+            explanation: "wk03 สไลด์ Part2-1: Boolean masking + .loc[] ยืดหยุ่นกว่า [] ธรรมดา เพราะระบุแถว+คอลัมน์พร้อมกัน (metformin_mask = df['DRUG']=='METFORMIN')"
+          },
+          {
+            topic: "สัปดาห์ 3: Multi-criteria",
+            question: "การกรองหลายเงื่อนไขใน pandas ต้องทำอย่างไร (wk03 สไลด์ Part2-2)?",
+            options: [
+              "ใช้ AND OR แบบคำ",
+              "ใช้ & (AND), | (OR), ~ (NOT) แบบบิต และต้องครอบวงเล็บแต่ละเงื่อนไข เช่น (df['gender']=='female') & (df['age']>=60) & (df['hba1c']>7.0)",
+              "ใช้ + -",
+              "ไม่ต้องวงเล็บ"
+            ],
+            answer: 1,
+            explanation: "wk03 สไลด์ Part2-2: กฎเหล็ก &|~ ต้องวงเล็บทุกเงื่อนไขย่อย มิฉะนั้น precedence ผิด ตัวอย่าง high_risk = df[(gender==female) & (age>=60) & (hba1c>7.0)]"
+          },
+          {
+            topic: "สัปดาห์ 3: Missing Data",
+            question: "วิธีจัดการ Null ของ HbA1c ใน wk03 คืออะไร?",
+            options: [
+              "ลบทั้งหมด",
+              "df['hba1c'].notnull() เพื่อเลือกแถวครบ, valid_labs = df[df['hba1c'].notnull()], df['hba1c'].fillna(mean) เพื่อแทนด้วยค่าเฉลี่ย",
+              "เติมด้วย 0 เสมอ",
+              "ปล่อยว่าง"
+            ],
+            answer: 1,
+            explanation: "wk03 สไลด์ Part2-4: .isnull/.notnull/.fillna(mean) — valid_labs = df[df['hba1c'].notnull()], mean = df['hba1c'].mean(), df['hba1c_imputed'] = fillna(mean)"
+          },
+          {
+            topic: "สัปดาห์ 3: Split-Apply-Combine &amp; agg",
+            question: "การหา HbA1c เฉลี่ยรายคนและสถิติหลายค่าใน wk03 Part3 ทำอย่างไร?",
+            options: [
+              "df.mean()",
+              "patient_hba1c = df.groupby('patient_id')['hba1c'].mean().nlargest(5) และ df.groupby('practice_code')['hba1c'].agg(['min','max','mean','count']) หรือ demographic_analysis = df.groupby(['gender','age'])['los_days'].mean()",
+              "ใช้ Photoshop",
+              "นับด้วยมือ"
+            ],
+            answer: 1,
+            explanation: "wk03 Part3 สไลด์ 2/5/6: groupby('patient_id')['hba1c'].mean(), demographic_analysis = groupby(['gender','age'])['los_days'].mean(), .agg(['min','max','mean','count']), value_counts()/nunique() สำหรับนับยา/คนไม่ซ้ำ"
+          }
+        ],
+
+        init() {
+          this.totalQuestions = this.questions.length;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        },
+
+        selectAnswer(qIdx, optIdx) {
+          if (this.checked[qIdx]) return;
+          this.answers[qIdx] = optIdx;
+        },
+
+        checkAnswer(qIdx) {
+          if (this.answers[qIdx] === null) return;
+          this.checked[qIdx] = true;
+          this.updateScore();
+        },
+
+        getOptionClass(qIdx, optIdx) {
+          if (!this.checked[qIdx]) {
+            return this.answers[qIdx] === optIdx
+              ? 'border-emerald-400 bg-emerald-400/10'
+              : 'border-white/20 hover:border-white/40';
+          }
+          if (optIdx === this.questions[qIdx].answer) {
+            return 'border-green-400 bg-green-400/10';
+          }
+          if (this.answers[qIdx] === optIdx) {
+            return 'border-red-400 bg-red-400/10';
+          }
+          return 'border-white/10 opacity-40';
+        },
+
+        updateScore() {
+          let s = 0;
+          this.questions.forEach((q, i) => {
+            if (this.checked[i] && this.answers[i] === q.answer) s++;
+          });
+          this.score = s;
+        },
+
+        answeredCount() {
+          return Object.values(this.checked).filter(v => v).length;
+        },
+
+        nextQuestion() {
+          if (this.currentQuestion < this.totalQuestions + 1) {
+            this.currentQuestion++;
+          }
+        },
+
+        prevQuestion() {
+          if (this.currentQuestion > 0) {
+            this.currentQuestion--;
+          }
+        },
+
+        resetQuiz() {
+          this.currentQuestion = 0;
+          this.started = false;
+          this.score = null;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        }
+      };
+    }
+    </script>
+  </body>
+</html>
