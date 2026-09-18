@@ -7,6 +7,7 @@ Courses
 
    programming/index
    oop/index
+   fullstack/index
    webdev/index
    mobiledev/index
    dl/index

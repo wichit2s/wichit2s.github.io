@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 1: Introduction to Deep Learning">
+    <meta name="keywords" content="Deep Learning, Neural Networks, AI, Machine Learning">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullstack Web Application Development</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/fullstack/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk02.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+
+            <!-- Slide 0: Title & Overview -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-6 py-8">
+          <span class="bg-emerald-500/20 text-emerald-300 text-sm font-semibold px-4 py-1.5 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-4 inline-block">สัปดาห์ที่ 2 -- ส่วนที่ 1</span>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight mt-2 text-white">
+            สถาปัตยกรรม REST API และเครื่องมือ HTTPie
+          </h1>
+          <p class="text-xl md:text-2xl text-emerald-200 mb-6 font-medium">
+            RESTful API Design, HTTPie CLI / Desktop & Scoop Installation (1145101)
+          </p>
+          <div class="tech-card mb-6 bg-slate-900/80 backdrop-blur border border-slate-700/60 rounded-xl p-6 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-emerald-400 flex items-center justify-center gap-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              เป้าหมายการเรียนรู้สัปดาห์ที่ 2
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-sm md:text-base">
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">1. เข้าใจหลักการและข้อกำหนดของสถาปัตยกรรม <span class="text-emerald-300 font-semibold">REST API</span></div>
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">2. ออกแบบ <span class="text-emerald-300 font-semibold">Resource-Oriented Endpoints</span> และเลือกใช้ HTTP Verbs / Status Codes</div>
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">3. ติดตั้ง <span class="text-emerald-300 font-semibold">HTTPie CLI & Desktop</span> ผ่าน Package Manager <span class="text-emerald-300 font-semibold">Scoop</span></div>
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">4. ฝึกส่งคำสั่งและทดสอบการรับส่งข้อมูล <span class="text-emerald-300 font-semibold">JSON Payload</span> ด้วย HTTPie</div>
+            </div>
+          </div>
+          <div class="text-sm text-slate-300 font-light">รายวิชา การพัฒนาเว็บแอปพลิเคชันเต็มรูปแบบพื้นฐาน -- 3 หน่วยกิต 3(2-2-5)</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Learning Outcomes & Agenda -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">เค้าโครงการเรียนรู้ประจำสัปดาห์</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Week 2 Detailed Agenda & Outline</p>
+
+          <div class="grid md:grid-cols-5 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 border-t-4 border-emerald-400 p-4 rounded-xl shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">ส่วนที่ 1</div>
+              <div class="font-bold text-white text-xs mb-1">REST Overview</div>
+              <div class="text-xs text-slate-300">ความหมาย ข้อกำหนดหลัก และการเปรียบเทียบ API Architectures</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-teal-400 p-4 rounded-xl shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">ส่วนที่ 2</div>
+              <div class="font-bold text-white text-xs mb-1">Endpoint Design</div>
+              <div class="text-xs text-slate-300">Resource Naming, CRUD Mapping, Nested URLs & Query Params</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-cyan-400 p-4 rounded-xl shadow-lg">
+              <div class="text-cyan-400 font-bold text-sm mb-1">ส่วนที่ 3</div>
+              <div class="font-bold text-white text-xs mb-1">Status & Payload</div>
+              <div class="text-xs text-slate-300">Status Codes, JSON Structure, Error Handling & Versioning</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-blue-400 p-4 rounded-xl shadow-lg">
+              <div class="text-blue-400 font-bold text-sm mb-1">ส่วนที่ 4</div>
+              <div class="font-bold text-white text-xs mb-1">Scoop & HTTPie</div>
+              <div class="text-xs text-slate-300">การติดตั้ง Scoop, HTTPie CLI & Desktop และเปรียบเทียบ cURL/Postman</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-indigo-400 p-4 rounded-xl shadow-lg">
+              <div class="text-indigo-400 font-bold text-sm mb-1">ส่วนที่ 5</div>
+              <div class="font-bold text-white text-xs mb-1">Hands-on Lab</div>
+              <div class="text-xs text-slate-300">ฝึกทดสอบ Public API, ออกแบบ API Spec และสรุปการบ้าน</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: What is REST? -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">REST คืออะไร? (Representational State Transfer)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Architectural Style for Distributed Hypermedia Systems</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-6 rounded-xl shadow-2xl text-left mb-4">
+            <p class="text-xs md:text-sm text-slate-200 leading-relaxed mb-4">
+              <strong>REST</strong> ไม่ใช่โปรโตคอลหรือมาตรฐานบังคับ แต่เป็น <span class="text-emerald-300 font-semibold">สถาปัตยกรรมระดับแนวทางปฏิบัติ (Architectural Style)</span> ที่ถูกนำเสนอโดย Roy Fielding ในปี 2000 สำหรับสร้าง Web Services ที่ขยายระบบง่าย (Scalable) และสื่อสารกันผ่านมาตรฐานโปรโตคอล HTTP
+            </p>
+
+            <h3 class="text-emerald-400 font-bold text-sm mb-3">6 ข้อกำหนดสำคัญของสถาปัตยกรรม REST (REST Constraints):</h3>
+            <div class="grid md:grid-cols-3 gap-3 text-xs">
+              <div class="bg-slate-800 p-3 rounded-lg border border-emerald-500/30">
+                <div class="font-bold text-emerald-300 mb-1">1. Client-Server</div>
+                <div class="text-slate-300">แยกส่วน UI และ Data Management ชัดเจน</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded-lg border border-teal-500/30">
+                <div class="font-bold text-teal-300 mb-1">2. Stateless</div>
+                <div class="text-slate-300">ไม่เก็บ Session Context บน Server</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded-lg border border-cyan-500/30">
+                <div class="font-bold text-cyan-300 mb-1">3. Cacheable</div>
+                <div class="text-slate-300"> Response ต้องระบุว่าเก็บแคชได้หรือไม่</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded-lg border border-blue-500/30">
+                <div class="font-bold text-blue-300 mb-1">4. Uniform Interface</div>
+                <div class="text-slate-300">ใช้มาตรฐาน URI/HTTP เดียวกันทั้งระบบ</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded-lg border border-indigo-500/30">
+                <div class="font-bold text-indigo-300 mb-1">5. Layered System</div>
+                <div class="text-slate-300">ต่อซ้อนชั้น Proxy, Load Balancer ได้</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded-lg border border-purple-500/30">
+                <div class="font-bold text-purple-300 mb-1">6. Code on Demand</div>
+                <div class="text-slate-300">ส่งโค้ดไปรันฝั่ง Client ได้ (Optional)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: API Architecture Comparison -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การเปรียบเทียบสถาปัตยกรรม API สมัยใหม่</h2>
+          <p class="text-emerald-300 mb-6 text-sm">REST vs RPC / gRPC vs GraphQL</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border-t-4 border-emerald-400 shadow-lg">
+              <div class="text-emerald-400 font-bold text-base mb-1">REST API</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">Resource-Based</div>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>• เน้นการจัดการทรัพยากร (Nouns) ผ่าน HTTP Verbs</li>
+                <li>• เข้ากันได้ดีกับเว็บบราว์เซอร์ และทำ HTTP Caching ง่าย</li>
+                <li>• มาตรฐานหลักในการพัฒนา Web & Mobile Services</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-t-4 border-teal-400 shadow-lg">
+              <div class="text-teal-400 font-bold text-base mb-1">RPC / gRPC</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">Action-Based</div>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>• เน้นการเรียกใช้ฟังก์ชัน/คำสั่งกริยา (Verbs/Remote Procedures)</li>
+                <li>• ประมวลผลรวดเร็วมากด้วย Binary Protocol (Protobuf)</li>
+                <li>• นิยมใช้สื่อสารระหว่าง Microservices หลังบ้าน</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-t-4 border-cyan-400 shadow-lg">
+              <div class="text-cyan-400 font-bold text-base mb-1">GraphQL</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">Query-Based</div>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>• Client กำหนดโครงสร้างข้อมูลที่ต้องการตอบกลับได้เอง</li>
+                <li>• แก้ปัญหา Over-fetching และ Under-fetching</li>
+                <li>• เหมาะสำหรับระบบที่มี UI ซับซ้อนและข้อมูลหลายความสัมพันธ์</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Part 2 Intro - Resource-Oriented Design -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 2 -- ส่วนที่ 2</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">การออกแบบเน้นทรัพยากร (Resource-Oriented Design)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Shifting from Verbs to Nouns in Web Development</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-rose-500/40 shadow-lg">
+              <div class="text-rose-400 font-bold text-base mb-2 flex items-center gap-2">
+                <span class="text-xl">❌</span> RPC-style Approach (เน้นคำสั่ง)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">สร้าง URL แยกตามการทำงานแต่ละฟังก์ชัน:</p>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-rose-300 space-y-1">
+                <div>POST /getUsers</div>
+                <div>POST /createProduct</div>
+                <div>POST /updateProductPrice?id=10</div>
+                <div>POST /deleteUser</div>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg">
+              <div class="text-emerald-400 font-bold text-base mb-2 flex items-center gap-2">
+                <span class="text-xl">✓</span> RESTful Approach (เน้นทรัพยากร)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">ใช้ URL ระบุทรัพยากร และใช้ HTTP Verb ระบุการกระทำ:</p>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-emerald-300 space-y-1">
+                <div>GET /api/v1/users</div>
+                <div>POST /api/v1/products</div>
+                <div>PATCH /api/v1/products/10</div>
+                <div>DELETE /api/v1/users/5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Naming Conventions for REST Endpoints -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">กฎการตั้งชื่อ REST Endpoints (Naming Conventions)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Best Practices for Clean & Standard URLs</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. ใช้คำนามพหูพจน์ (Plural Nouns)</div>
+              <p class="text-xs text-slate-300">แทนกลุ่มชุดทรัพยากร เช่น `/users`, `/products`, `/orders` แทนคำเอกพจน์</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. ใช้ตัวพิมพ์เล็กและ Hyphen</div>
+              <p class="text-xs text-slate-300">ใช้ตัวพิมพ์เล็กทั้งหมด เชื่อมคำด้วย `-` (kebab-case) เช่น `/order-items` ห้ามใช้ `camelCase` หรือ `_`</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-cyan-400 font-bold text-sm mb-1">3. ห้ามใส่คำกริยาใน URL Path</div>
+              <p class="text-xs text-slate-300">ห้ามใส่คำว่า `/create-user` หรือ `/delete-item` ให้ใช้ HTTP Method แทนการระบุกริยา</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-blue-400 font-bold text-sm mb-1">4. ระบุตัวแทนด้วย Identifier ID</div>
+              <p class="text-xs text-slate-300">เข้าถึงข้อมูลเฉพาะชิ้นโดยการต่อท้ายด้วย ID เช่น `/users/102` หรือ `/orders/88`</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Mapping HTTP Methods to CRUD -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การจับคู่ HTTP Verbs กับ CRUD Operations</h2>
+          <p class="text-emerald-300 mb-6 text-sm">HTTP Methods & Resource Endpoint Matrix</p>
+
+          <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-4 shadow-2xl overflow-x-auto text-left mb-4">
+            <table class="w-full text-xs text-slate-200">
+              <thead>
+                <tr class="border-b border-slate-700 text-emerald-300 font-bold">
+                  <th class="p-2.5">HTTP Verb</th>
+                  <th class="p-2.5">CRUD Operation</th>
+                  <th class="p-2.5">Example Endpoint</th>
+                  <th class="p-2.5">Safe?</th>
+                  <th class="p-2.5">Idempotent?</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr>
+                  <td class="p-2.5 font-bold text-blue-400">GET</td>
+                  <td class="p-2.5">Read (ดึงข้อมูล)</td>
+                  <td class="p-2.5 font-mono text-slate-300">/api/v1/articles</td>
+                  <td class="p-2.5 text-emerald-400">Yes</td>
+                  <td class="p-2.5 text-emerald-400">Yes</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold text-emerald-400">POST</td>
+                  <td class="p-2.5">Create (สร้างข้อมูลใหม่)</td>
+                  <td class="p-2.5 font-mono text-slate-300">/api/v1/articles</td>
+                  <td class="p-2.5 text-rose-400">No</td>
+                  <td class="p-2.5 text-rose-400">No</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold text-amber-400">PUT</td>
+                  <td class="p-2.5">Update (ทดแทนทั้งหมด)</td>
+                  <td class="p-2.5 font-mono text-slate-300">/api/v1/articles/10</td>
+                  <td class="p-2.5 text-rose-400">No</td>
+                  <td class="p-2.5 text-emerald-400">Yes</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold text-orange-400">PATCH</td>
+                  <td class="p-2.5">Update (แก้ไขบางส่วน)</td>
+                  <td class="p-2.5 font-mono text-slate-300">/api/v1/articles/10</td>
+                  <td class="p-2.5 text-rose-400">No</td>
+                  <td class="p-2.5 text-rose-400">No</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold text-rose-400">DELETE</td>
+                  <td class="p-2.5">Delete (ลบข้อมูล)</td>
+                  <td class="p-2.5 font-mono text-slate-300">/api/v1/articles/10</td>
+                  <td class="p-2.5 text-rose-400">No</td>
+                  <td class="p-2.5 text-emerald-400">Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Handling Nested Resources -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การจัดการทรัพยากรเกี่ยวเนื่อง (Nested Resources)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Modeling Parent-Child Relationships in URLs</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-5 rounded-xl shadow-xl text-left mb-4 space-y-3">
+            <h3 class="text-emerald-400 font-bold text-sm">การเชื่อมโยงข้อมูลที่มีความสัมพันธ์กัน:</h3>
+            
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+              <div class="text-xs text-slate-400 mb-1">ดึงความคิดเห็นทั้งหมดใต้บทความ ID: 45</div>
+              <div class="font-mono text-xs text-emerald-300">GET /api/v1/articles/45/comments</div>
+            </div>
+
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+              <div class="text-xs text-slate-400 mb-1">สร้างความคิดเห็นใหม่ใต้บทความ ID: 45</div>
+              <div class="font-mono text-xs text-teal-300">POST /api/v1/articles/45/comments</div>
+            </div>
+
+            <div class="bg-amber-950/40 border border-amber-500/30 p-3 rounded-lg text-xs text-amber-200">
+              คำแนะนำ: หลีกเลี่ยงการซ้อนตำแหน่งเกิน 2 ระดับ เช่น <code class="text-rose-300">/authors/1/books/5/chapters/12</code> ให้ปรับเป็น <code class="text-emerald-300">/chapters/12</code> โดยตรงเพื่อความเรียบง่าย
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Filtering, Sorting, & Pagination -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">Filtering, Sorting & Pagination ด้วย Query Parameters</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Managing Collection Datasets without Changing Resource URLs</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-2">1. Filtering (กรองข้อมูล)</div>
+              <p class="text-xs text-slate-300 mb-2">ส่งเงื่อนไขกรองเฉพาะรายการที่เข้าเกณฑ์:</p>
+              <div class="bg-slate-950 p-2 rounded font-mono text-xs text-emerald-300">
+                GET /products?status=active&category=tech
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-2">2. Sorting (เรียงลำดับ)</div>
+              <p class="text-xs text-slate-300 mb-2">กำหนดฟิลด์และทิศทางในการเรียงลำดับ:</p>
+              <div class="bg-slate-950 p-2 rounded font-mono text-xs text-teal-300">
+                GET /products?sort=-created_at,price
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-cyan-400 font-bold text-sm mb-2">3. Pagination (แบ่งหน้า)</div>
+              <p class="text-xs text-slate-300 mb-2">แบ่งการส่งข้อมูลออกเป็นก้อนเพื่อลดภาระระบบ:</p>
+              <div class="bg-slate-950 p-2 rounded font-mono text-xs text-cyan-300">
+                GET /products?page=2&limit=20
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Part 3 Intro - Status Codes in REST -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 2 -- ส่วนที่ 3</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">HTTP Status Codes ในสถาปัตยกรรม REST</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Meaningful Response Statuses in API Design</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-emerald-400 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-1">200 OK & 201 Created</div>
+              <p class="text-xs text-slate-300">`200` สำหรับดึง/แก้ไขสำเร็จ และ `201` สำหรับคำสั่งสร้างทรัพยากรใหม่สำเร็จ (POST)</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-teal-400 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-1">204 No Content</div>
+              <p class="text-xs text-slate-300">ประมวลผลสำเร็จแต่ไม่มี Response Payload ส่งกลับ (นิยมใช้กับคำสั่ง DELETE)</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-amber-400 shadow-md">
+              <div class="text-amber-400 font-bold text-sm mb-1">400 Bad Request & 422 Unprocessable</div>
+              <p class="text-xs text-slate-300">`400` สำหรับไวยากรณ์ผิดพลาด และ `422` สำหรับกรณีข้อมูลฟอร์มไม่ผ่านการ Validation</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-rose-400 shadow-md">
+              <div class="text-rose-400 font-bold text-sm mb-1">401 Unauthorized & 403 Forbidden</div>
+              <p class="text-xs text-slate-300">`401` เมื่อผู้ใช้ยังไม่ได้ Login และ `403` เมื่อ Login แล้วแต่ไม่มีสิทธิ์เข้าถึงทรัพยากร</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: JSON Payload Design Principles -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">หลักการออกแบบ JSON Payload</h2>
+          <p class="text-emerald-300 mb-6 text-sm">JSON Data Formatting & Naming Conventions</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 font-mono text-xs text-slate-200 shadow-xl">
+              <div class="text-slate-500 mb-1">// Good JSON Payload Example</div>
+              <div class="text-emerald-300">{</div>
+              <div class="text-emerald-300 pl-4">"id": 102,</div>
+              <div class="text-emerald-300 pl-4">"first_name": "Somchai",</div>
+              <div class="text-emerald-300 pl-4">"is_active": true,</div>
+              <div class="text-emerald-300 pl-4">"roles": ["developer", "admin"],</div>
+              <div class="text-emerald-300 pl-4">"created_at": "2026-09-10T08:00:00Z"</div>
+              <div class="text-emerald-300">}</div>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-200">
+              <div class="bg-slate-900/90 p-3.5 rounded-lg border-l-4 border-emerald-400">
+                <div class="font-bold text-emerald-300 mb-0.5">1. Consistent Key Naming</div>
+                <div>ตกลงรูปแบบ Key ร่วมกันให้ชัดเจนในทีม (นิยมใช้ `snake_case` สำหรับ Django/Python หรือ `camelCase` สำหรับ JS)</div>
+              </div>
+              <div class="bg-slate-900/90 p-3.5 rounded-lg border-l-4 border-teal-400">
+                <div class="font-bold text-teal-300 mb-0.5">2. Proper Data Types</div>
+                <div>ใช้ Data Types ให้ถูกต้อง เช่น Boolean (`true/false`), Numbers (`102`) โดยไม่ต้องครอบด้วย String Quote</div>
+              </div>
+              <div class="bg-slate-900/90 p-3.5 rounded-lg border-l-4 border-cyan-400">
+                <div class="font-bold text-cyan-300 mb-0.5">3. ISO 8601 Date Format</div>
+                <div>ส่งข้อมูลวันที่และเวลาในรูปแบบมาตรฐานสากล ISO 8601 เช่น `2026-09-10T08:00:00Z`</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Standard Error Response Structure -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">โครงสร้างการตอบกลับข้อผิดพลาด (Error Handling Schema)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Predictable Error Responses for Client Integration</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-rose-500/50 font-mono text-xs text-slate-200 shadow-xl">
+              <div class="text-slate-500 mb-1">// Standard Error Response Body</div>
+              <div class="text-rose-300">{</div>
+              <div class="text-rose-300 pl-4">"error_code": "VALIDATION_FAILED",</div>
+              <div class="text-rose-300 pl-4">"message": "Invalid form submission data.",</div>
+              <div class="text-rose-300 pl-4">"details": [</div>
+              <div class="text-amber-300 pl-8">{"field": "email", "issue": "Email is already registered."},</div>
+              <div class="text-amber-300 pl-8">{"field": "password", "issue": "Password is too short."}</div>
+              <div class="text-rose-300 pl-4">]</div>
+              <div class="text-rose-300">}</div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700 shadow-lg text-xs space-y-2">
+              <h3 class="font-bold text-emerald-300 text-sm mb-2">ทำไมต้องทำ Error Schema ให้เป็นมาตรฐาน?</h3>
+              <p class="text-slate-300 leading-relaxed">• ช่วยให้ทีมพัฒนาฝั่ง Frontend หรือ Mobile App เขียนสคริปต์ดักจับและแสดงข้อผิดพลาดบน UI ได้อย่างสม่ำเสมอ</p>
+              <p class="text-slate-300 leading-relaxed">• สามารถระบุรายละเอียดฟิลด์ที่ไม่ผ่านเงื่อนไข Validation ช่วยเพิ่มประสบการณ์ผู้ใช้ที่ดีขึ้น</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: API Versioning Strategies -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">กลยุทธ์การจัดการเวอร์ชันของ API (API Versioning)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Managing Backward Compatibility in Growing Applications</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. URI Path Versioning (นิยมที่สุด)</div>
+              <p class="text-xs text-slate-300 mb-3">ระบุเวอร์ชันลงในโครงสร้าง URL โดยตรง อ่านง่าย และทดสอบได้สะดวกรวดเร็ว:</p>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-emerald-300">
+                https://api.demo.com/v1/products<br/>
+                https://api.demo.com/v2/products
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. Header Versioning</div>
+              <p class="text-xs text-slate-300 mb-3">ระบุเวอร์ชันผ่าน Request Header เช่น `Accept` หรือ Custom Header:</p>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-teal-300">
+                Accept: application/vnd.demo.v2+json
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Stateless Authentication Concept -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การยืนยันตัวตนแบบ Stateless ใน REST APIs</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Token-Based Authentication & Authorization Headers</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-5 rounded-xl shadow-2xl text-left mb-4">
+            <h3 class="text-emerald-400 font-bold text-sm mb-2">กลไกการยืนยันตัวตนด้วย Bearer Token (JWT):</h3>
+            <div class="grid md:grid-cols-3 gap-3 text-xs mb-3">
+              <div class="bg-slate-800 p-3 rounded border border-emerald-500/30">
+                <div class="font-bold text-emerald-300 mb-1">1. Authentication</div>
+                <div class="text-slate-300">User ส่ง Username/Password ไปยัง `/api/login`</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded border border-teal-500/30">
+                <div class="font-bold text-teal-300 mb-1">2. Issue Token</div>
+                <div class="text-slate-300">Server ตรวจสอบถูกต้อง แล้วออก Access Token คืนกลับไป</div>
+              </div>
+              <div class="bg-slate-800 p-3 rounded border border-cyan-500/30">
+                <div class="font-bold text-cyan-300 mb-1">3. Authorization Header</div>
+                <div class="text-slate-300">Client แนบ Token ไปกับ Authorization Header ทุกครั้ง</div>
+              </div>
+            </div>
+
+            <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-slate-200">
+              Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Part 4 Intro - Scoop Package Manager -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 2 -- ส่วนที่ 4</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">แนะนำ Scoop Package Manager สำหรับ Windows</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Command-Line Software Installer for Developers</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg">
+              <h3 class="text-emerald-400 font-bold text-base mb-2">Scoop คืออะไร?</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                <strong>Scoop</strong> เป็น Package Manager บน Windows ที่ช่วยให้เราติดตั้ง จัดการ และอัปเดตเครื่องมือพัฒนาซอฟต์แวร์ผ่าน PowerShell ได้ง่ายๆ โดยไม่ต้องกด GUI Wizard หน้าต่างป๊อปอัปให้ยุ่งยาก
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-lg">
+              <h3 class="text-teal-400 font-bold text-base mb-2">ขั้นตอนการติดตั้ง Scoop บน PowerShell:</h3>
+              <div class="bg-slate-950 p-3 rounded font-mono text-xs text-teal-300 space-y-1">
+                <div>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</div>
+                <div>Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Installing HTTPie via Scoop -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การติดตั้ง HTTPie CLI & Desktop ด้วย Scoop</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Installing Modern API Testing Tools in One Command</p>
+
+          <div class="bg-slate-950 p-5 rounded-xl border border-slate-700 text-left font-mono text-xs text-slate-200 mb-5 shadow-2xl space-y-3">
+            <div><span class="text-slate-500"># 1. ติดตั้ง HTTPie CLI (Command-Line Interface)</span></div>
+            <div><span class="text-emerald-400">scoop</span> install httpie</div>
+
+            <div><span class="text-slate-500"># 2. ติดตั้ง HTTPie Desktop (Graphical User Interface)</span></div>
+            <div><span class="text-emerald-400">scoop</span> bucket add extras</div>
+            <div><span class="text-emerald-400">scoop</span> install httpie-desktop</div>
+
+            <div><span class="text-slate-500"># 3. ตรวจสอบเวอร์ชันหลังติดตั้งสำเร็จ</span></div>
+            <div><span class="text-emerald-400">http</span> --version</div>
+          </div>
+
+          <div class="bg-slate-900/80 border border-emerald-500/30 p-3 rounded-lg text-xs text-slate-300 text-center">
+            เพียงเท่านี้ เครื่องคอมพิวเตอร์ของคุณจะพร้อมใช้งานทั้งเครื่องมือทดสอบ API แบบ <span class="text-emerald-300 font-semibold">CLI บน Terminal</span> และแบบ <span class="text-teal-300 font-semibold">Desktop GUI Application</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: HTTPie CLI Fundamentals -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">พื้นฐานการใช้งาน HTTPie CLI</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Human-Friendly Command-Line HTTP Client</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700 shadow-lg text-xs space-y-2">
+              <h3 class="font-bold text-emerald-400 text-sm mb-2">ทำไมต้องเลือกใช้ HTTPie?</h3>
+              <p class="text-slate-300">• ไวยากรณ์สั้นกระชับ เป็นธรรมชาติ สื่อความหมายชัดเจน</p>
+              <p class="text-slate-300">• จัดรูปแบบสีเน้นข้อความ (Syntax Highlighting) และจัดย่อหน้า JSON อัตโนมัติ</p>
+              <p class="text-slate-300">• กำหนดค่า `Content-Type: application/json` ให้อัตโนมัติเมื่อส่งป้อนข้อมูล</p>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 font-mono text-xs text-slate-200 shadow-xl">
+              <div class="text-slate-500 mb-1">// โครงสร้างไวยากรณ์มาตรฐาน</div>
+              <div class="text-emerald-300 font-bold mb-3">http [METHOD] URL [ITEM...]</div>
+              
+              <div class="text-slate-400 mb-1">// ตัวอย่างคำสั่งส่ง GET Request แบบง่าย</div>
+              <div class="text-teal-300">http GET api.demo.com/v1/products</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Sending Requests with HTTPie CLI -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">ตัวอย่างคำสั่ง HTTPie CLI ในรูปแบบต่างๆ</h2>
+          <p class="text-emerald-300 mb-6 text-sm">HTTPie CLI Usage Examples: Parameters, Headers & JSON</p>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 text-left font-mono text-xs text-slate-200 shadow-xl space-y-2.5">
+            <div><span class="text-slate-500"># 1. ส่ง Query Parameters (ใช้สัญลักษณ์ ==)</span></div>
+            <div><span class="text-emerald-400">http</span> GET api.demo.com/products category==tech limit==10</div>
+
+            <div><span class="text-slate-500"># 2. ส่ง JSON Payload สำหรับสร้างข้อมูลใหม่ (ใช้สัญลักษณ์ =)</span></div>
+            <div><span class="text-emerald-400">http</span> POST api.demo.com/products title="Keyboard" price:=1500 is_stock:=true</div>
+
+            <div><span class="text-slate-500"># 3. แนบ Request Header & Authorization Token (ใช้สัญลักษณ์ :)</span></div>
+            <div><span class="text-emerald-400">http</span> GET api.demo.com/profile "Authorization:Bearer token123"</div>
+
+            <div><span class="text-slate-500"># 4. ดูเฉพาะ Response Headers (-h) หรือเฉพาะ Body (-b)</span></div>
+            <div><span class="text-emerald-400">http</span> -h GET api.demo.com/products</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Introduction to HTTPie Desktop -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">รู้จักเครื่องมือ HTTPie Desktop (GUI Interface)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Visual & Intuitive API Testing Environment</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. Visual Request Builder</div>
+              <p class="text-xs text-slate-300">สร้าง Request สลับแท็บ Param, Header, Body (JSON/Form) ได้สะดวกรวดเร็วผ่านหน้าจอ GUI</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. Collections & Spaces</div>
+              <p class="text-xs text-slate-300">จัดกลุ่มรายการ API Endpoints แยกตามโปรเจกต์ เพิ่มความสะดวกในการทำงานร่วมกันเป็นทีม</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-cyan-400 font-bold text-sm mb-1">3. Environment Variables</div>
+              <p class="text-xs text-slate-300">ตั้งค่าตัวแปรสภาพแวดล้อม เช่น `{{base_url}}` หรือ `{{token}}` สำหรับสลับทดสอบระหว่าง Local/Prod</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Tool Comparison: cURL vs HTTPie vs Postman -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">ตารางเปรียบเทียบ cURL vs HTTPie vs Postman</h2>
+          <p class="text-emerald-300 mb-6 text-sm">API Testing Tools Comparison Matrix</p>
+
+          <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-4 shadow-2xl overflow-x-auto text-left mb-4">
+            <table class="w-full text-xs text-slate-200">
+              <thead>
+                <tr class="border-b border-slate-700 text-emerald-300 font-bold">
+                  <th class="p-2.5">คุณสมบัติ</th>
+                  <th class="p-2.5">cURL</th>
+                  <th class="p-2.5 text-emerald-400">HTTPie (CLI & Desktop)</th>
+                  <th class="p-2.5">Postman</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr>
+                  <td class="p-2.5 font-bold">Interface Support</td>
+                  <td class="p-2.5">CLI เท่านั้น</td>
+                  <td class="p-2.5 text-emerald-300 font-bold">CLI & Desktop App</td>
+                  <td class="p-2.5">Desktop App & Cloud</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold">ความง่ายของไวยากรณ์ CLI</td>
+                  <td class="p-2.5">ซับซ้อน ต้องจดจำตัวแปรดิบ</td>
+                  <td class="p-2.5 text-emerald-300 font-bold">อ่านง่าย เป็นธรรมชาติ</td>
+                  <td class="p-2.5">ไม่มี CLI หลัก (ต้องใช้ Newman)</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold">การจัดรูปแบบ JSON/Color</td>
+                  <td class="p-2.5">ข้อความเปล่า ต้องต่อท่อ `jq`</td>
+                  <td class="p-2.5 text-emerald-300 font-bold">สีสันสวยงาม & จัดย่อหน้าในตัว</td>
+                  <td class="p-2.5">สวยงามผ่าน GUI</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-bold">การติดตั้งบน Windows</td>
+                  <td class="p-2.5">มีในตัว (PowerShell)</td>
+                  <td class="p-2.5 text-emerald-300 font-bold">ติดตั้งง่ายผ่าน Scoop</td>
+                  <td class="p-2.5">ดาวน์โหลดไฟล์ `.exe` ขนาดใหญ่</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Part 5 Intro - Hands-on Lab -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 2 -- ส่วนที่ 5</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">ปฏิบัติการทดสอบ Public REST APIs ด้วย HTTPie</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Hands-on Lab Exercise: Testing Live Mock Services</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-5 rounded-xl shadow-xl text-left mb-4 space-y-3">
+            <h3 class="text-emerald-400 font-bold text-sm">โจทย์ทดสอบปฏิบัติการในชั้นเรียน:</h3>
+            <p class="text-xs text-slate-300">ใช้ **HTTPie CLI** บน Terminal หรือ **HTTPie Desktop** ยิง Request ไปยัง Public API (<code class="text-emerald-300">https://jsonplaceholder.typicode.com</code>):</p>
+            
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs font-mono space-y-1">
+              <div><span class="text-slate-500"># 1. อ่านโพสต์ทั้งหมด</span> -> <span class="text-emerald-300">http GET https://jsonplaceholder.typicode.com/posts</span></div>
+              <div><span class="text-slate-500"># 2. สร้างโพสต์ใหม่</span> -> <span class="text-teal-300">http POST https://jsonplaceholder.typicode.com/posts title="My Post" userId:=1</span></div>
+              <div><span class="text-slate-500"># 3. ลบโพสต์ ID 1</span> -> <span class="text-rose-300">http DELETE https://jsonplaceholder.typicode.com/posts/1</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: API Design Specification Exercise -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">กิจกรรมออกแบบโครงสร้าง RESTful API Specification</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Small Group Workshop: E-Commerce / Store API Design</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg text-xs space-y-2">
+              <h3 class="font-bold text-emerald-300 text-sm mb-2">โจทย์เวิร์กชอปกลุ่มย่อย:</h3>
+              <p class="text-slate-300">ออกแบบโครงสร้าง Endpoints สำหรับระบบร้านค้าออนไลน์ (Store System) ที่ประกอบด้วยทรัพยากร **Products** และ **Orders**</p>
+              <p class="text-slate-300">• กำหนด HTTP Method, URL Path และ Status Code ให้ถูกต้องตามมาตรฐาน REST</p>
+              <p class="text-slate-300">• เขียนโครงสร้าง JSON Request / Response Body จำลอง</p>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 font-mono text-xs text-slate-200 shadow-xl space-y-1">
+              <div class="text-emerald-400 font-bold mb-1">// ตัวอย่างผลลัพธ์ที่ต้องส่ง</div>
+              <div>GET /api/v1/products</div>
+              <div>POST /api/v1/products</div>
+              <div>GET /api/v1/users/12/orders</div>
+              <div>DELETE /api/v1/orders/99</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Week 2 Key Takeaways -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">สรุปประเด็นสำคัญสัปดาห์ที่ 2</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Week 2 Key Takeaways & Summary</p>
+
+          <div class="grid md:grid-cols-4 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-emerald-500/40 shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">REST Constraints</div>
+              <p class="text-xs text-slate-300">สถาปัตยกรรมแบบ Stateless, Client-Server และ Uniform Interface</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-teal-500/40 shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">Resource URLs</div>
+              <p class="text-xs text-slate-300">ใช้คำนามพหูพจน์ระบุทรัพยากร จับคู่ CRUD กับ HTTP Verbs</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-cyan-500/40 shadow-lg">
+              <div class="text-cyan-400 font-bold text-sm mb-1">Scoop Installation</div>
+              <p class="text-xs text-slate-300">ใช้ Scoop บน Windows ติดตั้งเครื่องมือสาย Dev ได้สะดวกผ่าน Terminal</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-blue-500/40 shadow-lg">
+              <div class="text-blue-400 font-bold text-sm mb-1">HTTPie Tools</div>
+              <p class="text-xs text-slate-300">ใช้ HTTPie CLI & Desktop ทดสอบการรับส่ง JSON Payload อย่างมีประสิทธิภาพ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Weekly Lab & Self-Study Guide -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">งานปฏิบัติการและการศึกษาด้วยตนเอง</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Weekly Assignment & Self-Study Guide (5 Hours/Week)</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg">
+              <h3 class="text-emerald-400 font-bold text-base mb-2">1. งานปฏิบัติการประจำสัปดาห์ (Lab 2)</h3>
+              <ul class="text-xs text-slate-200 space-y-2">
+                <li>• ติดตั้ง Scoop, HTTPie CLI และ HTTPie Desktop บนเครื่องคอมพิวเตอร์ตนเอง</li>
+                <li>• เขียนสคริปต์คำสั่ง HTTPie CLI ทดสอบการยิง Request 5 รูปแบบ แล้วจับภาพหน้าจอผลลัพธ์ส่งในรายงาน</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-lg">
+              <h3 class="text-teal-400 font-bold text-base mb-2">2. หัวข้อศึกษาด้วยตนเอง (5 ชม./สัปดาห์)</h3>
+              <ul class="text-xs text-slate-200 space-y-2">
+                <li>• ศึกษาบทความเปรียบเทียบสถาปัตยกรรม Monolithic vs Microservices เพื่อเตรียมตัวสำหรับสัปดาห์ถัดไป</li>
+                <li>• ฝึกใช้ตัวแปร Environment ใน HTTPie Desktop เพื่อทดสอบ API Endpoints</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: Next Week Teaser (Week 3 Preview) -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">เกริ่นนำบทเรียนครั้งต่อไป</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">สัปดาห์ที่ 3: System Design Overview (Part I)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Monolithic vs Microservices Architecture & Architectural Trade-offs</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-6 rounded-xl text-left max-w-3xl mx-auto shadow-2xl">
+            <h3 class="font-bold text-emerald-300 mb-3 text-sm">หัวข้อที่จะเรียนรู้ในสัปดาห์ที่ 3:</h3>
+            <ul class="text-xs text-slate-200 space-y-2.5">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>ภาพรวม System Design:</strong> การจัดวางสถาปัตยกรรมระบบเว็บแอปพลิเคชันและการวางเลเยอร์ (Frontend, Backend, Database)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-teal-400 font-bold">•</span>
+                <span><strong>Monolith vs Microservices:</strong> การเปรียบเทียบข้อดี ข้อเสีย และข้อแลกเปลี่ยน (Trade-offs) ในการเลือกสถาปัตยกรรม</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>System Architecture Diagram:</strong> การเขียนและวิเคราะห์แผนผังสถาปัตยกรรมระบบสำหรับโปรเจกต์จริง</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

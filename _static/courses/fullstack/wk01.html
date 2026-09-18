@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Deep Learning Week 1: Introduction to Deep Learning">
+    <meta name="keywords" content="Deep Learning, Neural Networks, AI, Machine Learning">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullstack Web Application Development</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body class="bg-gray-50" x-data="slideshow()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/fullstack/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+      <span x-text="currentSlide+1"></span> / <span x-text="totalSlides"></span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="previousSlide()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./wk01.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <button id="nextSlide" @click="nextSlide()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+
+    <div x-ref="slidesContainer">
+
+            <!-- Slide 0: Title & Course Intro -->
+      <div :class="{ 'active': currentSlide === 0 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="text-center max-w-5xl mx-auto px-6 py-8">
+          <span class="bg-emerald-500/20 text-emerald-300 text-sm font-semibold px-4 py-1.5 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-4 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 1</span>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight mt-2 text-white">
+            การพัฒนาเว็บแอปพลิเคชันเต็มรูปแบบพื้นฐาน
+          </h1>
+          <p class="text-xl md:text-2xl text-emerald-200 mb-6 font-medium">
+            Basic Full Stack Web Application Development (1145101)
+          </p>
+          <div class="tech-card mb-6 bg-slate-900/80 backdrop-blur border border-slate-700/60 rounded-xl p-6 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-emerald-400 flex items-center justify-center gap-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              เป้าหมายการเรียนรู้สัปดาห์ที่ 1
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4 text-left text-sm md:text-base">
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">1. เข้าใจสถาปัตยกรรม <span class="text-emerald-300 font-semibold">Client-Server</span> และการแบ่งส่วนหน้าที่</div>
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">2. อธิบายกลไกการทำงานของ <span class="text-emerald-300 font-semibold">IP Address & DNS</span></div>
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">3. เข้าใจโครงสร้างโปรโตคอล <span class="text-emerald-300 font-semibold">HTTP Request & Response</span></div>
+              <div class="bg-slate-800/60 p-3.5 rounded-lg border border-slate-700/40">4. ใช้เครื่องมือ <span class="text-emerald-300 font-semibold">Browser DevTools & cURL</span> ตรวจสอบทราฟฟิก</div>
+            </div>
+          </div>
+          <div class="text-sm text-slate-300 font-light">จำนวน 3 หน่วยกิต 3(2-2-5) -- บรรยาย 2 ชม. | ปฏิบัติ 2 ชม. | ศึกษาด้วยตนเอง 5 ชม./สัปดาห์</div>
+        </div>
+      </div>
+
+      <!-- Slide 1: Course Objectives & Evaluation Structure -->
+      <div :class="{ 'active': currentSlide === 1 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-8 w-full text-center">
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">วัตถุประสงค์และสัดส่วนการประเมินผล</h2>
+          <p class="text-emerald-300 mb-6 text-base">Course Objectives & Evaluation Structure</p>
+          
+          <div class="grid md:grid-cols-5 gap-3 mb-6 text-left">
+            <div class="bg-slate-900/90 border-t-4 border-emerald-400 p-4 rounded-xl shadow-lg">
+              <div class="text-3xl font-extrabold text-emerald-400 mb-1">10%</div>
+              <div class="font-bold text-sm text-white mb-1">เข้าชั้นเรียน</div>
+              <div class="text-xs text-slate-300">การมีส่วนร่วมและพฤติกรรมในชั้นเรียน</div>
+            </div>
+            <div class="bg-slate-900/90 border-t-4 border-teal-400 p-4 rounded-xl shadow-lg">
+              <div class="text-3xl font-extrabold text-teal-400 mb-1">20%</div>
+              <div class="font-bold text-sm text-white mb-1">งานปฏิบัติการ</div>
+              <div class="text-xs text-slate-300">แบบฝึกหัดและการทดลองรายสัปดาห์</div>
+            </div>
+            <div class="bg-slate-900/90 border-t-4 border-cyan-400 p-4 rounded-xl shadow-lg">
+              <div class="text-3xl font-extrabold text-cyan-400 mb-1">25%</div>
+              <div class="font-bold text-sm text-white mb-1">กลางภาค</div>
+              <div class="text-xs text-slate-300">สอบวัดความรู้ & โครงงานย่อย Midterm</div>
+            </div>
+            <div class="bg-slate-900/90 border-t-4 border-blue-400 p-4 rounded-xl shadow-lg">
+              <div class="text-3xl font-extrabold text-blue-400 mb-1">30%</div>
+              <div class="font-bold text-sm text-white mb-1">โครงงานปลายภาค</div>
+              <div class="text-xs text-slate-300">Full-Stack App + Podman Deployment</div>
+            </div>
+            <div class="bg-slate-900/90 border-t-4 border-indigo-400 p-4 rounded-xl shadow-lg">
+              <div class="text-3xl font-extrabold text-indigo-400 mb-1">15%</div>
+              <div class="font-bold text-sm text-white mb-1">นำเสนอ & สรุป</div>
+              <div class="text-xs text-slate-300">นำเสนอผลงาน และเอกสารรายงาน</div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-5 text-left text-sm text-slate-200">
+            <h3 class="font-bold text-emerald-300 mb-2 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              ข้อตกลงในการเรียน
+            </h3>
+            <ul class="list-disc list-inside space-y-1 text-slate-300">
+              <li>เน้นการปฏิบัติจริงบนเครื่องคอมพิวเตอร์ส่วนบุคคลด้วยเครื่องมือ Open Source ทั้งหมด</li>
+              <li>ส่งงานปฏิบัติการและซอร์สโค้ดผ่านทางระบบควบคุมเวอร์ชัน (Git Repository)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: 15-Week Roadmap -->
+      <div :class="{ 'active': currentSlide === 2 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-1 text-white">เส้นทางการเรียนรู้ 15 สัปดาห์</h2>
+          <p class="text-emerald-300 mb-5 text-sm">15-Week Learning Roadmap</p>
+          
+          <div class="grid md:grid-cols-4 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 border border-emerald-500/40 p-4 rounded-xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 bg-emerald-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded-bl-lg">เฟส 1</div>
+              <div class="text-emerald-400 font-bold text-base mb-1">สัปดาห์ที่ 1 - 3</div>
+              <div class="text-white font-semibold text-sm mb-2">Web & System Foundations</div>
+              <p class="text-xs text-slate-300 leading-relaxed">Client-Server, DNS/IP, HTTP/HTTPS, REST Concepts, HTTPie Desktop & CLI, System Design Overview</p>
+            </div>
+            
+            <div class="bg-slate-900/90 border border-teal-500/40 p-4 rounded-xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 bg-teal-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded-bl-lg">เฟส 2</div>
+              <div class="text-teal-400 font-bold text-base mb-1">สัปดาห์ที่ 4 - 8</div>
+              <div class="text-white font-semibold text-sm mb-2">Django Full-Stack Core</div>
+              <p class="text-xs text-slate-300 leading-relaxed">Django MVT Architecture, ORM & Normalization, Views/Templates, Forms, Session Management & Midterm</p>
+            </div>
+
+            <div class="bg-slate-900/90 border border-cyan-500/40 p-4 rounded-xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 bg-cyan-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded-bl-lg">เฟส 3</div>
+              <div class="text-cyan-400 font-bold text-base mb-1">สัปดาห์ที่ 9 - 12</div>
+              <div class="text-white font-semibold text-sm mb-2">APIs & Security</div>
+              <p class="text-xs text-slate-300 leading-relaxed">Web Security (XSS/CSRF), Django REST Framework (DRF), JWT Token Auth, CORS & Caching Framework</p>
+            </div>
+
+            <div class="bg-slate-900/90 border border-blue-500/40 p-4 rounded-xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 bg-blue-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded-bl-lg">เฟส 4</div>
+              <div class="text-blue-400 font-bold text-base mb-1">สัปดาห์ที่ 13 - 15</div>
+              <div class="text-white font-semibold text-sm mb-2">Container & Deployment</div>
+              <p class="text-xs text-slate-300 leading-relaxed">Podman Containerization, Multi-Container Stack (Nginx + Gunicorn + Django + Postgres) & Project Presentation</p>
+            </div>
+          </div>
+
+          <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-lg p-3 text-center text-xs text-emerald-200">
+            เป้าหมายปลายทาง: สามารถออกแบบ พัฒนา และ Deploy ระบบ Full-Stack Application ได้ด้วยตนเองบนคอมพิวเตอร์เครื่องเดียว
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Week 1 Agenda -->
+      <div :class="{ 'active': currentSlide === 3 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-4xl mx-auto px-6 py-8 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">เค้าโครงการเรียนรู้สัปดาห์ที่ 1</h2>
+          <p class="text-emerald-300 mb-6 text-base">Week 1 Detailed Agenda</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg flex gap-4 items-start">
+              <div class="bg-emerald-500 text-slate-950 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">1</div>
+              <div>
+                <h3 class="font-bold text-white text-base mb-1">แนะนำรายวิชา & Client-Server Model</h3>
+                <p class="text-xs text-slate-300">ภาพรวมรายวิชา ปรัชญาการพัฒนาเว็บ และการแบ่งส่วนความรับผิดชอบระหว่าง Client กับ Server</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg flex gap-4 items-start">
+              <div class="bg-teal-500 text-slate-950 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">2</div>
+              <div>
+                <h3 class="font-bold text-white text-base mb-1">ระบบ IP Address & DNS Lookup</h3>
+                <p class="text-xs text-slate-300">หมายเลขไอพี Port การแปลงชื่อโดเมน การทำ DNS Caching และการทำงานของไฟล์ Hosts</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg flex gap-4 items-start">
+              <div class="bg-cyan-500 text-slate-950 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">3</div>
+              <div>
+                <h3 class="font-bold text-white text-base mb-1">โปรโตคอล HTTP/HTTPS & Security</h3>
+                <p class="text-xs text-slate-300">โครงสร้าง Request/Response, HTTP Methods, Status Codes และการเข้ารหัส SSL/TLS</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg flex gap-4 items-start">
+              <div class="bg-blue-500 text-slate-950 font-bold w-8 h-8 rounded-full flex items-center justify-center shrink-0">4</div>
+              <div>
+                <h3 class="font-bold text-white text-base mb-1">ภาคปฏิบัติการตรวจสอบทราฟฟิก</h3>
+                <p class="text-xs text-slate-300">ทดลองใช้ Browser DevTools (Network Tab), cURL และตั้งค่าสภาพแวดล้อมบนเครื่องส่วนบุคคล</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Part 2 Intro - Client-Server Architecture -->
+      <div :class="{ 'active': currentSlide === 4 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 2</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">สถาปัตยกรรม Client-Server</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Client-Server Architecture Fundamentals</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 border-2 border-emerald-500/50 p-5 rounded-xl shadow-xl">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-emerald-500/20 rounded-lg text-emerald-400">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h6l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-emerald-400">Client (ฝั่งผู้ใช้ / ส่วนหน้า)</h3>
+                  <p class="text-xs text-slate-300">Initiates Requests</p>
+                </div>
+              </div>
+              <ul class="text-xs text-slate-200 space-y-2">
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">•</span> เป็นผู้เริ่มต้นส่งคำร้องขอ (Request) ไปยังเซิร์ฟเวอร์</li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">•</span> รับผิดชอบการแสดงผลส่วนต่อประสานผู้ใช้ (User Interface)</li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">•</span> ตัวอย่าง: Web Browser, Mobile Application, HTTPie, cURL</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 border-2 border-teal-500/50 p-5 rounded-xl shadow-xl">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-teal-500/20 rounded-lg text-teal-400">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-teal-400">Server (ฝั่งผู้ให้บริการ / ส่วนหลัง)</h3>
+                  <p class="text-xs text-slate-300">Processes & Responds</p>
+                </div>
+              </div>
+              <ul class="text-xs text-slate-200 space-y-2">
+                <li class="flex items-start gap-2"><span class="text-teal-400 font-bold">•</span> รอรับและประมวลผลคำร้องขอจาก Client</li>
+                <li class="flex items-start gap-2"><span class="text-teal-400 font-bold">•</span> จัดการตรรกะทางธุรกิจ (Business Logic) และเก็บรักษาข้อมูล</li>
+                <li class="flex items-start gap-2"><span class="text-teal-400 font-bold">•</span> ตอบกลับด้วยคำตอบ (Response) เช่น HTML, JSON, Media</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg text-xs text-slate-300 text-center">
+            หลักการสำคัญ: <span class="text-emerald-300 font-semibold">Separation of Concerns</span> ช่วยให้การพัฒนาฝั่งหน้าบ้านและหลังบ้านสามารถแยกออกจากกันและทำงานร่วมกันอย่างมีระบบ
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Understanding the Client Side (Frontend) -->
+      <div :class="{ 'active': currentSlide === 5 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">เจาะลึกองค์ประกอบฝั่ง Client (Frontend)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Client Technology Stack & Responsibilities</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-5">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/60 shadow-lg">
+              <div class="text-emerald-400 font-bold text-base mb-2 flex items-center gap-2">
+                <span class="w-3 h-3 bg-emerald-400 rounded-full"></span> HTML5 (Structure)
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                กำหนดโครงสร้างและองค์ประกอบของเนื้อหาบนหน้าเว็บ เช่น หัวข้อ ข้อความ ฟอร์มป้อนข้อมูล และลิงก์เชื่อมโยง
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/60 shadow-lg">
+              <div class="text-teal-400 font-bold text-base mb-2 flex items-center gap-2">
+                <span class="w-3 h-3 bg-teal-400 rounded-full"></span> CSS3 (Presentation)
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                จัดการตกแต่งความสวยงาม จัดวางเลย์เอาต์ ควบคุมสี ฟอนต์ และจัดทำ Responsive Design รองรับทุกขนาดหน้าจอ
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/60 shadow-lg">
+              <div class="text-cyan-400 font-bold text-base mb-2 flex items-center gap-2">
+                <span class="w-3 h-3 bg-cyan-400 rounded-full"></span> JavaScript (Behavior)
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                สร้างความตื่นตัวและโต้ตอบ (Interactivity) จัดการ DOM และส่ง HTTP Request แบบ asynchronous ผ่าน Fetch API
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 border border-emerald-500/30 p-4 rounded-xl text-left">
+            <div class="text-sm font-bold text-emerald-300 mb-1">หน้าที่หลักของ Client ในระบบ Full-Stack Web App:</div>
+            <div class="grid md:grid-cols-2 gap-2 text-xs text-slate-200">
+              <div>• ตรวจสอบความถูกต้องของข้อมูลเบื้องต้น (Client-Side Validation)</div>
+              <div>• ส่งสัญญาณ Request พร้อม Headers/Payload ตามโปรโตคอล</div>
+              <div>• แปลงข้อมูลคำตอบ (Response Payload) มาแสดงผลบน UI</div>
+              <div>• จัดเก็บข้อมูลสถานะชั่วคราวบนเบราว์เซอร์ (LocalStorage / Cookies)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Understanding the Server Side (Backend) -->
+      <div :class="{ 'active': currentSlide === 6 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">เจาะลึกองค์ประกอบฝั่ง Server (Backend)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Server-Side Layers & Infrastructure</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-5">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/60 shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. Web / Application Server</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">Nginx / Gunicorn / WSGI</div>
+              <p class="text-xs text-slate-300">
+                ทำหน้าที่รับ HTTP Connection, จัดการ SSL Termination, บริการไฟล์ Static และส่งต่อ Request ให้กับแอปพลิเคชัน
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/60 shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. Business Logic Layer</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">Django Framework</div>
+              <p class="text-xs text-slate-300">
+                ประมวลผลตรรกะของระบบ ตรวจสอบสิทธิ์ผู้ใช้ (Authentication/Authorization) และจัดการเส้นทาง URL (Routing)
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/60 shadow-lg">
+              <div class="text-cyan-400 font-bold text-sm mb-1">3. Data Persistence Layer</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">Database (PostgreSQL / SQLite)</div>
+              <p class="text-xs text-slate-300">
+                จัดเก็บข้อมูลอย่างถาวรและเป็นระเบียบ ทำงานผ่าน Django ORM เพื่ออ่าน เขียน และอัปเดตข้อมูลในฐานข้อมูล
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-amber-950/40 border border-amber-500/30 p-3.5 rounded-lg text-xs text-amber-200 text-center">
+            ข้อควรระวัง: เซิร์ฟเวอร์ต้องทำหน้าที่เป็น <span class="font-bold underline">Single Source of Truth</span> และดูแลความปลอดภัยอย่างเคร่งครัด ห้ามเชื่อถือข้อมูลที่ส่งมาจาก Client โดยไม่มีการตรวจสอบ
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: The Request-Response Cycle -->
+      <div :class="{ 'active': currentSlide === 7 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">วงจรการทำงาน Request-Response</h2>
+          <p class="text-emerald-300 mb-6 text-sm">The Complete Web Request-Response Lifecycle</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-5 mb-5 shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+              
+              <div class="bg-slate-800 p-3 rounded-lg border border-emerald-500/40 w-full md:w-1/4 text-center">
+                <div class="bg-emerald-500 text-slate-950 font-black rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">1</div>
+                <div class="font-bold text-emerald-300 mb-1">Client Request</div>
+                <div class="text-slate-300">ผู้ใช้กดปุ่ม หรือส่งฟอร์ม เบราว์เซอร์สร้าง HTTP Request Packet</div>
+              </div>
+
+              <div class="text-emerald-400 font-bold hidden md:block text-xl">➔</div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-teal-500/40 w-full md:w-1/4 text-center">
+                <div class="bg-teal-500 text-slate-950 font-black rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">2</div>
+                <div class="font-bold text-teal-300 mb-1">Network & Web Server</div>
+                <div class="text-slate-300">ข้อมูลส่งผ่านอินเทอร์เน็ต เซิร์ฟเวอร์รับแพ็กเกจและส่งเข้า App</div>
+              </div>
+
+              <div class="text-teal-400 font-bold hidden md:block text-xl">➔</div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-cyan-500/40 w-full md:w-1/4 text-center">
+                <div class="bg-cyan-500 text-slate-950 font-black rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">3</div>
+                <div class="font-bold text-cyan-300 mb-1">Django App Logic</div>
+                <div class="text-slate-300">URL Routing -> View -> Query DB -> Render Template / JSON</div>
+              </div>
+
+              <div class="text-cyan-400 font-bold hidden md:block text-xl">➔</div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-blue-500/40 w-full md:w-1/4 text-center">
+                <div class="bg-blue-500 text-slate-950 font-black rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">4</div>
+                <div class="font-bold text-blue-300 mb-1">Server Response</div>
+                <div class="text-slate-300">ตอบกลับด้วย HTTP Response Packet เบราว์เซอร์วาดหน้าจอ UI</div>
+              </div>
+
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-300 max-w-3xl mx-auto">
+            กระบวนการทั้งหมดนี้เกิดขึ้นอย่างรวดเร็ว (มักใช้เวลาน้อยกว่า 100 มิลลิวินาทีในสภาพแวดล้อมที่ได้รับการปรับแต่งประสิทธิภาพ)
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 8: Stateless Protocol Concept -->
+      <div :class="{ 'active': currentSlide === 8 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">แนวคิดเรื่อง Stateless Protocol</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Understanding Statelessness in Web Communications</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-5">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg">
+              <h3 class="text-emerald-400 font-bold text-lg mb-2">Stateless หมายถึงอะไร?</h3>
+              <p class="text-xs text-slate-200 leading-relaxed mb-3">
+                เซิร์ฟเวอร์ <span class="text-emerald-300 font-semibold">จะไม่จดจำ Context หรือสถานะ</span> ของคำร้องขอก่อนหน้าเลย แต่ละ HTTP Request ที่ส่งเข้ามาจะถูกประมวลผลเสมือนเป็นคำร้องขอแรกและแยกเป็นอิสระต่อกันโดยสมบูรณ์
+              </p>
+              <div class="bg-slate-800/80 p-3 rounded-lg text-xs text-slate-300 border-l-4 border-emerald-400">
+                ข้อดี: ทำให้ระบบทำ Horizontal Scaling ได้ง่าย ขยายเซิร์ฟเวอร์กี่เครื่องก็ได้เพราะไม่มีเครื่องใดถือกรรมสิทธิ์ Session ของผู้ใช้ไว้คนเดียว
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg">
+              <h3 class="text-teal-400 font-bold text-lg mb-2">คำถาม: แล้วเว็บรู้ได้อย่างไรว่าเราคือใคร?</h3>
+              <p class="text-xs text-slate-200 leading-relaxed mb-3">
+                หาก HTTP เป็น Stateless เราต้องใช้กลไกพิเศษในการส่งข้อมูลระบุตัวตนแนบไปกับ <span class="text-teal-300 font-semibold">ทุกๆ Request</span>
+              </p>
+              <ul class="text-xs text-slate-300 space-y-2">
+                <li class="flex items-center gap-2"><span class="text-teal-400">✓</span> <strong>Cookies & Sessions:</strong> ส่ง Session ID แนบไปใน Cookie Header</li>
+                <li class="flex items-center gap-2"><span class="text-teal-400">✓</span> <strong>Token-based (JWT):</strong> ส่ง Bearer Token แนบไปใน Authorization Header</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Part 3 Intro - IP Address & Ports -->
+      <div :class="{ 'active': currentSlide === 9 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 3</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">การระบุตำแหน่งบนเครือข่าย: IP Address & Ports</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Network Addressing Essentials</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-lg mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                IP Address (ที่อยู่บนเครือข่าย)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">เปรียบเสมือนบ้านเลขที่ของเครื่องคอมพิวเตอร์ในระบบเครือข่าย</p>
+              <ul class="text-xs text-slate-200 space-y-1.5">
+                <li>• <strong>IPv4:</strong> เช่น <code class="bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded">192.168.1.1</code> หรือ <code class="bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded">142.250.199.14</code></li>
+                <li>• <strong>IPv6:</strong> รูปแบบใหม่รองรับอุปกรณ์จำนวนมาก</li>
+                <li>• <strong>Localhost:</strong> <code class="bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded">127.0.0.1</code> (หมายถึงเครื่องตนเอง)</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-lg">
+              <div class="flex items-center gap-2 text-teal-400 font-bold text-lg mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                Port Number (ประตูช่องทางบริการ)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">เปรียบเสมือนประตูหมายเลขห้องที่ให้บริการแอปพลิเคชันเฉพาะทาง</p>
+              <div class="grid grid-cols-2 gap-2 text-xs text-slate-200">
+                <div class="bg-slate-800/80 p-2 rounded"><strong>Port 80:</strong> HTTP</div>
+                <div class="bg-slate-800/80 p-2 rounded"><strong>Port 443:</strong> HTTPS</div>
+                <div class="bg-slate-800/80 p-2 rounded"><strong>Port 8000:</strong> Django Dev</div>
+                <div class="bg-slate-800/80 p-2 rounded"><strong>Port 5432:</strong> PostgreSQL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Domain Name System Fundamentals -->
+      <div :class="{ 'active': currentSlide === 10 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">ระบบชื่อโดเมน (DNS Fundamentals)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Domain Name System -- The Internet's Directory</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-6 rounded-xl shadow-xl text-left mb-5">
+            <h3 class="text-emerald-400 font-bold text-lg mb-2">ทำไมต้องมี DNS?</h3>
+            <p class="text-xs text-slate-200 leading-relaxed mb-4">
+              มนุษย์จดจำชื่อข้อความได้ดี เช่น <code class="text-emerald-300 font-mono">app.demo.com</code> แต่เครื่องคอมพิวเตอร์และอุปกรณ์เครือข่ายสื่อสารกันผ่านหมายเลข IP Address เช่น <code class="text-emerald-300 font-mono">192.0.2.1</code> ดังนั้น DNS จึงทำหน้าที่เป็น <span class="text-emerald-300 font-semibold">สมุดโทรศัพท์ของอินเทอร์เน็ต (Internet Phonebook)</span> ในการแปลงชื่อโดเมนเป็นหมายเลขไอพี
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-3 text-center text-xs">
+              <div class="bg-slate-800/90 p-3 rounded-lg border border-emerald-500/30">
+                <div class="text-emerald-300 font-bold mb-1">1. User Inputs URL</div>
+                <div class="font-mono text-slate-300">https://app.demo.com</div>
+              </div>
+              <div class="bg-slate-800/90 p-3 rounded-lg border border-teal-500/30">
+                <div class="text-teal-300 font-bold mb-1">2. DNS Translation</div>
+                <div class="text-slate-300">DNS Server แปลงเป็น IP</div>
+              </div>
+              <div class="bg-slate-800/90 p-3 rounded-lg border border-cyan-500/30">
+                <div class="text-cyan-300 font-bold mb-1">3. Connect to IP</div>
+                <div class="font-mono text-slate-300">192.0.2.1:443</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: How DNS Resolution Works Step-by-Step -->
+      <div :class="{ 'active': currentSlide === 11 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">ขั้นตอนการทำงานของ DNS Resolution</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Step-by-Step DNS Resolution Process</p>
+
+          <div class="grid md:grid-cols-3 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-emerald-400 shadow-md">
+              <div class="text-emerald-400 font-bold text-xs mb-1">ขั้นตอนที่ 1</div>
+              <div class="font-bold text-white text-sm mb-1">Browser & OS Cache Check</div>
+              <p class="text-xs text-slate-300">เบราว์เซอร์และระบบปฏิบัติการตรวจสอบในหน่วยความจำแคชของเครื่องตนเองก่อน</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-teal-400 shadow-md">
+              <div class="text-teal-400 font-bold text-xs mb-1">ขั้นตอนที่ 2</div>
+              <div class="font-bold text-white text-sm mb-1">DNS Recursive Resolver</div>
+              <p class="text-xs text-slate-300">หากไม่พบ จะส่งคำถามไปยัง DNS ของ ISP หรือ Public DNS (เช่น 8.8.8.8, 1.1.1.1)</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-cyan-400 shadow-md">
+              <div class="text-cyan-400 font-bold text-xs mb-1">ขั้นตอนที่ 3</div>
+              <div class="font-bold text-white text-sm mb-1">Root Name Server</div>
+              <p class="text-xs text-slate-300">ชี้เบาะแสต่อไปยัง TLD Server ตามนามสกุลโดเมน (เช่น .com, .org, .th)</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-blue-400 shadow-md">
+              <div class="text-blue-400 font-bold text-xs mb-1">ขั้นตอนที่ 4</div>
+              <div class="font-bold text-white text-sm mb-1">TLD Name Server</div>
+              <p class="text-xs text-slate-300">ชี้เบาะแสไปยัง Authoritative Name Server ที่ดูแลโดเมนนั้นๆ โดยตรง</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-indigo-400 shadow-md">
+              <div class="text-indigo-400 font-bold text-xs mb-1">ขั้นตอนที่ 5</div>
+              <div class="font-bold text-white text-sm mb-1">Authoritative Server</div>
+              <p class="text-xs text-slate-300">คืนค่าหมายเลข IP Address จริงของโดเมนนั้นกลับมาให้เครื่อง Client</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-l-4 border-purple-400 shadow-md">
+              <div class="text-purple-400 font-bold text-xs mb-1">ขั้นตอนที่ 6</div>
+              <div class="font-bold text-white text-sm mb-1">Caching & HTTP Request</div>
+              <p class="text-xs text-slate-300">บันทึก IP ลงใน Cache แล้วสร้าง HTTP Request เชื่อมต่อไปยัง IP นั้นทันที</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: DNS Caching & Local Hosts File -->
+      <div :class="{ 'active': currentSlide === 12 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">DNS Caching และการกำหนดค่าใน Local Hosts File</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Optimization & Local Domain Overrides</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-5">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg">
+              <h3 class="text-emerald-400 font-bold text-base mb-2">DNS Caching & TTL</h3>
+              <p class="text-xs text-slate-200 leading-relaxed mb-3">
+                การค้นหา DNS จะถูกบันทึกไว้ในหน่วยความจำชั่วคราวเพื่อลด Latency และลดภาระทราฟฟิกบนเครือข่าย โดยมีค่า <span class="text-emerald-300 font-semibold">TTL (Time-To-Live)</span> กำหนดระยะเวลาการเก็บแคชก่อนสอบถามใหม่
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700/60 shadow-lg">
+              <h3 class="text-teal-400 font-bold text-base mb-2">การตั้งค่าไฟล์ Hosts ใน Local Machine</h3>
+              <p class="text-xs text-slate-200 leading-relaxed mb-2">
+                นักพัฒนาสามารถกำหนดชื่อโดเมนจำลองในเครื่องตนเองสำหรับทดสอบ (Local Development) ผ่านไฟล์ระบบ:
+              </p>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-slate-300 mb-2">
+                # /etc/hosts (Linux/macOS) หรือ C:\Windows\System32\drivers\etc\hosts<br/>
+                127.0.0.1   myapp.local
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Architecture Diagram: DNS & Web Request Flow -->
+      <div :class="{ 'active': currentSlide === 13 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">แผนผังสถาปัตยกรรมระบบ: การค้นหา DNS และส่ง Request</h2>
+          <p class="text-emerald-300 mb-6 text-sm">System Architecture: From Domain Name to Web Server Request</p>
+
+          <div class="bg-slate-900/90 border border-slate-700 p-6 rounded-xl shadow-2xl text-left">
+            <div class="grid md:grid-cols-3 gap-4 text-center text-xs mb-4">
+              
+              <div class="bg-slate-800/90 p-4 rounded-xl border border-emerald-500/40">
+                <div class="text-emerald-400 font-bold text-sm mb-1">1. Client Device</div>
+                <div class="text-slate-300 mb-2">พิมพ์ URL: <code class="text-emerald-300">app.demo.com</code></div>
+                <div class="bg-slate-900 p-2 rounded text-slate-400">ยังไม่ทราบหมายเลข IP Address</div>
+              </div>
+
+              <div class="bg-slate-800/90 p-4 rounded-xl border border-teal-500/40">
+                <div class="text-teal-400 font-bold text-sm mb-1">2. DNS Resolution</div>
+                <div class="text-slate-300 mb-2">สอบถาม DNS Server</div>
+                <div class="bg-slate-900 p-2 rounded text-teal-300 font-mono">คืนค่า IP: 192.0.2.1</div>
+              </div>
+
+              <div class="bg-slate-800/90 p-4 rounded-xl border border-cyan-500/40">
+                <div class="text-cyan-400 font-bold text-sm mb-1">3. Direct Web Request</div>
+                <div class="text-slate-300 mb-2">ส่ง HTTP GET Request</div>
+                <div class="bg-slate-900 p-2 rounded text-cyan-300 font-mono">192.0.2.1:443</div>
+              </div>
+
+            </div>
+
+            <div class="bg-slate-800/60 p-3 rounded-lg border border-slate-700 text-center text-xs text-slate-300">
+              เมื่อเซิร์ฟเวอร์ <span class="text-emerald-300 font-semibold">192.0.2.1</span> ได้รับ Request จะประมวลผลผ่าน Django Web Application และส่งผลลัพธ์ (เช่น HTML/JSON) กลับมายังเบราว์เซอร์
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Part 4 Intro - HTTP Protocol Overview & Evolution -->
+      <div :class="{ 'active': currentSlide === 14 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 4</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">โปรโตคอล HTTP และการวิวัฒนาการ</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Hypertext Transfer Protocol Overview & Evolution</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-emerald-500/40 shadow-lg">
+              <div class="text-emerald-400 font-bold text-base mb-1">HTTP/1.1</div>
+              <div class="text-xs text-slate-300 mb-2">Standard Protocol (1997)</div>
+              <ul class="text-xs text-slate-200 space-y-1">
+                <li>• รองรับ Persistent Connections (Keep-Alive)</li>
+                <li>• รับส่งข้อมูลแบบเป็นลำดับทีละคำร้องขอ (Head-of-Line Blocking)</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-teal-500/40 shadow-lg">
+              <div class="text-teal-400 font-bold text-base mb-1">HTTP/2</div>
+              <div class="text-xs text-slate-300 mb-2">Binary & Multiplexed (2015)</div>
+              <ul class="text-xs text-slate-200 space-y-1">
+                <li>• ส่งข้อมูลหลาย Stream พร้อมกันผ่าน Connection เดียว (Multiplexing)</li>
+                <li>• บีบอัด Header (HPACK) และรองรับ Server Push</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-cyan-500/40 shadow-lg">
+              <div class="text-cyan-400 font-bold text-base mb-1">HTTP/3</div>
+              <div class="text-xs text-slate-300 mb-2">QUIC Protocol (UDP)</div>
+              <ul class="text-xs text-slate-200 space-y-1">
+                <li>• เปลี่ยนมาใช้ QUIC บน UDP แทน TCP</li>
+                <li>• ลดระยะเวลาในขั้นตอนการสร้าง Connection และแก้ปัญหา Packet Loss</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Structure of an HTTP Request -->
+      <div :class="{ 'active': currentSlide === 15 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">โครงสร้างของ HTTP Request</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Anatomy of an HTTP Request Message</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 font-mono text-xs text-slate-200 shadow-xl">
+              <div class="text-emerald-400 font-bold mb-1">GET /api/v1/products HTTP/1.1  <span class="text-slate-400 font-normal">← Request Line</span></div>
+              <div class="text-teal-300">Host: app.demo.com</div>
+              <div class="text-teal-300">User-Agent: Mozilla/5.0 (Windows NT 10.0)</div>
+              <div class="text-teal-300">Accept: application/json</div>
+              <div class="text-teal-300">Authorization: Bearer eyJhbGciOi...</div>
+              <div class="text-slate-500 my-1">&lt;บรรทัดว่าง สำหรับแยก Header และ Body&gt;</div>
+              <div class="text-cyan-300">{"category": "electronics", "page": 1}  <span class="text-slate-400 font-normal">← Request Body (Optional)</span></div>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-200">
+              <div class="bg-slate-900/90 p-3 rounded-lg border-l-4 border-emerald-400">
+                <div class="font-bold text-emerald-300 mb-0.5">1. Request Line</div>
+                <div>ประกอบด้วย HTTP Method (เช่น GET, POST), Path/URI ที่ต้องการเข้าถึง และเวอร์ชันของโปรโตคอล</div>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-lg border-l-4 border-teal-400">
+                <div class="font-bold text-teal-300 mb-0.5">2. Request Headers</div>
+                <div>ข้อมูลอธิบายการคำร้องขอ เช่น Host, User-Agent, Content-Type, Authorization Token และ Cookies</div>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-lg border-l-4 border-cyan-400">
+                <div class="font-bold text-cyan-300 mb-0.5">3. Request Body (Payload)</div>
+                <div>ส่วนข้อมูลที่ส่งไปยังเซิร์ฟเวอร์ (มักใช้ในคำสั่ง POST, PUT, PATCH เช่น ข้อมูลแบบฟอร์ม หรือ JSON)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Standard HTTP Methods -->
+      <div :class="{ 'active': currentSlide === 16 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">คำสั่งมาตรฐาน HTTP Methods</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Standard HTTP Verbs & Operations</p>
+
+          <div class="grid md:grid-cols-5 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 border-t-4 border-blue-400 p-3.5 rounded-xl">
+              <div class="text-blue-400 font-extrabold text-base mb-1">GET</div>
+              <div class="text-xs font-bold text-white mb-1">อ่านข้อมูล (Read)</div>
+              <div class="text-xs text-slate-300">ดึงข้อมูลจากเซิร์ฟเวอร์ โดยไม่มีการเปลี่ยนแปลงข้อมูลหลังบ้าน (Safe & Idempotent)</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-emerald-400 p-3.5 rounded-xl">
+              <div class="text-emerald-400 font-extrabold text-base mb-1">POST</div>
+              <div class="text-xs font-bold text-white mb-1">สร้างข้อมูล (Create)</div>
+              <div class="text-xs text-slate-300">ส่งข้อมูลใหม่ไปประมวลผลและสร้างทรัพยากรใหม่บนเซิร์ฟเวอร์</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-amber-400 p-3.5 rounded-xl">
+              <div class="text-amber-400 font-extrabold text-base mb-1">PUT</div>
+              <div class="text-xs font-bold text-white mb-1">ทดแทนข้อมูล (Replace)</div>
+              <div class="text-xs text-slate-300">อัปเดตหรือทดแทนข้อมูลทรัพยากรเดิมแบบทั้งหมด (Full Update)</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-orange-400 p-3.5 rounded-xl">
+              <div class="text-orange-400 font-extrabold text-base mb-1">PATCH</div>
+              <div class="text-xs font-bold text-white mb-1">แก้ไขบางส่วน (Update)</div>
+              <div class="text-xs text-slate-300">อัปเดตเฉพาะบางฟิลด์ข้อมูลที่ต้องการแก้ไข (Partial Update)</div>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-rose-400 p-3.5 rounded-xl">
+              <div class="text-rose-400 font-extrabold text-base mb-1">DELETE</div>
+              <div class="text-xs font-bold text-white mb-1">ลบข้อมูล (Delete)</div>
+              <div class="text-xs text-slate-300">ลบทรัพยากรที่ระบุออกจากเซิร์ฟเวอร์</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Structure of an HTTP Response -->
+      <div :class="{ 'active': currentSlide === 17 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">โครงสร้างของ HTTP Response</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Anatomy of an HTTP Response Message</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 font-mono text-xs text-slate-200 shadow-xl">
+              <div class="text-emerald-400 font-bold mb-1">HTTP/1.1 200 OK  <span class="text-slate-400 font-normal">← Status Line</span></div>
+              <div class="text-teal-300">Date: Thu, 10 Sep 2026 10:00:00 GMT</div>
+              <div class="text-teal-300">Server: Nginx/1.24.0</div>
+              <div class="text-teal-300">Content-Type: application/json</div>
+              <div class="text-teal-300">Content-Length: 128</div>
+              <div class="text-slate-500 my-1">&lt;บรรทัดว่าง สำหรับแยก Header และ Body&gt;</div>
+              <div class="text-cyan-300">{<br/>
+&nbsp;&nbsp;"status": "success",<br/>
+&nbsp;&nbsp;"data": [{"id": 1, "name": "Laptop"}]<br/>
+}  <span class="text-slate-400 font-normal">← Response Body</span></div>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-200">
+              <div class="bg-slate-900/90 p-3 rounded-lg border-l-4 border-emerald-400">
+                <div class="font-bold text-emerald-300 mb-0.5">1. Status Line</div>
+                <div>ประกอบด้วย เวอร์ชัน HTTP, รหัสสถานะ (Status Code) และข้อความอธิบายสถานะ (Reason Phrase)</div>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-lg border-l-4 border-teal-400">
+                <div class="font-bold text-teal-300 mb-0.5">2. Response Headers</div>
+                <div>ข้อมูลอธิบายการตอบกลับ เช่น Content-Type, Content-Length, Set-Cookie และ Caching Policies</div>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-lg border-l-4 border-cyan-400">
+                <div class="font-bold text-cyan-300 mb-0.5">3. Response Body</div>
+                <div>ส่วนเนื้อหาคำตอบจริง เช่น โครงสร้างไฟล์ HTML, ข้อมูลชุด JSON หรือไฟล์สื่อสื่อบันทึก</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: HTTP Status Codes Categories -->
+      <div :class="{ 'active': currentSlide === 18 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">หมวดหมู่รหัสสถานะ HTTP (Status Codes)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">HTTP Status Code Classifications & Common Codes</p>
+
+          <div class="grid md:grid-cols-4 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 border-t-4 border-emerald-400 p-3.5 rounded-xl shadow-lg">
+              <div class="text-emerald-400 font-bold text-lg mb-1">2xx Success</div>
+              <div class="text-xs font-bold text-white mb-2">ทำงานสำเร็จ</div>
+              <ul class="text-xs text-slate-300 space-y-1">
+                <li>• <strong>200 OK:</strong> คำร้องขอสำเร็จ</li>
+                <li>• <strong>201 Created:</strong> สร้างข้อมูลสำเร็จ</li>
+                <li>• <strong>204 No Content:</strong> สำเร็จแต่ไม่มี Body</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-blue-400 p-3.5 rounded-xl shadow-lg">
+              <div class="text-blue-400 font-bold text-lg mb-1">3xx Redirection</div>
+              <div class="text-xs font-bold text-white mb-2">การเปลี่ยนเส้นทาง</div>
+              <ul class="text-xs text-slate-300 space-y-1">
+                <li>• <strong>301 Moved Permanently</strong></li>
+                <li>• <strong>302 Found (Temporary)</strong></li>
+                <li>• <strong>304 Not Modified (Cache)</strong></li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-amber-400 p-3.5 rounded-xl shadow-lg">
+              <div class="text-amber-400 font-bold text-lg mb-1">4xx Client Error</div>
+              <div class="text-xs font-bold text-white mb-2">ข้อผิดพลาดฝั่งผู้ใช้</div>
+              <ul class="text-xs text-slate-300 space-y-1">
+                <li>• <strong>400 Bad Request:</strong> รูปแบบไม่ถูกต้อง</li>
+                <li>• <strong>401 Unauthorized:</strong> ไม่ได้ Login</li>
+                <li>• <strong>403 Forbidden:</strong> ไม่มีสิทธิ์เข้าถึง</li>
+                <li>• <strong>404 Not Found:</strong> ไม่พบทรัพยากร</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 border-t-4 border-rose-400 p-3.5 rounded-xl shadow-lg">
+              <div class="text-rose-400 font-bold text-lg mb-1">5xx Server Error</div>
+              <div class="text-xs font-bold text-white mb-2">ข้อผิดพลาดฝั่งเซิร์ฟเวอร์</div>
+              <ul class="text-xs text-slate-300 space-y-1">
+                <li>• <strong>500 Internal Server Error</strong></li>
+                <li>• <strong>502 Bad Gateway</strong></li>
+                <li>• <strong>503 Service Unavailable</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Content-Type & Data Payload Formats -->
+      <div :class="{ 'active': currentSlide === 19 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">รูปแบบข้อมูลและ Content-Type</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Media Types & Data Payload Formats in Web Applications</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-5">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">text/html</div>
+              <div class="text-xs font-bold text-white mb-2">HTML Document</div>
+              <p class="text-xs text-slate-300">
+                ใช้ในเว็บแอปพลิเคชันแบบ Monolith ที่เซิร์ฟเวอร์ประมวลผลและส่งเนื้อหาเป็นโค้ด HTML เพื่อให้เบราว์เซอร์วาดหน้าจอทันที
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">application/json</div>
+              <div class="text-xs font-bold text-white mb-2">JSON Format</div>
+              <p class="text-xs text-slate-300">
+                มาตรฐานยอดนิยมสำหรับการสื่อสารระหว่าง RESTful API และ Frontend Framework / Mobile Apps ข้อมูลมีขนาดเล็ก ประมวลผลรวดเร็ว
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-lg">
+              <div class="text-cyan-400 font-bold text-sm mb-1">multipart/form-data</div>
+              <div class="text-xs font-bold text-white mb-2">Form & File Uploads</div>
+              <p class="text-xs text-slate-300">
+                ใช้เมื่อมีการส่งข้อมูลจากแบบฟอร์มที่มีการแนบไฟล์อัปโหลด เช่น รูปภาพ หรือเอกสารต่างๆ ร่วมกับข้อมูลข้อความ
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 border border-emerald-500/30 p-3 rounded-lg text-xs text-emerald-200 text-center">
+            สัปดาห์หน้า: สถาปัตยกรรม REST API และการติดตั้งใช้งานเครื่องมือทดสอบ API <span class="font-bold underline">HTTPie CLI / HTTPie Desktop</span> ผ่าน <span class="font-bold underline">Scoop</span>
+          </div>
+        </div>
+      </div>
+
+            <!-- Slide 20: Part 5 Intro - Security Risks in Plain HTTP -->
+      <div :class="{ 'active': currentSlide === 20 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 5</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">ความเสี่ยงของโปรโตคอล Plain HTTP</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Security Risks in Unencrypted Web Communications</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-5">
+            <div class="bg-slate-900/90 p-4 rounded-xl border-t-4 border-rose-500 shadow-lg">
+              <div class="text-rose-400 font-bold text-base mb-1">1. Eavesdropping / Sniffing</div>
+              <div class="text-xs font-bold text-white mb-2">การดักรับและแอบดูข้อมูล</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                ข้อมูลที่ส่งผ่าน HTTP จะเป็นข้อความเปล่า (Plain Text) ทำให้ผู้ไม่หวังดีบนเครือข่ายเดียวกันสามารถใช้เครื่องมือ Network Sniffer ดักดูรหัสผ่าน หรือข้อมูลบัตรเครดิตได้โดยง่าย
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-t-4 border-amber-500 shadow-lg">
+              <div class="text-amber-400 font-bold text-base mb-1">2. Man-in-the-Middle (MitM)</div>
+              <div class="text-xs font-bold text-white mb-2">การแทรกซึมกลางทาง</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                ผู้โจมตีสวมรอยเป็นตัวกลางระหว่าง Client และ Server เพื่อดักจับ ปลอมแปลง หรือแก้ไขข้อมูลที่รับส่งโดยที่ทั้งสองฝ่ายไม่รู้ตัว
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border-t-4 border-orange-500 shadow-lg">
+              <div class="text-orange-400 font-bold text-base mb-1">3. Data Tampering</div>
+              <div class="text-xs font-bold text-white mb-2">การดัดแปลงข้อมูล</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                คำร้องขอหรือผลลัพธ์สามารถถูกแก้ไขระหว่างทาง เช่น การฝังโฆษณา สคริปต์อันตราย (Malicious Scripts) หรือเปลี่ยนหมายเลขบัญชีโอนเงิน
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-lg text-xs text-slate-300 text-center">
+            ทางออก: ปัจจุบันเว็บแอปพลิเคชันสมัยใหม่ต้องเปลี่ยนมาใช้โปรโตคอล <span class="text-emerald-300 font-semibold">HTTPS (HTTP over TLS/SSL)</span> เพื่อคุ้มครองข้อมูลของผู้ใช้
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: HTTPS & TLS/SSL Encryption -->
+      <div :class="{ 'active': currentSlide === 21 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">โปรโตคอล HTTPS และการเข้ารหัส SSL/TLS</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Data Encryption in Transit</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-5">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-xl">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-base mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                Asymmetric Encryption (การเข้ารหัสแบบไม่สมมาตร)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">ใช้กุญแจคู่เป็นหลัก: <strong>Public Key</strong> (สำหรับเข้ารหัส) และ <strong>Private Key</strong> (สำหรับถอดรหัส)</p>
+              <ul class="text-xs text-slate-200 space-y-1.5">
+                <li>• ใช้ในขั้นตอนการยืนยันตัวตนและสร้างความปลอดภัยเริ่มต้น</li>
+                <li>• ปลอดภัยสูง แต่ประมวลผลช้ากว่าเนื่องจากคำนวณคณิตศาสตร์ซับซ้อน</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-xl">
+              <div class="flex items-center gap-2 text-teal-400 font-bold text-base mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z"></path></svg>
+                Symmetric Encryption (การเข้ารหัสแบบสมมาตร)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">ใช้กุญแจดอกเดียวกัน (<strong>Session Key</strong>) ทั้งในการเข้ารหัสและถอดรหัสข้อมูล</p>
+              <ul class="text-xs text-slate-200 space-y-1.5">
+                <li>• ประมวลผลรวดเร็วมาก เหมาะสำหรับส่ง Payload ข้อมูลขนาดใหญ่</li>
+                <li>• ถูกสร้างและใช้อย่างปลอดภัยหลังจบขั้นตอน TLS Handshake</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 border border-slate-700 p-3.5 rounded-lg text-xs text-slate-300 text-center">
+            หลักการทำงานของ HTTPS: ผสมผสาน <span class="text-emerald-300 font-semibold">Asymmetric Encryption</span> ในการยืนยันตัวตน และใช้ <span class="text-teal-300 font-semibold">Symmetric Encryption</span> ในการรับส่งข้อมูลจริง
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Digital Certificates & Certificate Authority (CA) -->
+      <div :class="{ 'active': currentSlide === 22 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">ใบรับรองดิจิทัลและองค์กรออกใบรับรอง (Certificates & CA)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Public Key Infrastructure (PKI) & Server Authentication</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-5">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. Digital Certificate</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">เอกสารยืนยันตัวตน</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                ทำหน้าที่คล้ายบัตรประชาชนของเว็บไซต์ บรรจุข้อมูลชื่อโดเมน Public Key และวันหมดอายุ เพื่อยืนยันว่า Client กำลังคุยกับเซิร์ฟเวอร์ตัวจริง
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. Certificate Authority (CA)</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">องค์กรออกใบรับรอง</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                หน่วยงานกลางที่เป็นที่น่าเชื่อถือ (เช่น Let's Encrypt, DigiCert) ทำหน้าที่ตรวจสอบความเป็นเจ้าของโดเมนและลงลายมือชื่อดิจิทัลรับรอง
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-lg">
+              <div class="text-cyan-400 font-bold text-sm mb-1">3. Chain of Trust</div>
+              <div class="text-xs font-semibold text-slate-200 mb-2">ห่วงโซ่แห่งความเชื่อมั่น</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                เบราว์เซอร์จะตรวจสอบใบรับรองย้อนกลับไปถึง Root CA ที่ฝังอยู่ในระบบปฏิบัติการ หากห่วงโซ่ถูกต้อง ป้ายกุญแจเขียวจะปรากฏบนเบราว์เซอร์
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: TLS Handshake Overview -->
+      <div :class="{ 'active': currentSlide === 23 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">ขั้นตอนการทำงานของ TLS Handshake</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Establishing a Secure Encrypted Connection</p>
+
+          <div class="bg-slate-900/90 border border-slate-700 p-5 rounded-xl shadow-2xl mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs text-center">
+              
+              <div class="bg-slate-800 p-3 rounded-lg border border-emerald-500/40">
+                <div class="bg-emerald-500 text-slate-950 font-bold rounded-full w-5 h-5 mx-auto mb-1 flex items-center justify-center">1</div>
+                <div class="font-bold text-emerald-300 mb-1">ClientHello</div>
+                <div class="text-slate-300">ส่งเวอร์ชัน TLS, Cipher Suites และ Random Byte</div>
+              </div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-teal-500/40">
+                <div class="bg-teal-500 text-slate-950 font-bold rounded-full w-5 h-5 mx-auto mb-1 flex items-center justify-center">2</div>
+                <div class="font-bold text-teal-300 mb-1">ServerHello</div>
+                <div class="text-slate-300">เลือก Cipher Suite, ส่ง Certificate & Public Key</div>
+              </div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-cyan-500/40">
+                <div class="bg-cyan-500 text-slate-950 font-bold rounded-full w-5 h-5 mx-auto mb-1 flex items-center justify-center">3</div>
+                <div class="font-bold text-cyan-300 mb-1">Verification</div>
+                <div class="text-slate-300">Client ตรวจสอบความถูกต้องของ CA Certificate</div>
+              </div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-blue-500/40">
+                <div class="bg-blue-500 text-slate-950 font-bold rounded-full w-5 h-5 mx-auto mb-1 flex items-center justify-center">4</div>
+                <div class="font-bold text-blue-300 mb-1">Key Exchange</div>
+                <div class="text-slate-300">คำนวณและสร้าง Symmetric Session Key ร่วมกัน</div>
+              </div>
+
+              <div class="bg-slate-800 p-3 rounded-lg border border-indigo-500/40">
+                <div class="bg-indigo-500 text-slate-950 font-bold rounded-full w-5 h-5 mx-auto mb-1 flex items-center justify-center">5</div>
+                <div class="font-bold text-indigo-300 mb-1">Secure Transfer</div>
+                <div class="text-slate-300">เริ่มรับส่งข้อมูล HTTP ที่เข้ารหัสไว้ล่วงหน้า</div>
+              </div>
+
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-300">
+            กระบวนการจับมือนี้เกิดขึ้นบน TCP Port 443 ก่อนที่จะเริ่มส่ง HTTP Request แรก
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 24: Key Security Headers -->
+      <div :class="{ 'active': currentSlide === 24 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">Security Headers ที่สำคัญบนเว็บ</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Protecting Web Applications via HTTP Response Headers</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-mono font-bold text-xs mb-1">Strict-Transport-Security (HSTS)</div>
+              <p class="text-xs text-slate-300">บังคับให้เบราว์เซอร์เข้าถึงเว็บไซต์ผ่าน HTTPS เท่านั้น โดยปฏิเสธการเชื่อมต่อแบบ HTTP ในอนาคต</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-mono font-bold text-xs mb-1">Content-Security-Policy (CSP)</div>
+              <p class="text-xs text-slate-300">จำกัดแหล่งที่มาของสคริปต์และสคริปต์ภายนอก ป้องกันการโจมตีประเภท Cross-Site Scripting (XSS)</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-cyan-400 font-mono font-bold text-xs mb-1">X-Content-Type-Options: nosniff</div>
+              <p class="text-xs text-slate-300">ป้องกันไม่ให้เบราว์เซอร์สุ่มเดาประเภทไฟล์ (MIME-sniffing) นอกเหนือจากที่กำหนดใน Content-Type</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-blue-400 font-mono font-bold text-xs mb-1">X-Frame-Options: DENY / SAMEORIGIN</div>
+              <p class="text-xs text-slate-300">ป้องกันไม่ให้หน้าเว็บถูกนำไปแสดงผลใน `&lt;iframe&gt;` เพื่อป้องกันการโจมตีประเภท Clickjacking</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Part 6 Intro - Inspection Tools Overview -->
+      <div :class="{ 'active': currentSlide === 25 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 6</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">เครื่องมือตรวจสอบทราฟฟิกข้อมูลบนเว็บ</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Inspection & Debugging Tools: GUI vs CLI</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-xl">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-base mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h6l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                Graphical UI Tools (Browser DevTools)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">เครื่องมือตรวจสอบในตัวเบราว์เซอร์ (Chrome, Firefox, Edge)</p>
+              <ul class="text-xs text-slate-200 space-y-1.5">
+                <li>• เหมาะสำหรับดูภาพรวม Network Waterfall, Rendering และ Cookies</li>
+                <li>• แสดงผล Response Body ในรูปแบบสวยงาม (Formatted View)</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-xl">
+              <div class="flex items-center gap-2 text-teal-400 font-bold text-base mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                Command-Line Tools (cURL & Terminal)
+              </div>
+              <p class="text-xs text-slate-300 mb-3">เครื่องมือระดับคำสั่งบน Terminal</p>
+              <ul class="text-xs text-slate-200 space-y-1.5">
+                <li>• แม่นยำ รวดเร็ว ไม่มีการโหลดสคริปต์ส่วนเกินของเบราว์เซอร์</li>
+                <li>• เหมาะสำหรับเขียนสคริปต์อัตโนมัติ และทดสอบ API Endpoints</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Using Browser Developer Tools (Network Tab) -->
+      <div :class="{ 'active': currentSlide === 26 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การใช้งาน Browser DevTools (Network Tab)</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Visual Network Traffic Inspection & Analysis</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left mb-5">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. Headers Tab</div>
+              <p class="text-xs text-slate-300">แสดง General Info (URL, Method, Status Code), Response Headers และ Request Headers ทั้งหมด</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. Preview & Response Tab</div>
+              <p class="text-xs text-slate-300">ตรวจสอบ Payload ข้อมูลที่ได้รับกลับมาจากเซิร์ฟเวอร์ ไม่ว่าจะเป็น HTML, JSON หรือรูปภาพ</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-cyan-400 font-bold text-sm mb-1">3. Timing Waterfall</div>
+              <p class="text-xs text-slate-300">วิเคราะห์ระยะเวลาในแต่ละขั้นตอน: DNS Lookup, Initial Connection, SSL Handshake, และ Waiting (TTFB)</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-blue-400 font-bold text-sm mb-1">4. Filter & Preserve Log</div>
+              <p class="text-xs text-slate-300">กรองชนิดไฟล์ (Fetch/XHR, Doc, JS, CSS) และเปิด Preserve Log บันทึกทราฟฟิกข้ามหน้าเปลี่ยน URL</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Introduction to cURL Command-Line Tool -->
+      <div :class="{ 'active': currentSlide === 27 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">แนะนำเครื่องมือ cURL บน Command Line</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Command-Line HTTP Client for Developers</p>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-700 text-left font-mono text-xs text-slate-200 mb-4 shadow-xl space-y-2">
+            <div><span class="text-slate-500"># 1. ส่ง Request พื้นฐานดึงเนื้อหาเว็บ</span></div>
+            <div><span class="text-emerald-400">curl</span> https://httpbin.org/get</div>
+
+            <div><span class="text-slate-500"># 2. ดูเฉพาะ Response Headers (-I)</span></div>
+            <div><span class="text-emerald-400">curl</span> -I https://httpbin.org/get</div>
+
+            <div><span class="text-slate-500"># 3. โหมดVerbose แสดงทั้ง Request/Response Headers แบบละเอียด (-v)</span></div>
+            <div><span class="text-emerald-400">curl</span> -v https://httpbin.org/get</div>
+
+            <div><span class="text-slate-500"># 4. ส่ง HTTP POST พร้อมแนบข้อมูล JSON (-X POST -H -d)</span></div>
+            <div><span class="text-emerald-400">curl</span> -X POST https://httpbin.org/post -H <span class="text-amber-300">"Content-Type: application/json"</span> -d <span class="text-teal-300">'{"title":"Django"}'</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Analyzing Real HTTP Traffic with cURL -->
+      <div :class="{ 'active': currentSlide === 28 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">วิเคราะห์ HTTP Traffic ด้วย cURL ในทางปฏิบัติ</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Hands-on CLI Examples: HTML vs JSON Response</p>
+
+          <div class="grid md:grid-cols-2 gap-4 text-left">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-2">ดึงข้อมูล HTML Page</div>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-slate-300 mb-2">
+                curl -I https://www.django-project.com/
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1">
+                <li>• Status: <code class="text-emerald-300">HTTP/2 200 OK</code></li>
+                <li>• Content-Type: <code class="text-emerald-300">text/html; charset=utf-8</code></li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-2">ดึงข้อมูล JSON API Payload</div>
+              <div class="bg-slate-950 p-2.5 rounded font-mono text-xs text-slate-300 mb-2">
+                curl -s https://api.github.com/users/octocat
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1">
+                <li>• Status: <code class="text-teal-300">HTTP/2 200 OK</code></li>
+                <li>• Content-Type: <code class="text-teal-300">application/json</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Setting Up Local Development Environment -->
+      <div :class="{ 'active': currentSlide === 29 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">การจัดเตรียมสภาพแวดล้อมบนเครื่องเดี่ยว</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Single PC Development Setup for Full-Stack Course</p>
+
+          <div class="grid md:grid-cols-3 gap-4 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-emerald-400 font-bold text-sm mb-1">1. Terminal & CLI</div>
+              <p class="text-xs text-slate-300">Windows (WSL2 / PowerShell), macOS Terminal หรือ Linux Terminal</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-teal-400 font-bold text-sm mb-1">2. Python 3.x & Virtualenv</div>
+              <p class="text-xs text-slate-300">ติดตั้ง Python เวอร์ชันล่าสุด พร้อมใช้งาน `venv` สำหรับจัดการแพ็กเกจประจำโปรเจกต์</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 shadow-md">
+              <div class="text-cyan-400 font-bold text-sm mb-1">3. Scoop Package Manager</div>
+              <p class="text-xs text-slate-300">เครื่องมือจัดการซอฟต์แวร์แบบ Command-Line บน Windows สำหรับติดตั้งเครื่องมือต่างๆ ได้สะดวกรวดเร็ว</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Part 7 Intro - Week 1 Key Takeaways -->
+      <div :class="{ 'active': currentSlide === 30 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">สัปดาห์ที่ 1 -- ส่วนที่ 7</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">สรุปประเด็นสำคัญสัปดาห์ที่ 1</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Week 1 Key Takeaways & Core Concepts</p>
+
+          <div class="grid md:grid-cols-4 gap-3 text-left mb-4">
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-emerald-500/40 shadow-lg">
+              <div class="text-emerald-400 font-bold text-sm mb-1">Client-Server</div>
+              <p class="text-xs text-slate-300">แยกส่วน Frontend และ Backend เพื่อหลักการ Separation of Concerns</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-teal-500/40 shadow-lg">
+              <div class="text-teal-400 font-bold text-sm mb-1">IP & DNS</div>
+              <p class="text-xs text-slate-300">DNS แปลงชื่อโดเมนเป็น IP Address ปลายทางเพื่อเริ่มสร้าง Connection</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-cyan-500/40 shadow-lg">
+              <div class="text-cyan-400 font-bold text-sm mb-1">HTTP & HTTPS</div>
+              <p class="text-xs text-slate-300"> Stateless Protocol เข้ารหัสความปลอดภัยข้อมูลระหว่างทางด้วย TLS/SSL</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-blue-500/40 shadow-lg">
+              <div class="text-blue-400 font-bold text-sm mb-1">DevTools & cURL</div>
+              <p class="text-xs text-slate-300">ใช้ตรวจทราฟฟิก Headers, Status Codes และ Payload Response</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Lab Assignment & Self-Study Guide -->
+      <div :class="{ 'active': currentSlide === 31 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <h2 class="text-3xl font-bold mb-2 text-white">งานปฏิบัติการและโจทย์ศึกษาด้วยตนเอง</h2>
+          <p class="text-emerald-300 mb-6 text-sm">Weekly Lab Exercise & Self-Study Guidelines (5 Hours/Week)</p>
+
+          <div class="grid md:grid-cols-2 gap-6 text-left mb-4">
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-emerald-500/40 shadow-lg">
+              <h3 class="text-emerald-400 font-bold text-base mb-2">1. งานปฏิบัติการในชั้นเรียน (Lab 1)</h3>
+              <ul class="text-xs text-slate-200 space-y-2">
+                <li>• ใช้คำสั่ง <code class="text-emerald-300">curl -I</code> ส่ง Request ไปยังเว็บไซต์ที่กำหนด แล้วบันทึกค่า Response Headers</li>
+                <li>• เปิด Browser DevTools ตรวจสอบการส่ง Network Request และแคปเจอร์ภาพผลลัพธ์</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-xl border border-teal-500/40 shadow-lg">
+              <h3 class="text-teal-400 font-bold text-base mb-2">2. หัวข้อศึกษาด้วยตนเอง (5 ชม./สัปดาห์)</h3>
+              <ul class="text-xs text-slate-200 space-y-2">
+                <li>• อ่านเอกสารประกอบเกี่ยวกับวงจรชีวิตการทำงานของ DNS Lookup</li>
+                <li>• ทดลองแก้ไขไฟล์ Local Hosts (`/etc/hosts`) บนเครื่องตนเองเพื่อแมปโดเมนจำลอง</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: Next Week Teaser (Week 2 Preview) -->
+      <div :class="{ 'active': currentSlide === 32 }" class="slide gradient-bg flex-col justify-center items-center text-white">
+        <div class="max-w-5xl mx-auto px-6 py-6 w-full text-center">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-wider mb-2 inline-block">เกริ่นนำบทเรียนครั้งต่อไป</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">สัปดาห์ที่ 2: REST API & HTTPie Tools</h2>
+          <p class="text-emerald-300 mb-6 text-sm">REST Architecture, HTTPie CLI / Desktop & Scoop Installation</p>
+
+          <div class="bg-slate-900/90 border border-slate-700/80 p-6 rounded-xl text-left max-w-3xl mx-auto shadow-2xl">
+            <h3 class="font-bold text-emerald-300 mb-3 text-sm">หัวข้อที่จะเรียนรู้ในสัปดาห์ที่ 2:</h3>
+            <ul class="text-xs text-slate-200 space-y-2.5">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>สถาปัตยกรรม REST API:</strong> การออกแบบ Resource-Oriented URLs, HTTP Methods และ Status Codes ตามมาตรฐาน</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-teal-400 font-bold">•</span>
+                <span><strong>การติดตั้งผ่าน Scoop Package Manager:</strong> ฝึกใช้ Scoop ติดตั้งโปรแกรม **HTTPie CLI** และ **HTTPie Desktop**</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>การทดสอบ API ด้วย HTTPie:</strong> ฝึกส่ง GET, POST, PUT, DELETE Request พร้อมแนบ Headers และ JSON Payload</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script>
+    function slideshow() {
+      return {
+        currentSlide: 0,
+        totalSlides: 0,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        init() {
+          this.totalSlides = this.$refs.slidesContainer.querySelectorAll('.slide').length;
+          this.setupKeyboardNavigation();
+          this.setupTouchNavigation();
+        },
+
+        nextSlide() {
+          this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+
+        previousSlide() {
+          this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+
+        setupKeyboardNavigation() {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+              e.preventDefault();
+              this.nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.previousSlide();
+            }
+          });
+        },
+
+        setupTouchNavigation() {
+          document.addEventListener('touchstart', (e) => {
+            this.touchStartX = e.changedTouches[0].screenX;
+          });
+
+          document.addEventListener('touchend', (e) => {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = 50;
+
+            if (this.touchStartX - this.touchEndX > swipeDistance) {
+              this.nextSlide();
+            } else if (this.touchEndX - this.touchStartX > swipeDistance) {
+              this.previousSlide();
+            }
+          });
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
