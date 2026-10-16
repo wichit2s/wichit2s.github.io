@@ -1,0 +1,28 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<div x-data="{ sbp: 120, hba1c: 5.5, get riskTier() {
+    if (this.sbp >= 180 || this.hba1c >= 9.0) return 'CRITICAL';
+    if (this.sbp >= 140 || this.hba1c >= 7.0) return 'HIGH';
+    if (this.sbp >= 120 || this.hba1c >= 5.7) return 'MODERATE';
+    return 'NORMAL';
+}}" class="p-6 bg-slate-900 text-white rounded-2xl max-w-md mx-auto">
+
+  <h3 class="text-lg font-bold text-yellow-300 mb-4">🩺 แบบคัดกรองความเสี่ยงสุขภาพส่วนบุคคล</h3>
+  
+  <label class="block text-xs mb-1">ความดันโลหิตตัวบน (SBP mmHg):</label>
+  <input type="number" x-model="sbp" class="w-full p-2 bg-slate-800 rounded mb-3 text-white border border-slate-700">
+
+  <label class="block text-xs mb-1">น้ำตาลสะสมในเลือด (HbA1c %):</label>
+  <input type="number" step="0.1" x-model="hba1c" class="w-full p-2 bg-slate-800 rounded mb-4 text-white border border-slate-700">
+
+  <div class="p-3 rounded-xl text-center font-bold text-xs"
+       :class="{
+         'bg-rose-600 text-white': riskTier === 'CRITICAL',
+         'bg-amber-500 text-black': riskTier === 'HIGH',
+         'bg-blue-500 text-white': riskTier === 'MODERATE',
+         'bg-emerald-600 text-white': riskTier === 'NORMAL'
+       }">
+    ผลการประเมินความเสี่ยง: <span x-text="riskTier"></span>
+  </div>
+</div>

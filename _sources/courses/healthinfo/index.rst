@@ -3,8 +3,8 @@ Workshop in Health Informatics
 =========================================================
 
 .. meta::
-   :description: Course syllabus and timetable for Workshop in Health Informatics Course
-   :keywords: health informatics, data wrangling, SQL, medical data, course timetable
+   :description: Course syllabus and timetable for Workshop in Health Informatics Course — SQL on SQLite, DuckDB and PostgreSQL
+   :keywords: health informatics, data wrangling, SQL, SQLite, DuckDB, PostgreSQL, medical data, course timetable
 
 ปฏิบัติการสารสนเทศด้านสุขภาพ (Workshop in Health Informatics)
 -----------------------------------------------------------
@@ -79,7 +79,7 @@ Workshop in Health Informatics
 
        - Relational database & database schema
        - column type, SELECT statement, LIMIT
-       - primary key, SQLite, SQL INSERT
+       - primary key, SQL INSERT — ฝึกบน 3 เอนจิน: SQLite · DuckDB · PostgreSQL
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
@@ -91,7 +91,7 @@ Workshop in Health Informatics
        - Data warehouse & Basic database design
        - SQL WHERE (AND, OR, NOT, NULL)
        - AS ALIAS, ORDER BY, MIN, MAX, AVG, COUNT, DISTINCT
-       - DATE, LIKE, IN, BETWEEN
+       - DATE, LIKE, IN, BETWEEN (เทียบ dialect ของ SQLite · DuckDB · PostgreSQL)
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
@@ -103,6 +103,7 @@ Workshop in Health Informatics
        - ER diagram, FOREIGN key
        - SQL JOIN (INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN, SELF JOIN)
        - Dot notation, UNION, GROUP BY, HAVING
+       - FOREIGN KEY enforcement ต่างกันใน SQLite · DuckDB · PostgreSQL
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
@@ -113,10 +114,12 @@ Workshop in Health Informatics
      - **Finding Insights with SQL**
 
        - การสืบค้นและค้นหาข้อมูลสุขภาพเชิงลึกด้วยคำสั่ง SQL
+       - Subquery · CTE · CASE · Window Functions — รันได้บน SQLite · DuckDB · PostgreSQL
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Dataset: General Practice Prescribing Data
 
        * `สไลด์ <../../_static/courses/healthinfo/wk08.html>`_
+       * `โน้ตบุ๊กฝึกปฏิบัติ <../../_static/courses/healthinfo/week08-insights.ipynb>`_
    * - 9
      - **สอบกลางภาค**
 
@@ -156,6 +159,7 @@ Workshop in Health Informatics
 
        - การใช้งานระบบ Google BigQuery (หรือ DuckDB แบบออฟไลน์สำหรับ self-study)
        - การวิเคราะห์ข้อมูลผู้ป่วยจำลองที่สร้างจาก PySynthea (Python-native, แทน Synthea Java เดิม)
+       - เปรียบเทียบ DuckDB · PostgreSQL · BigQuery และการเชื่อมต่อด้วย psycopg
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Google BigQuery และ PySynthea
 
@@ -166,6 +170,7 @@ Workshop in Health Informatics
      - **Finding Insights from Big Data (Part 2)**
 
        - การวิเคราะห์ข้อมูลผู้ป่วยจำลองบนรูปแบบ OMOP Common Data Model
+       - 2 เส้นทางเอนจิน: DuckDB (exploratory analytics) และ PostgreSQL (CDM ที่ติดตั้งจริง)
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Synthetic Patient Data in OMOP (สังเคราะห์ด้วย PySynthea)
 
@@ -177,6 +182,7 @@ Workshop in Health Informatics
 
        - Big Data manipulation techniques
        - Table view, table update, and Permission management
+       - เทียบการคุมสิทธิ์ข้ามเอนจิน: SQLite · DuckDB · PostgreSQL (GRANT/ROLE)
 
      - บรรยาย: PowerPoint และฝึกปฏิบัติในห้องปฏิบัติการคอมพิวเตอร์ด้วย Synthetic Patient Data
 
@@ -189,6 +195,9 @@ Workshop in Health Informatics
        - การให้คำปรึกษาโครงงานกลุ่มของนักศึกษา
        - หัวข้อ: การสร้าง ER diagram จาก สปสช. Data Dictionary
      - การทำโครงงานกลุ่มและการให้คำปรึกษาโดยอาจารย์ผู้สอน
+
+
+       * `สไลด์ <../../_static/courses/healthinfo/project.html>`_
    * - 16
      - **Project Presentation**
 
@@ -199,6 +208,19 @@ Workshop in Health Informatics
 
        - การสอบวัดผลสัมฤทธิ์ปลายภาคเรียน
      - การสอบภาคปฏิบัติและทฤษฎีปลายภาค
+
+ฐานข้อมูลที่ใช้ในรายวิชา (Database Engines)
+===========================================
+
+รายวิชาใช้ชุดข้อมูลเดียวกัน (``healthinfo``) ฝึกบน 3 เอนจิน เพื่อให้เห็นจุดแข็งและข้อจำกัดที่ต่างกัน:
+
+* **SQLite** — ไฟล์เดียว ``healthinfo.db`` เริ่มง่าย เหมาะกับ SQL พื้นฐาน (สัปดาห์ 5–8)
+* **DuckDB** — ไฟล์เดียว ``healthinfo.duckdb`` เชิงคอลัมน์ เน้น analytics (สัปดาห์ 5–8 และ 12–14)
+* **PostgreSQL 14+** — ฐานข้อมูล client/server มี ``ROLE``/``GRANT`` และธุรกรรมจริง (สัปดาห์ 5–8 และ 12–14)
+
+สร้าง/รีเฟรชทุกเอนจินจากชุดข้อมูลเดียวกันได้ด้วยสคริปต์ใน
+``source/_static/courses/healthinfo/scripts/`` (``build_sqlite.py``, ``build_duckdb.py``, ``setup_postgres.sh``)
+— ดู ``scripts/README.md`` สำหรับขั้นตอนติดตั้งและเชื่อมต่อ (รวม ``psycopg[binary]``)
 
 การประเมินผลการเรียนรู้ (Course Evaluation)
 ==========================================

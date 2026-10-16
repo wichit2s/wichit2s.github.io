@@ -1,0 +1,33 @@
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="p-6 bg-slate-950 min-h-screen text-slate-100 font-sans">
+  <h2 class="text-xl font-bold text-cyan-300 mb-4">🩺 แดชบอร์ดเฝ้าระวังผู้ป่วยกลุ่มเสี่ยงวิกฤตที่ขาดการรับยา (Care Gap Surveillance)</h2>
+  
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-rose-950/80 p-4 rounded-xl border border-rose-800">
+      <div class="text-xs text-rose-300">เคสวิกฤตที่ต้องได้รับการติดต่อด่วน (CRITICAL)</div>
+      <div class="text-2xl font-bold text-rose-200">{{ critical_count }} ราย</div>
+    </div>
+    <div class="bg-amber-950/80 p-4 rounded-xl border border-amber-800">
+      <div class="text-xs text-amber-300">รวมผู้ป่วยกลุ่มเสี่ยงที่ขาดการรับยา (Total Care Gaps)</div>
+      <div class="text-2xl font-bold text-amber-200">{{ total_care_gaps }} ราย</div>
+    </div>
+  </div>
+
+  <table class="w-full text-left text-xs bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <thead class="bg-slate-800 text-slate-300">
+      <tr><th class="p-3">Patient Hash ID</th><th>Age Group</th><th>SBP (mmHg)</th><th>HbA1c (%)</th><th>Risk Tier</th></tr>
+    </thead>
+    <tbody>
+      {% for p in patients %}
+      <tr class="border-b border-slate-800 hover:bg-slate-800/50">
+        <td class="p-3 font-mono text-cyan-300">{{ p.patient_id_hash }}</td>
+        <td>{{ p.age_group }}</td><td>{{ p.sbp }}</td><td>{{ p.hba1c }}</td>
+        <td>
+          <span class="px-2 py-1 rounded text-[10px] font-bold {% if p.risk_tier == 'CRITICAL' %}bg-rose-600 text-white{% else %}bg-amber-500 text-black{% endif %}">{{ p.risk_tier }}</span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
