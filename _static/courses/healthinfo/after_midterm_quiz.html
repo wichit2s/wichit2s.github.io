@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Workshop in Health Informatics - Quiz Weeks 1-3">
+    <meta name="keywords" content="Health Informatics, Quiz, Practice, Multiple Choice, wk01, wk02, wk03">
+    <meta name="author" content="Wichit Sombat, PhD.,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop in Health Informatics - After Midterm Quiz</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../css/greenish.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-50" x-data="quiz()">
+
+    <div class="home flex items-center gap-4">
+      <a href="../../../courses/healthinfo/index.html" class="text-white bg-gray-900 backdrop-blur-sm hover:bg-gray-700 transition rounded-full p-2 px-4 text-sm">
+        <span class="hover:text-blue-700">
+          <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+        </span>
+        <span class="py-3 mt-2"> แผนการเรียนรู้ </span>
+      </a>
+    </div>
+
+    <div class="slide-counter">
+      <span x-text="currentQuestion+1"></span> / <span x-text="totalQuestions"></span>
+      <span class="text-xs ml-2 text-emerald-300" x-show="score !== null" x-text="'คะแนน: ' + score + '/' + totalQuestions"></span>
+    </div>
+
+    <div class="fixed top-2 left-0 right-0 flex justify-between items-center px-8 z-10">
+      <button id="prevSlide" @click="prevQuestion()" class="previous-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div class="mx-auto flex items-center gap-4">
+        <a href="./after_midterm_quiz.html" class="text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition rounded-full p-2 px-4 text-sm">
+          <span>
+            <svg class="inline w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </span>
+        </a>
+      </div>
+      <button id="nextSlide" @click="nextQuestion()" class="next-slide">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-8 py-20">
+
+      <!-- Title Slide -->
+      <div x-show="currentQuestion === 0 && !started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">ข้อสอบทบทวน</h1>
+          <div class="text-xl text-white/90 mb-8 font-light">สัปดาห์ที่ 7-15: ทักษะเชิงลึกของเวชสารสนเทศ</div>
+          <div class="tech-card mb-8 text-left">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-300">คำชี้แจง</h2>
+            <ul class="space-y-2 text-base">
+              <li>- <strong>60 ข้อ</strong> ครอบคลุมเนื้อหาสัปดาห์ที่ 7 เป็นต้นไป</li>
+              <li>- คลิกที่ตัวเลือกเพื่อเลือกคำตอบ แล้วกด <strong>ตรวจคำตอบ</strong></li>
+              <li>- เขียว = ถูก, แดง = ผิด พร้อมคำอธิบาย</li>
+              <li>- คะแนนจะอัปเดตให้เห็นทันที</li>
+              <li>- ใช้ปุ่มลูกศรหรือปุ่มนำทางเพื่อเลื่อนไป-กลับ</li>
+            </ul>
+          </div>
+          <button @click="started = true; currentQuestion = 1"
+                  class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+            เริ่มทำข้อสอบ
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions -->
+      <template x-for="(q, idx) in questions" :key="idx">
+        <div x-show="currentQuestion === idx + 1 && started" class="gradient-bg flex-col justify-center text-white rounded-2xl p-8" style="min-height:80vh">
+          <div class="max-w-4xl mx-auto">
+            <!-- Question header -->
+            <div class="mb-2 text-emerald-300 text-sm font-mono" x-text="'ข้อที่ ' + (idx+1) + ' จาก ' + totalQuestions + ' -- ' + q.topic"></div>
+
+            <!-- Question text -->
+            <div class="text-2xl md:text-3xl font-semibold mb-8 leading-relaxed" x-html="q.question"></div>
+
+            <!-- Answer options -->
+            <div class="space-y-3 mb-8">
+              <template x-for="(opt, oi) in q.options" :key="oi">
+                <button @click="selectAnswer(idx, oi)"
+                        class="w-full text-left p-4 rounded-xl border-2 transition-all text-lg"
+                        :class="getOptionClass(idx, oi)">
+                  <span class="font-mono text-emerald-300 mr-3" x-text="String.fromCharCode(65 + oi) + '.'"></span>
+                  <span x-html="opt"></span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                  <span x-show="answers[idx] === oi && checked[idx] && oi !== q.answer" class="float-right text-red-400">&#10007;</span>
+                  <span x-show="checked[idx] && answers[idx] !== oi && oi === q.answer" class="float-right text-green-400">&#10003;</span>
+                </button>
+              </template>
+            </div>
+
+            <!-- Check / Explanation -->
+            <div x-show="answers[idx] !== null && !checked[idx]" class="mb-6">
+              <button @click="checkAnswer(idx)"
+                      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition">
+                ตรวจคำตอบ
+              </button>
+            </div>
+
+            <div x-show="checked[idx]" class="tech-card border-yellow-400 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xl" x-text="answers[idx] === q.answer ? '&#10003; ถูกต้อง!' : '&#10007; ไม่ถูกต้อง'"></span>
+              </div>
+              <p class="text-sm" x-html="q.explanation"></p>
+            </div>
+
+            <!-- Progress -->
+            <div class="mt-8 text-sm text-white/50">
+              <span x-text="'ทำแล้ว: ' + answeredCount() + '/' + totalQuestions"></span>
+              <span class="ml-4 text-emerald-300" x-text="'คะแนน: ' + score + '/' + totalQuestions" x-show="score !== null"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Results -->
+      <div x-show="currentQuestion === totalQuestions + 1 && started" class="gradient-bg flex-col justify-center items-center text-white rounded-2xl p-8" style="min-height:80vh">
+        <div class="text-center max-w-4xl mx-auto">
+          <h1 class="text-5xl font-bold mb-6">ทำข้อสอบเสร็จแล้ว!</h1>
+          <div class="tech-card mb-8">
+            <div class="text-6xl font-bold mb-4" :class="score >= 16 ? 'text-green-400' : score >= 12 ? 'text-yellow-400' : 'text-red-400'"
+                 x-text="score + ' / ' + totalQuestions"></div>
+            <div class="text-xl mb-4" x-text="score >= 16 ? 'ยอดเยี่ยม! พื้นฐานแน่นพร้อมลุย SQL/BigQuery' : score >= 12 ? 'ทำได้ดี! ทบทวนจุดพลาดจาก wk01-03 อีกครั้ง' : 'พยายามต่อ! กลับไปทบทวนสไลด์ wk01-wk03'"></div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm text-left">
+              <div class="tech-card"><strong>สัปดาห์ 1:</strong> บทนำ Health Informatics · Informed&Assisted · Scoop/uv/FHIR · CSV/JSON/pandas</div>
+              <div class="tech-card"><strong>สัปดาห์ 2:</strong> Siloed Data · Inner/Left Join · pd.merge · groupby/agg · HAVING · MIMIC/PySynthea</div>
+              <div class="tech-card"><strong>สัปดาห์ 3:</strong> Series/DataFrame · Boolean/.loc · Missing/Validation · Split-Apply-Combine · HbA1c</div>
+            </div>
+          </div>
+          <div class="space-x-4">
+            <button @click="resetQuiz()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg text-xl transition">
+              ทำข้อสอบอีกครั้ง
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    function quiz() {
+      return {
+        currentQuestion: 0,
+        started: false,
+        score: null,
+        answers: {},
+        checked: {},
+        totalQuestions: 60,
+        questions: [
+          {
+            "topic": "สัปดาห์ 7: มาตรฐานการแลกเปลี่ยนข้อมูล HL7 FHIR",
+            "question": "ในมาตรฐาน HL7 FHIR (Fast Healthcare Interoperability Resources) โครงสร้างข้อมูลย่อยที่ใช้ตัวแทนเอนทิตีทางคลินิก (เช่น Patient, Observation, MedicationRequest) มีลักษณะทางเทคนิคอย่างไร?",
+            "options": [
+              "เป็นไฟล์รูปภาพบีบอัดแบบ DICOM เสมอ",
+              "เป็นตาราง Excel ที่ต้องเปิดด้วย Microsoft Office เท่านั้น",
+              "เป็น Resource Objects ในรูปแบบ JSON หรือ XML ที่เข้าถึงได้ผ่าน RESTful API",
+              "เป็นสคริปต์ C++ ที่ต้องคอมไพล์ก่อนส่งผ่านเครือข่าย",
+              "เป็นไฟล์ Binary ที่ไม่สามารถเปิดอ่านด้วย Human-readable text ได้"
+            ],
+            "answer": 2,
+            "explanation": "wk07 / FHIR Standards: HL7 FHIR กำหนดให้ข้อมูลสุขภาพอยู่ในรูป 'Resource' (เช่น Patient, Observation) จัดเก็บเป็น JSON/XML และสื่อสารผ่าน RESTful HTTP APIs เพื่อรองรับ Interoperability ในระบบสุขภาพยุคใหม่"
+          },
+          {
+            "topic": "สัปดาห์ 7: รหัสมาตรฐานทางการแพทย์ (Clinical Terminologies)",
+            "question": "รหัสมาตรฐานทางการแพทย์ LOINC (Logical Observation Identifiers Names and Codes) และ SNOMED-CT มีบทบาทเด่นแตกต่างกันอย่างไรในระบบเวชสารสนเทศ?",
+            "options": [
+              "LOINC ใช้สำหรับคิดเงินค่ารักษา; SNOMED-CT ใช้สำหรับเบิกจ่ายประกันภัย",
+              "LOINC ใช้เป็นมาตรฐานรหัสตรวจทางห้องปฏิบัติการและสัญญาณชีพ; ส่วน SNOMED-CT เป็นคลังคำศัพท์ทางคลินิกครอบคลุมแนวคิดการวินิจฉัยและอาการแสดง",
+              "LOINC ใช้สำหรับระบุจังหวัด; SNOMED-CT ใช้สำหรับระบุชื่อโรงพยาบาล",
+              "LOINC ใช้สำหรับระบบคลาวด์เท่านั้น; SNOMED-CT ใช้เฉพาะในกระดาษ",
+              "LOINC และ SNOMED-CT เป็นโปรแกรมทำความสะอาดข้อมูล ไม่ใช่รหัสมาตรฐาน"
+            ],
+            "answer": 1,
+            "explanation": "wk07 / Standards: LOINC เป็นมาตรฐานสากลสำหรับรหัสแล็บและผลตรวจสัญญาณชีพ (Lab/Vitals Observation) ส่วน SNOMED-CT เป็น Comprehensive Clinical Terminology ที่ใช้ระบุคำศัพท์ อาการ หัตถการ และโรคทางคลินิก"
+          },
+          {
+            "topic": "สัปดาห์ 7: การทำความสะอาดข้อมูลสุขภาพ (Clinical Data Cleaning)",
+            "question": "หากพบค่าเวชระเบียนผู้ป่วยมีค่า Systolic BP = 350 mmHg ในขั้นตอนการสำรวจข้อมูล (EDA) เทคนิคในข้อใดเหมาะสมที่สุดในการจัดการค่าความผิดปกติทางกายภาพ (Physiological Outliers) นี้?",
+            "options": [
+              "แทนที่ค่าด้วย 0 mmHg ทันที",
+              "ปล่อยค่านั้นไว้เพื่อคำนวณค่าเฉลี่ยประชากร",
+              "คูณค่านั้นด้วย 2 เพื่อเพิ่มความสำคัญ",
+              "ลบแถวข้อมูลของผู้ป่วยทุกคนในโรงพยาบาลนั้นทิ้งทั้งหมด",
+              "ตรวจสอบเงื่อนไขขอบเขตทางคลินิก (Domain Thresholds e.g., SBP 50-300 mmHg) ร่วมกับการตัดด้วยวิธี IQR หรือกำหนดให้เป็น NULL เพื่อป้องกันผลวิเคราะห์เบี่ยงเบน"
+            ],
+            "answer": 4,
+            "explanation": "wk07 / Project Demo Hour 1: ค่า SBP = 350 mmHg เกินขอบเขตที่เป็นไปได้ทางกายภาพของผู้ป่วยที่ยังมีชีวิต (Out-of-bound) การใช้ Domain Filtering (50-300 mmHg) หรือ IQR Trimming เป็นแนวทางมาตรฐานเพื่อกรองข้อมูลขยะออก"
+          },
+          {
+            "topic": "สัปดาห์ 7: ตรรกะความถูกต้องของเวลา (Temporal Validation)",
+            "question": "ในการตรวจสอบคุณภาพข้อมูลเวชระเบียนผู้ป่วยนอนโรงพยาบาล (Inpatient EHR) เงื่อนไขตรรกะเวลา (Temporal Logic) ข้อใดจัดเป็นข้อมูลขัดแย้ง (Data Inconsistency) ที่ต้องได้รับการแก้ไข?",
+            "options": [
+              "dischtime < admittime (วันจำหน่ายออกจาก รพ. เกิดขึ้นก่อนวันรับนอน รพ.)",
+              "dischtime > admittime (วันจำหน่ายออกจาก รพ. เกิดขึ้นหลังวันรับนอน รพ.)",
+              "lab_date อยู่ระหว่าง admittime และ dischtime",
+              "admittime เท่ากับวันปัจจุบัน",
+              "dischtime เกิดขึ้นหลัง admittime 3 วัน"
+            ],
+            "answer": 0,
+            "explanation": "wk07 / Project Demo Hour 1 Slide 3: เงื่อนไข dischtime < admittime คือความผิดพลาดทางตรรกะเวลา (Temporal Inconsistency) เพราะผู้ป่วยไม่สามารถจำหน่ายออกจากโรงพยาบาลก่อนวันเข้ารับการรักษาได้"
+          },
+          {
+            "topic": "สัปดาห์ 7: ระบบเวชระเบียนอิเล็กทรอนิกส์ (HIS vs EHR)",
+            "question": "ข้อใดอธิบายความแตกต่างระหว่างระบบ Hospital Information System (HIS) และ Electronic Health Record (EHR) ได้ถูกต้องตามหลักเวชสารสนเทศ?",
+            "options": [
+              "HIS ใช้เก็บเฉพาะภาพถ่าย X-ray; EHR ใช้เก็บเฉพาะใบเสร็จรับเงิน",
+              "HIS ไม่รองรับการเชื่อมต่อกับฐานข้อมูล SQL",
+              "HIS เน้นการบริหารจัดการและบันทึกการทำงานภายในโรงพยาบาลเดียว; ส่วน EHR เน้นการเก็บและแลกเปลี่ยนประวัติสุขภาพผู้ป่วยครอบคลุมข้ามสถานพยาบาลตลอดช่วงชีวิต",
+              "EHR เป็นฮาร์ดแวร์คอมพิวเตอร์; HIS เป็นระบบสายแลน",
+              "ทั้งสองระบบคือชื่อเรียกทดแทนกันของโปรแกรม Microsoft Excel"
+            ],
+            "answer": 2,
+            "explanation": "wk07 / Health Informatics Foundations: HIS (Hospital Information System) เน้นงานบริหารและบริการภายในรพ. เดียว ส่วน EHR (Electronic Health Record) ออกแบบให้สะสมประวัติสุขภาพผู้ป่วยแบบ Longitudinal Record ที่แลกเปลี่ยนข้ามสถาบันได้"
+          },
+          {
+            "topic": "สัปดาห์ 7: การวิเคราะห์สถิติสรุปกลุ่ม (Data Aggregation & Grouping)",
+            "question": "หากต้องการคำนวณอัตราการนอนโรงพยาบาลซ้ำ (Readmission Rate) แยกตามแผนกการรักษา เงื่อนไข SQL ข้อใดใช้กรองแผนกที่มีจำนวนผู้ป่วยรับบริการมากกว่า 100 คนขึ้นไป?",
+            "options": [
+              "WHERE COUNT(patient_id) > 100",
+              "ORDER BY COUNT(patient_id) FILTER 100",
+              "SELECT DISTINCT department WHERE patient_id > 100",
+              "GROUP BY department HAVING COUNT(patient_id) > 100",
+              "LIMIT 100 HAVING department IS NOT NULL"
+            ],
+            "answer": 3,
+            "explanation": "wk07 / SQL Aggregation: การกรองผลลัพธ์ที่เกิดจากการสรุปกลุ่มสถิติ (Aggregate Functions เช่น COUNT) ต้องใช้เงื่อนไข HAVING ร่วมกับ GROUP BY ไม่สามารถใช้ WHERE โดยตรงได้"
+          },
+          {
+            "topic": "สัปดาห์ 8: Window Functions - ลำดับเหตุการณ์ทางคลินิก",
+            "question": "การใช้ Window Function ชนิด RANK() และ DENSE_RANK() แตกต่างกันอย่างไรเมื่อพบผลแล็บของผู้ป่วยที่มีค่าเท่ากันและอยู่ในลำดับเดียวกัน?",
+            "options": [
+              "DENSE_RANK() จะลบข้อมูลแถวที่ซ้ำกันทิ้งทันที",
+              "RANK() ใช้ได้เฉพาะข้อมูลตัวเลข; DENSE_RANK() ใช้ได้เฉพาะข้อมูลตัวอักษร",
+              "RANK() ทำงานเฉพาะบนระบบคลาวด์เท่านั้น",
+              "ทั้งสองฟังก์ชันให้ผลลัพธ์ลำดับเหมือนกันทุกประการโดยไม่มีข้อแตกต่าง",
+              "RANK() จะข้ามลำดับถัดไป (เช่น 1, 2, 2, 4); ส่วน DENSE_RANK() จะไม่ข้ามลำดับถัดไป (เช่น 1, 2, 2, 3)"
+            ],
+            "answer": 4,
+            "explanation": "wk08 / SQL Window Functions: RANK() จะเว้นลำดับถัดไปเมื่อมีอันดับซ้ำกัน (Gaps in sequence e.g., 1, 2, 2, 4) ในขณะที่ DENSE_RANK() จะรันลำดับต่อเนื่องโดยไม่ข้ามตัวเลข (No gaps e.g., 1, 2, 2, 3)"
+          },
+          {
+            "topic": "สัปดาห์ 8: Window Framing - คำนวณแนวโน้มสัญญาณชีพ",
+            "question": "ในคำสั่ง SQL Window Function ข้อความ 'ROWS BETWEEN 2 PRECEDING AND CURRENT ROW' หมายถึงขอบเขตการคำนวณข้อมูลช่วงใด?",
+            "options": [
+              "นับเฉพาะข้อมูล 2 แถวแรกของตารางทั้งหมด",
+              "นับรวมข้อมูล 2 แถวก่อนหน้า รวมกับแถวปัจจุบัน (รวมเป็น 3 แถว)",
+              "นับเฉพาะข้อมูลแถวปัจจุบันและ 2 แถวในอนาคต",
+              "นับเฉพาะข้อมูลที่ไม่ใช่ค่า NULL ทั้งหมด",
+              "นับข้อมูลย้อนหลัง 2 ปีเต็ม"
+            ],
+            "answer": 1,
+            "explanation": "wk08 / Window Framing: 'ROWS BETWEEN 2 PRECEDING AND CURRENT ROW' กำหนด Sliding Window ครอบคลุมแถวก่อนหน้า 2 แถว + แถวปัจจุบัน รวมเป็น 3 แถว เหมาะสำหรับการคำนวณค่าเฉลี่ยเคลื่อนที่ (Moving Average) ของผลแล็บ"
+          },
+          {
+            "topic": "สัปดาห์ 8: Common Table Expressions (CTEs)",
+            "question": "การใช้คำสั่ง WITH (Common Table Expressions - CTE) ใน SQL มีประโยชน์หลักประการใดในการประมวลผลท่อส่งข้อมูลสุขภาพ (Data Pipeline)?",
+            "options": [
+              "ช่วยให้สามารถสร้างไฟล์รูปภาพแสดงผลได้โดยตรง",
+              "ช่วยปิดการทำงานของระบบรักษาความปลอดภัยฐานข้อมูล",
+              "ช่วยจัดโครงสร้างแบบสอบถามซับซ้อนให้เป็นบล็อกชั่วคราวที่อ่านง่าย เป็นระเบียบ และสามารถอ้างอิงซ้ำในคำสั่งหลักได้",
+              "ทำให้คำสั่ง SQL รันผ่านเว็บเบราว์เซอร์ได้โดยไม่ต้องใช้ Database Server",
+              "บังคับให้ตารางต้องจัดเก็บเป็นแบบ NoSQL"
+            ],
+            "answer": 2,
+            "explanation": "wk08 / Project Demo Hour 4 Slide 16-17: CTE (WITH clause) ช่วยย่อยแบบสอบถาม SQL ที่มีหลายขั้นตอนออกเป็นตารางชั่วคราวที่มีชื่อชัดเจน ทำให้การอ่าน บำรุงรักษา และทดสอบตรรกะง่ายกว่า Subquery ซ้อนกันหลายชั้น"
+          },
+          {
+            "topic": "สัปดาห์ 8: Anti-Join Pattern & Care Gap Identification",
+            "question": "ในการตรวจหา Care Gap ผู้ป่วยโรคเบาหวานวิกฤตที่ไม่ได้รับยา รูปแบบการเขียน Anti-Join โดยใช้ LEFT JOIN ข้อใดถูกต้อง?",
+            "options": [
+              "SELECT * FROM patients p LEFT JOIN prescriptions rx ON p.id = rx.id WHERE rx.id IS NULL",
+              "SELECT * FROM patients p LEFT JOIN prescriptions rx ON p.id = rx.id WHERE rx.id IS NOT NULL",
+              "SELECT * FROM patients p INNER JOIN prescriptions rx ON p.id = rx.id",
+              "SELECT * FROM patients p CROSS JOIN prescriptions rx",
+              "SELECT * FROM patients p RIGHT JOIN prescriptions rx ON p.id = rx.id WHERE p.id IS NOT NULL"
+            ],
+            "answer": 0,
+            "explanation": "wk08 / SQL Join Patterns: การทำ Anti-Join ด้วย LEFT JOIN ... WHERE rx.id IS NULL จะดึงผู้ป่วยทั้งหมดและจับคู่กับใบสั่งยา หากผู้ป่วยคนใดไม่มีใบสั่งยา ค่าฝั่ง rx.id จะกลายเป็น NULL ทำให้กรองพบผู้ป่วยที่ไม่ได้รับยาได้อย่างถูกต้อง"
+          },
+          {
+            "topic": "สัปดาห์ 8: SQL CASE WHEN Multi-Parameter Stratification",
+            "question": "ข้อใดเป็นคำสั่ง SQL CASE WHEN ที่สามารถจำแนกความเสี่ยงผู้ป่วยเป็นกลุ่ม 'HIGH' เมื่อ SBP >= 140 หรือ HbA1c >= 7.0 ได้อย่างถูกต้อง?",
+            "options": [
+              "CASE WHEN sbp >= 140 AND hba1c >= 7.0 THEN 'HIGH' END",
+              "CASE WHEN sbp = 140 THEN 'HIGH' WHEN hba1c = 7.0 THEN 'LOW' END",
+              "CASE WHEN sbp < 140 OR hba1c < 7.0 THEN 'HIGH' END",
+              "CASE WHEN sbp >= 140 OR hba1c >= 7.0 THEN 'HIGH' ELSE 'NORMAL' END",
+              "CASE WHEN sbp + hba1c = 147 THEN 'HIGH' END"
+            ],
+            "answer": 3,
+            "explanation": "wk08 / Project Demo Hour 4 Slide 17: ตามเกณฑ์เวชปฏิบัติ การใช้ตัวดำเนินการ OR (sbp >= 140 OR hba1c >= 7.0) จะช่วยคัดกรองผู้ป่วยที่เข้าเกณฑ์ความดันสูง หรือ น้ำตาลสะสมสูง ด้านใดด้านหนึ่งให้จัดอยู่ในกลุ่มเสี่ยงสูง (HIGH) ได้อย่างครอบคลุม"
+          },
+          {
+            "topic": "สัปดาห์ 8: Time-Series Calculation in SQLite",
+            "question": "หากต้องการคำนวณจำนวนวันที่ผู้ป่วยนอนโรงพยาบาล (Length of Stay in Days) จากคอลัมน์ admittime และ dischtime ใน SQLite ควรใช้ฟังก์ชันเวลาใด?",
+            "options": [
+              "DATEDIFF(dischtime, admittime)",
+              "dischtime - admittime",
+              "COUNT(dischtime, admittime)",
+              "TIME_SPAN(admittime TO dischtime)",
+              "julianday(dischtime) - julianday(admittime)"
+            ],
+            "answer": 4,
+            "explanation": "wk08 / SQLite Time Functions: ใน SQLite ฟังก์ชัน julianday() จะแปลงข้อความวันเวลา ISO-8601 ให้เป็นตัวเลข Julian Day Number ทำให้สามารถนำมาลบกันตรงๆ (julianday(dischtime) - julianday(admittime)) เพื่อหาจำนวนวันต่างได้อย่างแม่นยำ"
+          },
+          {
+            "topic": "สัปดาห์ 8: Subqueries vs Window Functions Efficiency",
+            "question": "เหตุใดการใช้ Window Function (เช่น ROW_NUMBER() OVER) ในการดึงค่าสัญญานชีพล่าสุด จึงมีประสิทธิภาพสูงกว่าการใช้ Self-Subquery ซ้อนหลายชั้น?",
+            "options": [
+              "เพราะ Window Function ไม่ต้องวนสแกนตารางซ้ำหลายรอบ (Single Pass Scan over Partition)",
+              "เพราะ Window Function ทำงานเฉพาะบนการประมวลผลไฟล์ Excel",
+              "เพราะ Subquery บังคับให้เปลี่ยนภาษาเป็น C#",
+              "เพราะ Window Function ช่วยลบตารางออกจากดิสก์ทันที",
+              "เพราะ Subquery ไม่สามารถใช้กับข้อมูลตัวเลขได้"
+            ],
+            "answer": 0,
+            "explanation": "wk08 / Query Optimization: Window Functions ประมวลผลโดยจัดกลุ่มและเรียงลำดับผ่าน Partition ในรอบเดียว (Single Pass) ในขณะที่ Correlated Subquery ต้องวนกลับไปสแกนตารางแม่ซ้ำทุกๆ แถว ทำให้ Window Function ทำงานไวกว่าอย่างมหาศาลบนชุดข้อมูลขนาดใหญ่"
+          },
+          {
+            "topic": "สัปดาห์ 10: Thailand PDPA พ.ศ. 2562 - บทบาทผู้เกี่ยวข้อง",
+            "question": "ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) โรงพยาบาลที่ตัดสินใจเก็บรวบรวมข้อมูลผู้ป่วย และบริษัทผู้ให้บริการระบบคลาวด์ที่รับจัดเก็บข้อมูลตามคำสั่ง รพ. จัดเป็นผู้มีส่วนได้ส่วนเสียในบทบาทใดตามลำดับ?",
+            "options": [
+              "Data Subject และ Data Controller",
+              "Data Controller (ผู้ควบคุมข้อมูลส่วนบุคคล) และ Data Processor (ผู้ประมวลผลข้อมูลส่วนบุคคล)",
+              "Data Processor และ Data Subject",
+              "Data Protection Officer (DPO) ทั้งสองฝ่าย",
+              "Data Owner และ Data Auditor"
+            ],
+            "answer": 1,
+            "explanation": "wk10 Slide 3 & 7: โรงพยาบาลเป็นผู้มีอำนาจตัดสินใจเกี่ยวกับการเก็บรวบรวมใช้ข้อมูล จึงเป็น Data Controller ส่วนบริษัทคลาวด์ที่ดำเนินการตามคำสั่งหรือในนามของ Data Controller จัดเป็น Data Processor"
+          },
+          {
+            "topic": "สัปดาห์ 10: HIPAA Safe Harbor - 18 Identifiers Classification",
+            "question": "ข้อใดคือข้อมูลที่จัดเป็น Protected Health Information (PHI) ตามมาตรฐาน HIPAA Safe Harbor ที่ **ต้องลบออก** จากชุดข้อมูลก่อนนำไปใช้วิจัย?",
+            "options": [
+              "ค่าความดันโลหิต (Systolic BP)",
+              "ระดับน้ำตาลสะสม (HbA1c)",
+              "หมายเลขประจำตัวผู้ป่วย (Hospital Number - HN) และ วันเดือนปีเกิดจริงของผู้ป่วย",
+              "เพศสภาพของผู้ป่วย (Gender)",
+              "ปี ค.ศ. เข้ารับการรักษา"
+            ],
+            "answer": 2,
+            "explanation": "wk10 Slide 4 & 8: เลข HN (Medical Record Number) และวันเดือนปีเกิดจริง (Exact Dates) จัดเป็น 1 ใน 18 รายการชี้ตัว (PHI) ตาม HIPAA Safe Harbor ที่ต้องกำจัดออกหรือแปลงรูป ส่วนค่าแล็บ เพศ และปี ค.ศ. สามารถคงไว้ได้"
+          },
+          {
+            "topic": "สัปดาห์ 10: De-identification vs Anonymization vs Pseudonymization",
+            "question": "การทำ Pseudonymization (เช่น การเปลี่ยนเลข HN เป็น SHA-256 Hash + Salt) มีความแตกต่างจาก Anonymization สมบูรณ์แบบอย่างไรในทางกฎหมายและเทคนิค?",
+            "options": [
+              "Pseudonymization ทำให้ข้อมูลสูญหายไปถาวรไม่สามารถนำกลับมาใช้ได้",
+              "Anonymization สามารถย้อนกลับมาหาตัวตนผู้ป่วยได้ง่ายกว่า Pseudonymization",
+              "ทั้งสองคำมีความหมายเหมือนกันทุกประการ",
+              "Pseudonymization เป็นการแทนที่ข้อมูลชี้ตัวด้วยรหัสเทียม ซึ่งยังสามารถย้อนกลับได้หากมี Secret Key (ดังนั้นยังจัดเป็นข้อมูลส่วนบุคคล); ส่วน Anonymization เป็นการตัดข้อมูลชี้ตัวถาวรจนไม่สามารถเชื่อมโยงกลับได้อีกเลย",
+              "Pseudonymization ใช้เฉพาะกับข้อมูลการเงินเท่านั้น"
+            ],
+            "answer": 3,
+            "explanation": "wk10 Slide 5 & 9: Pseudonymization ใช้รหัสเทียมแทน direct identifiers หากมี Secret Key/Salt ก็จะสามารถ Re-identify กลับได้ ข้อมูลจึงยังอยู่ภายใต้ PDPA ต่างจาก Anonymization ที่หลุดพ้นจากขอบเขตบังคับ PDPA เพราะไม่สามารถ Re-identify ได้อีกต่อไป"
+          },
+          {
+            "topic": "สัปดาห์ 10: Linkage Attack & Differential Privacy",
+            "question": "ภัยคุกคามชนิด Linkage Attack ในระบบข้อมูลสุขภาพสาธารณะ สามารถป้องกันได้อย่างไรในระดับเทคโนโลยีสารสนเทศขั้นสูง?",
+            "options": [
+              "การเปิดเผยชื่อจริงของผู้ป่วยทั้งหมด",
+              "การยกเลิกการใช้ระบบคอมพิวเตอร์ในโรงพยาบาล",
+              "การใช้เทคนิค k-Anonymity (การรวมกลุ่มให้มีผู้ป่วยคล้ายกันอย่างน้อย k ราย) และ Differential Privacy (การเติม Noise ทางสถิติ)",
+              "การเปลี่ยนรหัสผ่านเซิร์ฟเวอร์ทุกๆ 1 ชั่วโมง",
+              "การบันทึกข้อมูลเฉพาะผู้ป่วยชายเท่านั้น"
+            ],
+            "answer": 2,
+            "explanation": "wk10 Slide 5 & 9: Linkage Attack เกิดจากการนำชุดข้อมูลรองไปเชื่อมกับตารางภายนอก การป้องกันต้องใช้เทคนิคทางสถิติขั้นสูง เช่น k-Anonymity, l-Diversity, t-Closeness และ Differential Privacy เพื่อให้การสืบค้นย้อนกลับทำไม่ได้"
+          },
+          {
+            "topic": "สัปดาห์ 10: AHIMA Information Governance (A TIP CARD)",
+            "question": "ตามกรอบธรรมาภิบาลข้อมูล AHIMA IGPHC หลักการ 'Retention' และ 'Disposition' หมายถึงข้อใดตามลำดับ?",
+            "options": [
+              "การจัดเก็บข้อมูลตลอดไป และ การขายข้อมูลแก่ภายนอก",
+              "การกำหนดระยะเวลาจัดเก็บข้อมูลเวชระเบียนที่เหมาะสมตามกฎหมาย และ การทำลายข้อมูลอย่างปลอดภัยเมื่อครบกำหนดอายุจัดเก็บ",
+              "การสำรองข้อมูลลงแฟลชไดรฟ์ และ การส่งอีเมลหาคนไข้",
+              "การปิดล็อกห้องทำงาน และ การแจกรหัสผ่าน",
+              "การซ่อนไฟล์บนเดสก์ท็อป และ การเปลี่ยนชื่อไฟล์"
+            ],
+            "answer": 1,
+            "explanation": "wk10 Slide 8: Retention คือการกำหนดระยะเวลาจัดเก็บข้อมูลเวชระเบียนตามที่กฎหมายระบุ (เช่น 5-10 ปี) ส่วน Disposition คือกระบวนการทำลาย ลบ หรือจำหน่ายข้อมูลอย่างปลอดภัยและมีหลักฐานเมื่อหมดความจำเป็น"
+          },
+          {
+            "topic": "สัปดาห์ 10: Security Controls - Data Encryption Standards",
+            "question": "ในการคุ้มครองข้อมูลเวชระเบียนอิเล็กทรอนิกส์ มาตรฐานการเข้ารหัสข้อมูลขณะจัดเก็บในฐานข้อมูล (Data at Rest) และขณะรับส่งผ่านเครือข่าย (Data in Transit) ข้อใดเป็นมาตรฐานที่ยอมรับในปัจจุบัน?",
+            "options": [
+              "At Rest: MD5; In Transit: HTTP",
+              "At Rest: SHA-1; In Transit: FTP",
+              "At Rest: Plain Text; In Transit: Telnet",
+              "At Rest: AES-256; In Transit: TLS 1.3 (HTTPS)",
+              "At Rest: Base64; In Transit: SMS"
+            ],
+            "answer": 3,
+            "explanation": "wk10 Slide 6 & 9: มาตรฐานความมั่นคงปลอดภัยไซเบอร์ปัจจุบันกำหนดให้ Data at Rest เข้ารหัสด้วย AES-256 (Advanced Encryption Standard) และ Data in Transit เข้ารหัสการสื่อสารด้วย TLS 1.3 (HTTPS) เพื่อป้องกัน eavesdropping"
+          },
+          {
+            "topic": "สัปดาห์ 10: Synthetic Health Data Value",
+            "question": "เหตุใดข้อมูลผู้ป่วยสังเคราะห์ (Synthetic Patient Data) ที่สร้างจาก PySynthea จึงมีบทบาทสำคัญอย่างมากในงานวิจัยและพัฒนานวัตกรรม AI ทางการแพทย์?",
+            "options": [
+              "เพราะข้อมูลสังเคราะห์สามารถใช้แทนการรักษาผู้ป่วยจริงได้โดยไม่ต้องใช้ยา",
+              "เพราะช่วยลดความเสี่ยงการละเมิดความเป็นส่วนตัว (Zero Re-identification Risk) ทำให้สามารถแบ่งปันชุดข้อมูลเพื่อการศึกษา ทดสอบ และวิจัย AI ได้อย่างเสรีโดยไม่ละเมิด PDPA/HIPAA",
+              "เพราะข้อมูลสังเคราะห์ไม่ต้องใช้พื้นที่ฮาร์ดดิสก์ในการจัดเก็บ",
+              "เพราะเป็นข้อมูลที่ได้รับการยกเว้นไม่ต้องเขียนโค้ดประมวลผล",
+              "เพราะบริษัทประกันภัยสามารถนำไปใช้ปฏิเสธการจ่ายค่ารักษาได้"
+            ],
+            "answer": 1,
+            "explanation": "wk10 Slide 5 & 9: ข้อมูลผู้ป่วยสังเคราะห์ (Synthetic Data) รักษารูปแบบสถิติและความสัมพันธ์ทางคลินิกไว้เสมือนจริง แต่ไม่มีตัวตนผู้ป่วยมนุษย์จริงอยู่เลย ทำให้ Re-identification risk เป็นศูนย์ ปลอดภัย 100% ต่อ PDPA/HIPAA ในการแชร์เพื่อวิจัย"
+          },
+          {
+            "topic": "สัปดาห์ 8: Advanced SQL Analytics & CTEs",
+            "question": "ในการทำ Data Pipeline สำหรับวิเคราะห์ข้อมูลสุขภาพ การใช้ Common Table Expression (CTE) ด้วยคำสั่ง WITH มีข้อได้เปรียบหลักอย่างไรเมื่อเทียบกับการใช้ Subquery ซ้อนหลายชั้น?",
+            "options": [
+              "ช่วยเพิ่มอ่านง่าย (Readability) ของโค้ด สามารถอ้างอิงชุดข้อมูลชั่วคราวซ้ำได้ และช่วยลดความซับซ้อนของคำสั่ง SQL",
+              "ช่วยให้เพิ่มความเร็วในการเขียนไฟล์ลงดิสก์โดยอัตโนมัติ",
+              "ช่วยยกเลิกการใช้ Primary Key ในการเชื่อมตาราง",
+              "ทำให้คำสั่ง SQL แปลงข้อมูลเป็นไฟล์ Excel โดยทันที",
+              "ช่วยข้ามการตรวจสอบชนิดข้อมูล (Type Checking) ของฐานข้อมูล"
+            ],
+            "answer": 0,
+            "explanation": "wk08 / Project Demo Hour 4: CTE (WITH clause) ช่วยแบ่งคำสั่ง SQL ที่ซับซ้อนออกเป็นบล็อกชั่วคราวที่อ่านง่ายขึ้น สามารถนำบล็อกนั้นมาเรียกรู้และ JOIN ซ้ำได้ในคำสั่งเดียว ทำให้บำรุงรักษาโค้ดได้ดีกว่า Subquery ซ้อนหลายชั้น"
+          },
+          {
+            "topic": "สัปดาห์ 8: Window Functions",
+            "question": "หากต้องการดึงค่าสัญญาณชีพ (Vitals) บันทึกล่าสุดของผู้ป่วยแต่ละคนจากตาราง vitals_labs คำสั่ง Window Function ข้อใดถูกต้องที่สุด?",
+            "options": [
+              "RANK() OVER (ORDER BY patient_id_hash DESC)",
+              "COUNT() OVER (PARTITION BY lab_date ORDER BY patient_id_hash)",
+              "ROW_NUMBER() OVER (PARTITION BY patient_id_hash ORDER BY lab_date DESC)",
+              "DENSE_RANK() OVER (GROUP BY patient_id_hash ORDER BY lab_date ASC)",
+              "SUM() OVER (PARTITION BY patient_id_hash ORDER BY lab_date DESC)"
+            ],
+            "answer": 2,
+            "explanation": "wk08 / Project Demo Hour 4 Slide 19: การใช้ ROW_NUMBER() OVER (PARTITION BY patient_id_hash ORDER BY lab_date DESC) จะจัดลำดับแถวประวัติของผู้ป่วยแต่ละคนโดยให้วันที่ล่าสุดได้ลำดับที่ 1 (rn = 1) ทำให้กรองเฉพาะค่าล่าสุดของผู้ป่วยทุกคนได้อย่างแม่นยำ"
+          },
+          {
+            "topic": "สัปดาห์ 8: Anti-Join Pattern & Care Gap Analysis",
+            "question": "ในการค้นหากลุ่มเสี่ยงวิกฤตที่ยังไม่ได้รับยา (Care Gap Analysis) เหตุใดจึงควรใช้รูปแบบ Anti-Join (NOT EXISTS) แทนการใช้ NOT IN (SELECT patient_id_hash FROM prescriptions)?",
+            "options": [
+              "เพราะ NOT IN รันเร็วกว่า NOT EXISTS เสมอ",
+              "เพราะ NOT EXISTS รองรับเฉพาะข้อมูลที่เป็นตัวเลขเท่านั้น",
+              "เพราะ NOT EXISTS บังคับให้ผู้ใช้ต้องใส่รหัสผ่านก่อนดึงข้อมูล",
+              "เพราะหากตาราง Subquery ใน NOT IN มีค่า NULL แม้เพียงแถวเดียว คำสั่ง NOT IN จะคืนค่าผลลัพธ์เป็นเซตว่าง (Empty Set) ทันที (SQL NULL Trap)",
+              "เพราะ NOT IN ไม่สามารถใช้ร่วมกับตารางที่มี Foreign Key ได้"
+            ],
+            "answer": 3,
+            "explanation": "wk08 / Project Demo Hour 4 Slide 18: กฎ SQL NULL Trap ระบุว่าหาก Subquery ภายใน NOT IN มีค่า NULL ปนอยู่ ตัวประมวลผล SQL จะไม่สามารถประเมินค่าเงื่อนไขได้และจะคืนค่าเป็นว่างเปล่าทันที ดังนั้น Anti-Join ด้วย NOT EXISTS หรือ LEFT JOIN ... WHERE IS NULL จึงปลอดภัยและเป็นมาตรฐานทางเวชสารสนเทศ"
+          },
+          {
+            "topic": "สัปดาห์ 8: SQL Risk Triage Engine",
+            "question": "ในการประมวลผลจัดลำดับความเสี่ยงผู้ป่วย (Risk Triage) จากค่า Systolic BP (SBP) และ HbA1c เงื่อนไข CASE WHEN ในข้อใดจัดกลุ่มผู้ป่วยวิกฤต (CRITICAL) ตามแนวทางเวชปฏิบัติได้ถูกต้อง?",
+            "options": [
+              "CASE WHEN sbp < 120 AND hba1c < 5.7 THEN 'CRITICAL' END",
+              "CASE WHEN sbp = 140 AND hba1c = 7.0 THEN 'CRITICAL' END",
+              "CASE WHEN sbp BETWEEN 120 AND 139 THEN 'CRITICAL' END",
+              "CASE WHEN sbp >= 180 OR hba1c >= 9.0 THEN 'CRITICAL' END",
+              "CASE WHEN hba1c >= 5.7 OR sbp < 90 THEN 'CRITICAL' END"
+            ],
+            "answer": 3,
+            "explanation": "wk08 / Project Demo Hour 4 Slide 17: ตามเกณฑ์เวชปฏิบัติโรคความดันโลหิตสูงและเบาหวาน (Thai HT/DM Guidelines) ผู้ป่วยที่มีค่า SBP >= 180 mmHg (Hypertensive Crisis) หรือ HbA1c >= 9.0% จัดเป็นกลุ่มเสี่ยงวิกฤต (CRITICAL) ที่ต้องได้รับการดูแลเร่งด่วน"
+          },
+          {
+            "topic": "สัปดาห์ 8: Window Functions - Moving Average",
+            "question": "หากต้องการคำนวณค่าเฉลี่ยเคลื่อนที่ 7 วัน (7-day Moving Average) ของชั่วโมงการนอนในตาราง daily_behaviors คำสั่ง Window Frame ข้อใดถูกกำหนดอย่างถูกต้อง?",
+            "options": [
+              "AVG(sleep_hours) OVER (ORDER BY user_id_hash ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
+              "SUM(sleep_hours) OVER (PARTITION BY log_date RANGE BETWEEN 7 PRECEDING AND 7 FOLLOWING)",
+              "COUNT(sleep_hours) OVER (PARTITION BY user_id_hash ORDER BY log_date ROWS 7 PRECEDING)",
+              "AVG(sleep_hours) OVER (PARTITION BY user_id_hash ORDER BY sleep_hours DESC)",
+              "AVG(sleep_hours) OVER (PARTITION BY user_id_hash ORDER BY log_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)"
+            ],
+            "answer": 4,
+            "explanation": "wk08 / UniHealth Feedback: การคำนวณ 7-day Moving Average ต้องใช้ AVG() ร่วมกับคำสั่ง PARTITION BY user_id_hash ORDER BY log_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW ซึ่งจะนับรวมวันปัจจุบันและ 6 วันก่อนหน้าได้ครบ 7 วันพอดี"
+          },
+          {
+            "topic": "สัปดาห์ 8: SQL Aggregation & Grouping",
+            "question": "ข้อใดกล่าวถูกต้องเกี่ยวกับความแตกต่างระหว่างการกรองด้วยเงื่อนไข WHERE และ HAVING ในคำสั่ง SQL?",
+            "options": [
+              "WHERE ใช้กรองข้อมูลหลังการ GROUP BY แต่ HAVING ใช้กรองก่อนการ GROUP BY",
+              "HAVING สามารถใช้ได้เฉพาะตารางที่มี Primary Key เท่านั้น",
+              "WHERE และ HAVING ทำงานเหมือนกันทุกประการ สามารถใช้แทนกันได้เสมอ",
+              "WHERE ใช้กรองแถวข้อมูลดิบก่อนการจัดกลุ่ม (Aggregation) ส่วน HAVING ใช้กรองผลลัพธ์ที่ผ่านฟังก์ชันสถิติกลุ่ม (เช่น COUNT, AVG) แล้ว",
+              "HAVING เป็นคำสั่งสำหรับลบข้อมูล ส่วน WHERE เป็นคำสั่งสำหรับแก้ไขข้อมูล"
+            ],
+            "answer": 3,
+            "explanation": "wk08: WHERE ประมวลผลก่อน GROUP BY เพื่อกรองแถวที่ไม่เกี่ยวข้องออกไป ส่วน HAVING ประมวลผลหลัง GROUP BY เพื่อกรองกลุ่มผลลัพธ์รวมสถิติ (เช่น HAVING AVG(sbp) > 140)"
+          },
+          {
+            "topic": "สัปดาห์ 9: Data Warehousing (OLTP vs OLAP)",
+            "question": "ระบบสารสนเทศโรงพยาบาล (HIS) ที่เน้นบันทึกการรักษาประจำวันด้วยความเร็วสูง และตารางวิเคราะห์ข้อมูลระดับคลังข้อมูล (Data Warehouse) มีสถาปัตยกรรมต่างกันอย่างไร?",
+            "options": [
+              "HIS เป็น OLAP เน้น Read-Optimized; Data Warehouse เป็น OLTP เน้น Write-Optimized",
+              "ทั้งสองระบบใช้สถาปัตยกรรม NoSQL เดียวกันทั้งหมด",
+              "HIS ไม่สามารถใช้ร่วมกับฐานข้อมูล Relational ได้",
+              "HIS เป็น OLTP (Write-Optimized / 3NF); ส่วน Data Warehouse เป็น OLAP (Read-Optimized / Columnar / Star Schema)",
+              "Data Warehouse ห้ามนำข้อมูลจากระบบ HIS เข้าไปจัดเก็บ"
+            ],
+            "answer": 3,
+            "explanation": "wk09 / Project Demo Hour 3 Slide 12: ระบบ HIS ฝั่งปฏิบัติงานเป็น OLTP (Online Transaction Processing) ที่ต้องการ 3NF เพื่อป้องกัน Data Anomaly ขณะบันทึกข้อมูล ส่วนคลังข้อมูลวิเคราะห์เป็น OLAP (Online Analytical Processing เช่น DuckDB) ที่ออกแบบตารางเพื่อรองรับการอ่านและสรุปผลปริมาณมาก"
+          },
+          {
+            "topic": "สัปดาห์ 9: Normalization 1NF to 3NF",
+            "question": "การแตกตารางแบน (Flat File) ให้อยู่ในรูป Third Normal Form (3NF) มีวัตถุประสงค์หลักเพื่อแก้ไขปัญหาใดในระบบฐานข้อมูล?",
+            "options": [
+              "เพิ่มขนาดไฟล์ฐานข้อมูลให้ใหญ่ขึ้น",
+              "ขจัดความซ้ำซ้อนของข้อมูล (Data Redundancy) และป้องกันข้อผิดพลาดในการเพิ่ม แก้ไข หรือลบข้อมูล (Anomalies)",
+              "ยกเลิกการใช้ Foreign Key ระหว่างตาราง",
+              "บังคับให้ข้อมูลทุกแถวต้องบันทึกเป็นภาษาอังกฤษเท่านั้น",
+              "ทำให้คำสั่ง SELECT ไม่สามารถทำงานได้"
+            ],
+            "answer": 1,
+            "explanation": "wk09 / Project Demo Hour 3 Slide 12: 3NF มุ่งเน้นการขจัด Transitive Dependency และ Data Redundancy เพื่อป้องกัน Insertion, Update และ Deletion Anomalies เมื่อมีการแก้ไขข้อมูลโครงสร้างหลัก"
+          },
+          {
+            "topic": "สัปดาห์ 9: Relational Schema Design",
+            "question": "ในการออกแบบสคีมาฐานข้อมูลระบบเฝ้าระวังโรคเรื้อรังแบบ 3NF ข้อใดจัดลำดับความสัมพันธ์ของตารางได้ถูกต้องตามหลัก Relational Database?",
+            "options": [
+              "N patients ➔ 1 vitals_labs โดยห้ามใช้ Primary Key",
+              "ตาราง vitals_labs และ prescriptions ต้องรวมเป็นตารางเดียวกันเสมอ",
+              "1 prescriptions ➔ N patients โดยใช้ age_group เป็น Primary Key",
+              "ทุกตารางต้องไม่มีการเชื่อมโยง Foreign Key เพื่อความปลอดภัย",
+              "1 patients ➔ N vitals_labs และ 1 patients ➔ N prescriptions เชื่อมด้วย Foreign Key (patient_id_hash)"
+            ],
+            "answer": 4,
+            "explanation": "wk09 / Project Demo Hour 3 Slide 13: สคีมา 3NF ที่ถูกต้อง จะแยกตารางประชากรผู้ป่วย (patients) เป็นตารางแม่ และมีตารางลูก vitals_labs กับ prescriptions เชื่อมโยงแบบ One-to-Many (1:N) ผ่าน Foreign Key (patient_id_hash)"
+          },
+          {
+            "topic": "สัปดาห์ 9: SQLite Integrity Constraints",
+            "question": "ในการสร้างตาราง vitals_labs บน SQLite หากต้องการป้องกันไม่ให้มีการบันทึกค่า Systolic BP ผิดปกติ เช่น SBP = 999 mmHg ควรใช้คำสั่ง DDL ข้อใด?",
+            "options": [
+              "sbp REAL CHECK(sbp BETWEEN 50 AND 300)",
+              "sbp TEXT UNIQUE",
+              "sbp INTEGER PRIMARY KEY",
+              "sbp REAL AUTOINCREMENT",
+              "sbp VARCHAR(10) DEFAULT '999'"
+            ],
+            "answer": 0,
+            "explanation": "wk09 / Project Demo Hour 3 Slide 14: คำสั่ง CHECK(sbp BETWEEN 50 AND 300) เป็นการกำหนด Domain Constraint บน DDL เพื่อป้องกันการบันทึกค่าสัญญานชีพที่เป็นไปไม่ได้ทางคลินิกเข้าสู่ฐานข้อมูล"
+          },
+          {
+            "topic": "สัปดาห์ 9: DuckDB vs SQLite Usage",
+            "question": "ข้อใดอธิบายความเหมาะสมในการเลือกใช้ DuckDB เทียบกับ SQLite ในโครงการเวชสารสนเทศได้อย่างถูกต้อง?",
+            "options": [
+              "SQLite เหมาะสำหรับการประมวลผลข้อมูล OLAP ขนาดใหญ่แบบ Columnar; DuckDB เหมาะสำหรับแอปพลิเคชันมือถือขนาดเล็ก",
+              "DuckDB ไม่รองรับการเขียนคำสั่ง SQL",
+              "SQLite เหมาะเป็น OLTP Embedded Database สำหรับเว็บแอปพลิเคชันขนาดเล็ก-กลาง; ส่วน DuckDB เป็น In-Memory Analytical Engine เหมาะสำหรับการประมวลผล SQL OLAP ความเร็วสูงบนไฟล์ CSV/Parquet",
+              "SQLite ไม่สามารถใช้งานร่วมกับภาษา Python ได้",
+              "ทั้งสองไลบรารีต้องรันผ่าน Docker Container เท่านั้น"
+            ],
+            "answer": 2,
+            "explanation": "wk09 / Project Demo: SQLite เป็น RDBMS ชนิด Row-oriented OLTP ที่สมบูรณ์แบบสำหรับแอปพลิเคชัน Django ส่วน DuckDB เป็น Columnar OLAP Engine ที่เหมาะสำหรับงานวิเคราะห์ สถิติ และ Data Science ปริมาณมาก"
+          },
+          {
+            "topic": "สัปดาห์ 10: PDPA พ.ศ. 2562 & Sensitive Data",
+            "question": "ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) มาตรา 26 ข้อมูลสุขภาพและข้อมูลพันธุกรรมจัดเป็นข้อมูลประเภทใด และมีหลักการเก็บรวบรวมอย่างไร?",
+            "options": [
+              "ข้อมูลทั่วไป สามารถเก็บรวบรวมได้โดยไม่ต้องแจ้งเจ้าของข้อมูล",
+              "ข้อมูลส่วนบุคคลอ่อนไหว (Sensitive Personal Data) ต้องได้รับความยินยอมโดยชัดแจ้ง (Explicit Consent) เว้นแต่จะเข้าข้อยกเว้นตามกฎหมาย",
+              "ข้อมูลสาธารณะ ไม่ได้รับการคุ้มครองตามกฎหมาย",
+              "ข้อมูลความลับทางการค้า ห้ามเก็บรวบรวมในโรงพยาบาลทุกกรณี",
+              "ข้อมูลเปิดเผยได้自由 โดยเป็นสิทธิของโปรแกรมเมอร์"
+            ],
+            "answer": 1,
+            "explanation": "wk10 Slide 3 & 7: PDPA มาตรา 26 จัดให้ข้อมูลสุขภาพ พันธุกรรม และชีวภาพ เป็น Sensitive Data การเก็บรวบรวมต้องขอ Explicit Consent เว้นแต่เข้าข้อยกเว้น เช่น Vital Interest หรือการรักษาพยาบาลโดยผู้ประกอบวิชาชีพ"
+          },
+          {
+            "topic": "สัปดาห์ 10: PDPA Medical Exemptions",
+            "question": "ข้อใด **ไม่ใช่** ข้อยกเว้นตามกฎหมายในการประมวลผลข้อมูลสุขภาพโดยไม่ต้องขอความยินยอม (Explicit Consent) ตาม PDPA มาตรา 26?",
+            "options": [
+              "เพื่อการป้องกันหรือระงับอันตรายต่อชีวิต ร่างกาย หรือสุขภาพของบุคคล (Vital Interest)",
+              "เพื่อการวินิจฉัยทางการแพทย์และการรักษาพยาบาลโดยผู้ประกอบวิชาชีพเวชกรรม",
+              "เพื่อประโยชน์ด้านสาธารณสุขและการควบคุมโรคติดต่อ",
+              "เพื่อการปฏิบัติหน้าที่ตามกฎหมายด้านการคุ้มครองสังคมของสถานพยาบาล",
+              "เพื่อนำข้อมูลไปขายแก่บริษัทประกันชีวิตเชิงพาณิชย์โดยไม่ผ่านการปิดบังตัวตน"
+            ],
+            "answer": 4,
+            "explanation": "wk10 Slide 3 & 7: การนำข้อมูลสุขภาพไปขายแก่บริษัทประกันเชิงพาณิชย์โดยไม่ได้รับยินยอมและไม่ De-identify ถือเป็นการละเมิด PDPA ร้ายแรง ไม่เข้าข้อยกเว้นทางการแพทย์หรือสาธารณสุข"
+          },
+          {
+            "topic": "สัปดาห์ 10: HIPAA Safe Harbor 18 Identifiers",
+            "question": "ตามมาตรฐาน HIPAA Safe Harbor ในการนำชุดข้อมูลสุขภาพไปใช้วิจัยหรือฝึก AI ข้อใด **ไม่จัดเป็น** 1 ใน 18 รายการข้อมูลระบุตัวตน (PHI) ที่ต้องกำจัดออก?",
+            "options": [
+              "ชื่อ-นามสกุล และ เลขประจำตัวผู้ป่วย (HN / MRN)",
+              "ช่วงกลุ่มอายุผู้ป่วยแบบกว้าง เช่น '40-49 ปี' (Age Binning)",
+              "หมายเลขโทรศัพท์ และ เลขบัตรประจำตัวประชาชน (SSN)",
+              "ที่อยู่อีเมล และ IP Address",
+              "ภาพถ่ายใบหน้าเต็ม (Full-face photos) และ อัตลักษณ์ชีวภาพ (Biometrics)"
+            ],
+            "answer": 1,
+            "explanation": "wk10 Slide 4 & 8: ช่วงกลุ่มอายุแบบกว้าง (Age Binning เช่น '40-49 ปี') ไม่ใช่ข้อมูลชี้ตัว แต่เป็นเทคนิค De-identification ที่ยอมรับให้ใช้ได้ ส่วนชื่อ, HN, SSN, IP, ภาพถ่ายจัดเป็น PHI ที่ต้องตัดออก"
+          },
+          {
+            "topic": "สัปดาห์ 10: HIPAA Age > 89 Rule",
+            "question": "เหตุใดมาตรฐาน HIPAA Safe Harbor จึงกำหนดเงื่อนไขพิเศษให้ต้องรวมกลุ่มผู้ป่วยที่มีอายุมากกว่า 89 ปีขึ้นไป ให้กลายเป็นหมวดหมู่ '90+' (Age > 89 Rule)?",
+            "options": [
+              "เพราะประชากรกลุ่มนี้มีจำนวนน้อยมาก ทำให้เสี่ยงต่อการถูกชี้ตัวย้อนกลับ (Extreme Outlier Re-identification Risk) เมื่อเชื่อมโยงข้อมูล",
+              "เพราะผู้สูงอายุมากกว่า 89 ปีไม่สามารถรับการรักษาในโรงพยาบาลได้",
+              "เพราะฐานข้อมูลไม่สามารถเก็บตัวเลขเกิน 2 หลักได้",
+              "เพราะเป็นข้อบังคับของบริษัทผู้ผลิตโปรแกรมบัญชี",
+              "เพราะผู้สูงอายุกลุ่มนี้ไม่มีรหัสประจำตัวประชาชน"
+            ],
+            "answer": 0,
+            "explanation": "wk10 Slide 4 & 8: ผู้สูงอายุที่อายุเกิน 89 ปีจัดเป็น Extreme Outliers ในเชิงสถิติประชากร หากปล่อยค่าอายุจริง (เช่น 98 ปี) ร่วมกับเพศและจังหวัด จะเสี่ยงต่อการถูกระบุตัวตนย้อนกลับได้ง่ายมาก"
+          },
+          {
+            "topic": "สัปดาห์ 10: Cryptographic Salt-Hashing",
+            "question": "ในการทำ Pseudonymization บนคอลัมน์ patient_id เหตุใดการใช้ฟังก์ชัน SHA-256 ร่วมกับค่า Secret Salt (SHA-256 + Salt) จึงปลอดภัยกว่าการใช้ SHA-256 แบบธรรมดา?",
+            "options": [
+              "เพราะทำให้ไฟล์ข้อมูลมีขนาดเล็กลง 50%",
+              "เพราะทำให้คำสั่ง SQL รันได้เร็วขึ้น 10 เท่า",
+              "เพราะช่วยป้องกันการถอดรหัสย้อนกลับด้วยตารางจับคู่สำเร็จรูป (Rainbow Table Attacks) และป้องกันการค้นหาด้วยรหัสเดาเด็ดขาดหากไม่มี Secret Key",
+              "เพราะทำให้รหัสสุ่มเปลี่ยนไปเรื่อยๆ ทุกครั้งที่เปิดไฟล์ CSV",
+              "เพราะเป็นเงื่อนไขบังคับของการติดตั้ง Windows"
+            ],
+            "answer": 2,
+            "explanation": "wk10 Slide 5 & 9: การทำ Salt-Hashing โดยนำข้อความความลับ (Secret Salt) ไปต่อกับ HN ก่อนเข้า SHA-256 จะทำให้ค่า Hash ที่ได้เปลี่ยนไปโดยสิ้นเชิง ป้องกันแฮกเกอร์ใช้ Rainbow Tables ย้อนรหัสผู้ป่วยได้"
+          },
+          {
+            "topic": "สัปดาห์ 10: Linkage Attack",
+            "question": "จากศึกษาวิจัยอันเป็นตำนานของ Latanya Sweeney (1997) พบว่าข้อมูลที่ไม่ระบุชื่อ เพียงใช้ตัวแปร 3 ตัวใดร่วมกัน ก็สามารถระบุตัวตนประชากรในสหรัฐฯ ได้ถูกต้องถึง 87%?",
+            "options": [
+              "หมู่เลือด + กรุ๊ปเลือด + รหัสโรค",
+              "ระดับความดันโลหิต + ค่าเบาหวาน + น้ำหนัก",
+              "ชื่อโรงพยาบาล + ชื่อแผนก + วันที่รับยา",
+              "เบอร์ห้องพัก + หมายเลขเตียง + ชื่ออาหาร",
+              "รหัสไปรษณีย์ (ZIP Code) + วันเดือนปีเกิด (Date of Birth) + เพศ (Gender)"
+            ],
+            "answer": 4,
+            "explanation": "wk10 Slide 5 & 9: Sweeney (1997) พิสูจน์ว่า ZIP Code + Birthdate + Gender เมื่อนำไปเชื่อมโยง (Linkage Attack) กับตารางทะเบียนราษฎร์สาธารณะ สามารถระบุตัวตนบุคคลได้ถึง 87%"
+          },
+          {
+            "topic": "สัปดาห์ 10: 3P Safety Framework",
+            "question": "กรอบความปลอดภัย 3P Safety ในระบบสารสนเทศสุขภาพและการแพทย์ ประกอบด้วยองค์ประกอบหลัก 3 ด้านใดบ้าง?",
+            "options": [
+              "Python Safety, PHP Safety, Postgres Safety",
+              "Privacy Safety, Protection Safety, Protocol Safety",
+              "Patient Safety (ผู้ป่วย), Personnel Safety (เจ้าหน้าที่), People/Public Safety (สาธารณชน)",
+              "Physical Safety, Process Safety, Program Safety",
+              "Pharmacy Safety, Physician Safety, Pathology Safety"
+            ],
+            "answer": 2,
+            "explanation": "wk10 Slide 7 & Project Demo Hour 6 Slide 30: กรอบ 3P Safety มุ่งเน้น Patient Safety (ลดข้อผิดพลาดการรักษา), Personnel Safety (ลดภาระงาน/Cognitive Overload ของบุคลากร) และ Public Safety (การคุ้มครองข้อมูลและสาธารณสุข)"
+          },
+          {
+            "topic": "สัปดาห์ 10: AHIMA IGPHC Principles",
+            "question": "หลักการธรรมาภิบาลข้อมูลสุขภาพตาม AHIMA IGPHC (ย่อว่า A TIP CARD) ข้อใดอธิบายความหมายของ 'Integrity' (ความสมบูรณ์ถูกต้อง) ได้ชัดเจนที่สุด?",
+            "options": [
+              "การเก็บข้อมูลไว้โดยไม่มีวันลบทำลาย",
+              "การอนุญาตให้โปรแกรมเมอร์ทุกคนแก้ไขข้อมูลได้ตลอดเวลา",
+              "การรับประกันว่าข้อมูลมีความถูกต้อง เชื่อถือได้ ไม่ถูกแก้ไขเปลี่ยนแปลงโดยไม่ได้รับอนุญาต และสอดคล้องกับความเป็นจริงทางคลินิก",
+              "การซ่อนข้อมูลไม่ให้แพทย์มองเห็น",
+              "การแปลงข้อมูลทั้งหมดเป็นไฟล์รูปภาพ"
+            ],
+            "answer": 2,
+            "explanation": "wk10 Slide 8: Integrity ในธรรมาภิบาลข้อมูล AHIMA หมายถึงการรับประกันความถูกต้อง เที่ยงตรง เชื่อถือได้ และปลอดจากการถูกดัดแปลงแก้ไขอย่างผิดกฎหมายตลอดวงจรชีวิตข้อมูล"
+          },
+          {
+            "topic": "สัปดาห์ 10: Security in Code - SQL Injection Prevention",
+            "question": "ในการเขียนโปรแกรมเชื่อมต่อฐานข้อมูลสุขภาพ ข้อใดคือแนวทางปฏิบัติที่ถูกต้องเพื่อป้องกันช่องโหว่ SQL Injection?",
+            "options": [
+              "ใช้การนำสตริงมาต่อกันโดยตรง เช่น f\"SELECT * FROM users WHERE name = '{user_input}'\"",
+              "ปิดระบบล็อกอินของฐานข้อมูลทั้งหมด",
+              "ใช้ภาษา HTML ในการประมวลผลคำสั่ง SQL",
+              "ใช้ Parameterized Queries หรือ ORM ของ Django (เช่น cursor.execute(\"SELECT * FROM users WHERE name = ?\", (user_input,)))",
+              "เปลี่ยนชื่อตารางฐานข้อมูลทุกๆ 5 นาที"
+            ],
+            "answer": 3,
+            "explanation": "wk10 Slide 9 & Project Demo Hour 5: Parameterized Queries หรือการใช้ Django ORM จะทำการแยกคำสั่ง SQL ออกจากตัวแปรอินพุต ทำให้ตัวแปรของผู้ใช้ถูกตีความว่าเป็นข้อมูลบริสุทธิ์ ไม่สามารถแทรกคำสั่งอันตรายเข้ามาสั่งประมวลผลได้"
+          },
+          {
+            "topic": "สัปดาห์ 11: CDSS Core Concepts",
+            "question": "ระบบสนับสนุนการตัดสินใจทางคลินิก (Clinical Decision Support System - CDSS) มีเป้าหมายหลักทางเวชสารสนเทศอย่างไร?",
+            "options": [
+              "เพื่อวินิจฉัยโรคและสั่งรักษาแทนแพทย์โดยสมบูรณ์โดยไม่ต้องมีมนุษย์ควบคุม",
+              "เพื่อช่วยคัดกรอง แจ้งเตือนข้อผิดพลาด (เช่น ยาตีกัน) และสนับสนุนข้อมูลเชิงพยานหลักฐาน (Evidence-based) ให้แก่บุคลากรทางการแพทย์เพื่อเพิ่มความปลอดภัยของผู้ป่วย",
+              "เพื่อลดจำนวนพยาบาลในโรงพยาบาลให้เหลือศูนย์",
+              "เพื่อจัดทำบัญชีรายรับรายจ่ายของสถานพยาบาล",
+              "เพื่อยกเลิกการใช้เวชระเบียนแบบกระดาษเพียงอย่างเดียว"
+            ],
+            "answer": 1,
+            "explanation": "wk11 / Project Demo Hour 4: CDSS ไม่ได้มาแทนที่แพทย์ แต่เป็นเครื่องมือช่วยคัดกรอง แจ้งเตือนความเสี่ยง (เช่น Care Gap, Drug Interaction) และเพิ่มคุณภาพและความปลอดภัยในการดูแลรักษาผู้ป่วย"
+          },
+          {
+            "topic": "สัปดาห์ 11: Rule-Based CDSS Engine",
+            "question": "ในการออกแบบ Rule-Based CDSS สำหรับโรคเบาหวาน หากพบผู้ป่วยมีค่า Fasting Plasma Glucose (FPG) >= 126 mg/dL ร่วมกับ HbA1c >= 6.5% ระบบควรประเมินอยู่ในกลุ่มใดตามแนวทางเวชปฏิบัติ?",
+            "options": [
+              "กลุ่มระดับน้ำตาลปกติ (Normal)",
+              "กลุ่มเสี่ยงสูง/เข้าเกณฑ์วินิจฉัยโรคเบาหวาน (Diabetes Mellitus)",
+              "กลุ่มภาวะความดันโลหิตสูงวิกฤต (Hypertensive Crisis)",
+              "กลุ่มตับวายเฉียบพลัน (Acute Liver Failure)",
+              "กลุ่มโรคกระดูกพรุน (Osteoporosis)"
+            ],
+            "answer": 1,
+            "explanation": "wk11 / Diabetes Feedback: ตามเกณฑ์สมาคมโรคเบาหวานแห่งประเทศไทยและ ADA ค่า FPG >= 126 mg/dL หรือ HbA1c >= 6.5% จัดเป็นเกณฑ์วินิจฉัยเข้าสู่ภาวะโรคเบาหวาน"
+          },
+          {
+            "topic": "สัปดาห์ 11: AMR Factors & Dynamic Simulation",
+            "question": "ในโครงการจำลองเชื้อดื้อยา (AMR-Factors Interactive SIM) การส่งผ่านยีนดื้อยาระหว่างแบคทีเรียเรียกว่าอะไร และใช้พารามิเตอร์ใดในแบบจำลอง?",
+            "options": [
+              "Vertical Gene Transfer (VGT)",
+              "Polymerase Chain Reaction (PCR)",
+              "Horizontal Gene Transfer (HGT) Rate ร่วมกับอัตราแรงกดดันจากการใช้ยาปฏิชีวนะ (Selection Pressure)",
+              "Reverse Transcription",
+              "Mitotic Cell Division"
+            ],
+            "answer": 2,
+            "explanation": "wk11 / AFISIM Feedback: การถ่ายทอดยีนดื้อยาข้ามสายพันธุ์แบคทีเรียคือ Horizontal Gene Transfer (HGT) ซึ่งถูกกดดันด้วยการใช้ยาปฏิชีวนะ (Selection Pressure) ทำให้ประชากรเชื้อดื้อยาเพิ่มขึ้นอย่างรวดเร็ว"
+          },
+          {
+            "topic": "สัปดาห์ 11: Heart Failure Biomarkers",
+            "question": "ในการติดตามผู้ป่วยภาวะหัวใจล้มเหลว (Heart Failure Dashboard) ตัวชี้วัดการบีบตัวของหัวใจห้องล่างซ้าย (Left Ventricular Ejection Fraction - LFEF) ค่าเท่าใดที่จัดว่าอยู่ในภาวะการบีบตัวลดลงอย่างน่ากังวล (HFrEF)?",
+            "options": [
+              "EF > 70%",
+              "EF = 55%",
+              "EF BETWEEN 50% AND 60%",
+              "EF < 40%",
+              "EF > 85%"
+            ],
+            "answer": 3,
+            "explanation": "wk11 / Heart Failure Feedback: ตามเกณฑ์ ACC/AHA ค่า Ejection Fraction (EF) < 40% จัดเป็น Heart Failure with Reduced Ejection Fraction (HFrEF) ซึ่งต้องได้รับการติดตามการสั่งจ่ายยาอย่างใกล้ชิด"
+          },
+          {
+            "topic": "สัปดาห์ 11: Health Literacy in CDSS",
+            "question": "ตามหลักความรอบรู้ด้านสุขภาพ (Health Literacy - ขวัญเมือง แก้วดำเกิง, 2562) การแสดงผลข้อความแจ้งเตือนจากระบบ CDSS ไปยังผู้ป่วยควรมีลักษณะอย่างไร?",
+            "options": [
+              "ใช้คำศัพท์ภาษาละตินและรหัส ICD-10 ซับซ้อนทั้งหมด",
+              "ใช้ภาษาที่เข้าใจง่าย ชัดเจน บอกขั้นตอนที่ต้องปฏิบัติถัดไป (Actionable Guidance) และหลีกเลี่ยงการสร้างความตื่นตระหนก",
+              "แสดงผลเป็นสมการคณิตศาสตร์ดิบ",
+              "ซ่อนข้อความเตือนไม่ให้ผู้ป่วยเห็นในทุกกรณี",
+              "แสดงเฉพาะคำเตือนสั้นๆ ว่า 'ERROR' โดยไม่ขยายความ"
+            ],
+            "answer": 1,
+            "explanation": "wk11 / UniHealth Feedback: การสื่อสารข้อมูลสุขภาพตามหลัก Health Literacy ต้องเน้นภาษาที่ประชาชนเข้าใจง่าย มี Actionable Advice สอดคล้องกับระดับความรอบรู้พื้นฐานและปฏิสัมพันธ์"
+          },
+          {
+            "topic": "สัปดาห์ 12: Django MVT Pattern",
+            "question": "ในสถาปัตยกรรม Django MVT (Model-View-Template) ส่วนประกอบ 'View' ทำหน้าที่หลักอะไรในระบบสารสนเทศสุขภาพ?",
+            "options": [
+              "จัดเก็บไฟล์รูปภาพ X-ray ลงบนฮาร์ดดิสก์",
+              "ตกแต่งสีสันของหน้าเว็บด้วย CSS",
+              "สร้างไฟล์ PDF โดยอัตโนมัติโดยไม่ผ่านคำสั่ง Python",
+              "ทำหน้าที่เป็นระบบปฏิบัติการของเซิร์ฟเวอร์",
+              "เป็นส่วนรับ Request, ดึงและประมวลผลตรรกะข้อมูล (เช่น รันคำสั่ง SQL CDSS) แล้วส่งผลลัพธ์ต่อไปยัง Template เพื่อแสดงผล HTML"
+            ],
+            "answer": 4,
+            "explanation": "wk12 / Project Demo Hour 5 Slide 22-23: View ใน Django MVT ทำหน้าที่เป็นตัวประมวลผลตรรกะหลัก (Business/Clinical Logic) รับ HTTP Request ดึงข้อมูลผ่าน ORM/SQL แล้วส่ง Context Data ไปให้ Template เรนเดอร์"
+          },
+          {
+            "topic": "สัปดาห์ 12: Django ORM & Raw SQL",
+            "question": "เมื่อใดที่นักพัฒนาระบบเวชสารสนเทศควรเลือกใช้ Raw SQL Queries ร่วมกับ Django แทนการใช้ ORM ตามปกติ?",
+            "options": [
+              "เมื่อต้องการเพิ่มบรรทัดโค้ดให้ยาวขึ้น",
+              "เมื่อต้องการรันคำสั่งวิเคราะห์ข้อมูลซับซ้อน เช่น Window Functions (ROW_NUMBER) หรือ Anti-Joins (NOT EXISTS) ที่ ORM ปกติทำได้ยากหรือไม่มีประสิทธิภาพเท่า",
+              "เมื่อไม่ต้องการใช้ฐานข้อมูล SQLite",
+              "เมื่อต้องการให้หน้าเว็บไม่มีสีสัน",
+              "เมื่อต้องการยกเลิกการใช้ภาษา Python"
+            ],
+            "answer": 1,
+            "explanation": "wk12 / Project Demo Hour 5 Slide 23: สำหรับคำสั่งวิเคราะห์เชิงลึก เช่น CTEs, Window Functions หรือ Care Gap Anti-Joins การเขียน Raw SQL บน Django คอนเนกชันจะให้ประสิทธิภาพความเร็วและควบคุมตรรกะได้ตรงจุดกว่า ORM Standard Filter"
+          },
+          {
+            "topic": "สัปดาห์ 12: Web Security - CSRF Protection",
+            "question": "แท็ก {% csrf_token %} ใน Django HTML Template มีบทบาทสำคัญอย่างไรในการรักษาความมั่นคงปลอดภัยของฟอร์มสุขภาพ?",
+            "options": [
+              "ช่วยเปลี่ยนฟอนต์ของฟอร์มให้สวยงามขึ้น",
+              "ช่วยบีบอัดขนาดไฟล์ภาพที่อัปโหลด",
+              "ป้องกันการโจมตีประเภท Cross-Site Request Forgery (CSRF) โดยการสร้างโทเคนสุ่มเพื่อยืนยันว่า Request ส่งมาจากฟอร์มของเว็บไซต์จริง",
+              "ช่วยแปลงภาษาไทยเป็นภาษาอังกฤษโดยอัตโนมัติ",
+              "ช่วยลบข้อมูลผู้ป่วยทิ้งทันทีเมื่อกด Submit"
+            ],
+            "answer": 2,
+            "explanation": "wk12 / Project Demo Hour 5: แท็ก {% csrf_token %} ป้องกัน CSRF Attacks ซึ่งเป็นภัยคุกคามที่หลอกให้ผู้ใช้ส่ง Request ปลอมเปลี่ยนแปลงข้อมูลการรักษาในระบบ"
+          },
+          {
+            "topic": "สัปดาห์ 12: Django Settings - Databases",
+            "question": "ในการตั้งค่าไฟล์ settings.py ของ Django เพื่อเชื่อมต่อกับไฟล์ฐานข้อมูล health_cdss.db ข้อใดระบุค่า ENGINE ได้ถูกต้อง?",
+            "options": [
+              "'ENGINE': 'django.db.backends.mysql'",
+              "'ENGINE': 'django.db.backends.oracle'",
+              "'ENGINE': 'django.db.backends.mongodb'",
+              "'ENGINE': 'django.db.backends.sqlite3'",
+              "'ENGINE': 'django.db.backends.excel'"
+            ],
+            "answer": 3,
+            "explanation": "wk12 / Project Demo Hour 5 Slide 22: สำหรับ SQLite ฐานข้อมูลฝังตัวมาตรฐานของโปรเจกต์ ต้องตั้งค่า ENGINE เป็น 'django.db.backends.sqlite3'"
+          },
+          {
+            "topic": "สัปดาห์ 12: HTTP Request Methods in Health Apps",
+            "question": "ความแตกต่างในการเลือกใช้ HTTP Method ระหว่าง GET และ POST ในการส่งข้อมูลสุขภาพผ่านแบบฟอร์มคัดกรองคืออะไร?",
+            "options": [
+              "GET ใช้สำหรับการส่งข้อมูลลับ; POST ใช้สำหรับการดึงรูปภาพ",
+              "ทั้งสองวิธีทำงานเหมือนกันทุกประการ",
+              "POST ไม่สามารถส่งข้อมูลตัวเลขได้",
+              "GET บังคับให้ต้องใส่รหัสผ่านทุกครั้ง",
+              "GET จะแนบข้อมูลไปกับ URL (เสี่ยงต่อ PHI รั่วไหลใน Browser History/Logs); ส่วน POST จะส่งข้อมูลใน Request Body จึงเหมาะสมกว่าสำหรับการบันทึกข้อมูลสุขภาพ"
+            ],
+            "answer": 4,
+            "explanation": "wk12 / Project Demo Hour 5: การส่งข้อมูล Sensitive Health Data ห้ามใช้ GET เพราะพารามิเตอร์จะปรากฏบน URL string และบันทึกใน Server Logs การบันทึกหรือเปลี่ยนสถานะข้อมูลต้องใช้ POST ร่วมกับ CSRF token"
+          },
+          {
+            "topic": "สัปดาห์ 13: Alpine.js Client-Side Reactivity",
+            "question": "เหตุใดการเลือกใช้ Alpine.js จึงเหมาะสำหรับแบบฟอร์มคัดกรองความเสี่ยงสุขภาพเรียลไทม์ฝั่งผู้ป่วย (Patient View)?",
+            "options": [
+              "เพราะต้องติดตั้ง Node.js และคอมไพล์โปรเจกต์นาน 30 นาที",
+              "เพราะ Alpine.js ทำหน้าที่แทนฐานข้อมูล SQLite ได้ทั้งหมด",
+              "เพราะเป็นไลบรารีขนาดเล็กมาก (Lightweight) สามารถเรียกผ่าน CDN และเขียนตรรกะประเมินผลคำนวณเปลี่ยนสีความเสี่ยงตอบสนองเรียลไทม์ใน HTML ได้ทันทีโดยไม่ต้องโหลดหน้าเว็บใหม่",
+              "เพราะใช้งานได้เฉพาะบนระบบปฏิบัติการ Mac เท่านั้น",
+              "เพราะช่วยลบไฟล์ CSS ทั้งหมดออกจากโปรเจกต์"
+            ],
+            "answer": 2,
+            "explanation": "wk13 / Project Demo Hour 5 Slide 24: Alpine.js มอบความสามารถ Reactive สไตล์ Vue/React แต่เรียบง่าย ดึงผ่าน CDN ได้ทันที เหมาะสำหรับการคำนวณ Risk Score และเปลี่ยนคลาสสี Tailwind ตามอินพุตเรียลไทม์"
+          },
+          {
+            "topic": "สัปดาห์ 13: Tailwind CSS Utility Classes",
+            "question": "หากต้องการกำหนดสีพื้นหลังตารางแถวผู้ป่วยกลุ่มวิกฤต (CRITICAL) ให้เป็นสีแดงเข้มเตือนสายตาใน Tailwind CSS ควรใช้คลาสใด?",
+            "options": [
+              "bg-green-100 text-black",
+              "bg-transparent text-slate-800",
+              "bg-blue-300 text-blue-900",
+              "bg-rose-600 text-white",
+              "bg-yellow-200 text-yellow-800"
+            ],
+            "answer": 3,
+            "explanation": "wk13 / Project Demo Hour 5 Slide 25: ใน Tailwind CSS คลาสกลุ่มสีแดงเข้ม เช่น bg-rose-600 หรือ bg-red-600 คู่กับ text-white ใช้สำหรับแสดงสถานะเตือนภัยวิกฤต (CRITICAL Triage Status) ให้เด่นชัดบนหน้าจอ"
+          },
+          {
+            "topic": "สัปดาห์ 13: UX Design in Health Dashboards",
+            "question": "ตามหลัก UX Design สารสนเทศสุขภาพ การออกแบบแดชบอร์ดติดตามผู้ป่วยกลุ่มเสี่ยง (Clinician Dashboard) ควรเน้นสิ่งใดเป็นสำคัญ?",
+            "options": [
+              "ใส่แอนิเมชันเคลื่อนไหวตระการตาทุกจุดเพื่อความตื่นเต้น",
+              "จัดวาง Metric Summary Cards แสดงจำนวนเคสวิกฤตไว้ด้านบนสุด ใช้การแยกโค้ดสีระดับความเสี่ยงที่ชัดเจน และมีตารางจัดลำดับความสำคัญ (Triage Queue) เพื่อลดภาระทางสมองของแพทย์",
+              "ซ่อนข้อมูลตัวเลขสัญญาณชีพไว้ในปุ่มกดซ้อนหลายชั้น",
+              "ใช้ตัวอักษรขนาดเล็กที่สุดเท่าที่จะทำได้เพื่อประหยัดพื้นที่",
+              "เปลี่ยนสีพื้นหลังหน้าจอเป็นสีสะท้อนแสงสลับกันตลอดเวลา"
+            ],
+            "answer": 1,
+            "explanation": "wk13 / Project Demo Hour 5 Slide 25: การออกแบบ UI/UX สุขภาพที่ดี ต้องเน้น Information Hierarchy จัดวางจุดสนใจสำคัญ (KPI Metrics & High-Risk Triage Queue) ไว้ด้านบนสุด พร้อมรหัสสีมาตรฐาน เพื่อลด Cognitive Overload"
+          },
+          {
+            "topic": "สัปดาห์ 13: Responsive Web Design",
+            "question": "คลาส Tailwind CSS ในข้อใดช่วยให้แดชบอร์ดสุขภาพปรับการจัดวางจาก 1 คอลัมน์บนสมาร์ทโฟน เป็น 3 คอลัมน์บนจอคอมพิวเตอร์ได้อย่างสมบูรณ์?",
+            "options": [
+              "grid grid-cols-1 md:grid-cols-3 gap-4",
+              "flex flex-col no-wrap",
+              "display-none hover:block",
+              "block align-center font-bold",
+              "absolute top-0 left-0"
+            ],
+            "answer": 0,
+            "explanation": "wk13 / Project Demo Hour 5 Slide 25: คลาส grid grid-cols-1 md:grid-cols-3 แสดงผลเป็น 1 คอลัมน์บนจอเล็ก และขยายเป็น 3 คอลัมน์เมื่อความกว้างหน้าจอถึงระดับ medium (md) ตามหลัก Responsive Web Design"
+          },
+          {
+            "topic": "สัปดาห์ 14: Synthetic Health Data - PySynthea",
+            "question": "PySynthea Framework มีความโดดเด่นและแตกต่างจาก Synthea ฉบับเดิมอย่างไรในการพัฒนา Data Pipeline สุขภาพ?",
+            "options": [
+              "PySynthea ทำงานได้เฉพาะบนเครื่องเมนเฟรมเท่านั้น",
+              "PySynthea ไม่สามารถสร้างข้อมูลโรคเรื้อรังได้",
+              "PySynthea สร้างได้เฉพาะภาพถ่าย X-ray เท่านั้น",
+              "PySynthea เป็น Python-native ทำให้ประมวลผลสร้างประวัติผู้ป่วยสังเคราะห์ได้รวดเร็วและเชื่อมต่อกับ Pandas/Jupyter ได้โดยตรงโดยไม่ต้องติดตั้ง Java Runtime (JVM)",
+              "PySynthea บังคับให้ต้องเสียค่าลิขสิทธิ์ซอฟต์แวร์รายเดือน"
+            ],
+            "answer": 3,
+            "explanation": "wk14 / PySynthea Paper: PySynthea ถูกพัฒนาเป็น Python-native framework เพื่อขจัดความยุ่งยากในการพึ่งพา Java (JVM) ของ Synthea เดิม ทำให้สร้างข้อมูลสังเคราะห์ขนาดใหญ่และต่อท่อเข้าสู่ Pandas DataFrame ได้ทันที"
+          },
+          {
+            "topic": "สัปดาห์ 14: PySynthea - Generic Module Framework (GMF)",
+            "question": "ในสถาปัตยกรรม Synthea/PySynthea กลไกที่ใช้จำลองการดำเนินไปของโรค (Disease Progression) จากสถานะเริ่มต้น ผ่านเงื่อนไข จนถึงการเสียชีวิตหรือหายขาด เรียกว่าอะไร?",
+            "options": [
+              "Neural Network Architecture",
+              "Linear Regression Model",
+              "Generic Module Framework (GMF) บนพื้นฐานของ State Machine (แบบจำลองสถานะจำกัด)",
+              "Genetic Algorithm",
+              "Decision Tree Classifier"
+            ],
+            "answer": 2,
+            "explanation": "wk14 / Synthea GMF Doc: Synthea และ PySynthea ใช้ Generic Module Framework (GMF) ซึ่งเป็น Finite State Machine (ประกอบด้วย State ต่างๆ เช่น Initial, Delay, Encounter, Condition, Medication, Terminal) ในการจำลองประวัติการเจ็บป่วยอย่างสมจริง"
+          },
+          {
+            "topic": "สัปดาห์ 14: Demographics Integration in PySynthea",
+            "question": "หากต้องการให้ PySynthea สร้างประชากรสังเคราะห์ที่มีสัดส่วนประชากรตามจังหวัดต่างๆ ของประเทศไทย ต้องกำหนดตัวเลือกใน GeneratorOptions อย่างไร?",
+            "options": [
+              "options.demographics_file = 'thai_demographics.csv'",
+              "options.use_random_names = True",
+              "options.country = 'USA'",
+              "options.disable_demographics()",
+              "options.format = 'excel'"
+            ],
+            "answer": 0,
+            "explanation": "wk14 / Project Demo Hour 1 Slide 2 (Updated): การกำหนด options.demographics_file = 'thai_demographics.csv' จะทำให้ PySynthea โหลดสัดส่วนประชากรและชื่อจังหวัดของไทยทั้ง 77 จังหวัดไปใช้สร้างกลุ่มประชากรทดสอบ"
+          },
+          {
+            "topic": "สัปดาห์ 15: Cloud Deployment - WSGI Configuration",
+            "question": "ในการนำโปรเจกต์ Django ขึ้นติดตั้งบนคลาวด์ PythonAnywhere ไฟล์ WSGI (Web Server Gateway Interface) ทำหน้าที่สำคัญอย่างไร?",
+            "options": [
+              "ทำหน้าที่เก็บข้อมูลรหัสผ่านของผู้ป่วย",
+              "ทำหน้าที่เป็นสะพานเชื่อมต่อระหว่าง Web Server (เช่น Nginx) กับ Django Application เพื่อรับส่ง HTTP Request/Response",
+              "ทำหน้าที่คอมไพล์โค้ด C++",
+              "ทำหน้าที่สแกนไวรัสในคอมพิวเตอร์",
+              "ทำหน้าที่สร้างไฟล์ PDF อัตโนมัติ"
+            ],
+            "answer": 1,
+            "explanation": "wk15 / Project Demo Hour 6 Slide 28: WSGI เป็นมาตรฐานตัวเชื่อมประสานระหว่าง Web Server บนคลาวด์กับ Python Web Application (Django) เพื่อประมวลผลคำสั่งเว็บเมื่อมีผู้ใช้เข้าเยี่ยมชม"
+          },
+          {
+            "topic": "สัปดาห์ 15: Reproducibility with uv.lock",
+            "question": "การใช้เครื่องมือ uv ในการล็อกสภาพแวดล้อมระบบ (Environment Locking) มีความสำคัญอย่างไรต่อการวิจัยและพัฒนาซอฟต์แวร์ทางเวชสารสนเทศ?",
+            "options": [
+              "ทำให้ผู้ใช้คนอื่นไม่สามารถเปิดดูไฟล์โค้ดได้",
+              "ช่วยเพิ่มความเร็วอินเทอร์เน็ตในการดาวน์โหลดข้อมูล",
+              "รับประกันความสามารถในการผลิตซ้ำ (Reproducibility) โดยการล็อกเวอร์ชันของไลบรารีทุกตัวอย่างแม่นยำ ป้องกันปัญหาโค้ดพังเมื่อรันบนเครื่องอื่นหรือบน Cloud Server",
+              "ช่วยแปลงไฟล์โปรเจกต์ให้กลายเป็นแอปพลิเคชัน Android",
+              "ช่วยปิดคำสั่งแจ้งเตือนข้อผิดพลาดทั้งหมดของ Python"
+            ],
+            "answer": 2,
+            "explanation": "wk15 / Project Demo Hour 6 Slide 27: หลัก Reproducibility ต้องการให้การประมวลผลได้ผลลัพธ์เดิมเสมอ การล็อกเวอร์ชันไลบรารีด้วย uv (หรือ uv.lock / requirements.txt) ช่วยป้องกันปัญหาความต่างของเวอร์ชันแพ็กเกจบนสภาพแวดล้อมที่ต่างกัน"
+          },
+          {
+            "topic": "สัปดาห์ 15: Production Deployment & 3P Safety Audit",
+            "question": "ข้อใดเป็นขั้นตอนที่ **ไม่ถูกต้อง** หรือเสี่ยงต่อความปลอดภัย ในการเตรียมโปรเจกต์ Django สำหรับการขึ้นระบบใช้งานจริง (Production Deployment)?",
+            "options": [
+              "ตั้งค่า DEBUG = False ใน settings.py",
+              "ตั้งค่า DEBUG = True ไว้ตลอดเวลาบน Public Cloud เพื่อให้ผู้ใช้ทั่วไปเห็น Error Traceback และโค้ดภายในเมื่อระบบมีปัญหา",
+              "รันคำสั่ง python manage.py collectstatic เพื่อรวบรวมไฟล์ CSS/JS ไปยัง STATIC_ROOT",
+              "ระบุชื่อโดเมนใน ALLOWED_HOSTS",
+              "ทำการตรวจสอบความถูกต้องของระบบตามกรอบ 3P Safety Audit ก่อนเปิดใช้งาน"
+            ],
+            "answer": 1,
+            "explanation": "wk15 / Project Demo Hour 6 Slide 29: การเปิด DEBUG = True บน Production ถือเป็นช่องโหว่ความปลอดภัยร้ายแรง เพราะเมื่อเกิดข้อผิดพลาด Django จะแสดงข้อมูลการตั้งค่า รหัสผ่าน และโครงสร้างโค้ดแก่สาธารณะ ดังนั้นบน Production ต้องตั้ง DEBUG = False เสมอ"
+          }
+        ],
+
+        init() {
+          this.totalQuestions = this.questions.length;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        },
+
+        selectAnswer(qIdx, optIdx) {
+          if (this.checked[qIdx]) return;
+          this.answers[qIdx] = optIdx;
+        },
+
+        checkAnswer(qIdx) {
+          if (this.answers[qIdx] === null) return;
+          this.checked[qIdx] = true;
+          this.updateScore();
+        },
+
+        getOptionClass(qIdx, optIdx) {
+          if (!this.checked[qIdx]) {
+            return this.answers[qIdx] === optIdx
+              ? 'border-emerald-400 bg-emerald-400/10'
+              : 'border-white/20 hover:border-white/40';
+          }
+          if (optIdx === this.questions[qIdx].answer) {
+            return 'border-green-400 bg-green-400/10';
+          }
+          if (this.answers[qIdx] === optIdx) {
+            return 'border-red-400 bg-red-400/10';
+          }
+          return 'border-white/10 opacity-40';
+        },
+
+        updateScore() {
+          let s = 0;
+          this.questions.forEach((q, i) => {
+            if (this.checked[i] && this.answers[i] === q.answer) s++;
+          });
+          this.score = s;
+        },
+
+        answeredCount() {
+          return Object.values(this.checked).filter(v => v).length;
+        },
+
+        nextQuestion() {
+          if (this.currentQuestion < this.totalQuestions + 1) {
+            this.currentQuestion++;
+          }
+        },
+
+        prevQuestion() {
+          if (this.currentQuestion > 0) {
+            this.currentQuestion--;
+          }
+        },
+
+        resetQuiz() {
+          this.currentQuestion = 0;
+          this.started = false;
+          this.score = null;
+          this.questions.forEach((_, i) => {
+            this.answers[i] = null;
+            this.checked[i] = false;
+          });
+        }
+      };
+    }
+    </script>
+  </body>
+</html>
