@@ -8,6 +8,7 @@ Courses
    programming/index
    oop/index
    fullstack/index
+   project2/index
    webdev/index
    mobiledev/index
    dl/index
