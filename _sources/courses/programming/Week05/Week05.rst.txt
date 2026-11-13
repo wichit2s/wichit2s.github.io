@@ -170,14 +170,15 @@ call) เช่น
 
     happybday('Anna') 
 
-    argument ของคำสั่ง ``happybday('Anna')`` คือ ``'Anna'``
+argument ของคำสั่ง ``happybday('Anna')`` คือ ``'Anna'``
+
 
 .. code:: python
 
     name = 'Paul'
     happybday(name) 
 
-    argument ของ ``happybday(name)`` คือ ``'Paul'``
+argument ของ ``happybday(name)`` คือ ``'Paul'``
 
 
 Exercises

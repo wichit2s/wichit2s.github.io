@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="briefing">
+  <title>สัปดาห์ที่ 8: การสอบนำเสนอความก้าวหน้ากลางภาค (Grocery POS Platform) — 1145 204 Sophomore Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Noto+Serif+Thai:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* 1. Briefing style tokens */
+      --background: #faf9f5;
+      --surface-container-low: #ffffff;
+      --surface-container: #f1efe8;
+      --surface-container-high: #e6e2d6;
+
+      --on-surface: #17181a;
+      --on-surface-variant: #56585c;
+
+      --outline: #17181a;
+      --outline-variant: #dedad0;
+
+      --primary: #17181a;
+      --on-primary: #faf9f5;
+      --primary-container: #f2b705;
+      --on-primary-container: #17181a;
+      --secondary: #1f4e5f;
+      --tertiary: #785008;
+      --error: #b42318;
+      --on-error: #ffffff;
+
+      /* Additional harmonized pill & semantic tints */
+      --tag-warm-bg: #f5e6c4;
+      --positive-bg: #e7f3ed;
+      --warning-bg: #fdf2d6;
+      --error-bg: #fbeae8;
+      --secondary-soft-bg: #e9f1f4;
+      --btn-secondary-border: #c8c4b8;
+
+      /* Data series */
+      --data-1: #1f4e5f;
+      --data-2: #d99000;
+      --data-3: #2b6e52;
+      --data-4: #b84a39;
+      --data-context: #c4bfb2;
+
+      /* Fonts (Thai + Briefing stack) */
+      --font-headline: 'Noto Serif Thai', 'Source Serif 4', serif;
+      --font-body: 'Noto Sans Thai', 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Geist Mono', 'Noto Sans Thai', monospace;
+
+      /* Shape */
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 0.25rem;
+
+      /* Style effects */
+      --section-rule: 1.5px solid var(--outline);
+      --card-border: 1px solid var(--outline-variant);
+      --badge-radius: 2px;
+      --heading-tracking: -0.015em;
+      --label-tracking: 0.06em;
+
+      /* 3. Shared tokens */
+      --positive: #2b6e52;
+      --warning: #b37400;
+      --focus: #1f4e5f;
+
+      /* Type scale (Narrative slide deck) */
+      --display-size: clamp(1.9rem, 1.35rem + 1.8vw, 2.75rem);
+      --headline-size: clamp(1.45rem, 1.15rem + 1.1vw, 2rem);
+      --subhead-size: clamp(1.0625rem, 0.98rem + 0.35vw, 1.25rem);
+      --body-size: clamp(0.95rem, 0.92rem + 0.18vw, 1.0625rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.62;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 2.5px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Shell layout */
+    .deck-shell {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: var(--space-md) var(--space-lg) var(--space-2xl);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .deck-shell * { min-width: 0; }
+
+    /* Top Presenter Bar */
+    .deck-header {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-top: 3px solid var(--outline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-sm) var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .deck-header-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .deck-brand {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .dossier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--badge-radius);
+      line-height: 1.3;
+    }
+    .dossier-pill--latin {
+      font-family: var(--font-label);
+      text-transform: uppercase;
+      letter-spacing: var(--label-tracking);
+    }
+    .dossier-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: 0.45rem 0.9rem;
+      border-radius: var(--rounded);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border: 1px solid var(--btn-secondary-border);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--surface-container);
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn--primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+    .btn--primary:hover:not(:disabled) {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+    .btn--active {
+      background: var(--secondary);
+      color: var(--on-primary);
+      border-color: var(--secondary);
+    }
+    .btn--compact {
+      min-height: 36px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.8125rem;
+    }
+
+    /* Progress Bar */
+    .progress-track {
+      width: 100%;
+      height: 5px;
+      background: var(--surface-container-high);
+      border-radius: var(--badge-radius);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    /* Slide Overview Drawer */
+    .overview-panel {
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-top: var(--section-rule);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      display: none;
+    }
+    .overview-panel.is-open {
+      display: block;
+      animation: fadeSlide var(--dur-short) var(--ease-out);
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+    .overview-card {
+      text-align: left;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      cursor: pointer;
+      min-height: 44px;
+      display: grid;
+      gap: 0.2rem;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .overview-card:hover {
+      background: var(--surface-container-high);
+    }
+    .overview-card.is-current {
+      box-shadow: inset 3px 0 0 var(--primary-container);
+      background: var(--secondary-soft-bg);
+    }
+    .overview-num {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+    .overview-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      line-height: 1.35;
+    }
+
+    /* Slide Canvas */
+    .slides-stage {
+      display: grid;
+      gap: var(--space-lg);
+    }
+    .slide {
+      display: none;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: clamp(1.25rem, 1rem + 1.5vw, 2.5rem);
+      min-height: 540px;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-lg);
+    }
+    .slide.is-active {
+      display: flex;
+      animation: fadeSlide var(--dur-short) var(--ease-out);
+    }
+    .slides-stage.show-all .slide {
+      display: flex;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dossier Header inside each Slide */
+    .dossier-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .dossier-bar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .slide-title {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: var(--headline-size);
+      letter-spacing: var(--heading-tracking);
+      line-height: 1.18;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .slide-title--display {
+      font-size: var(--display-size);
+      line-height: 1.12;
+    }
+    .standfirst {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--subhead-size);
+      color: var(--secondary);
+      margin: var(--space-xs) 0 0 0;
+      line-height: 1.45;
+      max-width: 70ch;
+    }
+
+    /* Content Grids & Cards */
+    .slide-body {
+      display: grid;
+      gap: var(--space-lg);
+      flex: 1;
+      align-content: start;
+    }
+    .grid-asymmetric {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .grid-asymmetric-rev {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    .figure-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+    }
+    .figure-card--toned {
+      background: var(--surface-container);
+    }
+    .figure-card--accent {
+      border-left: 4px solid var(--secondary);
+    }
+    .figure-card--gold {
+      border-top: 3px solid var(--primary-container);
+    }
+    .aside-box {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+    }
+
+    .kpi-value {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.35rem);
+      font-variant-numeric: lining-nums tabular-nums;
+      line-height: 1.1;
+      color: var(--on-surface);
+      margin: var(--space-xs) 0;
+    }
+    .kpi-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+    .index-num {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--secondary);
+      background: var(--surface-container);
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--badge-radius);
+      display: inline-block;
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--rounded);
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--tag-warm-bg);
+      color: var(--tertiary);
+    }
+    .tag--secondary {
+      background: var(--secondary-soft-bg);
+      color: var(--secondary);
+    }
+    .tag--positive {
+      background: var(--positive-bg);
+      color: var(--positive);
+    }
+    .tag--error {
+      background: var(--error-bg);
+      color: var(--error);
+    }
+
+    /* Lists & Tables */
+    .clean-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .clean-list li {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--space-sm);
+      align-items: start;
+      padding-bottom: var(--space-sm);
+      border-bottom: var(--card-border);
+    }
+    .clean-list li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .dossier-table-wrap {
+      overflow-x: auto;
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+    }
+    table.dossier-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    table.dossier-table th {
+      text-align: left;
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      background: var(--surface-container);
+      padding: 0.65rem 0.85rem;
+      border-bottom: var(--section-rule);
+    }
+    table.dossier-table td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: var(--card-border);
+      vertical-align: top;
+    }
+    table.dossier-table tr:last-child td {
+      border-bottom: none;
+    }
+    .num-col {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-label);
+    }
+
+    /* Timeline / Roadmap SVG & Steps */
+    .roadmap-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+    .roadmap-node {
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      display: grid;
+      gap: 0.25rem;
+      align-content: start;
+    }
+    .roadmap-node.is-focus {
+      background: var(--surface-container-low);
+      border: 2px solid var(--outline);
+      border-top: 5px solid var(--primary-container);
+    }
+
+    /* Interactive Controls: Inputs, Sliders, Tabs, Checklists */
+    .field-group {
+      display: grid;
+      gap: 0.3rem;
+    }
+    .field-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+    .select-input, .text-input {
+      min-height: 44px;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+    }
+    .select-input {
+      padding-right: 2rem;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--secondary);
+      min-height: 36px;
+      cursor: pointer;
+    }
+
+    /* Checklist items */
+    .checklist-grid {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: 0.55rem 0.75rem;
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      cursor: pointer;
+      min-height: 44px;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .check-item:hover {
+      background: var(--surface-container);
+    }
+    .check-item.is-checked {
+      background: var(--positive-bg);
+      border-color: var(--positive);
+    }
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--positive);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Interactive Schema Table Chips */
+    .schema-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .schema-tab {
+      min-height: 40px;
+      padding: 0.35rem 0.75rem;
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container);
+      font-family: var(--font-label);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .schema-tab.is-selected {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    /* Q&A Question Buttons */
+    .qa-list {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .qa-btn {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      cursor: pointer;
+      min-height: 44px;
+      display: grid;
+      gap: 0.2rem;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .qa-btn:hover {
+      background: var(--surface-container);
+    }
+    .qa-btn.is-selected {
+      background: var(--secondary-soft-bg);
+      border-color: var(--secondary);
+      box-shadow: inset 3px 0 0 var(--secondary);
+    }
+
+    /* Rubric Dimension Row */
+    .rubric-control-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .rubric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+
+    /* Timebox Bar */
+    .timebox-bar {
+      display: flex;
+      height: 22px;
+      border-radius: var(--badge-radius);
+      overflow: hidden;
+      border: 1px solid var(--outline);
+    }
+    .tb-seg {
+      height: 100%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+    .tb-seg-1 { background: var(--data-1); }
+    .tb-seg-2 { background: var(--data-2); }
+    .tb-seg-3 { background: var(--data-3); }
+    .tb-seg-4 { background: var(--data-4); }
+    .tb-seg-5 { background: var(--on-surface-variant); }
+
+    /* Slide Footer & Navigation */
+    .slide-footer {
+      border-top: var(--card-border);
+      padding-top: var(--space-sm);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+    }
+
+    .deck-nav-bar {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .slide-dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      align-items: center;
+    }
+    .slide-dot {
+      min-width: 34px;
+      min-height: 36px;
+      padding: 0 0.45rem;
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container);
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .slide-dot.is-current {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    /* Speaker Notes Drawer */
+    .speaker-notes {
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-left: 4px solid var(--primary-container);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      display: none;
+    }
+    .speaker-notes.is-open {
+      display: block;
+    }
+
+    .inline-feedback {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--secondary);
+      min-height: 1.25em;
+    }
+
+    .svg-diagram {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Container queries for compact card interiors */
+    .card-wrapper { container-type: inline-size; }
+    @container (max-width: 440px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* Responsive breakpoints */
+    @media (max-width: 900px) {
+      .grid-asymmetric,
+      .grid-asymmetric-rev {
+        grid-template-columns: 1fr;
+      }
+      .roadmap-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .deck-shell {
+        padding: var(--space-sm);
+      }
+      .grid-2,
+      .roadmap-strip {
+        grid-template-columns: 1fr;
+      }
+      .slide {
+        min-height: auto;
+        padding: var(--space-md);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-shell">
+    <!-- Top Presenter Toolbar -->
+    <header class="deck-header" aria-label="แถบควบคุมสไลด์การสอน">
+      <div class="deck-header-top">
+        <div class="deck-brand">
+          <span class="dossier-pill dossier-pill--latin"><a href="../../../courses/project2/index.html">1145 204</a> · WEEK 08</span>
+          <span class="dossier-meta">Midterm Progress Defense · Grocery POS Platform</span>
+        </div>
+        <div class="deck-controls">
+          <span class="dossier-meta" id="slide-counter-badge">สไลด์ 01 / 10</span>
+          <button type="button" class="btn btn--compact" id="btn-overview" onclick="toggleOverview()">
+            <i data-lucide="layout-grid" aria-hidden="true"></i>
+            <span>สารบัญสไลด์</span>
+          </button>
+          <button type="button" class="btn btn--compact" id="btn-notes" onclick="toggleNotes()">
+            <i data-lucide="file-text" aria-hidden="true"></i>
+            <span>โน้ตผู้สอน</span>
+          </button>
+          <button type="button" class="btn btn--compact" id="btn-viewmode" onclick="toggleViewMode()">
+            <i data-lucide="layers" aria-hidden="true"></i>
+            <span id="viewmode-label">ดูทั้งหมด</span>
+          </button>
+        </div>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="deck-progress-fill" style="width: 10%;"></div>
+      </div>
+    </header>
+
+    <!-- Collapsible Slide Overview Grid -->
+    <nav class="overview-panel" id="overview-panel" aria-label="สารบัญสไลด์ทั้งหมด 10 แผ่น">
+      <div class="deck-header-top">
+        <strong>เลือกสไลด์ที่ต้องการนำเสนอ (คลิกเพื่อกระโดดไปยังสไลด์)</strong>
+        <button type="button" class="btn btn--compact" onclick="toggleOverview()">ปิดหน้าต่าง</button>
+      </div>
+      <div class="overview-grid" id="overview-grid"></div>
+    </nav>
+
+    <!-- Main Slides Stage -->
+    <main class="slides-stage" id="slides-stage">
+
+      <!-- SLIDE 1: TITLE & MISSION BRIEF -->
+      <section class="slide is-active" id="slide-1" data-title="หน้าปกและเป้าหมายการสอบกลางภาค">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">เอกสารประกอบการสอน สัปดาห์ที่ 8</span>
+              <span class="dossier-meta">รายวิชา 1145 204 โครงงานสำหรับนักศึกษาปีสอง (Sophomore Project)</span>
+            </div>
+            <span class="index-num">SLIDE 01 / 10</span>
+          </div>
+          <h1 class="slide-title slide-title--display">การสอบนำเสนอความก้าวหน้ากลางภาค: แพลตฟอร์ม Grocery POS</h1>
+          <p class="standfirst">แนวทางเตรียมความพร้อมโครงสร้างการนำเสนอ การสาธิตระบบตัวอย่างแบบสด กลยุทธ์ป้องกันสถาปัตยกรรมซอฟต์แวร์ และเกณฑ์ประเมินของคณะกรรมการ</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-asymmetric">
+            <div class="figure-card figure-card--accent">
+              <div class="kpi-label">บทบาทของการสอบกลางภาค (WEEK 8: MIDTERM PROGRESS DEFENSE)</div>
+              <p style="margin: var(--space-sm) 0;">การสอบกลางภาคไม่ใช่เพียงการรายงานความคืบหน้าเชิงเอกสาร แต่เป็นการตรวจสอบหลักฐานทางวิศวกรรมซอฟต์แวร์ (Working Prototype, Database Schema, Agile Velocity และ Risk Plan) ก่อนเข้าสู่ช่วงบูรณาการระบบเต็มรูปแบบในสัปดาห์ที่ 9–12</p>
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md);">
+                <span class="tag tag--secondary">CLO1: Agile &amp; Teamwork</span>
+                <span class="tag tag--secondary">CLO2: Software Architecture</span>
+                <span class="tag tag--secondary">CLO3: Risk &amp; PDPA</span>
+                <span class="tag tag--secondary">CLO4: Oral Defense &amp; Demo</span>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="figure-card figure-card--gold">
+                <div class="kpi-label">สัดส่วนคะแนน</div>
+                <div class="kpi-value">20–25%</div>
+                <div style="font-size: 0.85rem; color: var(--on-surface-variant);">ของเกรดรวมรายวิชา (คะแนนดิบเต็ม 100 คะแนน)</div>
+              </div>
+              <div class="figure-card figure-card--gold">
+                <div class="kpi-label">ขนาดทีมโครงงาน</div>
+                <div class="kpi-value">1–3 คน</div>
+                <div style="font-size: 0.85rem; color: var(--on-surface-variant);">ประเมินทั้งระดับกลุ่มและบทบาทรายบุคคล</div>
+              </div>
+              <div class="figure-card">
+                <div class="kpi-label">เวลานำเสนอมาตรฐาน</div>
+                <div class="kpi-value">12 นาที</div>
+                <div style="font-size: 0.85rem; color: var(--on-surface-variant);">รวมสาธิตสด + ช่วงซักถามคณะกรรมการ</div>
+              </div>
+              <div class="figure-card">
+                <div class="kpi-label">ตารางฐานข้อมูลหลัก</div>
+                <div class="kpi-value">6 ตาราง</div>
+                <div style="font-size: 0.85rem; color: var(--on-surface-variant);">โครงสร้าง Relational Schema สำหรับ Grocery POS</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aside-box">
+            <strong>ผลลัพธ์การเรียนรู้ประจำสัปดาห์ที่ 8 (LLO):</strong> นักศึกษาสามารถสื่อสาร นำเสนอความก้าวหน้าเชิงเทคนิค และสาธิตระบบตัวอย่าง (Prototype/Demo) ของแพลตฟอร์ม Grocery POS ต่อคณะกรรมการสอบได้อย่างชัดเจน มีเหตุผลรองรับ และวางแผนปรับปรุงตามข้อเสนอแนะได้
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>หลักสูตร 1145 204 Sophomore Project · กลุ่มระบบขายหน้าร้านร้านค้าปลีก (Grocery POS)</span>
+          <span>ใช้ปุ่มลูกศร ← / → เพื่อเปลี่ยนสไลด์</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 2: COURSE ARC & AGILE PRINCIPLE -->
+      <section class="slide" id="slide-2" data-title="ตำแหน่งของ Week 8 ในแผนการเรียน 15 สัปดาห์">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">ภาพรวมรายวิชา</span>
+              <span class="dossier-meta">Course Progression · From Charter to Final Defense</span>
+            </div>
+            <span class="index-num">SLIDE 02 / 10</span>
+          </div>
+          <h2 class="slide-title">จุดตัดครึ่งทาง: ทำไมคณะกรรมการตรวจ "ซอฟต์แวร์ที่ทำงานได้" มากกว่าสไลด์</h2>
+          <p class="standfirst">ตามหลัก Agile Software Development ความก้าวหน้าวัดจากซอฟต์แวร์ที่ใช้งานได้จริง ไม่ใช่ปริมาณเอกสารที่เขียนไว้</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="roadmap-strip">
+            <div class="roadmap-node">
+              <span class="index-num">W01–03</span>
+              <strong>ก่อตั้งทีมและวางกรอบ</strong>
+              <span style="font-size: 0.82rem; color: var(--on-surface-variant);">ใบตอบรับอาจารย์ที่ปรึกษา, Project Charter, SRS, User Story Backlog และ Initial Risk Register</span>
+            </div>
+            <div class="roadmap-node">
+              <span class="index-num">W04–07</span>
+              <strong>ออกแบบและ Sprint 1</strong>
+              <span style="font-size: 0.82rem; color: var(--on-surface-variant);">ตั้งค่า Jira/GitHub, Git Branching, ER Diagram, API Specs, พัฒนา Core Modules และ Code Review</span>
+            </div>
+            <div class="roadmap-node is-focus">
+              <span class="dossier-pill">W08 · ปัจจุบัน</span>
+              <strong>Midterm Defense</strong>
+              <span style="font-size: 0.82rem; color: var(--on-surface);">สอบนำเสนอความก้าวหน้าและสาธิต Prototype ต่อคณะกรรมการ (100 คะแนน)</span>
+            </div>
+            <div class="roadmap-node">
+              <span class="index-num">W09–12</span>
+              <strong>บูรณาการและ QA</strong>
+              <span style="font-size: 0.82rem; color: var(--on-surface-variant);">นำ Midterm Feedback Log เข้า Sprint 2, เชื่อม Frontend-Backend-DB, Risk Review และ Unit/Usability Test</span>
+            </div>
+            <div class="roadmap-node">
+              <span class="index-num">W13–15</span>
+              <strong>Final Defense</strong>
+              <span style="font-size: 0.82rem; color: var(--on-surface-variant);">ส่งมอบรายงานบทที่ 1–5, คู่มือติดตั้ง, Live Production URL, GitHub และสอบป้องกัน 15 นาที</span>
+            </div>
+          </div>
+
+          <div class="grid-asymmetric">
+            <div class="figure-card">
+              <h3 style="margin: 0 0 var(--space-sm) 0; font-size: 1.05rem;">จุดเปลี่ยนจาก "ข้อมูลตั้งต้น" สู่ "ระบบวิศวกรรมซอฟต์แวร์"</h3>
+              <ul class="clean-list">
+                <li>
+                  <span class="index-num">01</span>
+                  <div><strong>ความต่อเนื่องเชิงข้อมูล (Data Lineage):</strong> ต่อยอดจากทักษะการเตรียมข้อมูล POS ปี 1 (<span class="dossier-meta">order_id, timestamp, category, quantity, price_per_unit, payment_method</span>) สู่การออกแบบระบบธุรกรรมจริงในฐานข้อมูลเชิงสัมพันธ์</div>
+                </li>
+                <li>
+                  <span class="index-num">02</span>
+                  <div><strong>วงจรป้อนกลับสั้น (Short Iteration Feedback):</strong> การสอบ Week 8 ทำหน้าที่เสมือน Sprint Review ระดับหลักสูตร เพื่อค้นหาจุดบกพร่องของสถาปัตยกรรมก่อนสายเกินแก้</div>
+                </li>
+                <li>
+                  <span class="index-num">03</span>
+                  <div><strong>เกณฑ์วัดความสำเร็จ (Working Software):</strong> หากฟีเจอร์หลัก (Auth, Product Catalog, POS Cart, Stock Deduction) ยังรันผ่าน API หรือ UI ไม่ได้ ต้องแสดงความเสี่ยงและแผนแก้ไขอย่างซื่อสัตย์</div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="aside-box">
+              <div class="kpi-label">AUN-QA ASSESSMENT PRINCIPLE</div>
+              <p style="margin: var(--space-xs) 0;">การสอบโครงงานเป็นการประเมินแบบอิงเกณฑ์ (Criterion-referenced Assessment) ที่ตรวจสอบทั้ง <strong>Content &amp; Construct Validity</strong> ของ CLO1–CLO4 ผ่านหลักฐาน 3 ส่วนพร้อมกัน:</p>
+              <ol style="margin: var(--space-xs) 0 0 1.2rem; padding: 0; display: grid; gap: 0.35rem; font-size: 0.9rem;">
+                <li><strong>คำอธิบายด้วยวาจาและการตอบคำถาม</strong> (Oral Defense)</li>
+                <li><strong>การทำงานของระบบจริง</strong> (Live Prototype)</li>
+                <li><strong>ร่องรอยการทำงานใน Git &amp; Backlog</strong> (Process Evidence)</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>อ้างอิง: แผนการสอน มคอ.3 รายวิชา 1145 204 และแนวคิด Agile Principles</span>
+          <span>Slide 02 — Context &amp; Course Alignment</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 3: PRESENTATION STRUCTURE & INTERACTIVE TIMEBOX PLANNER -->
+      <section class="slide" id="slide-3" data-title="โครงสร้างการนำเสนอและตัวจำลองการจัดสรรเวลา">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">โครงสร้างการนำเสนอ</span>
+              <span class="dossier-meta">Presentation Blueprint &amp; Interactive Timebox Simulator</span>
+            </div>
+            <span class="index-num">SLIDE 03 / 10</span>
+          </div>
+          <h2 class="slide-title">โครงสร้างสไลด์ 5 ช่วงที่กระชับ ครบประเด็น และไม่หลุดเวลา</h2>
+          <p class="standfirst">ปรับเวลาสอบรวมและลองจับเวลาซ้อมจริง เพื่อให้ช่วงสาธิตระบบ (Live Demo) และ Q&amp;A มีเวลาเพียงพอ</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-asymmetric">
+            <div class="figure-card">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                <div>
+                  <div class="kpi-label">เลือกกรอบเวลานำเสนอ (ไม่รวม Q&amp;A หรือรวมตามประกาศกรรมการ)</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-xs);">
+                    <button type="button" class="btn btn--compact" id="tb-10" onclick="setPresentationDuration(10)">10 นาที (เร่งรัด)</button>
+                    <button type="button" class="btn btn--compact btn--active" id="tb-12" onclick="setPresentationDuration(12)">12 นาที (มาตรฐานกลางภาค)</button>
+                    <button type="button" class="btn btn--compact" id="tb-15" onclick="setPresentationDuration(15)">15 นาที (เทียบเท่า Final)</button>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div class="kpi-label">เวลาซ้อมปัจจุบัน</div>
+                  <div class="kpi-value" id="timer-display" style="font-size: 1.65rem; margin: 0;">12:00</div>
+                </div>
+              </div>
+
+              <div class="timebox-bar" id="timebox-bar" aria-label="แถบสัดส่วนเวลาแต่ละช่วง">
+                <div class="tb-seg tb-seg-1" id="seg-1" style="width: 15%;"></div>
+                <div class="tb-seg tb-seg-2" id="seg-2" style="width: 20%;"></div>
+                <div class="tb-seg tb-seg-3" id="seg-3" style="width: 25%;"></div>
+                <div class="tb-seg tb-seg-4" id="seg-4" style="width: 28%;"></div>
+                <div class="tb-seg tb-seg-5" id="seg-5" style="width: 12%;"></div>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md);">
+                <button type="button" class="btn btn--primary btn--compact" id="btn-timer-toggle" onclick="toggleTimer()">เริ่มจับเวลาซ้อม</button>
+                <button type="button" class="btn btn--compact" onclick="resetTimer()">รีเซ็ตเวลา</button>
+                <span class="inline-feedback" id="timer-status" style="align-self: center; margin-left: var(--space-xs);">พร้อมจับเวลา 12 นาที</span>
+              </div>
+
+              <div class="dossier-table-wrap" style="margin-top: var(--space-md);">
+                <table class="dossier-table">
+                  <thead>
+                    <tr>
+                      <th>ช่วงที่</th>
+                      <th>หัวข้อในสไลด์</th>
+                      <th>หลักฐานที่ต้องโชว์</th>
+                      <th class="num-col">เวลา (นาที)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="timebox-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="aside-box">
+              <div class="kpi-label">กฎเหล็กการจัดสัดส่วนทีม (1–3 คน)</div>
+              <ul class="clean-list" style="margin-top: var(--space-sm);">
+                <li>
+                  <span class="index-num">A</span>
+                  <div><strong>สมาชิกทุกคนต้องได้พูดและตอบคำถาม:</strong> เกณฑ์ด้านที่ 4 หักคะแนนทันทีหากมีสมาชิกคนใดคนหนึ่งนำเสนอคนเดียวทั้งหมด</div>
+                </li>
+                <li>
+                  <span class="index-num">B</span>
+                  <div><strong>แบ่งตามความเชี่ยวชาญจริง:</strong> เช่น คนที่ 1 พูด Problem &amp; Agile/Risk, คนที่ 2 อธิบาย DB Schema &amp; API, คนที่ 3 คุม Live POS Demo</div>
+                </li>
+                <li>
+                  <span class="index-num">C</span>
+                  <div><strong>ห้ามอ่านสไลด์ตัวอักษรแน่น:</strong> ใช้แผนภาพ ER, Burndown Chart และตัวเลขสถิติจริงบนหน้าจอแทนพารากราฟยาว</div>
+                </li>
+                <li>
+                  <span class="index-num">D</span>
+                  <div><strong>กันเวลาฉุกเฉิน 1 นาที:</strong> เผื่อจังหวะสลับหน้าจอสไลด์ไปยังหน้าเว็บ/โปรแกรม POS จริง</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>เคล็ดลับ: ซ้อมพูดพร้อมสาธิตจริงอย่างน้อย 2 รอบก่อนเข้าห้องสอบ</span>
+          <span>Slide 03 — Timebox &amp; Structure</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 4: GROCERY POS SCOPE & DELIVERABLES -->
+      <section class="slide" id="slide-4" data-title="ขอบเขตและชิ้นงานของแพลตฟอร์ม Grocery POS">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">ขอบเขตระบบตัวอย่าง</span>
+              <span class="dossier-meta">Grocery POS Deliverables · Week 8 Baseline vs. Post-Midterm</span>
+            </div>
+            <span class="index-num">SLIDE 04 / 10</span>
+          </div>
+          <h2 class="slide-title">แพลตฟอร์ม Grocery POS: สิ่งที่ต้องทำงานได้จริงในสัปดาห์ที่ 8</h2>
+          <p class="standfirst">แยกให้ออกระหว่างขอบเขตหลักที่ต้องโชว์ในกลางภาค (Sprint 1 + Core POS) กับฟีเจอร์ส่วนขยายใน Sprint 2–3</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="figure-card figure-card--accent">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                <strong style="color: var(--positive);">ต้องพร้อมสาธิตใน Week 8 (Midterm Baseline)</strong>
+                <span class="tag tag--positive">Sprint 1 + Core MVP</span>
+              </div>
+              <ul class="clean-list">
+                <li>
+                  <span class="index-num">01</span>
+                  <div><strong>ระบบยืนยันตัวตนและสิทธิ์ (Auth &amp; RBAC):</strong> ลงชื่อเข้าใช้แยกบทบาท <span class="dossier-meta">Admin / Manager / Cashier</span> พร้อมจัดเก็บรหัสผ่านแบบ Hash</div>
+                </li>
+                <li>
+                  <span class="index-num">02</span>
+                  <div><strong>ฐานข้อมูลสินค้าและหมวดหมู่ (Catalog &amp; Stock):</strong> เพิ่ม/แก้ไข/ค้นหาสินค้า Grocery ตามหมวดหมู่ กำหนดราคาต่อหน่วย หน่วยนับ และจุดสั่งซื้อซ้ำ (<span class="dossier-meta">reorder_level</span>)</div>
+                </li>
+                <li>
+                  <span class="index-num">03</span>
+                  <div><strong>หน้าจอขายหน้าร้าน (POS Checkout Flow):</strong> เลือกสินค้าลงตะกร้า คำนวณราคารวม ยืนยันการชำระเงิน (<span class="dossier-meta">Cash / PromptPay / Credit Card</span>) และบันทึก <span class="dossier-meta">Orders + Order_Items</span></div>
+                </li>
+                <li>
+                  <span class="index-num">04</span>
+                  <div><strong>การตัดสต็อกอัตโนมัติ (Auto Stock Deduction):</strong> เมื่อยืนยันคำสั่งซื้อ ยอด <span class="dossier-meta">stock_quantity</span> ต้องลดลงทันทีและแจ้งเตือนเมื่อต่ำกว่าเกณฑ์</div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="figure-card figure-card--toned">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                <strong style="color: var(--secondary);">แผนพัฒนาต่อใน Week 9–12 (Sprint 2–3)</strong>
+                <span class="tag tag--secondary">Post-Midterm Roadmap</span>
+              </div>
+              <ul class="clean-list">
+                <li>
+                  <span class="index-num">05</span>
+                  <div><strong>สรุปยอดขายและ Peak Hours Analytics:</strong> แดชบอร์ดยอดขายรายวัน แยกตามหมวดหมู่สินค้า และช่วงเวลาขายดี เพื่อช่วยวางแผนเติมสต็อก</div>
+                </li>
+                <li>
+                  <span class="index-num">06</span>
+                  <div><strong>ระบบจัดการใบเสร็จและการคืนสินค้า (Void/Refund):</strong> ออกใบเสร็จสมบูรณ์ พร้อมตรรกะคืนสต็อกเมื่อยกเลิกบิล</div>
+                </li>
+                <li>
+                  <span class="index-num">07</span>
+                  <div><strong>การบูรณาการ Error Handling &amp; Concurrency:</strong> รองรับการขายพร้อมกันหลายจุด (Locking/Transaction) และการทดสอบ Unit + Integration + Usability Test</div>
+                </li>
+                <li>
+                  <span class="index-num">08</span>
+                  <div><strong>Deployment บน Cloud/Production:</strong> เผยแพร่ลิงก์ระบบจริงและคู่มือติดตั้งสำหรับ Final Defense สัปดาห์ที่ 13–15</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="figure-card">
+            <div class="kpi-label" style="margin-bottom: var(--space-xs);">ตัวอย่าง USER STORY &amp; ACCEPTANCE CRITERIA มาตรฐานสำหรับใช้ในสไลด์</div>
+            <p style="margin: 0; font-size: 0.95rem;">
+              <strong>User Story:</strong> "ในฐานะ <em>พนักงานแคชเชียร์ (Cashier)</em> ฉันต้องการ <em>สแกนหรือเลือกสินค้าในตะกร้าและกดรับชำระเงินผ่าน PromptPay/เงินสด</em> เพื่อ <em>ออกใบเสร็จให้ลูกค้าได้อย่างรวดเร็วและตัดยอดสต็อกในคลังโดยอัตโนมัติ</em>"<br>
+              <strong>Acceptance Criteria:</strong> (1) ระบบคำนวณ subtotal และ total_amount ถูกต้อง (2) ห้ามขายเกิน stock_quantity ที่มีอยู่ (3) หาก stock_quantity ≤ reorder_level ต้องขึ้นสถานะ Low Stock ทันที
+            </p>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>อ้างอิง: โครงสร้างชิ้นงาน POS และเกณฑ์ Sprint 1–3</span>
+          <span>Slide 04 — Grocery POS Functional Scope</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 5: LIVE PROTOTYPE DEMO CHECKLIST (INTERACTIVE) -->
+      <section class="slide" id="slide-5" data-title="รายการตรวจสอบก่อนสาธิตระบบสด (Interactive Checklist)">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">สาธิตระบบสด</span>
+              <span class="dossier-meta">Live Prototype Demo Checklist · Persistent Readiness Tracker</span>
+            </div>
+            <span class="index-num">SLIDE 05 / 10</span>
+          </div>
+          <h2 class="slide-title">เช็กลิสต์เตรียมสาธิตระบบสด: กฎ 3 นาทีทองที่ห้ามระบบล่มต่อหน้ากรรมการ</h2>
+          <p class="standfirst">ติ๊กตรวจสอบความพร้อมของทีมก่อนขึ้นสอบจริง ระบบจะบันทึกความคืบหน้าไว้ให้อัตโนมัติ</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-asymmetric-rev">
+            <div class="figure-card figure-card--gold">
+              <div class="kpi-label">ความพร้อมในการสาธิตสด (DEMO READINESS)</div>
+              <div class="kpi-value" id="demo-readiness-pct">0%</div>
+              <div class="progress-track" style="height: 8px; margin: var(--space-sm) 0;">
+                <div class="progress-fill" id="demo-readiness-bar" style="width: 0%;"></div>
+              </div>
+              <p id="demo-readiness-msg" style="font-size: 0.9rem; margin: var(--space-xs) 0 var(--space-md) 0; color: var(--on-surface-variant);">
+                ยังไม่เริ่มตรวจสอบ — คลิกทำเครื่องหมายในรายการด้านขวา
+              </p>
+
+              <div class="aside-box">
+                <strong>ลำดับทองในการสาธิต (3–4 นาที):</strong>
+                <ol style="margin: var(--space-xs) 0 0 1.2rem; padding: 0; font-size: 0.875rem; display: grid; gap: 0.3rem;">
+                  <li>เปิดหน้า Login แสดง Role สั้นๆ (15 วินาที)</li>
+                  <li>สแกน/เลือกสินค้า Grocery 2–3 ชิ้น + ปรับจำนวน (45 วินาที)</li>
+                  <li>กดชำระเงิน + โชว์บันทึก Order และใบเสร็จ (45 วินาที)</li>
+                  <li>สลับดูหน้าคลังสินค้า ยืนยันว่ายอดสต็อกลดลงจริงและขึ้นแจ้งเตือน Low Stock (60 วินาที)</li>
+                  <li>โชว์ Error Case 1 กรณี เช่น สินค้าหมด/สั่งเกินสต็อก (30 วินาที)</li>
+                </ol>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md);">
+                <button type="button" class="btn btn--compact" id="btn-reset-checklist" onclick="resetDemoChecklist(this)">ล้างรายการเช็กลิสต์</button>
+              </div>
+            </div>
+
+            <div class="figure-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                <strong>รายการตรวจสอบ 10 ข้อก่อนเข้าห้องสอบ</strong>
+                <span class="dossier-meta" id="demo-count-label">0 / 10 รายการ</span>
+              </div>
+              <div class="checklist-grid" id="demo-checklist-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>คำเตือน: เตรียม Seed Data ที่สมจริงและวิดีโอสำรอง (Backup Screen Recording) เสมอ เผื่ออินเทอร์เน็ตห้องสอบขัดข้อง</span>
+          <span>Slide 05 — Live Demo Readiness</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 6: SYSTEM & DATABASE ARCHITECTURE BLUEPRINT -->
+      <section class="slide" id="slide-6" data-title="สถาปัตยกรรมระบบและฐานข้อมูล 6 ตารางของ Grocery POS">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">สถาปัตยกรรมซอฟต์แวร์</span>
+              <span class="dossier-meta">CLO2 · Layered Architecture &amp; 6-Table Relational Schema</span>
+            </div>
+            <span class="index-num">SLIDE 06 / 10</span>
+          </div>
+          <h2 class="slide-title">สถาปัตยกรรมแยกชั้น (Decoupled Layers) และแบบจำลองฐานข้อมูล 6 ตารางหลัก</h2>
+          <p class="standfirst">คลิกที่ชื่อตารางด้านล่างเพื่อตรวจโครงสร้างคีย์หลัก (PK), คีย์นอก (FK) และเหตุผลการออกแบบเพื่อตอบคณะกรรมการ</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-asymmetric">
+            <div class="figure-card">
+              <div class="kpi-label" style="margin-bottom: var(--space-sm);">แผนผังสถาปัตยกรรมแยกส่วน UI ออกจาก Business Logic</div>
+              <svg class="svg-diagram" viewBox="0 0 640 215" role="img" aria-label="แผนภาพสถาปัตยกรรม Grocery POS แบบแยก 3 ชั้น">
+                <rect x="10" y="16" width="175" height="180" rx="6" fill="var(--surface-container)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="24" y="42" font-size="13" font-weight="700" fill="var(--on-surface)" font-family="var(--font-body)">1. Presentation (UI)</text>
+                <text x="24" y="64" font-size="11.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">POS Screen / Cart</text>
+                <text x="24" y="82" font-size="11.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">Inventory Dashboard</text>
+                <text x="24" y="100" font-size="11.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">Low-Stock Alerts</text>
+                <rect x="24" y="122" width="147" height="56" rx="4" fill="var(--surface-container-low)" stroke="var(--outline-variant)"/>
+                <text x="34" y="144" font-size="11" font-weight="600" fill="var(--secondary)" font-family="var(--font-body)">หลักการแยกส่วน:</text>
+                <text x="34" y="162" font-size="10.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">ห้ามคำนวณตัดสต็อก</text>
+                <text x="34" y="175" font-size="10.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">ในโค้ดฝั่งหน้าจอตรงๆ</text>
+
+                <line x1="188" y1="106" x2="225" y2="106" stroke="var(--secondary)" stroke-width="2"/>
+                <polygon points="225,101 235,106 225,111" fill="var(--secondary)"/>
+
+                <rect x="236" y="16" width="185" height="180" rx="6" fill="var(--secondary-soft-bg)" stroke="var(--secondary)" stroke-width="1.5"/>
+                <text x="250" y="42" font-size="13" font-weight="700" fill="var(--secondary)" font-family="var(--font-body)">2. API &amp; Business Logic</text>
+                <text x="250" y="64" font-size="11.5" fill="var(--on-surface)" font-family="var(--font-body)">Auth &amp; Role Guard</text>
+                <text x="250" y="82" font-size="11.5" fill="var(--on-surface)" font-family="var(--font-body)">Checkout &amp; Tax Calc</text>
+                <text x="250" y="100" font-size="11.5" fill="var(--on-surface)" font-family="var(--font-body)">Atomic Stock Service</text>
+                <rect x="250" y="122" width="157" height="56" rx="4" fill="var(--surface-container-low)" stroke="var(--secondary)"/>
+                <text x="260" y="144" font-size="11" font-weight="600" fill="var(--secondary)" font-family="var(--font-body)">ข้อดีในการสอบ:</text>
+                <text x="260" y="162" font-size="10.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">เขียน Unit/API Test</text>
+                <text x="260" y="175" font-size="10.5" fill="var(--on-surface-variant)" font-family="var(--font-body)">ได้โดยไม่ต้องพึ่ง UI</text>
+
+                <line x1="424" y1="106" x2="459" y2="106" stroke="var(--outline)" stroke-width="2"/>
+                <polygon points="459,101 469,106 459,111" fill="var(--outline)"/>
+
+                <rect x="470" y="16" width="160" height="180" rx="6" fill="var(--surface-container-low)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="484" y="42" font-size="13" font-weight="700" fill="var(--on-surface)" font-family="var(--font-body)">3. Relational DB</text>
+                <text x="484" y="66" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font-label)">Users · Categories</text>
+                <text x="484" y="84" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font-label)">Products · Inventory</text>
+                <text x="484" y="102" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font-label)">Orders · Order_Items</text>
+                <rect x="484" y="122" width="132" height="56" rx="4" fill="var(--warning-bg)" stroke="var(--warning)"/>
+                <text x="494" y="144" font-size="11" font-weight="700" fill="var(--tertiary)" font-family="var(--font-body)">ACID Transaction</text>
+                <text x="494" y="162" font-size="10.5" fill="var(--on-surface)" font-family="var(--font-body)">ป้องกันสต็อกติดลบ</text>
+                <text x="494" y="175" font-size="10.5" fill="var(--on-surface)" font-family="var(--font-body)">เมื่อยิงออเดอร์พร้อมกัน</text>
+              </svg>
+
+              <div class="aside-box" style="margin-top: var(--space-md);">
+                <strong>หลัก Agile Clean Architecture:</strong> เมื่อแยก UI ออกจาก Business Rules ทำให้สามารถสร้าง Automated Acceptance Tests และตรวจจับข้อผิดพลาดของ API Contracts ได้ตั้งแต่เนิ่นๆ (หลีกเลี่ยง Code Rot)
+              </div>
+            </div>
+
+            <div class="figure-card figure-card--accent">
+              <div class="kpi-label" style="margin-bottom: var(--space-xs);">สำรวจโครงสร้างฐานข้อมูล 6 ตาราง (ER SCHEMA EXPLORER)</div>
+              <div class="schema-tabs" id="schema-tabs"></div>
+              <div id="schema-detail" style="margin-top: var(--space-md);"></div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>อ้างอิง: Relational Database Schema ในเอกสารโครงการ POS และ Agile Clean Architecture</span>
+          <span>Slide 06 — Architecture &amp; Schema</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 7: ARCHITECTURE DEFENSE & Q&A STRATEGIES -->
+      <section class="slide" id="slide-7" data-title="กลยุทธ์การป้องกันสถาปัตยกรรมและตอบคำถามคณะกรรมการ">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">กลยุทธ์การตอบคำถาม</span>
+              <span class="dossier-meta">Architecture Defense &amp; Committee Q&amp;A Simulator</span>
+            </div>
+            <span class="index-num">SLIDE 07 / 10</span>
+          </div>
+          <h2 class="slide-title">ตอบคำถามเชิงเทคนิคอย่างไรให้ได้คะแนนเต็ม: หลักเหตุผล + Trade-off + แผนสำรอง</h2>
+          <p class="standfirst">เลือกคำถามยอดฮิตของคณะกรรมการสอบกลางภาค เพื่อเปรียบเทียบคำตอบที่ควรเลี่ยงกับคำตอบระดับวิศวกรรม</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-asymmetric-rev">
+            <div>
+              <div class="kpi-label" style="margin-bottom: var(--space-xs);">เลือกคำถามจำลองจากคณะกรรมการ (5 สถานการณ์)</div>
+              <div class="qa-list" id="qa-list"></div>
+            </div>
+
+            <div class="figure-card figure-card--gold" id="qa-detail-panel"></div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>จำไว้เสมอ: หากยังไม่สมบูรณ์ ให้ยอมรับข้อจำกัดอย่างตรงไปตรงมา พร้อมระบุ Issue/Sprint ที่จะแก้ในสัปดาห์ที่ 9–11</span>
+          <span>Slide 07 — Q&amp;A Defense Strategy</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 8: TECHNICAL RISK & PDPA COMPLIANCE -->
+      <section class="slide" id="slide-8" data-title="การบริหารความเสี่ยงทางเทคนิคและจริยธรรมข้อมูล PDPA">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">ความเสี่ยงและ PDPA</span>
+              <span class="dossier-meta">CLO3 · Concurrency Risk Mitigation &amp; Data Privacy</span>
+            </div>
+            <span class="index-num">SLIDE 08 / 10</span>
+          </div>
+          <h2 class="slide-title">เจาะลึกความเสี่ยงอันดับ 1 ของ Grocery POS: สต็อกตัดขนานพร้อมกันและการคุ้มครองข้อมูล PDPA</h2>
+          <p class="standfirst">คณะกรรมการประเมิน CLO3 จากความสามารถในการมองเห็นความเสี่ยงเชิงเทคนิคที่เกิดขึ้นจริง ไม่ใช่แค่ความเสี่ยงทั่วไป</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="figure-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                <strong>1. ความเสี่ยงตัดสต็อกขนานพร้อมกัน (Race Condition)</strong>
+                <span class="tag tag--error">High Impact</span>
+              </div>
+              <p style="font-size: 0.9rem; margin: 0 0 var(--space-sm) 0;">เมื่อร้าน Grocery มีเครื่องแคชเชียร์ 2 จุดขายสินค้าตัวสุดท้ายพร้อมกัน หากอ่านค่าสต็อกก่อนแล้วค่อยอัปเดตแยกกัน ยอดสต็อกจะผิดพลาดหรือติดลบ</p>
+              <div class="dossier-table-wrap">
+                <table class="dossier-table">
+                  <thead>
+                    <tr>
+                      <th>แนวทาง</th>
+                      <th>ผลลัพธ์เมื่อขายพร้อมกัน 2 จุด (เหลือ 1 ชิ้น)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="tag tag--error">แบบไม่มี Transaction</span></td>
+                      <td>ทั้งเครื่อง A และ B อ่านเจอว่าเหลือ 1 → ขายซ้ำได้ 2 ชิ้น (สต็อกเพี้ยน)</td>
+                    </tr>
+                    <tr>
+                      <td><span class="tag tag--positive">Atomic Update + DB Lock</span></td>
+                      <td>ใช้ <span class="dossier-meta">BEGIN TRANSACTION</span> และเงื่อนไข <span class="dossier-meta">WHERE stock &gt;= qty</span> → เครื่อง A สำเร็จ เครื่อง B ได้แจ้งเตือนสต็อกไม่พออย่างปลอดภัย</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="figure-card figure-card--accent">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                <strong>2. จริยธรรมข้อมูลและ PDPA ในชุดข้อมูล POS</strong>
+                <span class="tag tag--secondary">Privacy by Design</span>
+              </div>
+              <ul class="clean-list">
+                <li>
+                  <span class="index-num">01</span>
+                  <div><strong>Data Minimization (เก็บเท่าที่จำเป็น):</strong> ระบบขายหน้าร้านทั่วไปไม่จำเป็นต้องบังคับเก็บเลขบัตรประชาชนหรือเบอร์โทรลูกค้าลงในตารางวิเคราะห์ยอดขาย</div>
+                </li>
+                <li>
+                  <span class="index-num">02</span>
+                  <div><strong>Anonymization ก่อนวิเคราะห์:</strong> หากมีการส่งออกข้อมูลไปวิเคราะห์พฤติกรรมการซื้อหรือ Peak Hours ต้องลบข้อมูลระบุตัวตน (PII) ออกจาก Dataset เสมอ</div>
+                </li>
+                <li>
+                  <span class="index-num">03</span>
+                  <div><strong>Credential &amp; Access Control:</strong> แยกสิทธิ์ Cashier กับ Manager ห้ามส่ง <span class="dossier-meta">password_hash</span> กลับใน API Response เด็ดขาด</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="aside-box">
+            <strong>สิ่งที่ต้องเตรียมเข้าตาราง Risk Register ในสไลด์:</strong> ระบุ (1) รหัสความเสี่ยง (2) โอกาสเกิด × ผลกระทบ (3) มาตรการป้องกัน (Mitigation Plan) และ (4) สถานะปัจจุบันหลังทดสอบใน Sprint 1
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>อ้างอิง: Project Risk Management &amp; PDPA Compliance ในเอกสารโครงงานและสัปดาห์ที่ 11</span>
+          <span>Slide 08 — Risk &amp; PDPA</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 9: EVALUATION COMMITTEE RUBRICS (INTERACTIVE GRADER) -->
+      <section class="slide" id="slide-9" data-title="เกณฑ์การประเมินคณะกรรมการ 100 คะแนนและตัวจำลองคะแนน">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">เกณฑ์ประเมิน 100 คะแนน</span>
+              <span class="dossier-meta">Evaluation Committee Rubrics · Self-Assessment Simulator</span>
+            </div>
+            <span class="index-num">SLIDE 09 / 10</span>
+          </div>
+          <h2 class="slide-title">เกณฑ์การประเมินคณะกรรมการ (4 ด้าน × 25 คะแนน): ประเมินทีมของคุณก่อนขึ้นสอบจริง</h2>
+          <p class="standfirst">ปรับคะแนนจำลองทั้ง 4 ด้านเพื่อดูระดับคุณภาพตาม Rubric จริงของรายวิชา 1145 204 และส่งออกผลประเมินเป็นไฟล์ CSV</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-asymmetric">
+            <div style="display: grid; gap: var(--space-sm);" id="rubric-sliders-container"></div>
+
+            <div class="figure-card figure-card--gold">
+              <div class="kpi-label">ผลประเมินรวมจำลอง (MIDTERM SCORE SIMULATOR)</div>
+              <div style="display: flex; align-items: baseline; gap: var(--space-sm); margin: var(--space-xs) 0;">
+                <div class="kpi-value" id="rubric-total-score">84</div>
+                <span class="dossier-meta">/ 100 คะแนน</span>
+              </div>
+              <div id="rubric-verdict-badge" style="margin-bottom: var(--space-sm);"></div>
+
+              <div class="dossier-table-wrap" style="margin-bottom: var(--space-md);">
+                <table class="dossier-table">
+                  <thead>
+                    <tr>
+                      <th>ระดับคุณภาพ</th>
+                      <th>ช่วงคะแนน (ต่อด้าน 25)</th>
+                      <th>ความหมายตามเกณฑ์</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>ดีเยี่ยม</strong></td>
+                      <td class="num-col">22–25</td>
+                      <td>ระบบและหลักฐานครบสมบูรณ์ แสดงความเข้าใจเชิงลึก</td>
+                    </tr>
+                    <tr>
+                      <td><strong>ดี</strong></td>
+                      <td class="num-col">18–21</td>
+                      <td>ชัดเจน ครอบคลุม มีจุดปรับปรุงเล็กน้อย</td>
+                    </tr>
+                    <tr>
+                      <td><strong>พอใช้</strong></td>
+                      <td class="num-col">14–17</td>
+                      <td>ทำงานได้บางส่วน ขาดความลึกหรือเวลาเกินกำหนด</td>
+                    </tr>
+                    <tr>
+                      <td><strong>ปรับปรุง</strong></td>
+                      <td class="num-col">0–13</td>
+                      <td>ไม่พร้อมสาธิต หรือตอบคำถามเชิงเทคนิคไม่ได้</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs); align-items: center;">
+                <button type="button" class="btn btn--primary btn--compact" onclick="exportRubricCsv()">
+                  <i data-lucide="download" aria-hidden="true"></i>
+                  <span>ส่งออกผลประเมิน (CSV)</span>
+                </button>
+                <button type="button" class="btn btn--compact" onclick="resetRubricScores()">ค่ามาตรฐาน (84/100)</button>
+              </div>
+              <div class="inline-feedback" id="rubric-export-feedback" style="margin-top: var(--space-xs);"></div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>อ้างอิง: เกณฑ์ประเมิน Midterm Progress Defense (CLO1–CLO4) สำหรับ Google Classroom Rubric</span>
+          <span>Slide 09 — Committee Rubrics</span>
+        </footer>
+      </section>
+
+      <!-- SLIDE 10: ACTION PLAN & POST-MIDTERM BRIDGE -->
+      <section class="slide" id="slide-10" data-title="แผนเตรียมตัว 48 ชั่วโมงก่อนสอบและการต่อยอดสัปดาห์ที่ 9–15">
+        <div>
+          <div class="dossier-bar">
+            <div class="dossier-bar-left">
+              <span class="dossier-pill">บทสรุปและแผนปฏิบัติ</span>
+              <span class="dossier-meta">48-Hour Action Plan &amp; Post-Midterm Feedback Loop</span>
+            </div>
+            <span class="index-num">SLIDE 10 / 10</span>
+          </div>
+          <h2 class="slide-title">เตรียมพร้อม 48 ชั่วโมงก่อนสอบ และเปลี่ยนข้อเสนอแนะเป็นพลังของ Sprint 2</h2>
+          <p class="standfirst">ข้อเสนอแนะจากคณะกรรมการในสัปดาห์ที่ 8 คือข้อมูลตั้งต้นสำคัญของงานสัปดาห์ที่ 9–12 และความสำเร็จของ Final Defense</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="figure-card figure-card--accent">
+              <div class="kpi-label" style="margin-bottom: var(--space-sm);">แผนปฏิบัติการ 48 ชั่วโมงก่อนขึ้นสอบ (PRE-DEFENSE)</div>
+              <ul class="clean-list">
+                <li>
+                  <span class="index-num">T-48h</span>
+                  <div><strong>Freeze Branch &amp; Clean Commits:</strong> รวมโค้ดที่เสถียรเข้าสาขาหลัก ตรวจสอบ <span class="dossier-meta">README.md</span> และล้างไฟล์ขยะออกจาก Repository</div>
+                </li>
+                <li>
+                  <span class="index-num">T-24h</span>
+                  <div><strong>เตรียมข้อมูลตัวอย่าง &amp; วิดีโอสำรอง:</strong> รีเซ็ต Seed Data ให้สะอาด พร้อมอัดคลิปสาธิตความยาว 3 นาทีสำรองไว้ในเครื่อง</div>
+                </li>
+                <li>
+                  <span class="index-num">T-12h</span>
+                  <div><strong>ซ้อมจับเวลาเต็มรูปแบบ:</strong> ซ้อมพูดครบทุกคนตาม Timebox 12 นาที พร้อมฝึกตอบคำถามเชิงเทคนิค 5 ข้อจาก Slide 07</div>
+                </li>
+                <li>
+                  <span class="index-num">T-01h</span>
+                  <div><strong>ตั้งคนจด Midterm Feedback Log:</strong> มอบหมายสมาชิก 1 คนจดทุกคำแนะนำของกรรมการระหว่าง Q&amp;A แบบคำต่อคำ</div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="figure-card">
+              <div class="kpi-label" style="margin-bottom: var(--space-sm);">เส้นทางต่อยอดหลังกลางภาค (WEEK 9–15 BRIDGE)</div>
+              <ul class="clean-list">
+                <li>
+                  <span class="index-num">W09</span>
+                  <div><strong>Midterm Feedback Log &amp; Sprint 2:</strong> ปรับ Product Backlog ตามความเห็นคณะกรรมการและพัฒนาฟีเจอร์ระดับสูง</div>
+                </li>
+                <li>
+                  <span class="index-num">W10</span>
+                  <div><strong>System Integration &amp; API Alignment:</strong> เชื่อม Frontend–Backend–DB ครบวงจร พร้อม API Docs และ Error Handling</div>
+                </li>
+                <li>
+                  <span class="index-num">W11</span>
+                  <div><strong>Risk &amp; Quality Review:</strong> อัปเดต Risk Log จริงที่เกิดระหว่างพัฒนาและปิดปัญหาคอขวด</div>
+                </li>
+                <li>
+                  <span class="index-num">W12–15</span>
+                  <div><strong>QA Testing &amp; Final Defense:</strong> Unit/Integration/Usability Test (W12) ก่อนส่งมอบระบบ Live URL และรายงานฉบับสมบูรณ์ (W13–15)</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="aside-box" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-md);">
+            <div>
+              <strong>สรุปภาพรวมความพร้อมของทีมคุณตอนนี้:</strong>
+              <span id="final-summary-status" style="margin-left: var(--space-xs); color: var(--secondary); font-weight: 600;"></span>
+            </div>
+            <button type="button" class="btn btn--primary btn--compact" onclick="goToSlide(0)">กลับไปสไลด์แรก (01)</button>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>1145 204 Sophomore Project · ขอให้นักศึกษาทุกทีมนำเสนอความก้าวหน้าได้อย่างมั่นใจ</span>
+          <span>Slide 10 — Action Plan</span>
+        </footer>
+      </section>
+
+    </main>
+
+    <!-- Collapsible Speaker Notes Panel -->
+    <aside class="speaker-notes" id="speaker-notes" aria-label="โน้ตสำหรับอาจารย์ผู้สอน">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
+        <strong id="notes-title">โน้ตผู้สอนประจำสไลด์ที่ 01</strong>
+        <button type="button" class="btn btn--compact" onclick="toggleNotes()">ซ่อนโน้ต</button>
+      </div>
+      <p id="notes-body" style="margin: 0; font-size: 0.925rem; color: var(--on-surface);"></p>
+    </aside>
+
+    <!-- Bottom Slide Navigation Bar -->
+    <nav class="deck-nav-bar" aria-label="การนำทางระหว่างสไลด์">
+      <button type="button" class="btn" id="btn-prev" onclick="prevSlide()">
+        <i data-lucide="arrow-left" aria-hidden="true"></i>
+        <span>สไลด์ก่อนหน้า</span>
+      </button>
+
+      <div class="slide-dots" id="slide-dots" role="tablist" aria-label="เลือกหมายเลขสไลด์"></div>
+
+      <button type="button" class="btn btn--primary" id="btn-next" onclick="nextSlide()">
+        <span>สไลด์ถัดไป</span>
+        <i data-lucide="arrow-right" aria-hidden="true"></i>
+      </button>
+    </nav>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    const TOTAL_SLIDES = 10;
+
+    const SPEAKER_NOTES = [
+      `สไลด์ 01: เปิดคาบด้วยการย้ำความสำคัญของ Week 8 ว่าคิดเป็น 20–25% ของเกรดทั้งวิชา และประเมินครบทั้ง 4 CLOs ให้นักศึกษาเห็นภาพรวมทันทีว่างานวันนี้เตรียมทีมสู่ห้องสอบจริง`,
+      `สไลด์ 02: อธิบายเชื่อมโยงจาก Week 1–7 ที่ผ่านมา (จาก Proposal, SRS, ER Diagram และ Sprint 1) ว่าเหตุใดกรรมการจึงต้องการเห็นระบบที่ทำงานได้จริงตามแนวคิด Working Software ของ Agile`,
+      `สไลด์ 03: ชวนนักศึกษาลองเลือกเวลา 12 นาทีและกดตัวจับเวลาในห้องเรียน เพื่อสร้างความรู้สึกถึงกรอบเวลาจริง เน้นย้ำว่าสมาชิก 1–3 คนทุกคนต้องมีส่วนร่วมในการพูด`,
+      `สไลด์ 04: แยกขอบเขตให้ชัดระหว่าง Midterm MVP (Auth, Product/Stock CRUD, Checkout, Auto-deduct) กับสิ่งที่รอทำต่อใน Sprint 2–3 เพื่อไม่ให้นักศึกษาสัญญาฟีเจอร์เกินตัวแล้วทำไม่ทัน`,
+      `สไลด์ 05: ให้นักศึกษาเปิดเช็กลิสต์นี้ทดสอบระบบตัวเองก่อนวันสอบจริง ย้ำเรื่อง Seed Data และ Backup Video เพื่อป้องกันเหตุฉุกเฉินหน้าห้องสอบ`,
+      `สไลด์ 06: ให้นักศึกษาคลิกดูโครงสร้างตารางทั้ง 6 ตารางของ Grocery POS (Users, Categories, Products, Inventory_Ingredients, Orders, Order_Items) และย้ำการแยก UI ออกจาก Business Logic`,
+      `สไลด์ 07: จำลองบทบาทอาจารย์กรรมการถามนักศึกษาด้วยคำถามจริง 5 ข้อ แล้วให้นักศึกษาลองตอบก่อนคลิกดูคำตอบระดับวิศวกรรม`,
+      `สไลด์ 08: เน้นย้ำความเสี่ยงเฉพาะโดเมน Grocery POS คือ Race Condition ตอนตัดสต็อกพร้อมกัน และหลักการปกป้องข้อมูลส่วนบุคคล PDPA`,
+      `สไลด์ 09: พาดู Rubric 4 ด้าน (ด้านละ 25 คะแนน) ที่ใช้กรอกคะแนนจริงใน Google Classroom ให้นักศึกษาลองประเมินทีมตนเองและ Export CSV เก็บไว้ทบทวน`,
+      `สไลด์ 10: ปิดท้ายด้วย Timeline 48 ชั่วโมงก่อนสอบ และการนำ Midterm Feedback Log ไปใช้งานต่อทันทีในสัปดาห์ที่ 9–12 จนถึง Final Defense`
+    ];
+
+    const TIMEBOX_CONFIGS = {
+      10: [
+        { name: `1. ปัญหาและเป้าหมายระบบ (Problem & Scope)`, evidence: `Problem Statement + กลุ่มผู้ใช้ Grocery POS`, mins: 1.5, pct: 15 },
+        { name: `2. ความคืบหน้า Agile & Git`, evidence: `Sprint 1 Backlog + Burndown + Git Commits`, mins: 2.0, pct: 20 },
+        { name: `3. สถาปัตยกรรมและฐานข้อมูล`, evidence: `ER Diagram 6 ตาราง + Layered API Specs`, mins: 2.5, pct: 25 },
+        { name: `4. สาธิตระบบสด (Live Demo)`, evidence: `Auth + POS Checkout + Auto Stock Deduction`, mins: 3.0, pct: 30 },
+        { name: `5. ความเสี่ยงและแผน Sprint 2`, evidence: `Risk Register + PDPA + แผน Week 9–12`, mins: 1.0, pct: 10 }
+      ],
+      12: [
+        { name: `1. ปัญหาและเป้าหมายระบบ (Problem & Scope)`, evidence: `Problem Statement + กลุ่มผู้ใช้ Grocery POS`, mins: 1.5, pct: 12.5 },
+        { name: `2. ความคืบหน้า Agile & Git`, evidence: `Sprint 1 Backlog + Burndown + Git Commits`, mins: 2.5, pct: 21 },
+        { name: `3. สถาปัตยกรรมและฐานข้อมูล`, evidence: `ER Diagram 6 ตาราง + Layered API Specs`, mins: 3.0, pct: 25 },
+        { name: `4. สาธิตระบบสด (Live Demo)`, evidence: `Auth + POS Checkout + Auto Stock Deduction + Error Case`, mins: 3.5, pct: 29 },
+        { name: `5. ความเสี่ยงและแผน Sprint 2`, evidence: `Race Condition + PDPA + แผน Week 9–12`, mins: 1.5, pct: 12.5 }
+      ],
+      15: [
+        { name: `1. ปัญหาและเป้าหมายระบบ (Problem & Scope)`, evidence: `Problem Statement + User Stories + Scope`, mins: 2.0, pct: 13 },
+        { name: `2. ความคืบหน้า Agile & Git`, evidence: `Sprint 1 Backlog + Velocity + Git Branching`, mins: 3.0, pct: 20 },
+        { name: `3. สถาปัตยกรรมและฐานข้อมูล`, evidence: `ER Diagram 6 ตาราง + API Contracts + Decoupling`, mins: 3.5, pct: 23 },
+        { name: `4. สาธิตระบบสด (Live Demo)`, evidence: `End-to-End POS Flow + Stock Alert + Error Handling`, mins: 4.5, pct: 30 },
+        { name: `5. ความเสี่ยงและแผน Sprint 2`, evidence: `Risk Mitigation + PDPA + แผน Week 9–12`, mins: 2.0, pct: 14 }
+      ]
+    };
+
+    const DEMO_CHECKLIST_ITEMS = [
+      { id: `dc1`, text: `ข้อมูลทดสอบ (Seed Data) สะอาด สมจริง ไม่มีชื่อทดสอบมั่วๆ เช่น test123` },
+      { id: `dc2`, text: `ล็อกอินเข้าสู่ระบบได้จริง และแยกสิทธิ์ Cashier กับ Manager ชัดเจน` },
+      { id: `dc3`, text: `ค้นหา/เลือกสินค้า Grocery ลงตะกร้า ปรับจำนวน และคำนวณยอดรวมถูกต้อง` },
+      { id: `dc4`, text: `รับชำระเงิน (Cash / PromptPay / Credit Card) และสร้างใบเสร็จได้ครบ` },
+      { id: `dc5`, text: `ตัดสต็อกใน Inventory อัตโนมัติทันทีหลังยืนยันการขาย` },
+      { id: `dc6`, text: `แจ้งเตือน Low Stock เมื่อจำนวนคงเหลือต่ำกว่าหรือเท่ากับ reorder_level` },
+      { id: `dc7`, text: `ทดสอบกรณีผิดพลาด (Error Handling) เช่น สั่งเกินสต็อกแล้วระบบปฏิเสธอย่างถูกต้อง` },
+      { id: `dc8`, text: `เปิด Console / Terminal ทิ้งไว้พร้อมโชว์ API Request และ Log ไม่มี Error สีแดงค้าง` },
+      { id: `dc9`, text: `อัดวิดีโอสาธิตความยาว 3 นาทีสำรองไว้ในเครื่อง เผื่ออินเทอร์เน็ตหรือเซิร์ฟเวอร์ล่ม` },
+      { id: `dc10`, text: `ซ้อมสลับหน้าจอระหว่างสไลด์กับโปรแกรม POS จนใช้เวลาสลับไม่เกิน 5 วินาที` }
+    ];
+
+    const SCHEMA_TABLES = [
+      {
+        name: `Users`,
+        role: `จัดเก็บบัญชีผู้ใช้งานและสิทธิ์การเข้าถึงระบบ (RBAC)`,
+        columns: [
+          { col: `user_id`, type: `PK`, desc: `รหัสประจำตัวผู้ใช้งาน` },
+          { col: `username`, type: `UNIQUE`, desc: `ชื่อบัญชีเข้าสู่ระบบ` },
+          { col: `password_hash`, type: `VARCHAR`, desc: `รหัสผ่านที่เข้ารหัสทางเดียว (Bcrypt/Argon2)` },
+          { col: `role_enum`, type: `ENUM`, desc: `สิทธิ์บทบาท เช่น admin, manager, cashier` }
+        ],
+        defenseNote: `ห้ามเก็บรหัสผ่านแบบ Plain Text และห้ามส่งคอลัมน์ password_hash กลับไปใน JSON Response ของ API`
+      },
+      {
+        name: `Categories`,
+        role: `จัดกลุ่มสินค้า Grocery เพื่อรองรับการค้นหาและรายงานสรุปยอดขาย`,
+        columns: [
+          { col: `category_id`, type: `PK`, desc: `รหัสหมวดหมู่สินค้า` },
+          { col: `category_name`, type: `VARCHAR`, desc: `ชื่อหมวดหมู่ เช่น เครื่องดื่ม, ของใช้, อาหารแห้ง` }
+        ],
+        defenseNote: `แยกเป็นตารางอ้างอิง (Normalization) เพื่อลดความซ้ำซ้อนของชื่อหมวดหมู่และทำรายงานยอดขายรายหมวดหมู่ได้แม่นยำ`
+      },
+      {
+        name: `Products`,
+        role: `ข้อมูลสินค้าหน้าร้าน ราคาขาย และการเชื่อมโยงสูตร/สต็อก`,
+        columns: [
+          { col: `product_id`, type: `PK`, desc: `รหัสสินค้า / บาร์โค้ด` },
+          { col: `category_id`, type: `FK`, desc: `เชื่อมโยงไปยัง Categories.category_id` },
+          { col: `name`, type: `VARCHAR`, desc: `ชื่อสินค้าที่แสดงบนหน้าจอ POS และใบเสร็จ` },
+          { col: `price`, type: `DECIMAL`, desc: `ราคาต่อหน่วย (บาท) — ใช้ชนิดข้อมูลทศนิยมแม่นยำ` },
+          { col: `recipe_id`, type: `FK/NULL`, desc: `รหัสอ้างอิงวัตถุดิบหรือหน่วยตัดสต็อก` }
+        ],
+        defenseNote: `ราคาสินค้าใช้ DECIMAL(10,2) แทน Float เพื่อป้องกันปัญหาปัดเศษทศนิยมคลาดเคลื่อนทางบัญชี`
+      },
+      {
+        name: `Inventory_Ingredients`,
+        role: `ควบคุมปริมาณสินค้าคงคลัง หน่วยนับ และจุดแจ้งเตือนสั่งซื้อซ้ำ`,
+        columns: [
+          { col: `ingredient_id`, type: `PK`, desc: `รหัสสินค้าคงคลัง / วัตถุดิบ` },
+          { col: `name`, type: `VARCHAR`, desc: `ชื่อรายการในคลัง` },
+          { col: `stock_quantity`, type: `DECIMAL/INT`, desc: `จำนวนคงเหลือปัจจุบัน (ห้ามติดลบ)` },
+          { col: `unit`, type: `VARCHAR`, desc: `หน่วยนับ เช่น ชิ้น, ขวด, กิโลกรัม` },
+          { col: `reorder_level`, type: `INT`, desc: `เกณฑ์ขั้นต่ำสำหรับแจ้งเตือน Low Stock Alert` }
+        ],
+        defenseNote: `ใส่ Constraint หรือ Transaction Guard ตรวจสอบ stock_quantity >= 0 ทุกครั้งที่มีการตัดสต็อก`
+      },
+      {
+        name: `Orders`,
+        role: `บันทึกหัวบิลคำสั่งซื้อ ช่องทางชำระเงิน และสถานะธุรกรรม`,
+        columns: [
+          { col: `order_id`, type: `PK`, desc: `รหัสคำสั่งซื้อ (เช่น ORD-2026-001)` },
+          { col: `user_id`, type: `FK`, desc: `เชื่อมโยงพนักงานแคชเชียร์ผู้ทำรายการ` },
+          { col: `order_datetime`, type: `DATETIME`, desc: `วันเวลาที่ทำรายการ (ใช้วิเคราะห์ Peak Hours)` },
+          { col: `total_amount`, type: `DECIMAL`, desc: `ยอดสุทธิรวมของบิล` },
+          { col: `status`, type: `ENUM`, desc: `สถานะบิล เช่น PAID, PENDING, VOIDED` }
+        ],
+        defenseNote: `เก็บ timestamp ที่ฝั่ง Server เพื่อป้องกันเวลาเครื่องลูกข่าย (Client Clock) คลาดเคลื่อน`
+      },
+      {
+        name: `Order_Items`,
+        role: `แยกรายการสินค้าย่อยในแต่ละบิล (แก้ความสัมพันธ์ M:N ระหว่าง Orders กับ Products)`,
+        columns: [
+          { col: `order_item_id`, type: `PK`, desc: `รหัสรายการย่อยในบิล` },
+          { col: `order_id`, type: `FK`, desc: `อ้างอิง Orders.order_id` },
+          { col: `product_id`, type: `FK`, desc: `อ้างอิง Products.product_id` },
+          { col: `quantity`, type: `INT`, desc: `จำนวนสินค้าที่ซื้อในรายการนี้` },
+          { col: `subtotal`, type: `DECIMAL`, desc: `ยอดรวมย่อย ณ ราคาขณะขาย (Historical Price)` }
+        ],
+        defenseNote: `บันทึก subtotal/ราคา ณ ขณะขายแยกไว้ใน Order_Items เพื่อไม่ให้การแก้ไขราคาสินค้าในอนาคตไปกระทบยอดบิลเก่า`
+      }
+    ];
+
+    const QA_SCENARIOS = [
+      {
+        id: `qa1`,
+        topic: `Concurrency & Data Integrity`,
+        question: `ถ้าแคชเชียร์ 2 เครื่องกดขายสินค้าชิ้นสุดท้ายพร้อมกัน ระบบจะป้องกันสต็อกติดลบอย่างไร?`,
+        weak: `ไม่น่าจะเกิดขึ้นพร้อมกันครับ เพราะร้านมีเครื่องเดียว หรือเดี๋ยวหน้าเว็บเช็ก if (stock > 0) ก่อนกดปุ่มจ่ายเงินให้ครับ`,
+        strong: `การเช็กแค่ฝั่งหน้าเว็บ (Frontend) ไม่ปลอดภัยต่อ Race Condition ครับ ทีมเราแก้ในระดับ Database Transaction โดยครอบขั้นตอนสร้าง Order และตัดสต็อกด้วย Atomic UPDATE ที่มีเงื่อนไข WHERE stock_quantity >= quantity หากแถวที่อัปเดตได้เท่ากับ 0 ระบบจะ Rollback ทั้งบิลและแจ้งแคชเชียร์เครื่องที่สองทันที`,
+        clo: `CLO2 + CLO3`
+      },
+      {
+        id: `qa2`,
+        topic: `Software Architecture`,
+        question: `ทำไมต้องแยกโค้ดคำนวณบิลและตัดสต็อกออกจากหน้าจอ POS ไม่เขียนรวมในหน้าเดียวกันเลย?`,
+        weak: `อาจารย์สอนให้แยกครับ จะได้ดูเป็นระเบียบและอ่านโค้ดง่ายขึ้น`,
+        strong: `เพื่อลดการพึ่งพากัน (Decoupling) ระหว่าง UI กับ Business Rules ครับ ข้อดีคือทีมสามารถเขียน Automated Test ทดสอบสูตรคำนวณยอดรวมและตรรกะตัดสต็อกผ่าน Service/API ได้โดยไม่ต้องรันผ่านหน้าจอ UI และหากสัปดาห์ที่ 10 มีการปรับหน้าจอใหม่ กฎทางธุรกิจยังคงทำงานเหมือนเดิม`,
+        clo: `CLO2`
+      },
+      {
+        id: `qa3`,
+        topic: `Price History & Schema`,
+        question: `ถ้าเจ้าของร้านปรับราคาสินค้าในตาราง Products ยอดขายย้อนหลังของเดือนที่แล้วจะเปลี่ยนตามไหม?`,
+        weak: `อาจจะเปลี่ยนครับ เพราะตอนนี้ดึงราคามาจากตาราง Products มาคูณกับ quantity ตอนออกรายงาน`,
+        strong: `ไม่เปลี่ยนครับ เพราะตาราง Order_Items เก็บค่า subtotal (และราคา ณ ขณะขาย) เป็น Snapshot แยกไว้ต่างหากจาก Products.price ทำให้การปรับราคาปัจจุบันไม่ย้อนไปทำลายความถูกต้องทางบัญชีของบิลเก่า`,
+        clo: `CLO2`
+      },
+      {
+        id: `qa4`,
+        topic: `PDPA & Security`,
+        question: `ระบบเก็บข้อมูลลูกค้าอะไรบ้าง และจัดการประเด็นจริยธรรมข้อมูล (PDPA) อย่างไร?`,
+        weak: `ไม่ได้เก็บอะไรเยอะครับ แค่ทำหน้า Login ธรรมดา ยังไม่ได้คิดเรื่อง PDPA ละเอียด`,
+        strong: `ทีมใช้หลัก Data Minimization คือตาราง Orders เก็บเฉพาะ order_id, user_id และ timestamp โดยไม่เก็บเบอร์โทรศัพท์หรือรหัสบัตรประชาชนของลูกค้าทั่วไป และหากมีการส่งออกข้อมูลไปวิเคราะห์ Peak Hours ใน Sprint 2 จะตัดข้อมูลระบุตัวตนออกทั้งหมด รวมถึงเข้ารหัส password ด้วย Hash ฝั่ง Server`,
+        clo: `CLO3`
+      },
+      {
+        id: `qa5`,
+        topic: `Agile & Progress Slippage`,
+        question: `ดูจาก Sprint Backlog แล้วฟีเจอร์แจ้งเตือนสต็อกยังไม่เสร็จ 100% ทีมมีแผนบริหารงานอย่างไร?`,
+        weak: `ช่วงที่ผ่านมาติดสอบวิชาอื่นเลยทำไม่ทันครับ เดี๋ยวค่อยเร่งปั่นก่อน Final`,
+        strong: `ตาม Sprint 1 เราส่งมอบ Core Database, Auth และ POS Checkout ได้ตามเป้า ส่วน Alert UI ที่เหลือถูกจัดลำดับความสำคัญใหม่ร่วมกับที่ปรึกษาและย้ายเป็น Priority แรกของ Sprint 2 (สัปดาห์ที่ 9) พร้อมปรับขอบเขตที่ไม่จำเป็นออกเพื่อรักษา Sustainable Pace ของทีม 3 คนครับ`,
+        clo: `CLO1 + CLO4`
+      }
+    ];
+
+    const RUBRIC_DIMENSIONS = [
+      { id: `r1`, name: `ด้านที่ 1: ความก้าวหน้าและระบบตัวอย่าง (Prototype & Progress)`, clo: `CLO1, CLO2`, defaultScore: 21 },
+      { id: `r2`, name: `ด้านที่ 2: สถาปัตยกรรมซอฟต์แวร์และคุณภาพโค้ด (Architecture & Clean Code)`, clo: `CLO2`, defaultScore: 22 },
+      { id: `r3`, name: `ด้านที่ 3: การนำเสนอด้วยวาจาและการตอบคำถามเชิงเทคนิค (Oral & Q&A)`, clo: `CLO4`, defaultScore: 20 },
+      { id: `r4`, name: `ด้านที่ 4: การทำงานเป็นทีม กระบวนการ Agile และบริหารความเสี่ยง (Team & Risk)`, clo: `CLO1, CLO3`, defaultScore: 21 }
+    ];
+
+    /* Persistent application state */
+    let appState = {
+      currentSlide: 0,
+      showAll: false,
+      notesOpen: false,
+      presentationMins: 12,
+      demoChecked: {},
+      selectedSchemaIdx: 0,
+      selectedQaIdx: 0,
+      rubricScores: { r1: 21, r2: 22, r3: 20, r4: 21 }
+    };
+
+    let timerRemainingSecs = 12 * 60;
+    let timerIntervalId = null;
+
+    function persistState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+        window.notebookAppApi.setAppState(appState).catch(function() {});
+      }
+    }
+
+    function pad2(n) {
+      return n < 10 ? `0` + n : String(n);
+    }
+
+    function updateFinalSummary() {
+      const el = document.getElementById('final-summary-status');
+      if (!el) return;
+      const checkedCount = DEMO_CHECKLIST_ITEMS.filter(function(item) {
+        return Boolean(appState.demoChecked[item.id]);
+      }).length;
+      const totalRubric = RUBRIC_DIMENSIONS.reduce(function(sum, dim) {
+        return sum + Number(appState.rubricScores[dim.id] || 0);
+      }, 0);
+      el.textContent = `เช็กลิสต์สาธิตสด ${checkedCount}/${DEMO_CHECKLIST_ITEMS.length} ข้อ · คะแนนจำลองรวม ${totalRubric}/100`;
+    }
+
+    function renderSlideChrome() {
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach(function(slideEl, idx) {
+        if (idx === appState.currentSlide) {
+          slideEl.classList.add('is-active');
+        } else {
+          slideEl.classList.remove('is-active');
+        }
+      });
+
+      const counterBadge = document.getElementById('slide-counter-badge');
+      if (counterBadge) {
+        counterBadge.textContent = `สไลด์ ${pad2(appState.currentSlide + 1)} / ${TOTAL_SLIDES}`;
+      }
+
+      const progressFill = document.getElementById('deck-progress-fill');
+      if (progressFill) {
+        progressFill.style.width = `${((appState.currentSlide + 1) / TOTAL_SLIDES) * 100}%`;
+      }
+
+      const prevBtn = document.getElementById('btn-prev');
+      const nextBtn = document.getElementById('btn-next');
+      if (prevBtn) prevBtn.disabled = appState.currentSlide === 0;
+      if (nextBtn) nextBtn.disabled = appState.currentSlide === TOTAL_SLIDES - 1;
+
+      const dots = document.querySelectorAll('.slide-dot');
+      dots.forEach(function(dot, idx) {
+        if (idx === appState.currentSlide) {
+          dot.classList.add('is-current');
+          dot.setAttribute('aria-selected', 'true');
+        } else {
+          dot.classList.remove('is-current');
+          dot.setAttribute('aria-selected', 'false');
+        }
+      });
+
+      const ovCards = document.querySelectorAll('.overview-card');
+      ovCards.forEach(function(card, idx) {
+        if (idx === appState.currentSlide) {
+          card.classList.add('is-current');
+        } else {
+          card.classList.remove('is-current');
+        }
+      });
+
+      const notesTitle = document.getElementById('notes-title');
+      const notesBody = document.getElementById('notes-body');
+      if (notesTitle) notesTitle.textContent = `โน้ตผู้สอนประจำสไลด์ที่ ${pad2(appState.currentSlide + 1)}`;
+      if (notesBody) notesBody.textContent = SPEAKER_NOTES[appState.currentSlide] || ``;
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= TOTAL_SLIDES) return;
+      appState.currentSlide = index;
+      renderSlideChrome();
+      persistState();
+      const stage = document.getElementById('slides-stage');
+      if (stage && !appState.showAll) {
+        stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else if (appState.showAll) {
+        const target = document.getElementById(`slide-${index + 1}`);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function prevSlide() {
+      goToSlide(appState.currentSlide - 1);
+    }
+
+    function nextSlide() {
+      goToSlide(appState.currentSlide + 1);
+    }
+
+    function toggleOverview() {
+      const panel = document.getElementById('overview-panel');
+      const btn = document.getElementById('btn-overview');
+      if (!panel) return;
+      const open = panel.classList.toggle('is-open');
+      if (btn) btn.classList.toggle('btn--active', open);
+    }
+
+    function toggleNotes() {
+      appState.notesOpen = !appState.notesOpen;
+      const notesEl = document.getElementById('speaker-notes');
+      const btn = document.getElementById('btn-notes');
+      if (notesEl) notesEl.classList.toggle('is-open', appState.notesOpen);
+      if (btn) btn.classList.toggle('btn--active', appState.notesOpen);
+      persistState();
+    }
+
+    function toggleViewMode() {
+      appState.showAll = !appState.showAll;
+      const stage = document.getElementById('slides-stage');
+      const label = document.getElementById('viewmode-label');
+      const btn = document.getElementById('btn-viewmode');
+      if (stage) stage.classList.toggle('show-all', appState.showAll);
+      if (label) label.textContent = appState.showAll ? `โหมดทีละสไลด์` : `ดูทั้งหมด`;
+      if (btn) btn.classList.toggle('btn--active', appState.showAll);
+      persistState();
+    }
+
+    function buildOverviewAndDots() {
+      const ovGrid = document.getElementById('overview-grid');
+      const dotsWrap = document.getElementById('slide-dots');
+      const slides = document.querySelectorAll('.slide');
+      if (!ovGrid || !dotsWrap) return;
+
+      ovGrid.innerHTML = ``;
+      dotsWrap.innerHTML = ``;
+
+      slides.forEach(function(slideEl, idx) {
+        const title = slideEl.getAttribute('data-title') || `สไลด์ ${idx + 1}`;
+        const ovBtn = document.createElement('button');
+        ovBtn.type = 'button';
+        ovBtn.className = 'overview-card';
+        ovBtn.onclick = function() {
+          goToSlide(idx);
+          const panel = document.getElementById('overview-panel');
+          const btn = document.getElementById('btn-overview');
+          if (panel) panel.classList.remove('is-open');
+          if (btn) btn.classList.remove('btn--active');
+        };
+        ovBtn.innerHTML = `<span class="overview-num">SLIDE ${pad2(idx + 1)}</span><span class="overview-title">${title}</span>`;
+        ovGrid.appendChild(ovBtn);
+
+        const dotBtn = document.createElement('button');
+        dotBtn.type = 'button';
+        dotBtn.className = 'slide-dot';
+        dotBtn.textContent = pad2(idx + 1);
+        dotBtn.title = title;
+        dotBtn.setAttribute('role', 'tab');
+        dotBtn.onclick = function() { goToSlide(idx); };
+        dotsWrap.appendChild(dotBtn);
+      });
+    }
+
+    /* Slide 3: Timebox Planner & Countdown Timer */
+    function formatTimeMMSS(totalSecs) {
+      const m = Math.floor(totalSecs / 60);
+      const s = totalSecs % 60;
+      return `${pad2(m)}:${pad2(s)}`;
+    }
+
+    function renderTimebox() {
+      const mins = appState.presentationMins || 12;
+      const rows = TIMEBOX_CONFIGS[mins] || TIMEBOX_CONFIGS[12];
+      const tbody = document.getElementById('timebox-tbody');
+      if (tbody) {
+        tbody.innerHTML = rows.map(function(row) {
+          return `<tr>
+            <td><strong>${row.name}</strong></td>
+            <td>${row.name.split('(')[0]}</td>
+            <td>${row.evidence}</td>
+            <td class="num-col"><strong>${row.mins.toFixed(1)}</strong></td>
+          </tr>`;
+        }).join('');
+      }
+
+      rows.forEach(function(row, idx) {
+        const seg = document.getElementById(`seg-${idx + 1}`);
+        if (seg) seg.style.width = `${row.pct}%`;
+      });
+
+      [10, 12, 15].forEach(function(d) {
+        const b = document.getElementById(`tb-${d}`);
+        if (b) b.classList.toggle('btn--active', d === mins);
+      });
+
+      const timerDisp = document.getElementById('timer-display');
+      if (timerDisp && !timerIntervalId) {
+        timerRemainingSecs = mins * 60;
+        timerDisp.textContent = formatTimeMMSS(timerRemainingSecs);
+      }
+      const statusEl = document.getElementById('timer-status');
+      if (statusEl && !timerIntervalId) {
+        statusEl.textContent = `พร้อมจับเวลา ${mins} นาที`;
+      }
+    }
+
+    function setPresentationDuration(mins) {
+      if (timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+        const toggleBtn = document.getElementById('btn-timer-toggle');
+        if (toggleBtn) toggleBtn.textContent = `เริ่มจับเวลาซ้อม`;
+      }
+      appState.presentationMins = mins;
+      timerRemainingSecs = mins * 60;
+      renderTimebox();
+      persistState();
+    }
+
+    function toggleTimer() {
+      const toggleBtn = document.getElementById('btn-timer-toggle');
+      const timerDisp = document.getElementById('timer-display');
+      const statusEl = document.getElementById('timer-status');
+      if (timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+        if (toggleBtn) toggleBtn.textContent = `จับเวลาต่อ`;
+        if (statusEl) statusEl.textContent = `หยุดชั่วคราว`;
+        return;
+      }
+
+      if (timerRemainingSecs <= 0) {
+        timerRemainingSecs = (appState.presentationMins || 12) * 60;
+      }
+      if (toggleBtn) toggleBtn.textContent = `หยุดชั่วคราว`;
+      if (statusEl) statusEl.textContent = `กำลังซ้อมนำเสนอ...`;
+
+      timerIntervalId = setInterval(function() {
+        timerRemainingSecs -= 1;
+        if (timerDisp) timerDisp.textContent = formatTimeMMSS(Math.max(0, timerRemainingSecs));
+        if (timerRemainingSecs <= 60 && timerRemainingSecs > 0 && statusEl) {
+          statusEl.textContent = `เหลือเวลาไม่ถึง 1 นาที — เตรียมสรุปเข้า Q&A`;
+        }
+        if (timerRemainingSecs <= 0) {
+          clearInterval(timerIntervalId);
+          timerIntervalId = null;
+          if (toggleBtn) toggleBtn.textContent = `เริ่มจับเวลาซ้อม`;
+          if (statusEl) statusEl.textContent = `หมดเวลา ${appState.presentationMins} นาที!`;
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      if (timerIntervalId) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+      }
+      timerRemainingSecs = (appState.presentationMins || 12) * 60;
+      const timerDisp = document.getElementById('timer-display');
+      const toggleBtn = document.getElementById('btn-timer-toggle');
+      const statusEl = document.getElementById('timer-status');
+      if (timerDisp) timerDisp.textContent = formatTimeMMSS(timerRemainingSecs);
+      if (toggleBtn) toggleBtn.textContent = `เริ่มจับเวลาซ้อม`;
+      if (statusEl) statusEl.textContent = `รีเซ็ตเวลาเป็น ${appState.presentationMins} นาทีแล้ว`;
+    }
+
+    /* Slide 5: Live Demo Checklist */
+    function renderDemoChecklist() {
+      const container = document.getElementById('demo-checklist-container');
+      const pctEl = document.getElementById('demo-readiness-pct');
+      const barEl = document.getElementById('demo-readiness-bar');
+      const msgEl = document.getElementById('demo-readiness-msg');
+      const countEl = document.getElementById('demo-count-label');
+      if (!container) return;
+
+      container.innerHTML = DEMO_CHECKLIST_ITEMS.map(function(item) {
+        const checked = Boolean(appState.demoChecked[item.id]);
+        return `<label class="check-item ${checked ? 'is-checked' : ''}">
+          <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleDemoItem('${item.id}', this.checked)">
+          <span style="font-size: 0.875rem; line-height: 1.4;">${item.text}</span>
+        </label>`;
+      }).join('');
+
+      const done = DEMO_CHECKLIST_ITEMS.filter(function(i) { return Boolean(appState.demoChecked[i.id]); }).length;
+      const pct = Math.round((done / DEMO_CHECKLIST_ITEMS.length) * 100);
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (barEl) barEl.style.width = `${pct}%`;
+      if (countEl) countEl.textContent = `${done} / ${DEMO_CHECKLIST_ITEMS.length} รายการ`;
+      if (msgEl) {
+        if (pct === 0) msgEl.textContent = `ยังไม่เริ่มตรวจสอบ — คลิกทำเครื่องหมายในรายการด้านขวา`;
+        else if (pct < 60) msgEl.textContent = `ความพร้อมเบื้องต้น: ควรเร่งทดสอบ Flow หลักและ Error Case เพิ่มเติม`;
+        else if (pct < 100) msgEl.textContent = `เกือบพร้อมแล้ว: เก็บรายละเอียดรายการที่เหลือและเตรียม Backup Video`;
+        else msgEl.textContent = `พร้อมขึ้นสอบ 100%: ทีมมีหลักฐาน Live Demo และแผนสำรองครบถ้วน`;
+      }
+      updateFinalSummary();
+    }
+
+    function toggleDemoItem(id, isChecked) {
+      appState.demoChecked[id] = isChecked;
+      renderDemoChecklist();
+      persistState();
+    }
+
+    function resetDemoChecklist(btn) {
+      if (btn.dataset.armed !== 'true') {
+        btn.dataset.armed = 'true';
+        btn.textContent = `คลิกอีกครั้งเพื่อยืนยันล้างรายการ`;
+        return;
+      }
+      btn.dataset.armed = 'false';
+      btn.textContent = `ล้างรายการเช็กลิสต์`;
+      appState.demoChecked = {};
+      renderDemoChecklist();
+      persistState();
+    }
+
+    /* Slide 6: Schema Explorer */
+    function renderSchemaExplorer() {
+      const tabsEl = document.getElementById('schema-tabs');
+      const detailEl = document.getElementById('schema-detail');
+      if (!tabsEl || !detailEl) return;
+
+      tabsEl.innerHTML = SCHEMA_TABLES.map(function(tbl, idx) {
+        return `<button type="button" class="schema-tab ${idx === appState.selectedSchemaIdx ? 'is-selected' : ''}" onclick="selectSchemaTable(${idx})">${tbl.name}</button>`;
+      }).join('');
+
+      const active = SCHEMA_TABLES[appState.selectedSchemaIdx] || SCHEMA_TABLES[0];
+      const rowsHtml = active.columns.map(function(c) {
+        return `<tr>
+          <td><span class="dossier-meta" style="color: var(--on-surface); font-weight: 600;">${c.col}</span></td>
+          <td><span class="tag tag--secondary">${c.type}</span></td>
+          <td>${c.desc}</td>
+        </tr>`;
+      }).join('');
+
+      detailEl.innerHTML = `
+        <div style="margin-bottom: var(--space-sm);">
+          <strong style="font-size: 1.05rem;">${active.name}</strong>
+          <div style="font-size: 0.875rem; color: var(--on-surface-variant);">${active.role}</div>
+        </div>
+        <div class="dossier-table-wrap">
+          <table class="dossier-table">
+            <thead>
+              <tr><th>Attribute</th><th>Key / Type</th><th>คำอธิบาย</th></tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+        <div class="aside-box" style="margin-top: var(--space-sm); font-size: 0.875rem;">
+          <strong>จุดป้องกันต่อคณะกรรมการ:</strong> ${active.defenseNote}
+        </div>
+      `;
+    }
+
+    function selectSchemaTable(idx) {
+      appState.selectedSchemaIdx = idx;
+      renderSchemaExplorer();
+      persistState();
+    }
+
+    /* Slide 7: Committee Q&A Simulator */
+    function renderQaSimulator() {
+      const listEl = document.getElementById('qa-list');
+      const detailEl = document.getElementById('qa-detail-panel');
+      if (!listEl || !detailEl) return;
+
+      listEl.innerHTML = QA_SCENARIOS.map(function(item, idx) {
+        const selected = idx === appState.selectedQaIdx;
+        return `<button type="button" class="qa-btn ${selected ? 'is-selected' : ''}" onclick="selectQa(${idx})">
+          <span class="dossier-meta">${pad2(idx + 1)} · ${item.topic} (${item.clo})</span>
+          <strong style="font-size: 0.88rem; line-height: 1.4;">${item.question}</strong>
+        </button>`;
+      }).join('');
+
+      const active = QA_SCENARIOS[appState.selectedQaIdx] || QA_SCENARIOS[0];
+      detailEl.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+          <span class="dossier-pill">${active.topic}</span>
+          <span class="tag tag--secondary">ประเมิน ${active.clo}</span>
+        </div>
+        <h3 style="margin: 0 0 var(--space-md) 0; font-size: 1.1rem; line-height: 1.4;">"${active.question}"</h3>
+        <div style="display: grid; gap: var(--space-md);">
+          <div style="background: var(--error-bg); border-left: 4px solid var(--error); padding: var(--space-sm) var(--space-md); border-radius: var(--rounded);">
+            <strong style="color: var(--error); font-size: 0.85rem;">คำตอบที่ควรหลีกเลี่ยง (เสียคะแนนความน่าเชื่อถือ)</strong>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">${active.weak}</p>
+          </div>
+          <div style="background: var(--positive-bg); border-left: 4px solid var(--positive); padding: var(--space-sm) var(--space-md); border-radius: var(--rounded);">
+            <strong style="color: var(--positive); font-size: 0.85rem;">คำตอบระดับวิศวกรรม (ชี้เหตุผล + กลไก + หลักฐาน)</strong>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">${active.strong}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectQa(idx) {
+      appState.selectedQaIdx = idx;
+      renderQaSimulator();
+      persistState();
+    }
+
+    /* Slide 9: Rubric Grader & CSV Export */
+    function getTierLabel(score25) {
+      if (score25 >= 22) return { text: `ดีเยี่ยม (22–25)`, cls: `tag--positive` };
+      if (score25 >= 18) return { text: `ดี (18–21)`, cls: `tag--secondary` };
+      if (score25 >= 14) return { text: `พอใช้ (14–17)`, cls: `` };
+      return { text: `ปรับปรุง (0–13)`, cls: `tag--error` };
+    }
+
+    function renderRubricGrader() {
+      const container = document.getElementById('rubric-sliders-container');
+      const totalEl = document.getElementById('rubric-total-score');
+      const verdictEl = document.getElementById('rubric-verdict-badge');
+      if (!container) return;
+
+      container.innerHTML = RUBRIC_DIMENSIONS.map(function(dim) {
+        const val = Number(appState.rubricScores[dim.id] !== undefined ? appState.rubricScores[dim.id] : dim.defaultScore);
+        const tier = getTierLabel(val);
+        return `<div class="rubric-control-card">
+          <div class="rubric-header">
+            <label for="slider-${dim.id}" style="font-weight: 600; font-size: 0.9rem;">${dim.name}</label>
+            <span class="tag ${tier.cls}">${val}/25 · ${tier.text}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-sm); align-items: center;">
+            <input type="range" id="slider-${dim.id}" min="0" max="25" value="${val}" oninput="updateRubricScore('${dim.id}', this.value)">
+            <span class="dossier-meta">${dim.clo}</span>
+          </div>
+        </div>`;
+      }).join('');
+
+      const total = RUBRIC_DIMENSIONS.reduce(function(acc, dim) {
+        return acc + Number(appState.rubricScores[dim.id] || 0);
+      }, 0);
+      if (totalEl) totalEl.textContent = String(total);
+      if (verdictEl) {
+        let label = `ต้องเร่งปรับปรุงก่อนขึ้นสอบ`;
+        let cls = `tag--error`;
+        if (total >= 88) { label = `ระดับดีเยี่ยม — พร้อมคว้าคะแนนสูงสุด`; cls = `tag--positive`; }
+        else if (total >= 72) { label = `ระดับดี — ผ่านเกณฑ์มั่นคง เสริมความลึก Q&A`; cls = `tag--secondary`; }
+        else if (total >= 56) { label = `ระดับพอใช้ — เร่งปิด Bug ระบบตัวอย่างก่อนวันสอบ`; cls = ``; }
+        verdictEl.innerHTML = `<span class="tag ${cls}">${label}</span>`;
+      }
+      updateFinalSummary();
+    }
+
+    function updateRubricScore(dimId, value) {
+      appState.rubricScores[dimId] = Number(value);
+      renderRubricGrader();
+      persistState();
+    }
+
+    function resetRubricScores() {
+      appState.rubricScores = { r1: 21, r2: 22, r3: 20, r4: 21 };
+      const fb = document.getElementById('rubric-export-feedback');
+      if (fb) fb.textContent = `รีเซ็ตคะแนนจำลองเป็นค่ามาตรฐานแล้ว`;
+      renderRubricGrader();
+      persistState();
+    }
+
+    function exportRubricCsv() {
+      const fb = document.getElementById('rubric-export-feedback');
+      let csv = `Dimension,CLO,Score_Max_25,Tier\n`;
+      let total = 0;
+      RUBRIC_DIMENSIONS.forEach(function(dim) {
+        const s = Number(appState.rubricScores[dim.id] || 0);
+        total += s;
+        const tier = getTierLabel(s).text;
+        csv += `"${dim.name}","${dim.clo}",${s},"${tier}"\n`;
+      });
+      csv += `"Total Midterm Score","CLO1-CLO4",${total},"Max 100"\n`;
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+        window.notebookAppApi.triggerFileDownload({
+          content: csv,
+          contentType: 'text/csv',
+          encoding: 'UTF-8',
+          filename: '1145204_wk08_midterm_rubric_self_check.csv'
+        });
+        if (fb) fb.textContent = `ส่งออกไฟล์ 1145204_wk08_midterm_rubric_self_check.csv เรียบร้อย`;
+      } else {
+        if (fb) fb.textContent = `พร้อมส่งออก (คะแนนรวม ${total}/100)`;
+      }
+    }
+
+    /* Keyboard navigation */
+    document.addEventListener('keydown', function(evt) {
+      const tag = evt.target && evt.target.tagName ? evt.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (evt.key === 'ArrowRight' || evt.key === 'PageDown') {
+        evt.preventDefault();
+        nextSlide();
+      } else if (evt.key === 'ArrowLeft' || evt.key === 'PageUp') {
+        evt.preventDefault();
+        prevSlide();
+      }
+    });
+
+    async function initDeck() {
+      buildOverviewAndDots();
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            if (typeof saved.currentSlide === 'number' && saved.currentSlide >= 0 && saved.currentSlide < TOTAL_SLIDES) {
+              appState.currentSlide = saved.currentSlide;
+            }
+            if (typeof saved.showAll === 'boolean') appState.showAll = saved.showAll;
+            if (typeof saved.notesOpen === 'boolean') appState.notesOpen = saved.notesOpen;
+            if (typeof saved.presentationMins === 'number' && TIMEBOX_CONFIGS[saved.presentationMins]) {
+              appState.presentationMins = saved.presentationMins;
+              timerRemainingSecs = saved.presentationMins * 60;
+            }
+            if (saved.demoChecked && typeof saved.demoChecked === 'object') {
+              appState.demoChecked = saved.demoChecked;
+            }
+            if (typeof saved.selectedSchemaIdx === 'number') appState.selectedSchemaIdx = saved.selectedSchemaIdx;
+            if (typeof saved.selectedQaIdx === 'number') appState.selectedQaIdx = saved.selectedQaIdx;
+            if (saved.rubricScores && typeof saved.rubricScores === 'object') {
+              appState.rubricScores = Object.assign({}, appState.rubricScores, saved.rubricScores);
+            }
+          }
+        } catch (err) {
+          /* Ignore restore failure and continue with defaults */
+        }
+      }
+
+      const stage = document.getElementById('slides-stage');
+      const viewLabel = document.getElementById('viewmode-label');
+      const viewBtn = document.getElementById('btn-viewmode');
+      if (stage) stage.classList.toggle('show-all', appState.showAll);
+      if (viewLabel) viewLabel.textContent = appState.showAll ? `โหมดทีละสไลด์` : `ดูทั้งหมด`;
+      if (viewBtn) viewBtn.classList.toggle('btn--active', appState.showAll);
+
+      const notesEl = document.getElementById('speaker-notes');
+      const notesBtn = document.getElementById('btn-notes');
+      if (notesEl) notesEl.classList.toggle('is-open', appState.notesOpen);
+      if (notesBtn) notesBtn.classList.toggle('btn--active', appState.notesOpen);
+
+      renderTimebox();
+      renderDemoChecklist();
+      renderSchemaExplorer();
+      renderQaSimulator();
+      renderRubricGrader();
+      renderSlideChrome();
+
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    initDeck();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="briefing">
+  <title>สัปดาห์ที่ 3: การวิเคราะห์ความต้องการและ User Stories สำหรับ Grocery POS | 1145 204 โครงงานระดับชั้นปีที่ 2</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces: warm stone-white paper */
+      --background: #faf9f5;
+      --surface-container-low: #ffffff;
+      --surface-container: #f1efe8;
+      --surface-container-high: #e6e2d6;
+
+      /* Ink */
+      --on-surface: #17181a;
+      --on-surface-variant: #56585c;
+
+      /* Rules */
+      --outline: #17181a;
+      --outline-variant: #dedad0;
+
+      /* Accents */
+      --primary: #17181a;
+      --on-primary: #faf9f5;
+      --primary-container: #f2b705;
+      --on-primary-container: #17181a;
+      --secondary: #1f4e5f;
+      --tertiary: #785008;
+      --error: #b42318;
+      --on-error: #ffffff;
+
+      /* Semantic */
+      --positive: #2b6e52;
+      --positive-container: #e3f1eb;
+      --warning: #9a5b00;
+      --warning-container: #fdf1d6;
+      --error-container: #fbe8e7;
+      --secondary-container: #e3eef2;
+      --focus: #1f4e5f;
+
+      /* Data series */
+      --data-1: #1f4e5f;
+      --data-2: #d99000;
+      --data-3: #2b6e52;
+      --data-4: #b84a39;
+      --data-context: #c4bfb2;
+
+      /* Fonts (Thai-first pairing with Briefing style) */
+      --font-headline: 'Noto Sans Thai', 'Source Serif 4', serif;
+      --font-body: 'Noto Sans Thai', 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Geist Mono', 'Noto Sans Thai', monospace;
+
+      /* Shape */
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 0.25rem;
+
+      /* Style effects */
+      --section-rule: 1.5px solid var(--outline);
+      --card-border: 1px solid var(--outline-variant);
+      --badge-radius: 2px;
+      --heading-tracking: 0;
+      --label-tracking: 0;
+
+      /* Type scale (Narrative) */
+      --display-size: clamp(2rem, 1.4rem + 2.2vw, 3.125rem);
+      --headline-size: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+      --subhead-size: clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+      --body-size: clamp(1rem, 0.96rem + 0.15vw, 1.0625rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    button, input, select, textarea { font-family: inherit; }
+
+    :focus-visible {
+      outline: 2.5px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Deck Shell */
+    .deck-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: var(--space-md) var(--space-lg) var(--space-2xl);
+    }
+
+    /* Top Control Bar (non-sticky header) */
+    .deck-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: var(--section-rule);
+      margin-bottom: var(--space-lg);
+    }
+
+    .course-brand {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dossier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--badge-radius);
+    }
+
+    .dossier-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      border-radius: var(--rounded);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+      border: 1px solid var(--outline-variant);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--surface-container);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .btn-accent {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-color: var(--outline);
+    }
+
+    .btn-accent:hover:not(:disabled) {
+      background: var(--surface-container-high);
+    }
+
+    .btn-sm {
+      min-height: 38px;
+      padding: 0 var(--space-sm);
+      font-size: 0.8125rem;
+    }
+
+    .slide-counter {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--secondary);
+      padding: 0 var(--space-sm);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slide Rail / Index Pills */
+    .slide-rail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-lg);
+      padding: var(--space-sm);
+      background: var(--surface-container);
+      border-radius: var(--rounded-lg);
+      border: var(--card-border);
+    }
+
+    .rail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      min-height: 40px;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--rounded);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+      text-align: left;
+    }
+
+    .rail-item:hover {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+    }
+
+    .rail-item.is-active {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-weight: 700;
+      border-color: var(--outline);
+      box-shadow: inset 0 -3px 0 var(--primary-container);
+    }
+
+    .rail-num {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    /* Progress Bar */
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--surface-container-high);
+      margin-bottom: var(--space-lg);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 10%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    /* Slide Canvas */
+    .slide-stage {
+      min-height: 540px;
+    }
+
+    .slide {
+      display: none;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-xl);
+      animation: slideFade var(--dur-short) var(--ease-out);
+    }
+
+    .slide.is-active {
+      display: block;
+    }
+
+    .deck-shell.overview-mode .slide {
+      display: block;
+      margin-bottom: var(--space-xl);
+    }
+
+    .deck-shell.overview-mode .slide-rail,
+    .deck-shell.overview-mode .slide-footer-nav {
+      display: none;
+    }
+
+    @keyframes slideFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Header (Briefing Dossier Style) */
+    .dossier-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+
+    .dossier-bar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .slide-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--on-surface);
+      margin: 0 0 var(--space-xs) 0;
+    }
+
+    .slide-title.hero-title {
+      font-size: var(--display-size);
+      line-height: 1.18;
+    }
+
+    .standfirst {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--subhead-size);
+      color: var(--secondary);
+      margin: 0 0 var(--space-lg) 0;
+      max-width: 68ch;
+    }
+
+    .lead-copy {
+      max-width: 65ch;
+      color: var(--on-surface);
+      margin: 0 0 var(--space-lg) 0;
+    }
+
+    /* Grid & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .grid-asymmetric {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    .figure-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .figure-card.tint-stone {
+      background: var(--surface-container);
+    }
+
+    .aside-box {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 0 0 var(--rounded-lg) var(--rounded-lg);
+    }
+
+    .kpi-value {
+      font-family: 'Source Serif 4', var(--font-headline);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 1.4rem + 1vw, 2.5rem);
+      line-height: 1.1;
+      font-variant-numeric: lining-nums tabular-nums;
+      color: var(--on-surface);
+      margin: var(--space-xs) 0;
+    }
+
+    .index-num {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card-heading {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--on-surface);
+      margin: 0 0 var(--space-xs) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .muted-note {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+    }
+
+    /* Tags & Status Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.1875rem 0.5rem;
+      border-radius: var(--rounded);
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .chip-gold {
+      background: var(--warning-container);
+      color: var(--tertiary);
+    }
+
+    .chip-teal {
+      background: var(--secondary-container);
+      color: var(--secondary);
+    }
+
+    .chip-green {
+      background: var(--positive-container);
+      color: var(--positive);
+    }
+
+    .chip-red {
+      background: var(--error-container);
+      color: var(--error);
+    }
+
+    .chip-ink {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      background: var(--surface-container-low);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    thead th {
+      background: var(--surface-container);
+      border-bottom: var(--section-rule);
+      padding: 0.75rem 0.875rem;
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 0.75rem 0.875rem;
+      border-bottom: 1px solid var(--outline-variant);
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--background);
+    }
+
+    .num-cell {
+      font-family: var(--font-label);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Interactive Controls & Form Inputs */
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      min-width: 180px;
+      flex: 1 1 180px;
+    }
+
+    .field-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    .field-input, .field-select {
+      min-height: 44px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-size: 0.9375rem;
+    }
+
+    .field-select {
+      padding-right: 2rem;
+    }
+
+    /* Filter Pill Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-md);
+    }
+
+    .filter-btn {
+      min-height: 40px;
+      padding: 0.375rem 0.875rem;
+      border-radius: var(--rounded);
+      border: 1px solid var(--outline-variant);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filter-btn.is-active {
+      background: var(--secondary);
+      color: var(--on-primary);
+      border-color: var(--secondary);
+    }
+
+    /* Interactive Requirement Classifier */
+    .quiz-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      background: var(--surface-container-low);
+    }
+
+    .quiz-item + .quiz-item {
+      margin-top: var(--space-sm);
+    }
+
+    .quiz-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    /* SRS Document Accordion */
+    .srs-section {
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      background: var(--surface-container-low);
+      overflow: hidden;
+    }
+
+    .srs-section + .srs-section {
+      margin-top: var(--space-sm);
+    }
+
+    .srs-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      min-height: 48px;
+      padding: var(--space-md);
+      background: var(--surface-container);
+      border: none;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--on-surface);
+      cursor: pointer;
+    }
+
+    .srs-trigger[aria-expanded="true"] {
+      border-bottom: 1px solid var(--outline-variant);
+    }
+
+    .srs-panel {
+      padding: var(--space-md) var(--space-lg);
+      display: none;
+    }
+
+    .srs-panel.is-open {
+      display: block;
+    }
+
+    /* User Story Cards */
+    .story-card {
+      border: var(--card-border);
+      border-left: 4px solid var(--secondary);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      background: var(--surface-container-low);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+
+    .story-card:hover {
+      background: var(--surface-container);
+    }
+
+    .story-card.is-selected {
+      border-left-color: var(--primary-container);
+      background: var(--surface-container);
+      box-shadow: inset 0 0 0 1px var(--outline);
+    }
+
+    .story-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-xs);
+    }
+
+    /* Gherkin Code Block */
+    .gherkin-box {
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-top: 3px solid var(--secondary);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      font-size: 0.9rem;
+    }
+
+    .gherkin-line {
+      margin: 0.35rem 0;
+    }
+
+    .gherkin-kw {
+      font-family: var(--font-label);
+      font-weight: 700;
+      color: var(--secondary);
+      display: inline-block;
+      min-width: 56px;
+    }
+
+    /* Planning Poker Deck */
+    .poker-deck {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin: var(--space-md) 0;
+    }
+
+    .poker-card {
+      min-width: 60px;
+      min-height: 76px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--outline);
+      border-radius: var(--rounded-lg);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-family: 'Source Serif 4', var(--font-headline);
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+
+    .poker-card:hover {
+      transform: translateY(-3px);
+      background: var(--surface-container);
+    }
+
+    .poker-card.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      transform: translateY(-4px);
+    }
+
+    /* Risk Heatmap Matrix */
+    .risk-matrix {
+      display: grid;
+      grid-template-columns: 36px repeat(3, minmax(0, 1fr));
+      gap: 4px;
+      margin-top: var(--space-sm);
+    }
+
+    .matrix-cell {
+      min-height: 72px;
+      padding: var(--space-xs);
+      border-radius: var(--rounded);
+      border: 1px solid var(--outline-variant);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .matrix-axis {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      text-align: center;
+    }
+
+    .risk-low { background: var(--positive-container); color: var(--on-surface); }
+    .risk-med { background: var(--warning-container); color: var(--on-surface); }
+    .risk-high { background: var(--error-container); color: var(--on-surface); }
+
+    /* Footer Nav inside Slide */
+    .slide-footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+      padding-top: var(--space-md);
+      border-top: var(--card-border);
+    }
+
+    .speaker-notes-toggle {
+      margin-top: var(--space-md);
+    }
+
+    .speaker-notes-box {
+      display: none;
+      margin-top: var(--space-sm);
+      padding: var(--space-md);
+      background: var(--surface-container);
+      border-left: 3px solid var(--primary-container);
+      border-radius: var(--rounded);
+      font-size: 0.9rem;
+    }
+
+    .speaker-notes-box.is-open {
+      display: block;
+    }
+
+    .inline-msg {
+      margin-top: var(--space-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--secondary);
+      min-height: 1.4em;
+    }
+
+    .story-map-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .backbone-box {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .task-box {
+      background: var(--surface-container);
+      border-bottom: 2px solid var(--secondary);
+      padding: var(--space-xs) var(--space-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .slice-pill {
+      display: inline-block;
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.125rem 0.375rem;
+      border-radius: var(--rounded);
+      margin-bottom: 0.25rem;
+    }
+
+    .clean-list {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .clean-list li + li {
+      margin-top: var(--space-xs);
+    }
+
+    /* Mobile & Print */
+    @media (max-width: 640px) {
+      .deck-shell { padding: var(--space-sm); }
+      .slide { padding: var(--space-md); }
+      .grid-2, .grid-asymmetric { grid-template-columns: 1fr; }
+      .slide-rail { display: none; }
+    }
+
+    @media print {
+      .deck-topbar, .slide-rail, .progress-track, .slide-footer-nav, .speaker-notes-toggle { display: none !important; }
+      .slide { display: block !important; break-inside: avoid; margin-bottom: 1.5rem; border: 1px solid #999; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-shell" id="deck-shell">
+    <!-- Top Bar -->
+    <header class="deck-topbar">
+      <div class="course-brand">
+        <span class="dossier-pill">1145 204 · WEEK 03</span>
+        <a href="../../../courses/project2/index.html" class="btn btn-sm dossier-meta">SOPHOMORE PROJECT · GROCERY POS PLATFORM</a>
+      </div>
+      <div class="deck-controls">
+        <button type="button" class="btn btn-sm" id="btn-overview" onclick="toggleOverview()">
+          <i data-lucide="layout-grid" aria-hidden="true" style="width:16px;height:16px;"></i>
+          <span>มุมมองทั้งหมด</span>
+        </button>
+        <button type="button" class="btn btn-sm" id="btn-notes" onclick="toggleSpeakerNotes()">
+          <i data-lucide="message-square-text" aria-hidden="true" style="width:16px;height:16px;"></i>
+          <span>บันทึกผู้สอน</span>
+        </button>
+        <button type="button" class="btn btn-sm" id="btn-prev" onclick="prevSlide()" aria-label="สไลด์ก่อนหน้า">
+          <i data-lucide="chevron-left" aria-hidden="true" style="width:16px;height:16px;"></i>
+          <span>ก่อนหน้า</span>
+        </button>
+        <span class="slide-counter" id="slide-counter">01 / 10</span>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-next" onclick="nextSlide()" aria-label="สไลด์ถัดไป">
+          <span>ถัดไป</span>
+          <i data-lucide="chevron-right" aria-hidden="true" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <!-- Navigation Rail -->
+    <nav class="slide-rail" id="slide-rail" aria-label="สารบัญสไลด์">
+      <button type="button" class="rail-item is-active" data-slide="0" onclick="goToSlide(0)"><span class="rail-num">01</span> บทนำ</button>
+      <button type="button" class="rail-item" data-slide="1" onclick="goToSlide(1)"><span class="rail-num">02</span> ภาพรวมระบบ POS</button>
+      <button type="button" class="rail-item" data-slide="2" onclick="goToSlide(2)"><span class="rail-num">03</span> FR vs NFR</button>
+      <button type="button" class="rail-item" data-slide="3" onclick="goToSlide(3)"><span class="rail-num">04</span> โครงสร้าง SRS</button>
+      <button type="button" class="rail-item" data-slide="4" onclick="goToSlide(4)"><span class="rail-num">05</span> Story Mapping</button>
+      <button type="button" class="rail-item" data-slide="5" onclick="goToSlide(5)"><span class="rail-num">06</span> User Story Backlog</button>
+      <button type="button" class="rail-item" data-slide="6" onclick="goToSlide(6)"><span class="rail-num">07</span> Acceptance Criteria</button>
+      <button type="button" class="rail-item" data-slide="7" onclick="goToSlide(7)"><span class="rail-num">08</span> Story Points</button>
+      <button type="button" class="rail-item" data-slide="8" onclick="goToSlide(8)"><span class="rail-num">09</span> Risk Register</button>
+      <button type="button" class="rail-item" data-slide="9" onclick="goToSlide(9)"><span class="rail-num">10</span> เกณฑ์ประเมิน &amp; ส่งงาน</button>
+    </nav>
+
+    <!-- Main Stage -->
+    <main class="slide-stage" id="slide-stage">
+
+      <!-- SLIDE 1: TITLE & LEARNING OUTCOMES -->
+      <section class="slide is-active" data-index="0" aria-labelledby="s1-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">LECTURE BRIEFING · สัปดาห์ที่ 3</span>
+            <span class="dossier-meta">รายวิชา 1145 204 โครงงานระดับชั้นปีที่ 2 · ระดับพัฒนาการ: Practiced (P)</span>
+          </div>
+          <span class="dossier-meta">ปุ่มลูกศรซ้าย/ขวา เพื่อเปลี่ยนสไลด์</span>
+        </div>
+
+        <h1 class="slide-title hero-title" id="s1-title">การวิเคราะห์ความต้องการและ Agile User Stories สำหรับแพลตฟอร์ม Grocery POS</h1>
+        <p class="standfirst">เปลี่ยนโจทย์ร้านขายของชำให้เป็นเอกสารความต้องการเชิงวิศวกรรม (SRS), Product Backlog ที่ประเมินขนาดได้จริง และทะเบียนความเสี่ยงเริ่มต้นก่อนเริ่ม Sprint 1</p>
+
+        <div class="grid-asymmetric">
+          <div class="figure-card">
+            <span class="index-num">LEARNING OUTCOMES · ผลลัพธ์การเรียนรู้ประจำสัปดาห์</span>
+            <h2 class="card-heading" style="margin-top: var(--space-xs);">เมื่อจบบทเรียนสัปดาห์ที่ 3 นักศึกษาจะสามารถ:</h2>
+            <ul class="clean-list">
+              <li><strong>จำแนกความต้องการของระบบ (FR &amp; NFR)</strong> สำหรับระบบขายหน้าร้านของชำและคลังสินค้าได้อย่างชัดเจนและวัดผลได้</li>
+              <li><strong>จัดทำโครงร่างเอกสาร SRS</strong> ที่เชื่อมโยงบริบทธุรกิจ สถาปัตยกรรมฐานข้อมูลเชิงสัมพันธ์ (3NF) และข้อกำหนดด้านประสิทธิภาพ</li>
+              <li><strong>เขียน User Stories ตามหลัก INVEST และ MoSCoW</strong> พร้อม <strong>Acceptance Criteria (Given-When-Then)</strong> ที่ทดสอบได้จริง</li>
+              <li><strong>ประเมินขนาดงานด้วย Story Points (Planning Poker)</strong> และระบุ <strong>Initial Risk Register</strong> เช่น ปัญหาตัดสต็อกพร้อมกัน (Race Condition)</li>
+            </ul>
+          </div>
+
+          <div class="figure-card tint-stone">
+            <span class="index-num">COURSE CONTEXT · ความเชื่อมโยงในหลักสูตร</span>
+            <div class="kpi-value">4 ขั้นตอน</div>
+            <p class="muted-note" style="margin-bottom: var(--space-md);">จากข้อมูล Log ยอดขายในชั้นปีที่ 1 สู่ระบบ POS แบบทีมด้วยกระบวนการ Agile/Scrum ในชั้นปีที่ 2</p>
+            <div style="display:flex; flex-direction:column; gap:var(--space-xs);">
+              <div><span class="chip chip-teal">ปี 1 (1145 103)</span> วิเคราะห์ CSV Log ยอดขายและ PDPA</div>
+              <div><span class="chip chip-gold">ปี 2 (1145 204)</span> พัฒนา Web/Desktop POS + คลังวัตถุดิบ (Agile)</div>
+              <div><span class="chip chip-ink">ปี 3 (DS / SI)</span> AI Forecasting หรือ Cloud Microservices</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 1):</strong> ชี้ให้นักศึกษาเห็นความต่อเนื่องจากสัปดาห์ที่ 1–2 (การตั้งทีมและโจทย์ Grocery POS) สัปดาห์นี้เป็นจุดเปลี่ยนจากแนวคิดทางธุรกิจไปสู่ข้อกำหนดทางเทคนิคที่นำไปแตกเป็น Sprint Backlog ได้จริง และมีผลต่อคะแนนเกณฑ์ "ดีเยี่ยม (22–25 คะแนน)" ของวิชา
+        </div>
+      </section>
+
+      <!-- SLIDE 2: DOMAIN BRIDGE (GROCERY POS CONTEXT & DATA MODEL) -->
+      <section class="slide" data-index="1" aria-labelledby="s2-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">02 · DOMAIN CONTEXT</span>
+            <span class="dossier-meta">ทำไมต้องเข้าใจบริบทธุรกิจก่อนเขียน REQUIREMENT</span>
+          </div>
+          <span class="dossier-meta">GROCERY POS PLATFORM</span>
+        </div>
+
+        <h2 class="slide-title" id="s2-title">บริบทแพลตฟอร์ม Grocery POS: ผู้มีส่วนได้ส่วนเสียและแกนข้อมูลหลัก</h2>
+        <p class="standfirst">ระบบขายหน้าร้านขายของชำไม่ได้มีแค่หน้าคิดเงิน แต่ต้องคุมสินค้าหมดอายุ บาร์โค้ด สต็อกตัดทันที และการชำระเงินหลายช่องทาง</p>
+
+        <div class="grid-3" style="margin-bottom: var(--space-lg);">
+          <div class="figure-card">
+            <span class="index-num">STAKEHOLDER 01</span>
+            <h3 class="card-heading">พนักงานคิดเงิน (Cashier)</h3>
+            <p class="muted-note">ต้องการสแกนบาร์โค้ดเร็ว คิดเงินทอนไม่ผิด รองรับ PromptPay/เงินสด/บัตร และพักบิลลูกค้าเมื่อเกิดปัญหา</p>
+          </div>
+          <div class="figure-card">
+            <span class="index-num">STAKEHOLDER 02</span>
+            <h3 class="card-heading">ผู้จัดการร้าน (Store Manager)</h3>
+            <p class="muted-note">ต้องการเห็นสินค้าใกล้หมด (Reorder Level) สินค้าใกล้วันหมดอายุ และสรุปยอดขายรายกะ/รายวันแบบเรียลไทม์</p>
+          </div>
+          <div class="figure-card">
+            <span class="index-num">STAKEHOLDER 03</span>
+            <h3 class="card-heading">พนักงานคลัง (Inventory Clerk)</h3>
+            <p class="muted-note">ต้องการรับสินค้าเข้าคลัง ตรวจนับสต็อก (Stock Adjustment) และผูกหน่วยนับปลีก-ส่ง (แพ็ก vs ชิ้น)</p>
+          </div>
+        </div>
+
+        <div class="aside-box">
+          <div class="grid-asymmetric">
+            <div>
+              <span class="index-num">RELATIONAL SCHEMA BASELINE (3NF)</span>
+              <h3 class="card-heading" style="margin-top: var(--space-xs);">โครงสร้างตารางฐานข้อมูลที่ Requirement ต้องอ้างอิง</h3>
+              <p class="muted-note">อ้างอิงจากต้นแบบชิ้นงานชั้นปีที่ 2 (1145 204): ปรับให้รองรับสินค้าของชำที่มีบาร์โค้ด หน่วยนับ และวันหมดอายุ</p>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:var(--space-xs); align-content:center;">
+              <span class="chip chip-teal">Users (role_enum)</span>
+              <span class="chip chip-teal">Categories</span>
+              <span class="chip chip-teal">Products (barcode, price)</span>
+              <span class="chip chip-gold">Inventory_Items (stock_qty, reorder_level, expiry)</span>
+              <span class="chip chip-ink">Orders (total_amount, status)</span>
+              <span class="chip chip-ink">Order_Items (qty, subtotal)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 2):</strong> เน้นย้ำว่าปัญหาหลักของทีมปี 2 มักเขียน User Story โดยลืมบทบาทผู้ใช้งาน (Actor) หรือออกแบบตาราง Database ไม่สอดคล้องกับ Requirement เช่น ลืม field `reorder_level` หรือ `barcode` ในตารางสินค้า
+        </div>
+      </section>
+
+      <!-- SLIDE 3: FUNCTIONAL VS NON-FUNCTIONAL REQUIREMENTS -->
+      <section class="slide" data-index="2" aria-labelledby="s3-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">03 · FR VS NFR</span>
+            <span class="dossier-meta">FUNCTIONAL &amp; NON-FUNCTIONAL REQUIREMENTS</span>
+          </div>
+          <span class="dossier-meta">INTERACTIVE CLASSIFIER</span>
+        </div>
+
+        <h2 class="slide-title" id="s3-title">ความต้องการเชิงหน้าที่ (FR) เทียบกับความต้องการเชิงคุณภาพ (NFR)</h2>
+        <p class="standfirst">FR ตอบคำถามว่า "ระบบต้องทำอะไรได้บ้าง" ส่วน NFR กำหนดว่า "ระบบต้องทำงานได้ดี ปลอดภัย และเสถียรแค่ไหน"</p>
+
+        <div class="grid-2" style="margin-bottom: var(--space-lg);">
+          <div class="figure-card">
+            <span class="chip chip-teal" style="margin-bottom: var(--space-xs);">FUNCTIONAL REQUIREMENTS (FR)</span>
+            <h3 class="card-heading">สิ่งที่ระบบต้องดำเนินการ (Behavior)</h3>
+            <ul class="clean-list">
+              <li><strong>FR-01 การสแกนและค้นหาสินค้า:</strong> ระบบอ่านบาร์โค้ด EAN-13 หรือค้นหาชื่อสินค้าเพื่อเพิ่มลงตะกร้า</li>
+              <li><strong>FR-02 การคำนวณและชำระเงิน:</strong> คำนวณส่วนลด ภาษีมูลค่าเพิ่ม และออกใบเสร็จพร้อมบันทึกช่องทางชำระเงิน</li>
+              <li><strong>FR-03 การตัดสต็อกอัตโนมัติ:</strong> ลดจำนวนสินค้าคงคลังทันทีเมื่อยืนยันการชำระเงิน และแจ้งเตือนเมื่อต่ำกว่าจุดสั่งซื้อซ้ำ</li>
+              <li><strong>FR-04 การจัดการสิทธิ์ผู้ใช้:</strong> แยกสิทธิ์ Cashier กับ Manager ในการยกเลิกบิล (Void) หรือแก้ไขราคา</li>
+            </ul>
+          </div>
+
+          <div class="figure-card tint-stone">
+            <span class="chip chip-gold" style="margin-bottom: var(--space-xs);">NON-FUNCTIONAL REQUIREMENTS (NFR)</span>
+            <h3 class="card-heading">คุณลักษณะเชิงระบบที่วัดผลเป็นตัวเลขได้</h3>
+            <ul class="clean-list">
+              <li><strong>NFR-01 Performance:</strong> การค้นหาบาร์โค้ดและเพิ่มสินค้าลงตะกร้าต้องตอบสนองภายในไม่เกิน 300 มิลลิวินาที</li>
+              <li><strong>NFR-02 Data Integrity:</strong> การตัดสต็อกหลายจุดพร้อมกันต้องเป็น Atomic Transaction ไม่มีสต็อกติดลบ</li>
+              <li><strong>NFR-03 Security &amp; PDPA:</strong> รหัสผ่านต้องเข้ารหัส Hash (bcrypt/Argon2) และปิดบังข้อมูลส่วนบุคคลลูกค้าในรายงานสรุป</li>
+              <li><strong>NFR-04 Reliability:</strong> ระบบต้องทำงานออฟไลน์ชั่วคราวหรือกู้คืนบิลล่าสุดได้เมื่ออินเทอร์เน็ตสะดุด</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Interactive Classifier -->
+        <div class="figure-card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-sm); margin-bottom:var(--space-sm);">
+            <div>
+              <span class="index-num">CHECKPOINT · ฝึกแยกแยะ FR กับ NFR (บันทึกคำตอบอัตโนมัติ)</span>
+              <h3 class="card-heading" style="margin-top: 2px;">ลองคลิกจำแนกข้อกำหนดของ Grocery POS ต่อไปนี้</h3>
+            </div>
+            <span class="chip chip-ink" id="fr-score-badge">คะแนน: 0 / 4</span>
+          </div>
+
+          <div id="fr-quiz-list"></div>
+          <p class="inline-msg" id="fr-quiz-feedback" aria-live="polite"></p>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 3):</strong> เตือนนักศึกษาเรื่อง "NFR ที่คลุมเครือ" เช่น ห้ามเขียนว่า "ระบบต้องเร็ว" หรือ "ระบบต้องปลอดภัย" แต่ให้บังคับระบุเกณฑ์ตัวเลข เช่น "&lt; 300 ms" หรือ "เข้ารหัสด้วย bcrypt" เพื่อใช้ตรวจรับงานใน Sprint Review ได้
+        </div>
+      </section>
+
+      <!-- SLIDE 4: SRS (SOFTWARE REQUIREMENTS SPECIFICATION) -->
+      <section class="slide" data-index="3" aria-labelledby="s4-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">04 · SRS BLUEPRINT</span>
+            <span class="dossier-meta">IEEE 830 / ISO 29148 ADAPTED FOR AGILE SOPHOMORE PROJECT</span>
+          </div>
+          <span class="dossier-meta">คลิกเพื่อเปิดดูโครงร่างแต่ละหมวด</span>
+        </div>
+
+        <h2 class="slide-title" id="s4-title">เอกสารข้อกำหนดความต้องการซอฟต์แวร์ (SRS) แบบกระชับสำหรับทีม Agile</h2>
+        <p class="standfirst">เอกสาร SRS ไม่ใช่การเขียนนิยาย 100 หน้า แต่คือ "สัญญาความเข้าใจร่วมกัน" ระหว่างทีมพัฒนากับอาจารย์/เจ้าของร้าน ก่อนลงมือเขียนโค้ด</p>
+
+        <div class="grid-asymmetric">
+          <div id="srs-accordion">
+            <div class="srs-section">
+              <button type="button" class="srs-trigger" aria-expanded="true" onclick="toggleSrs(this)">
+                <span>1. บทนำและขอบเขตระบบ (Introduction &amp; Scope)</span>
+                <span class="index-num">SECTION 1</span>
+              </button>
+              <div class="srs-panel is-open">
+                <p style="margin-top:0;"><strong>วัตถุประสงค์:</strong> พัฒนาระบบ Grocery POS สำหรับร้านค้าปลีกขนาดกลาง รองรับแคชเชียร์ 2–3 จุดพร้อมกัน</p>
+                <p style="margin-bottom:0;"><strong>ขอบเขตที่ทำ (In-Scope):</strong> ขายหน้าร้าน, รับชำระ PromptPay/เงินสด, ตัดสต็อก, แจ้งเตือนสินค้าใกล้หมด และรายงานยอดขาย<br><strong>ขอบเขตที่ยังไม่ทำในเฟสนี้ (Out-of-Scope):</strong> ระบบบัญชีภาษีเต็มรูปแบบ และแอปสั่งซื้อออนไลน์สำหรับลูกค้า</p>
+              </div>
+            </div>
+
+            <div class="srs-section">
+              <button type="button" class="srs-trigger" aria-expanded="false" onclick="toggleSrs(this)">
+                <span>2. คำอธิบายภาพรวมและข้อจำกัด (Overall Description &amp; Constraints)</span>
+                <span class="index-num">SECTION 2</span>
+              </button>
+              <div class="srs-panel">
+                <p style="margin-top:0;"><strong>กลุ่มผู้ใช้ (User Classes):</strong> Cashier (ใช้งานทุกวัน เน้นความเร็ว), Manager (ดูรายงาน/อนุมัติ Void), Admin (จัดการผู้ใช้)</p>
+                <p style="margin-bottom:0;"><strong>ข้อจำกัดทางเทคนิค:</strong> ใช้ฐานข้อมูลเชิงสัมพันธ์ MySQL/PostgreSQL (3NF), รองรับเครื่องอ่านบาร์โค้ด USB HID และเครื่องพิมพ์ใบเสร็จความร้อน 80mm</p>
+              </div>
+            </div>
+
+            <div class="srs-section">
+              <button type="button" class="srs-trigger" aria-expanded="false" onclick="toggleSrs(this)">
+                <span>3. ข้อกำหนดเฉพาะ (Specific Requirements: FR, NFR &amp; External Interfaces)</span>
+                <span class="index-num">SECTION 3</span>
+              </button>
+              <div class="srs-panel">
+                <p style="margin-top:0;"><strong>Use Cases หลัก:</strong> UC-01 Check Out Item (สแกนบาร์โค้ด → แสดงราคา → ชำระเงิน → พิมพ์ใบเสร็จ), UC-02 Manual Price/Barcode Fallback (กรณีบาร์โค้ดอ่านไม่ออก)</p>
+                <p style="margin-bottom:0;"><strong>Data &amp; Traceability:</strong> ทุก FR ต้องผูกกับรหัส User Story (US-xxx) และ Test Case (TC-xxx) เพื่อยืนยันความครบถ้วน</p>
+              </div>
+            </div>
+          </div>
+
+          <aside class="aside-box">
+            <span class="index-num">JUST ENOUGH DOCUMENTATION</span>
+            <h3 class="card-heading" style="margin-top: var(--space-xs);">ความสมดุลระหว่าง SRS กับ Agile</h3>
+            <p class="muted-note" style="margin-bottom: var(--space-md);">ในแนวคิด Agile เอกสาร SRS ทำหน้าที่กำหนด <strong>ขอบเขต ระบบข้อมูลหลัก และข้อกำหนดคุณภาพ (NFR)</strong> ส่วนรายละเอียดของแต่ละฟีเจอร์จะถูกแปลงเป็น User Stories และ Acceptance Tests ที่ปรับเปลี่ยนได้ตามรอบ Sprint</p>
+            <div class="figure-card" style="padding: var(--space-sm) var(--space-md);">
+              <div class="index-num">USE CASE EXAMPLE: CHECK OUT ITEM</div>
+              <p style="margin: var(--space-xs) 0 0 0; font-size: 0.875rem;"><strong>Alternative Flow:</strong> หากเครื่องสแกนบาร์โค้ดอ่านรหัสไม่ติดเกิน 3 ครั้ง ระบบต้องส่งเสียงเตือนและเปิดช่องกรอกรหัสสินค้าด้วยตนเองทันที</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 4):</strong> ยกตัวอย่าง Use Case "Check Out Item" จากหนังสือ Agile Principles โดยชี้ให้เห็นว่า Alternative Course (เช่น สแกนบาร์โค้ดไม่ติด) มักเป็นจุดที่นักศึกษาลืมเขียนใน SRS แต่สำคัญมากในร้านขายของชำจริง
+        </div>
+      </section>
+
+      <!-- SLIDE 5: USER STORY MAPPING & MOSCOW -->
+      <section class="slide" data-index="4" aria-labelledby="s5-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">05 · STORY MAPPING</span>
+            <span class="dossier-meta">BACKBONE → TASKS → RELEASE SLICES (WALKING SKELETON)</span>
+          </div>
+          <span class="dossier-meta">3-SPRINT ROADMAP</span>
+        </div>
+
+        <h2 class="slide-title" id="s5-title">User Story Mapping: จัดลำดับความสำคัญด้วย Walking Skeleton และ MoSCoW</h2>
+        <p class="standfirst">Backlog แบบรายการเรียงเดี่ยวทำให้หลงทางได้ง่าย Story Map ช่วยให้เห็นเส้นทางการทำงานของร้านชำตั้งแต่รับของจนปิดกะ</p>
+
+        <div class="grid-4" style="margin-bottom: var(--space-lg);">
+          <div class="story-map-col">
+            <div class="backbone-box">1. เข้าสู่ระบบและตั้งค่ากะ</div>
+            <div class="task-box">ยืนยันตัวตน / เปิดลิ้นชักเงิน</div>
+            <div class="figure-card" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-green">SPRINT 1 · MUST HAVE</span>
+              <div style="font-size:0.85rem; font-weight:600;">US-01: ล็อกอินแยกสิทธิ์ Cashier / Manager</div>
+            </div>
+            <div class="figure-card tint-stone" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-gold">SPRINT 2 · SHOULD HAVE</span>
+              <div style="font-size:0.85rem;">US-08: บันทึกเงินทอนตั้งต้นเปิดกะ (Shift Open)</div>
+            </div>
+          </div>
+
+          <div class="story-map-col">
+            <div class="backbone-box">2. ขายหน้าร้าน (POS Checkout)</div>
+            <div class="task-box">สแกนสินค้า / คำนวณ / พักบิล</div>
+            <div class="figure-card" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-green">SPRINT 1 · MUST HAVE</span>
+              <div style="font-size:0.85rem; font-weight:600;">US-02: สแกนบาร์โค้ดและเพิ่มสินค้าลงตะกร้า</div>
+            </div>
+            <div class="figure-card tint-stone" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-gold">SPRINT 2 · MUST HAVE</span>
+              <div style="font-size:0.85rem;">US-04: พักบิลชั่วคราว (Hold Bill) เพื่อรับลูกค้าถัดไป</div>
+            </div>
+          </div>
+
+          <div class="story-map-col">
+            <div class="backbone-box">3. ชำระเงินและออกใบเสร็จ</div>
+            <div class="task-box">รับเงินสด / PromptPay / ตัดสต็อก</div>
+            <div class="figure-card" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-green">SPRINT 2 · MUST HAVE</span>
+              <div style="font-size:0.85rem; font-weight:600;">US-03: ชำระเงินสด/PromptPay พร้อมตัดสต็อกอัตโนมัติ</div>
+            </div>
+            <div class="figure-card tint-stone" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-teal">SPRINT 3 · COULD HAVE</span>
+              <div style="font-size:0.85rem;">US-09: สะสมแต้มสมาชิกด้วยเบอร์โทรศัพท์</div>
+            </div>
+          </div>
+
+          <div class="story-map-col">
+            <div class="backbone-box">4. คลังสินค้าและรายงาน</div>
+            <div class="task-box">แจ้งเตือนหมด / ตรวจวันหมดอายุ</div>
+            <div class="figure-card" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-green">SPRINT 3 · MUST HAVE</span>
+              <div style="font-size:0.85rem; font-weight:600;">US-05: แจ้งเตือนเมื่อสต็อกต่ำกว่า Reorder Level</div>
+            </div>
+            <div class="figure-card tint-stone" style="padding: var(--space-sm);">
+              <span class="slice-pill chip-red">ICEBOX · WON'T HAVE NOW</span>
+              <div style="font-size:0.85rem;">US-10: พยากรณ์ยอดสั่งซื้อด้วย AI (ไว้ทำในชั้นปี 3)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="aside-box">
+          <div class="grid-4">
+            <div><span class="chip chip-green">Must Have</span><p class="muted-note" style="margin-top:4px;">ขาดไม่ได้ ระบบจะใช้งานจริงหรือปล่อย Release ไม่ได้</p></div>
+            <div><span class="chip chip-gold">Should Have</span><p class="muted-note" style="margin-top:4px;">สำคัญ แต่มีวิธีแก้ขัดชั่วคราวได้ใน Sprint แรก</p></div>
+            <div><span class="chip chip-teal">Could Have</span><p class="muted-note" style="margin-top:4px;">มีก็ดี (Wish-list) ตัดออกก่อนหากเวลาไม่พอ</p></div>
+            <div><span class="chip chip-red">Won't Have</span><p class="muted-note" style="margin-top:4px;">ตกลงไม่ทำในรอบนี้ ย้ายไป Icebox ไว้พิจารณาภายหลัง</p></div>
+          </div>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 5):</strong> อธิบายแนวคิด "Walking Skeleton" — ใน Sprint 1–2 เราต้องได้ End-to-End Flow ที่ล็อกอิน สแกนขาย ชำระเงิน และตัดสต็อกได้ครบวงจรก่อน ไม่ใช่ทำหน้า Login กับหน้าเพิ่มสินค้าจนสมบูรณ์ 100% แต่ยังคิดเงินไม่ได้
+        </div>
+      </section>
+
+      <!-- SLIDE 6: AGILE USER STORY BACKLOG (INTERACTIVE EXPLORER & BUILDER) -->
+      <section class="slide" data-index="5" aria-labelledby="s6-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">06 · PRODUCT BACKLOG</span>
+            <span class="dossier-meta">USER STORY TEMPLATE: AS A [ROLE], I WANT [GOAL], SO THAT [BENEFIT]</span>
+          </div>
+          <span class="dossier-meta">INTERACTIVE BACKLOG EXPLORER</span>
+        </div>
+
+        <h2 class="slide-title" id="s6-title">Agile User Story Backlog สำหรับระบบ Grocery POS</h2>
+        <p class="standfirst">User Story คือ "ตัวแทนบทสนทนา" (Mnemonic Token) ที่บอกบทบาท เป้าหมาย และคุณค่าทางธุรกิจ โดยไม่ยัดไส้รายละเอียดโค้ด</p>
+
+        <div class="filter-bar" role="group" aria-label="กรองตามลำดับความสำคัญ MoSCoW">
+          <button type="button" class="filter-btn is-active" onclick="filterBacklog('ALL', this)">ทั้งหมด</button>
+          <button type="button" class="filter-btn" onclick="filterBacklog('Must', this)">Must Have</button>
+          <button type="button" class="filter-btn" onclick="filterBacklog('Should', this)">Should Have</button>
+          <button type="button" class="filter-btn" onclick="filterBacklog('Could', this)">Could Have</button>
+          <button type="button" class="filter-btn" onclick="filterBacklog('Sprint 1', this)">Sprint 1</button>
+          <button type="button" class="filter-btn" onclick="filterBacklog('Sprint 2', this)">Sprint 2</button>
+          <button type="button" class="filter-btn" onclick="filterBacklog('Sprint 3', this)">Sprint 3</button>
+        </div>
+
+        <div class="table-wrap" style="margin-bottom: var(--space-lg);">
+          <table>
+            <thead>
+              <tr>
+                <th>รหัส</th>
+                <th>Epic</th>
+                <th>User Story (As a / I want / So that)</th>
+                <th>MoSCoW</th>
+                <th>Sprint</th>
+                <th class="num-cell">Points</th>
+              </tr>
+            </thead>
+            <tbody id="backlog-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Quick Add Story to Local Team Backlog (Persisted) -->
+        <div class="figure-card tint-stone">
+          <span class="index-num">WORKSHOP · ลองเพิ่ม User Story ของทีมคุณลงในตารางข้างบน</span>
+          <div class="control-row" style="margin-top: var(--space-sm); margin-bottom: 0;">
+            <div class="field-group">
+              <label class="field-label" for="new-role">บทบาท (As a)</label>
+              <select class="field-select" id="new-role">
+                <option value="Cashier">Cashier (พนักงานคิดเงิน)</option>
+                <option value="Store Manager">Store Manager (ผู้จัดการร้าน)</option>
+                <option value="Inventory Clerk">Inventory Clerk (พนักงานคลัง)</option>
+              </select>
+            </div>
+            <div class="field-group" style="flex: 2 1 260px;">
+              <label class="field-label" for="new-want">สิ่งที่ต้องการ (I want to ...)</label>
+              <input type="text" class="field-input" id="new-want" placeholder="เช่น ค้นหาสินค้าที่ไม่มีบาร์โค้ดด้วยชื่อเมนู">
+            </div>
+            <div class="field-group" style="flex: 2 1 240px;">
+              <label class="field-label" for="new-benefit">คุณค่าที่ได้ (So that ...)</label>
+              <input type="text" class="field-input" id="new-benefit" placeholder="เช่น คิดเงินผักสดหรือสินค้าฉลากหลุดได้ทันที">
+            </div>
+            <div class="field-group" style="max-width: 120px;">
+              <label class="field-label" for="new-points">Points</label>
+              <select class="field-select" id="new-points">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="8">8</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addCustomStory()">เพิ่มเข้า Backlog</button>
+          </div>
+          <p class="inline-msg" id="backlog-msg" aria-live="polite"></p>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 6):</strong> ให้นักศึกษาสังเกตว่า Story Points ของทั้ง 3 Sprint ต้องสมดุลกับ Velocity ของทีม (เช่น ทีม 4 คนทำได้ ~13–15 Points ต่อ Sprint) และห้ามเขียน User Story กว้างเกินไปเช่น "ทำระบบคลังสินค้า" — ต้องแตก (Split) ออกเป็นส่วนย่อยที่ประเมินได้
+        </div>
+      </section>
+
+      <!-- SLIDE 7: ACCEPTANCE CRITERIA (GIVEN-WHEN-THEN) -->
+      <section class="slide" data-index="6" aria-labelledby="s7-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">07 · ACCEPTANCE CRITERIA</span>
+            <span class="dossier-meta">DEFINITION OF DONE · GIVEN-WHEN-THEN FORMAT</span>
+          </div>
+          <span class="dossier-meta">คลิกเลือก Story เพื่อดูเงื่อนไขการตรวจรับ</span>
+        </div>
+
+        <h2 class="slide-title" id="s7-title">เกณฑ์การยอมรับงาน (Acceptance Criteria) ด้วยรูปแบบ Given–When–Then</h2>
+        <p class="standfirst">Story จะยังไม่ถือว่า "Done" จนกว่าจะผ่าน Automated หรือ Manual Acceptance Tests ทุกกรณีทั้งสภาวะปกติและกรณีผิดพลาด</p>
+
+        <div class="grid-asymmetric">
+          <div id="ac-story-list" style="display:flex; flex-direction:column; gap:var(--space-sm);"></div>
+
+          <div class="figure-card" id="ac-detail-panel">
+            <span class="index-num" id="ac-detail-id">US-02 · ACCEPTANCE CRITERIA</span>
+            <h3 class="card-heading" id="ac-detail-title" style="margin-top:var(--space-xs);"></h3>
+            <p class="muted-note" id="ac-detail-story" style="margin-bottom:var(--space-md);"></p>
+            <div id="ac-gherkin-list" style="display:flex; flex-direction:column; gap:var(--space-sm);"></div>
+          </div>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 7):</strong> ย้ำว่า Acceptance Criteria คือส่วนที่มักทำให้นักศึกษาถูกหักคะแนนเหลือ "พอใช้ (14–17 คะแนน)" หากเขียนลอยๆ เช่น "ระบบตัดสต็อกถูกต้อง" ให้เปลี่ยนเป็น Given (สต็อกมี 10 ชิ้น) → When (ขาย 2 ชิ้นสำเร็จ) → Then (สต็อกเหลือ 8 ชิ้น และบันทึกประวัติตัดสต็อก)
+        </div>
+      </section>
+
+      <!-- SLIDE 8: STORY POINT ESTIMATION & VELOCITY -->
+      <section class="slide" data-index="7" aria-labelledby="s8-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">08 · STORY POINTS &amp; VELOCITY</span>
+            <span class="dossier-meta">RELATIVE SIZING · PLANNING POKER (FIBONACCI)</span>
+          </div>
+          <span class="dossier-meta">SIMULATOR</span>
+        </div>
+
+        <h2 class="slide-title" id="s8-title">การประเมินขนาดงานด้วย Story Points และการคำนวณ Sprint Capacity</h2>
+        <p class="standfirst">Story Points วัด "ขนาดสัมพัทธ์ ความซับซ้อน และความไม่แน่นอน" ไม่ใช่จำนวนชั่วโมงตรงๆ — ทีมใช้ Planning Poker เพื่อสร้างความเข้าใจร่วมกัน</p>
+
+        <div class="grid-asymmetric">
+          <div class="figure-card">
+            <span class="index-num">PLANNING POKER · เลือกไพ่ประเมินเพื่อเทียบความหมาย</span>
+            <div class="poker-deck" role="group" aria-label="ไพ่ Planning Poker">
+              <button type="button" class="poker-card" onclick="selectPoker(1, this)">1</button>
+              <button type="button" class="poker-card" onclick="selectPoker(2, this)">2</button>
+              <button type="button" class="poker-card is-selected" onclick="selectPoker(3, this)">3</button>
+              <button type="button" class="poker-card" onclick="selectPoker(5, this)">5</button>
+              <button type="button" class="poker-card" onclick="selectPoker(8, this)">8</button>
+              <button type="button" class="poker-card" onclick="selectPoker(13, this)">13</button>
+            </div>
+            <div class="aside-box" id="poker-explain">
+              <div class="index-num">3 POINTS · งานขนาดมาตรฐาน (BASELINE)</div>
+              <p style="margin: var(--space-xs) 0 0 0;"><strong>ตัวอย่าง Grocery POS:</strong> หน้าสแกนบาร์โค้ดและเพิ่มรายการลงตะกร้า (US-02) มีการเชื่อมต่อ DB พื้นฐานและจัดการ Error กรณีไม่พบบาร์โค้ด</p>
+            </div>
+          </div>
+
+          <div class="figure-card tint-stone">
+            <span class="index-num">SPRINT VELOCITY PLANNER · คำนวณจำนวนสปรินต์</span>
+            <div style="margin-top: var(--space-sm); display:flex; flex-direction:column; gap:var(--space-md);">
+              <div class="field-group">
+                <label class="field-label" for="vel-slider">Velocity เฉลี่ยของทีม (Points / Sprint): <strong id="vel-display">12</strong></label>
+                <input type="range" id="vel-slider" min="6" max="24" step="1" value="12" oninput="updateVelocityFromSlider(this.value)">
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="vel-number">หรือระบุค่า Velocity (6–24):</label>
+                <input type="number" class="field-input" id="vel-number" min="6" max="24" value="12" oninput="updateVelocityFromNumber(this.value)">
+              </div>
+              <div class="figure-card" style="padding: var(--space-md);">
+                <div class="index-num">ผลลัพธ์แผนปล่อยงาน (RELEASE FORECAST)</div>
+                <div class="kpi-value" id="sprint-forecast">3 Sprints</div>
+                <p class="muted-note" id="sprint-forecast-detail">Backlog รวม <span id="total-bp">0</span> Points · เพียงพอต่อแผน 3 สปรินต์ตามกรอบวิชา 1145 204</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 8):</strong> อธิบายเหตุผลที่ 8 หรือ 13 Points ควรแตกเป็น Story ย่อย (Splitting) เพราะ Story ใหญ่เกิน 8 Points มักประเมินคลาดเคลื่อนและทำให้จบไม่ทันในสปรินต์เดียว ("Done 90% of tasks แต่ 0 completed stories")
+        </div>
+      </section>
+
+      <!-- SLIDE 9: INITIAL RISK REGISTER -->
+      <section class="slide" data-index="8" aria-labelledby="s9-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">09 · INITIAL RISK REGISTER</span>
+            <span class="dossier-meta">PROJECT RISK MANAGEMENT &amp; MITIGATION PLAN</span>
+          </div>
+          <span class="dossier-meta">คลิกช่องตาราง Heatmap เพื่อกรองความเสี่ยง</span>
+        </div>
+
+        <h2 class="slide-title" id="s9-title">ทะเบียนความเสี่ยงเริ่มต้น (Initial Risk Register) สำหรับระบบ Grocery POS</h2>
+        <p class="standfirst">ระบุความเสี่ยงทางเทคนิคและธุรกิจตั้งแต่สัปดาห์ที่ 3 เพื่อป้องกันวิกฤตระหว่างพัฒนาและรองรับรายงานวิเคราะห์ความเสี่ยงของวิชา</p>
+
+        <div class="grid-asymmetric">
+          <div>
+            <div class="figure-card" style="margin-bottom: var(--space-md);">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="index-num">RISK MATRIX (LIKELIHOOD × IMPACT)</span>
+                <button type="button" class="btn btn-sm" onclick="filterRiskByLevel('ALL')">แสดงทั้งหมด</button>
+              </div>
+              <div class="risk-matrix" aria-label="ตารางเมทริกซ์ความเสี่ยง">
+                <div class="matrix-axis">สูง</div>
+                <div class="matrix-cell risk-med" onclick="filterRiskByLevel('MED')" role="button" tabindex="0"><span>โอกาสสูง / ผลกลาง</span><strong>R-04</strong></div>
+                <div class="matrix-cell risk-high" onclick="filterRiskByLevel('HIGH')" role="button" tabindex="0"><span>โอกาสสูง / ผลสูง</span><strong>R-01, R-02</strong></div>
+                <div class="matrix-cell risk-high" onclick="filterRiskByLevel('HIGH')" role="button" tabindex="0"><span>วิกฤตสูงสุด</span><strong>—</strong></div>
+
+                <div class="matrix-axis">กลาง</div>
+                <div class="matrix-cell risk-low" onclick="filterRiskByLevel('LOW')" role="button" tabindex="0"><span>ต่ำ</span><strong>—</strong></div>
+                <div class="matrix-cell risk-med" onclick="filterRiskByLevel('MED')" role="button" tabindex="0"><span>ปานกลาง</span><strong>R-03</strong></div>
+                <div class="matrix-cell risk-high" onclick="filterRiskByLevel('HIGH')" role="button" tabindex="0"><span>สูง</span><strong>R-05</strong></div>
+
+                <div class="matrix-axis">ต่ำ</div>
+                <div class="matrix-cell risk-low" onclick="filterRiskByLevel('LOW')" role="button" tabindex="0"><span>ต่ำ</span><strong>R-06</strong></div>
+                <div class="matrix-cell risk-low" onclick="filterRiskByLevel('LOW')" role="button" tabindex="0"><span>ต่ำ</span><strong>—</strong></div>
+                <div class="matrix-cell risk-med" onclick="filterRiskByLevel('MED')" role="button" tabindex="0"><span>เฝ้าระวัง</span><strong>—</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>รหัส</th>
+                  <th>ความเสี่ยง (Risk Event)</th>
+                  <th>ระดับ</th>
+                  <th>แผนบรรเทาความเสี่ยง (Mitigation Plan)</th>
+                </tr>
+              </thead>
+              <tbody id="risk-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 9):</strong> ชี้ให้นักศึกษาดู R-01 (Concurrency / Race Condition ตอนตัดสต็อกพร้อมกัน) ซึ่งเป็นตัวอย่างตรงจากเอกสารโครงงาน 1145 204 การใช้ SQL Transaction + Row-level Locking (`SELECT ... FOR UPDATE`) หรือ Optimistic Locking เป็นจุดที่กรรมการสอบมักถาม
+        </div>
+      </section>
+
+      <!-- SLIDE 10: RUBRIC, DELIVERABLES & WORKSHOP CHECKLIST -->
+      <section class="slide" data-index="9" aria-labelledby="s10-title">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">10 · DELIVERABLES &amp; RUBRIC</span>
+            <span class="dossier-meta">เกณฑ์การประเมินและสิ่งที่ต้องส่งมอบในสัปดาห์ถัดไป</span>
+          </div>
+          <span class="dossier-meta">EXPORT &amp; CHECKLIST</span>
+        </div>
+
+        <h2 class="slide-title" id="s10-title">เกณฑ์การให้คะแนนและรายการส่งมอบงานของทีม (Week 3 Workshop)</h2>
+        <p class="standfirst">ตรวจสอบความครบถ้วนของเอกสาร SRS, Backlog และ Risk Register เทียบกับเกณฑ์ประเมินระดับ "ดีเยี่ยม (22–25 คะแนน)"</p>
+
+        <div class="grid-asymmetric" style="margin-bottom: var(--space-lg);">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ระดับคุณภาพ</th>
+                  <th>ช่วงคะแนน</th>
+                  <th>ลักษณะงานตามเกณฑ์รายวิชา 1145 204</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="chip chip-green">ดีเยี่ยม</span></td>
+                  <td class="num-cell">22–25</td>
+                  <td>วิเคราะห์ FR/NFR ได้ถูกต้อง ครอบคลุม เขียน User Stories ตามมาตรฐาน Agile พร้อมประเมิน Story Points และระบุ Acceptance Criteria ได้อย่างสมบูรณ์</td>
+                </tr>
+                <tr>
+                  <td><span class="chip chip-teal">ดี</span></td>
+                  <td class="num-cell">18–21</td>
+                  <td>Requirements และ User Stories ครอบคลุมฟังก์ชันหลักของระบบ มีการประเมิน Story Points โดยมีจุดที่ต้องปรับแก้เล็กน้อย</td>
+                </tr>
+                <tr>
+                  <td><span class="chip chip-gold">พอใช้</span></td>
+                  <td class="num-cell">14–17</td>
+                  <td>User Stories เขียนไม่ถูกรูปแบบ ขาดรายละเอียด Acceptance Criteria หรือวิเคราะห์ Requirements ไม่ครอบคลุม</td>
+                </tr>
+                <tr>
+                  <td><span class="chip chip-red">ปรับปรุง</span></td>
+                  <td class="num-cell">0–13</td>
+                  <td>ไม่มีการวิเคราะห์ Requirements หรือจัดทำ User Story Backlog ตามหลักวิศวกรรมซอฟต์แวร์</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="figure-card tint-stone">
+            <span class="index-num">TEAM CHECKLIST · ตรวจความพร้อมก่อนส่ง</span>
+            <div id="deliverable-checklist" style="margin-top: var(--space-sm); display:flex; flex-direction:column; gap:var(--space-sm);"></div>
+            <div style="margin-top: var(--space-md); display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+              <button type="button" class="btn btn-primary" onclick="exportBacklogCsv()">
+                <i data-lucide="download" aria-hidden="true" style="width:16px;height:16px;"></i>
+                <span>ส่งออก Backlog (CSV)</span>
+              </button>
+              <button type="button" class="btn" id="btn-reset-state" onclick="handleResetState(this)">ล้างข้อมูลที่บันทึก</button>
+            </div>
+            <p class="inline-msg" id="export-msg" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="aside-box">
+          <span class="index-num">SOURCES &amp; REFERENCES</span>
+          <p class="muted-note" style="margin-top: var(--space-xs);">เรียบเรียงจากแนวทางโครงงานรายวิชา 1145 204 (โครงงานระดับชั้นปีที่ 2), เกณฑ์รูบริกการวิเคราะห์ความต้องการของหลักสูตร, คู่มือ Scrum Guide (Ken Schwaber &amp; Jeff Sutherland), หนังสือ Agile Estimating and Planning (Mike Cohn), Agile Principles, Patterns, and Practices (Robert C. Martin) และแนวทาง User Story Mapping และ GitHub Projects for Agile</p>
+        </div>
+
+        <div class="speaker-notes-box" data-note>
+          <strong>บันทึกผู้สอน (Slide 10):</strong> ให้นักศึกษาแต่ละกลุ่มใช้เวลา 30 นาทีท้ายคาบปรับปรุง Backlog และกดปุ่ม "ส่งออก Backlog (CSV)" เพื่อนำไป Import เข้า GitHub Projects / Jira พร้อมเตรียมนำเสนอความเสี่ยง R-01 ถึง R-05 ในสัปดาห์หน้า
+        </div>
+      </section>
+
+      <!-- Shared Slide Footer Navigation -->
+      <div class="slide-footer-nav">
+        <button type="button" class="btn" onclick="prevSlide()" id="footer-prev">
+          <i data-lucide="arrow-left" aria-hidden="true" style="width:16px;height:16px;"></i>
+          <span>สไลด์ก่อนหน้า</span>
+        </button>
+        <span class="dossier-meta" id="footer-slide-title">สไลด์ 1 จาก 10</span>
+        <button type="button" class="btn btn-primary" onclick="nextSlide()" id="footer-next">
+          <span>สไลด์ถัดไป</span>
+          <i data-lucide="arrow-right" aria-hidden="true" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // ---------- Data Definitions (Backticks used for safe escaping) ----------
+    const FR_QUIZ_DATA = [
+      {
+        id: `q1`,
+        text: `ระบบต้องสามารถสแกนบาร์โค้ด EAN-13 เพื่อดึงราคาและชื่อสินค้าแสดงบนหน้าจอคิดเงินได้`,
+        answer: `FR`,
+        explain: `เป็นหน้าที่การทำงานโดยตรงของระบบ (Functional Requirement)`
+      },
+      {
+        id: `q2`,
+        text: `หน้าจอคิดเงินต้องแสดงผลลัพธ์จากการสแกนบาร์โค้ดภายในไม่เกิน 300 มิลลิวินาที`,
+        answer: `NFR`,
+        explain: `เป็นการกำหนดเกณฑ์ด้านความเร็ว/ประสิทธิภาพ (NFR - Performance)`
+      },
+      {
+        id: `q3`,
+        text: `ระบบต้องป้องกันไม่ให้การตัดสต็อกพร้อมกันจากแคชเชียร์ 2 เครื่องทำให้จำนวนสินค้าติดลบ`,
+        answer: `NFR`,
+        explain: `เป็นคุณสมบัติด้านความถูกต้องของข้อมูลและ Concurrency (NFR - Data Integrity)`
+      },
+      {
+        id: `q4`,
+        text: `ผู้จัดการร้านสามารถอนุมัติการยกเลิกใบเสร็จ (Void) พร้อมบันทึกรหัสผู้ทำรายการได้`,
+        answer: `FR`,
+        explain: `เป็นฟีเจอร์การควบคุมสิทธิ์และการดำเนินการของระบบ (Functional Requirement)`
+      }
+    ];
+
+    const DEFAULT_BACKLOG = [
+      {
+        id: `US-01`,
+        epic: `Auth & Shift`,
+        role: `Cashier`,
+        want: `เข้าสู่ระบบด้วยบัญชีและรหัสผ่านประจำตัว`,
+        benefit: `สามารถเปิดกะขายสินค้าและบันทึกผู้ทำรายการในทุกใบเสร็จได้อย่างถูกต้อง`,
+        moscow: `Must`,
+        sprint: `Sprint 1`,
+        points: 2,
+        criteria: [
+          { given: `ฉันเป็น Cashier ที่มีบัญชีสถานะ Active`, when: `กรอก Username และ Password ที่ถูกต้องแล้วกดเข้าสู่ระบบ`, then: `ระบบเปิดหน้าจอขาย POS และบันทึกเวลาเริ่มกะในตารางบันทึกการใช้งาน` },
+          { given: `ฉันกรอกรหัสผ่านผิดติดต่อกัน 3 ครั้ง`, when: `กดปุ่มเข้าสู่ระบบครั้งที่ 3`, then: `ระบบแจ้งเตือนความผิดพลาดและระงับการเข้าใช้งานชั่วคราว 5 นาที` }
+        ]
+      },
+      {
+        id: `US-02`,
+        epic: `POS Checkout`,
+        role: `Cashier`,
+        want: `สแกนบาร์โค้ดสินค้าหรือค้นหาด้วยชื่อสินค้าเพื่อเพิ่มลงในตะกร้าขาย`,
+        benefit: `คิดเงินลูกค้าได้อย่างรวดเร็วโดยไม่ต้องจำราคาสินค้าทั้งหมด`,
+        moscow: `Must`,
+        sprint: `Sprint 1`,
+        points: 3,
+        criteria: [
+          { given: `สินค้า "น้ำดื่ม 600 มล." มีบาร์โค้ด 8850123456789 ราคา 7 บาทในฐานข้อมูล`, when: `สแกนบาร์โค้ด 8850123456789 เข้าสู่หน้าจอ POS`, then: `รายการสินค้าแสดงในตะกร้าภายใน 300 มิลลิวินาที พร้อมยอดรวมอัปเดตเป็น 7 บาท` },
+          { given: `สแกนบาร์โค้ดที่ไม่มีอยู่ในระบบ`, when: `ระบบค้นหาไม่พบข้อมูล`, then: `ระบบส่งเสียงเตือนและแสดงช่องกรอกรหัสสินค้าหรือค้นหาด้วยชื่อแทน` }
+        ]
+      },
+      {
+        id: `US-03`,
+        epic: `Payment & Stock`,
+        role: `Cashier`,
+        want: `รับชำระเงินด้วยเงินสดหรือ PromptPay และตัดสต็อกสินค้าอัตโนมัติ`,
+        benefit: `ยอดเงินและจำนวนสินค้าคงคลังตรงกันแบบเรียลไทม์ทันทีหลังปิดการขาย`,
+        moscow: `Must`,
+        sprint: `Sprint 2`,
+        points: 5,
+        criteria: [
+          { given: `ตะกร้ามียอดสุทธิ 145 บาท และสินค้า A มีสต็อกคงเหลือ 10 ชิ้น`, when: `รับเงินสด 200 บาทและกดยืนยันชำระเงิน`, then: `ระบบแสดงเงินทอน 55 บาท สร้างใบเสร็จ สถานะ Paid และลดสต็อกสินค้า A เหลือ 9 ชิ้นภายใน Transaction เดียว` },
+          { given: `เกิดข้อผิดพลาดระหว่างบันทึกการตัดสต็อก`, when: `Database Transaction ล้มเหลว`, then: `ระบบ Rollback ทั้งคำสั่งซื้อและแจ้งเตือนให้ทำรายการใหม่โดยไม่เกิดสต็อกเพี้ยน` }
+        ]
+      },
+      {
+        id: `US-04`,
+        epic: `POS Checkout`,
+        role: `Cashier`,
+        want: `พักบิลชั่วคราว (Hold Bill) และเรียกกลับมาคิดเงินต่อได้`,
+        benefit: `สามารถให้บริการลูกค้ารายถัดไปได้ทันทีเมื่อลูกค้าคนแรกขอไปหยิบสินค้าเพิ่ม`,
+        moscow: `Must`,
+        sprint: `Sprint 2`,
+        points: 3,
+        criteria: [
+          { given: `มีรายการสินค้าอยู่ในตะกร้าปัจจุบันอย่างน้อย 1 รายการ`, when: `กดปุ่ม "พักบิล"`, then: `ระบบบันทึกรายการลงคิวบิลที่พักไว้และล้างหน้าจอตะกร้าให้พร้อมรับลูกค้ารายใหม่` },
+          { given: `มีบิลที่พักไว้ในคิว 1 รายการ`, when: `Cashier กดเลือกบิลดังกล่าวกลับมา`, then: `รายการสินค้าและจำนวนทั้งหมดกลับมาแสดงในตะกร้าตามเดิมโดยไม่ตัดสต็อกซ้ำ` }
+        ]
+      },
+      {
+        id: `US-05`,
+        epic: `Inventory Alert`,
+        role: `Store Manager`,
+        want: `ดูรายการสินค้าที่มียอดคงเหลือต่ำกว่า Reorder Level หรือใกล้วันหมดอายุ`,
+        benefit: `สามารถสั่งซื้อสินค้ามาเติมชั้นวางและจัดโปรโมชันระบายสินค้าได้ทันเวลา`,
+        moscow: `Must`,
+        sprint: `Sprint 3`,
+        points: 3,
+        criteria: [
+          { given: `สินค้า "นมสด 1 ลิตร" มี Reorder Level = 12 และยอดคงเหลือลดลงเหลือ 10`, when: `ผู้จัดการเปิดหน้า Dashboard คลังสินค้า`, then: `ระบบแสดงป้ายเตือนสีแดง/ส้มที่สินค้า "นมสด 1 ลิตร" พร้อมจำนวนที่แนะนำให้สั่งเพิ่ม` },
+          { given: `สินค้ากลุ่มอาหารสดมีวันหมดอายุภายใน 7 วันข้างหน้า`, when: `ระบบรันการตรวจสอบรอบวัน`, then: `รายการสินค้าเหล่านั้นถูกจัดลำดับไว้ด้านบนสุดของรายงานสินค้าใกล้หมดอายุ` }
+        ]
+      },
+      {
+        id: `US-06`,
+        epic: `Void & Audit`,
+        role: `Store Manager`,
+        want: `อนุมัติการยกเลิกใบเสร็จ (Void) ด้วยรหัส PIN ผู้จัดการพร้อมระบุเหตุผล`,
+        benefit: `ป้องกันการทุจริตหน้าเคาน์เตอร์และคืนสินค้ากลับเข้าสต็อกอย่างมีหลักฐานตรวจสอบได้`,
+        moscow: `Should`,
+        sprint: `Sprint 2`,
+        points: 3,
+        criteria: [
+          { given: `Cashier กดขอ Void ใบเสร็จเลขที่ ORD-2026-089`, when: `Manager กรอก PIN ถูกต้องและเลือกเหตุผล "ลูกค้าเปลี่ยนใจ"`, then: `ใบเสร็จเปลี่ยนสถานะเป็น Voided และระบบคืนจำนวนสินค้าทั้งหมดกลับเข้าสต็อกพร้อมบันทึก Audit Log` }
+        ]
+      },
+      {
+        id: `US-07`,
+        epic: `Reporting & PDPA`,
+        role: `Store Manager`,
+        want: `ส่งออกรายงานยอดขายรายวันแยกตามหมวดหมู่สินค้าและช่วงเวลา Peak Hours`,
+        benefit: `ใช้วางแผนจัดตารางพนักงานและสั่งซื้อสินค้าโดยไม่ละเมิดข้อมูลส่วนบุคคลลูกค้า`,
+        moscow: `Should`,
+        sprint: `Sprint 3`,
+        points: 2,
+        criteria: [
+          { given: `มียอดขายในวันที่เลือกอย่างน้อย 1 รายการ`, when: `กดส่งออกรายงาน CSV รายวัน`, then: `ไฟล์ CSV แสดงยอดขายแยกตามหมวดหมู่และช่วงเวลา โดยลบเบอร์โทรศัพท์และข้อมูลส่วนบุคคลลูกค้าออกทั้งหมดตามหลัก PDPA` }
+        ]
+      },
+      {
+        id: `US-08`,
+        epic: `Auth & Shift`,
+        role: `Cashier`,
+        want: `บันทึกยอดเงินทอนตั้งต้นเปิดกะและสรุปยอดเงินสดปิดกะ`,
+        benefit: `ตรวจสอบยอดเงินในลิ้นชักเทียบกับยอดขายในระบบได้แม่นยำ`,
+        moscow: `Should`,
+        sprint: `Sprint 2`,
+        points: 2,
+        criteria: [
+          { given: `Cashier กำลังเปิดกะใหม่`, when: `กรอกยอดเงินตั้งต้น 2,000 บาทและยืนยัน`, then: `ระบบบันทึกยอดตั้งต้นและใช้คำนวณยอดเงินที่ควรมีในลิ้นชักตอนปิดกะ` }
+        ]
+      },
+      {
+        id: `US-09`,
+        epic: `Loyalty`,
+        role: `Cashier`,
+        want: `บันทึกคะแนนสะสมลูกค้าจากหมายเลขสมาชิกโดยไม่ต้องเก็บข้อมูลเกินจำเป็น`,
+        benefit: `กระตุ้นให้ลูกค้ากลับมาซื้อซ้ำในร้านชำ`,
+        moscow: `Could`,
+        sprint: `Sprint 3`,
+        points: 5,
+        criteria: [
+          { given: `ลูกค้าแจ้งรหัสสมาชิกและยินยอมตาม PDPA`, when: `ปิดบิลยอดซื้อทุก 25 บาท`, then: `ระบบเพิ่ม 1 คะแนนเข้าบัญชีสมาชิกโดยอัตโนมัติ` }
+        ]
+      }
+    ];
+
+    const POKER_INFO = {
+      1: { title: `1 POINT · งานขนาดเล็กมาก (TRIVIAL)`, desc: `ตัวอย่าง Grocery POS: เพิ่มปุ่มลัดล้างตะกร้าหรือปรับรูปแบบข้อความบนใบเสร็จ ใช้เวลาไม่นานและไม่มีความเสี่ยงทางเทคนิค` },
+      2: { title: `2 POINTS · งานขนาดเล็ก (EASY)`, desc: `ตัวอย่าง Grocery POS: หน้าเข้าสู่ระบบแยกสิทธิ์ Cashier/Manager (US-01) หรือส่งออกรายงาน CSV รายวัน (US-07)` },
+      3: { title: `3 POINTS · งานขนาดมาตรฐาน (BASELINE)`, desc: `ตัวอย่าง Grocery POS: หน้าสแกนบาร์โค้ดและเพิ่มรายการลงตะกร้า (US-02) มีการเชื่อมต่อ DB และจัดการกรณีไม่พบบาร์โค้ด` },
+      5: { title: `5 POINTS · งานซับซ้อนปานกลาง (COMPLEX)`, desc: `ตัวอย่าง Grocery POS: ระบบชำระเงินพร้อมตัดสต็อกแบบ Atomic Transaction และ Rollback (US-03)` },
+      8: { title: `8 POINTS · งานซับซ้อนสูง (HIGH EFFORT)`, desc: `ตัวอย่าง Grocery POS: ระบบทำงานออฟไลน์ชั่วคราว (IndexedDB Cache) พร้อม Sync กลับเมื่อเน็ตมา — ควรพิจารณาแตก Story ย่อย` },
+      13: { title: `13 POINTS · ใหญ่เกิน 1 สปรินต์ (SHOULD SPLIT)`, desc: `ตัวอย่าง Grocery POS: ระบบจัดการคลังสินค้าครบวงจรทั้งรับของ ปรับสต็อก และพยากรณ์ยอดสั่งซื้อ — ต้อง Split เป็นหลาย Stories ทันที` }
+    };
+
+    const RISK_DATA = [
+      { id: `R-01`, event: `Race Condition: แคชเชียร์ 2 เครื่องตัดสต็อกสินค้าชิ้นสุดท้ายพร้อมกันจนยอดติดลบ`, level: `HIGH`, levelLabel: `สูง`, mitigation: `ใช้ Database Transaction ร่วมกับ Row-level Locking (SELECT ... FOR UPDATE) หรือ Optimistic Locking และตรวจเช็ก Stock >= Quantity ก่อน Commit` },
+      { id: `R-02`, event: `อินเทอร์เน็ตหรือเซิร์ฟเวอร์ขัดข้องระหว่างคิดเงินช่วงชั่วโมงเร่งด่วน (Peak Hours)`, level: `HIGH`, levelLabel: `สูง`, mitigation: `เก็บคิวบิลชั่วคราวบน Local Cache/IndexedDB และมี Fallback Mode ให้คิดเงินสดได้ก่อน Sync เข้าระบบหลัก` },
+      { id: `R-03`, event: `เครื่องอ่านบาร์โค้ดสแกนฉลากสินค้ายับหรือไม่มีบาร์โค้ด (เช่น ผักสด/ของแบ่งขาย)`, level: `MED`, levelLabel: `กลาง`, mitigation: `สร้างปุ่มค้นหาด่วนด้วยชื่อสินค้า หมวดหมู่ และรายการสินค้าขายด่วน (Quick-Pick Grid) บนหน้าจอ POS` },
+      { id: `R-04`, event: `Scope Creep: เพิ่มฟีเจอร์นอกขอบเขตเช่น AI พยากรณ์หรือระบบบัญชีเต็มรูปแบบกลางเทอม`, level: `MED`, levelLabel: `กลาง`, mitigation: `ใช้กฎ MoSCoW จัดกลุ่มฟีเจอร์เสริมลง Icebox และล็อกขอบเขต Walking Skeleton ให้เสร็จภายใน Sprint 2` },
+      { id: `R-05`, event: `ข้อมูลส่วนบุคคลลูกค้า (เบอร์โทร/บัตรประชาชน) รั่วไหลในรายงานส่งออก (PDPA)`, level: `HIGH`, levelLabel: `สูง`, mitigation: `ทำ Data Anonymization/Masking ในชุดข้อมูลรายงานสรุปและจำกัดสิทธิ์เข้าถึงตารางข้อมูลลูกค้าเฉพาะ Manager` },
+      { id: `R-06`, event: `หน่วยนับสินค้ารับเข้าคลัง (ลัง/แพ็ก) ไม่ตรงกับหน่วยขายหน้าร้าน (ชิ้น)`, level: `LOW`, levelLabel: `ต่ำ`, mitigation: `กำหนดตารางแปลงหน่วย (Unit Conversion Factor เช่น 1 แพ็ก = 12 ชิ้น) ในโครงสร้าง Products` }
+    ];
+
+    const CHECKLIST_ITEMS = [
+      { id: `chk-srs`, label: `สรุปขอบเขตระบบและโครงร่าง SRS (In-Scope / Out-of-Scope & 3NF Schema)` },
+      { id: `chk-fr`, label: `เขียน Functional & Non-Functional Requirements ที่วัดผลเป็นตัวเลขได้ครบถ้วน` },
+      { id: `chk-us`, label: `จัดทำ User Story Backlog (อย่างน้อย 8–10 Stories) พร้อมจัดลำดับ MoSCoW` },
+      { id: `chk-ac`, label: `ระบุ Acceptance Criteria รูปแบบ Given–When–Then ครบทุก Must-Have Story` },
+      { id: `chk-sp`, label: `ประเมิน Story Points ด้วย Planning Poker และแบ่งแผน 3 Sprints ตาม Velocity` },
+      { id: `chk-rk`, label: `จัดทำ Initial Risk Register พร้อมแนวทางบรรเทาความเสี่ยงทางเทคนิค (Mitigation)` }
+    ];
+
+    // ---------- Application State ----------
+    const TOTAL_SLIDES = 10;
+    let appState = {
+      currentSlide: 0,
+      overviewMode: false,
+      showNotes: false,
+      quizAnswers: {},
+      customStories: [],
+      selectedStoryId: `US-02`,
+      backlogFilter: `ALL`,
+      velocity: 12,
+      riskFilter: `ALL`,
+      checklist: {}
+    };
+
+    // ---------- Persistence Helpers ----------
+    async function saveState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+          await window.notebookAppApi.setAppState(appState);
+        }
+      } catch (e) {
+        // Ignore persistence errors in standalone local preview
+      }
+    }
+
+    async function loadState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            appState = Object.assign({}, appState, saved);
+          }
+        }
+      } catch (e) {
+        // Fallback to defaults
+      }
+    }
+
+    // ---------- Slide Navigation ----------
+    function renderSlideState() {
+      const shell = document.getElementById(`deck-shell`);
+      const slides = document.querySelectorAll(`.slide`);
+      const rails = document.querySelectorAll(`.rail-item`);
+      const counter = document.getElementById(`slide-counter`);
+      const progress = document.getElementById(`progress-fill`);
+      const footerTitle = document.getElementById(`footer-slide-title`);
+      const btnPrev = document.getElementById(`btn-prev`);
+      const btnNext = document.getElementById(`btn-next`);
+      const footerPrev = document.getElementById(`footer-prev`);
+      const footerNext = document.getElementById(`footer-next`);
+      const btnOverview = document.getElementById(`btn-overview`);
+      const btnNotes = document.getElementById(`btn-notes`);
+
+      if (shell) {
+        shell.classList.toggle(`overview-mode`, Boolean(appState.overviewMode));
+      }
+
+      slides.forEach((s, idx) => {
+        s.classList.toggle(`is-active`, idx === appState.currentSlide);
+      });
+
+      rails.forEach((r, idx) => {
+        r.classList.toggle(`is-active`, idx === appState.currentSlide);
+      });
+
+      const numStr = String(appState.currentSlide + 1).padStart(2, `0`);
+      if (counter) counter.textContent = `${numStr} / ${TOTAL_SLIDES}`;
+      if (progress) progress.style.width = `${((appState.currentSlide + 1) / TOTAL_SLIDES) * 100}%`;
+      if (footerTitle) footerTitle.textContent = `สไลด์ ${appState.currentSlide + 1} จาก ${TOTAL_SLIDES}`;
+
+      const atStart = appState.currentSlide === 0;
+      const atEnd = appState.currentSlide === TOTAL_SLIDES - 1;
+      if (btnPrev) btnPrev.disabled = atStart || appState.overviewMode;
+      if (btnNext) btnNext.disabled = atEnd || appState.overviewMode;
+      if (footerPrev) footerPrev.disabled = atStart;
+      if (footerNext) footerNext.disabled = atEnd;
+
+      if (btnOverview) {
+        btnOverview.classList.toggle(`btn-accent`, Boolean(appState.overviewMode));
+      }
+      if (btnNotes) {
+        btnNotes.classList.toggle(`btn-accent`, Boolean(appState.showNotes));
+      }
+
+      document.querySelectorAll(`[data-note]`).forEach((box) => {
+        box.classList.toggle(`is-open`, Boolean(appState.showNotes));
+      });
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= TOTAL_SLIDES) return;
+      appState.currentSlide = index;
+      appState.overviewMode = false;
+      renderSlideState();
+      saveState();
+      window.scrollTo({ top: 0, behavior: `smooth` });
+    }
+
+    function nextSlide() {
+      if (appState.currentSlide < TOTAL_SLIDES - 1) {
+        goToSlide(appState.currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (appState.currentSlide > 0) {
+        goToSlide(appState.currentSlide - 1);
+      }
+    }
+
+    function toggleOverview() {
+      appState.overviewMode = !appState.overviewMode;
+      renderSlideState();
+      saveState();
+    }
+
+    function toggleSpeakerNotes() {
+      appState.showNotes = !appState.showNotes;
+      renderSlideState();
+      saveState();
+    }
+
+    // ---------- Slide 3: FR vs NFR Interactive Quiz ----------
+    function renderQuiz() {
+      const container = document.getElementById(`fr-quiz-list`);
+      const scoreBadge = document.getElementById(`fr-score-badge`);
+      if (!container) return;
+
+      let correctCount = 0;
+      container.innerHTML = FR_QUIZ_DATA.map((item, idx) => {
+        const chosen = appState.quizAnswers[item.id];
+        const isCorrect = chosen === item.answer;
+        if (isCorrect) correctCount += 1;
+
+        const frClass = chosen === `FR` ? (isCorrect ? `btn-primary` : `btn-accent`) : ``;
+        const nfrClass = chosen === `NFR` ? (isCorrect ? `btn-primary` : `btn-accent`) : ``;
+        const statusText = chosen
+          ? `<span class="chip ${isCorrect ? `chip-green` : `chip-red`}">${isCorrect ? `ถูกต้อง` : `ลองดูใหม่`} · ${item.explain}</span>`
+          : ``;
+
+        return `
+          <div class="quiz-item">
+            <div style="flex: 1 1 320px;">
+              <div><span class="index-num">ข้อ ${idx + 1}</span> · ${item.text}</div>
+              <div style="margin-top: 4px;">${statusText}</div>
+            </div>
+            <div class="quiz-actions">
+              <button type="button" class="btn btn-sm ${frClass}" onclick="answerQuiz('${item.id}', 'FR')">เป็น FR</button>
+              <button type="button" class="btn btn-sm ${nfrClass}" onclick="answerQuiz('${item.id}', 'NFR')">เป็น NFR</button>
+            </div>
+          </div>
+        `;
+      }).join(``);
+
+      if (scoreBadge) {
+        scoreBadge.textContent = `คะแนน: ${correctCount} / ${FR_QUIZ_DATA.length}`;
+      }
+    }
+
+    function answerQuiz(qId, choice) {
+      appState.quizAnswers[qId] = choice;
+      const item = FR_QUIZ_DATA.find((q) => q.id === qId);
+      const fb = document.getElementById(`fr-quiz-feedback`);
+      if (fb && item) {
+        fb.textContent = choice === item.answer
+          ? `ถูกต้อง: ${item.explain}`
+          : `ยังไม่ตรง: ข้อนี้คือ ${item.answer} (${item.explain})`;
+      }
+      renderQuiz();
+      saveState();
+    }
+
+    // ---------- Slide 4: SRS Accordion ----------
+    function toggleSrs(triggerBtn) {
+      if (!triggerBtn) return;
+      const expanded = triggerBtn.getAttribute(`aria-expanded`) === `true`;
+      triggerBtn.setAttribute(`aria-expanded`, String(!expanded));
+      const panel = triggerBtn.nextElementSibling;
+      if (panel) {
+        panel.classList.toggle(`is-open`, !expanded);
+      }
+    }
+
+    // ---------- Slide 6 & 7: Backlog + Acceptance Criteria ----------
+    function getAllStories() {
+      return DEFAULT_BACKLOG.concat(appState.customStories || []);
+    }
+
+    function getMoscowChipClass(moscow) {
+      if (moscow === `Must`) return `chip-green`;
+      if (moscow === `Should`) return `chip-gold`;
+      return `chip-teal`;
+    }
+
+    function renderBacklogTable() {
+      const tbody = document.getElementById(`backlog-tbody`);
+      if (!tbody) return;
+
+      const filter = appState.backlogFilter || `ALL`;
+      const filtered = getAllStories().filter((s) => {
+        if (filter === `ALL`) return true;
+        if (filter === `Must` || filter === `Should` || filter === `Could`) return s.moscow === filter;
+        return s.sprint === filter;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="muted-note">ไม่พบ User Story ในตัวกรองนี้</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((s) => `
+        <tr>
+          <td><span class="index-num">${s.id}</span></td>
+          <td><span class="chip chip-teal">${s.epic}</span></td>
+          <td><strong>As a ${s.role}</strong>, I want to ${s.want}, <em>so that</em> ${s.benefit}.</td>
+          <td><span class="chip ${getMoscowChipClass(s.moscow)}">${s.moscow}</span></td>
+          <td>${s.sprint}</td>
+          <td class="num-cell"><strong>${s.points}</strong></td>
+        </tr>
+      `).join(``);
+    }
+
+    function filterBacklog(filterKey, btnEl) {
+      appState.backlogFilter = filterKey;
+      document.querySelectorAll(`.filter-bar .filter-btn`).forEach((b) => b.classList.remove(`is-active`));
+      if (btnEl) btnEl.classList.add(`is-active`);
+      renderBacklogTable();
+      saveState();
+    }
+
+    function addCustomStory() {
+      const roleEl = document.getElementById(`new-role`);
+      const wantEl = document.getElementById(`new-want`);
+      const benefitEl = document.getElementById(`new-benefit`);
+      const pointsEl = document.getElementById(`new-points`);
+      const msgEl = document.getElementById(`backlog-msg`);
+
+      const role = roleEl ? roleEl.value : `Cashier`;
+      const want = wantEl ? wantEl.value.trim() : ``;
+      const benefit = benefitEl ? benefitEl.value.trim() : ``;
+      const points = pointsEl ? Number(pointsEl.value) : 3;
+
+      if (want.length < 5 || benefit.length < 5) {
+        if (msgEl) msgEl.textContent = `กรุณาระบุสิ่งที่ต้องการและคุณค่าที่ได้ให้ชัดเจนอย่างน้อย 5 ตัวอักษร`;
+        return;
+      }
+
+      const nextNum = getAllStories().length + 1;
+      const newStory = {
+        id: `US-${String(nextNum).padStart(2, `0`)}`,
+        epic: `Team Workshop`,
+        role,
+        want,
+        benefit,
+        moscow: `Should`,
+        sprint: `Sprint 2`,
+        points,
+        criteria: [
+          { given: `ฉันใช้งานในบทบาท ${role}`, when: `ดำเนินการ "${want}"`, then: `ระบบทำงานสำเร็จเพื่อให้ ${benefit}` }
+        ]
+      };
+
+      appState.customStories.push(newStory);
+      if (wantEl) wantEl.value = ``;
+      if (benefitEl) benefitEl.value = ``;
+      if (msgEl) msgEl.textContent = `เพิ่ม ${newStory.id} เข้าสู่ Product Backlog เรียบร้อยแล้ว`;
+
+      renderBacklogTable();
+      renderAcceptanceList();
+      updateVelocityForecast();
+      saveState();
+    }
+
+    function renderAcceptanceList() {
+      const listEl = document.getElementById(`ac-story-list`);
+      if (!listEl) return;
+
+      const stories = getAllStories().slice(0, 6);
+      listEl.innerHTML = stories.map((s) => `
+        <div class="story-card ${s.id === appState.selectedStoryId ? `is-selected` : ``}"
+             role="button" tabindex="0"
+             onclick="selectAcceptanceStory('${s.id}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectAcceptanceStory('${s.id}');}">
+          <div class="story-meta">
+            <span class="index-num">${s.id} · ${s.epic}</span>
+            <span class="chip ${getMoscowChipClass(s.moscow)}">${s.moscow} · ${s.points} pts</span>
+          </div>
+          <div style="font-weight: 600; font-size: 0.92rem;">As a ${s.role}, I want to ${s.want}</div>
+        </div>
+      `).join(``);
+
+      renderAcceptanceDetail();
+    }
+
+    function renderAcceptanceDetail() {
+      const stories = getAllStories();
+      const target = stories.find((s) => s.id === appState.selectedStoryId) || stories[0];
+      if (!target) return;
+
+      const idEl = document.getElementById(`ac-detail-id`);
+      const titleEl = document.getElementById(`ac-detail-title`);
+      const storyEl = document.getElementById(`ac-detail-story`);
+      const listEl = document.getElementById(`ac-gherkin-list`);
+
+      if (idEl) idEl.textContent = `${target.id} · ACCEPTANCE CRITERIA (${target.sprint})`;
+      if (titleEl) titleEl.textContent = `${target.epic}: ${target.want}`;
+      if (storyEl) storyEl.textContent = `As a ${target.role}, I want to ${target.want}, so that ${target.benefit}.`;
+
+      if (listEl) {
+        listEl.innerHTML = (target.criteria || []).map((c, idx) => `
+          <div class="gherkin-box">
+            <div class="index-num" style="margin-bottom: 4px;">SCENARIO ${idx + 1}</div>
+            <div class="gherkin-line"><span class="gherkin-kw">GIVEN</span> ${c.given}</div>
+            <div class="gherkin-line"><span class="gherkin-kw">WHEN</span> ${c.when}</div>
+            <div class="gherkin-line"><span class="gherkin-kw">THEN</span> ${c.then}</div>
+          </div>
+        `).join(``);
+      }
+    }
+
+    function selectAcceptanceStory(storyId) {
+      appState.selectedStoryId = storyId;
+      renderAcceptanceList();
+      saveState();
+    }
+
+    // ---------- Slide 8: Planning Poker & Velocity ----------
+    function selectPoker(pts, btnEl) {
+      document.querySelectorAll(`.poker-card`).forEach((b) => b.classList.remove(`is-selected`));
+      if (btnEl) btnEl.classList.add(`is-selected`);
+      const info = POKER_INFO[pts] || POKER_INFO[3];
+      const box = document.getElementById(`poker-explain`);
+      if (box) {
+        box.innerHTML = `
+          <div class="index-num">${info.title}</div>
+          <p style="margin: var(--space-xs) 0 0 0;">${info.desc}</p>
+        `;
+      }
+    }
+
+    function updateVelocityForecast() {
+      const stories = getAllStories();
+      const totalPoints = stories.reduce((sum, s) => sum + Number(s.points || 0), 0);
+      const vel = Math.max(6, Math.min(24, Number(appState.velocity) || 12));
+      const sprintsNeeded = Math.ceil(totalPoints / vel);
+
+      const disp = document.getElementById(`vel-display`);
+      const forecast = document.getElementById(`sprint-forecast`);
+      const detail = document.getElementById(`sprint-forecast-detail`);
+
+      if (disp) disp.textContent = String(vel);
+      if (forecast) forecast.textContent = `${sprintsNeeded} Sprints`;
+      if (detail) {
+        detail.textContent = `Backlog รวม ${totalPoints} Points ÷ ${vel} Points/Sprint ≈ ${sprintsNeeded} สปรินต์ (${sprintsNeeded <= 3 ? `พอดีกรอบเวลา 3 สปรินต์` : `เกิน 3 สปรินต์ ควรตัด Could Have ไป Icebox`})`;
+      }
+    }
+
+    function updateVelocityFromSlider(val) {
+      const clamped = Math.max(6, Math.min(24, Number(val) || 12));
+      appState.velocity = clamped;
+      const numInput = document.getElementById(`vel-number`);
+      if (numInput) numInput.value = String(clamped);
+      updateVelocityForecast();
+      saveState();
+    }
+
+    function updateVelocityFromNumber(val) {
+      const clamped = Math.max(6, Math.min(24, Number(val) || 12));
+      appState.velocity = clamped;
+      const sliderInput = document.getElementById(`vel-slider`);
+      if (sliderInput) sliderInput.value = String(clamped);
+      updateVelocityForecast();
+      saveState();
+    }
+
+    // ---------- Slide 9: Risk Register ----------
+    function renderRisks() {
+      const tbody = document.getElementById(`risk-tbody`);
+      if (!tbody) return;
+      const filter = appState.riskFilter || `ALL`;
+      const rows = RISK_DATA.filter((r) => filter === `ALL` || r.level === filter);
+
+      tbody.innerHTML = rows.map((r) => {
+        const badgeClass = r.level === `HIGH` ? `chip-red` : (r.level === `MED` ? `chip-gold` : `chip-green`);
+        return `
+          <tr>
+            <td><span class="index-num">${r.id}</span></td>
+            <td>${r.event}</td>
+            <td><span class="chip ${badgeClass}">${r.levelLabel}</span></td>
+            <td>${r.mitigation}</td>
+          </tr>
+        `;
+      }).join(``);
+    }
+
+    function filterRiskByLevel(level) {
+      appState.riskFilter = level;
+      renderRisks();
+      saveState();
+    }
+
+    // ---------- Slide 10: Checklist & CSV Export ----------
+    function renderChecklist() {
+      const box = document.getElementById(`deliverable-checklist`);
+      if (!box) return;
+
+      box.innerHTML = CHECKLIST_ITEMS.map((item) => {
+        const checked = Boolean(appState.checklist[item.id]);
+        return `
+          <label style="display:flex; align-items:flex-start; gap:var(--space-sm); cursor:pointer; padding:var(--space-xs); border-radius:var(--rounded); background:var(--surface-container-low); border:1px solid var(--outline-variant);">
+            <input type="checkbox" ${checked ? `checked` : ``} onchange="toggleChecklistItem('${item.id}', this.checked)" style="width:20px; height:20px; margin-top:2px; accent-color:var(--secondary);">
+            <span style="font-size:0.9rem;">${item.label}</span>
+          </label>
+        `;
+      }).join(``);
+    }
+
+    function toggleChecklistItem(id, checked) {
+      appState.checklist[id] = Boolean(checked);
+      saveState();
+    }
+
+    function exportBacklogCsv() {
+      const headers = [`ID`, `Epic`, `User_Story`, `MoSCoW`, `Sprint`, `Story_Points`];
+      const lines = [headers.join(`,`)];
+      getAllStories().forEach((s) => {
+        const storyTxt = `"As a ${s.role}, I want to ${s.want}, so that ${s.benefit}."`;
+        lines.push([s.id, `"${s.epic}"`, storyTxt, s.moscow, s.sprint, s.points].join(`,`));
+      });
+      const csvContent = `\uFEFF` + lines.join(`\n`);
+      const msgEl = document.getElementById(`export-msg`);
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: csvContent,
+          contentType: `text/csv`,
+          encoding: `UTF-8`,
+          filename: `1145-204-week03-grocery-pos-backlog.csv`
+        });
+        if (msgEl) msgEl.textContent = `ดาวน์โหลดไฟล์ 1145-204-week03-grocery-pos-backlog.csv แล้ว`;
+      } else {
+        const blob = new Blob([csvContent], { type: `text/csv;charset=utf-8;` });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement(`a`);
+        a.href = url;
+        a.download = `1145-204-week03-grocery-pos-backlog.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        if (msgEl) msgEl.textContent = `ส่งออกไฟล์ CSV เรียบร้อยแล้ว`;
+      }
+    }
+
+    function handleResetState(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `คลิกอีกครั้งเพื่อยืนยันการล้างข้อมูล`;
+        return;
+      }
+      btn.dataset.armed = `false`;
+      btn.textContent = `ล้างข้อมูลที่บันทึก`;
+      appState = {
+        currentSlide: appState.currentSlide,
+        overviewMode: appState.overviewMode,
+        showNotes: appState.showNotes,
+        quizAnswers: {},
+        customStories: [],
+        selectedStoryId: `US-02`,
+        backlogFilter: `ALL`,
+        velocity: 12,
+        riskFilter: `ALL`,
+        checklist: {}
+      };
+      const sliderEl = document.getElementById(`vel-slider`);
+      const numEl = document.getElementById(`vel-number`);
+      if (sliderEl) sliderEl.value = `12`;
+      if (numEl) numEl.value = `12`;
+      const msgEl = document.getElementById(`export-msg`);
+      if (msgEl) msgEl.textContent = `รีเซ็ตข้อมูลแบบฝึกหัดและ Backlog กลับสู่ค่าเริ่มต้นแล้ว`;
+
+      renderQuiz();
+      renderBacklogTable();
+      renderAcceptanceList();
+      updateVelocityForecast();
+      renderRisks();
+      renderChecklist();
+      saveState();
+    }
+
+    // ---------- Keyboard Navigation ----------
+    document.addEventListener(`keydown`, (e) => {
+      const tag = document.activeElement ? document.activeElement.tagName : ``;
+      if (tag === `INPUT` || tag === `TEXTAREA` || tag === `SELECT`) return;
+      if (e.key === `ArrowRight`) {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === `ArrowLeft`) {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // ---------- Initialize ----------
+    async function initApp() {
+      await loadState();
+
+      const sliderEl = document.getElementById(`vel-slider`);
+      const numEl = document.getElementById(`vel-number`);
+      if (sliderEl) sliderEl.value = String(appState.velocity || 12);
+      if (numEl) numEl.value = String(appState.velocity || 12);
+
+      renderSlideState();
+      renderQuiz();
+      renderBacklogTable();
+      renderAcceptanceList();
+      updateVelocityForecast();
+      renderRisks();
+      renderChecklist();
+
+      if (window.lucide && typeof window.lucide.createIcons === `function`) {
+        window.lucide.createIcons();
+      }
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>

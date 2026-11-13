@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="carbon">
+  <title>สัปดาห์ที่ 12: การทดสอบซอฟต์แวร์และการประกันคุณภาพ (Grocery POS) — 1145 204 Sophomore Project</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Carbon Page and Surfaces */
+      --background: #ffffff;
+      --surface-container-low: #f4f4f4;
+      --surface-container: #f4f4f4;
+      --surface-container-high: #e0e0e0;
+
+      /* Carbon Ink */
+      --on-surface: #161616;
+      --on-surface-variant: #525252;
+
+      /* Carbon Rules */
+      --outline: #8d8d8d;
+      --outline-variant: #e0e0e0;
+
+      /* Carbon Accents */
+      --primary: #0f62fe;
+      --on-primary: #ffffff;
+      --primary-container: #d0e2ff;
+      --on-primary-container: #161616;
+      --secondary: #6f6f6f;
+      --tertiary: #198038;
+      --error: #da1e28;
+      --on-error: #ffffff;
+
+      /* Carbon Data Series */
+      --data-1: #0f62fe;
+      --data-2: #6929c4;
+      --data-3: #005d5d;
+      --data-4: #9f1853;
+      --data-context: #8d8d8d;
+
+      /* Semantic Tokens */
+      --positive: #198038;
+      --positive-container: #defbe6;
+      --warning: #8e6a00;
+      --warning-container: #fcf4d6;
+      --error-container: #fff1f1;
+      --focus: #0f62fe;
+
+      /* Fonts (Thai-first with IBM Plex Sans + IBM Plex Mono) */
+      --font-headline: 'Noto Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-body: 'Noto Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-label: 'IBM Plex Mono', 'Noto Sans Thai', monospace;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.25rem;
+      --rounded-full: 0.75rem;
+
+      /* Style Effects */
+      --shadow-1: 0 2px 6px rgb(0 0 0 / 0.1);
+      --shadow-2: 0 4px 12px rgb(0 0 0 / 0.12);
+      --rule: 1px solid var(--outline-variant);
+      --field-rule: 1px solid var(--outline);
+      --indicator: 2px solid var(--primary);
+
+      /* Type Scale (Narrative / Teaching Deck) */
+      --display-size: clamp(1.85rem, 1.3rem + 1.8vw, 2.75rem);
+      --headline-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+      --body-size: clamp(0.95rem, 0.92rem + 0.18vw, 1.0625rem);
+      --label-size: 0.75rem;
+
+      /* Spacing Scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .deck-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-md) var(--space-lg) var(--space-2xl);
+      display: grid;
+      gap: var(--space-lg);
+    }
+    .deck-shell * { min-width: 0; }
+
+    /* Top Course Bar (Static Header) */
+    .deck-header {
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--space-md);
+    }
+    .course-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .mono-kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .thai-kicker {
+      font-family: var(--font-body);
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .deck-title-bar {
+      font-family: var(--font-headline);
+      font-size: var(--subhead-size);
+      font-weight: 600;
+      margin: 0;
+      color: var(--on-surface);
+    }
+
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .slide-counter {
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0 var(--space-sm);
+      color: var(--on-surface);
+    }
+
+    /* Buttons (Carbon Rectangular) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: 0;
+      border: 1px solid transparent;
+      font-weight: 500;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--primary), var(--on-surface) 22%);
+    }
+    .btn-secondary {
+      background: var(--background);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .btn-ghost {
+      background: var(--surface-container);
+      color: var(--on-surface);
+      border-color: var(--outline-variant);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--surface-container-high);
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-sm {
+      min-height: 40px;
+      padding: var(--space-xs) var(--space-md);
+      font-size: 0.8125rem;
+    }
+
+    /* Progress Strip & Slide Index Bar */
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--surface-container-high);
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 8.33%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    .slide-nav-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 2px;
+      background: var(--outline-variant);
+      border: var(--rule);
+    }
+    .nav-pill {
+      background: var(--background);
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: var(--space-sm) var(--space-sm);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-height: 48px;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .nav-pill:hover {
+      background: var(--surface-container);
+    }
+    .nav-pill.is-active {
+      background: var(--surface-container);
+      border-bottom: var(--indicator);
+    }
+    .nav-pill-num {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      color: var(--on-surface-variant);
+    }
+    .nav-pill.is-active .nav-pill-num {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .nav-pill-title {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--on-surface);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Slide Containers */
+    .slides-stage {
+      display: grid;
+      gap: var(--space-xl);
+    }
+    .slide {
+      display: none;
+      background: var(--background);
+      border: var(--rule);
+      padding: var(--space-xl);
+      animation: slideEnter var(--dur-short) var(--ease-out);
+    }
+    .slide.is-active {
+      display: block;
+    }
+    .slides-stage.view-all .slide {
+      display: block;
+    }
+
+    @keyframes slideEnter {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+    .slide-number-tag {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--primary);
+      font-weight: 600;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      padding: 2px 10px;
+      border-radius: var(--rounded-full);
+    }
+    .slide-topic-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Headlines (Carbon Light / Semibold Split) */
+    .display-title {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 300;
+      line-height: 1.2;
+      margin: 0 0 var(--space-md) 0;
+      letter-spacing: 0;
+    }
+    .display-title strong { font-weight: 600; }
+
+    .slide-headline {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 300;
+      line-height: 1.25;
+      margin: 0 0 var(--space-sm) 0;
+      letter-spacing: 0;
+    }
+    .slide-headline strong { font-weight: 600; }
+
+    .slide-lede {
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      margin: 0 0 var(--space-lg) 0;
+      max-width: 65ch;
+      line-height: 1.55;
+    }
+
+    .section-subhead {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 var(--space-sm) 0;
+      color: var(--on-surface);
+    }
+
+    /* Carbon Flat Gray Layers */
+    .layer {
+      background: var(--surface-container);
+      border-radius: 0;
+      padding: var(--space-md);
+    }
+    .layer .layer {
+      background: var(--surface-container-high);
+    }
+    .layer-bordered {
+      background: var(--surface-container);
+      border-left: 3px solid var(--primary);
+      padding: var(--space-md);
+    }
+    .layer-positive {
+      background: var(--surface-container);
+      border-left: 3px solid var(--positive);
+      padding: var(--space-md);
+    }
+    .layer-error {
+      background: var(--surface-container);
+      border-left: 3px solid var(--error);
+      padding: var(--space-md);
+    }
+    .layer-warning {
+      background: var(--surface-container);
+      border-left: 3px solid var(--warning);
+      padding: var(--space-md);
+    }
+
+    /* Carbon Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+    .grid-7-5 {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--space-lg);
+    }
+    .grid-5-7 {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-lg);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    /* Key Metric Tiles */
+    .metric-tile {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .metric-tile.key-tile {
+      border-bottom: var(--indicator);
+    }
+    .metric-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.04em;
+    }
+    .metric-value {
+      font-family: var(--font-label);
+      font-size: 1.85rem;
+      font-weight: 300;
+      color: var(--on-surface);
+      line-height: 1.15;
+    }
+    .metric-note {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Tags & Status Labels */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: var(--rounded-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      white-space: nowrap;
+    }
+    .tag-pass {
+      background: var(--positive-container);
+      color: var(--positive);
+    }
+    .tag-fail {
+      background: var(--error-container);
+      color: var(--error);
+    }
+    .tag-warn {
+      background: var(--warning-container);
+      color: var(--warning);
+    }
+    .tag-neutral {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+
+    /* Tables (Carbon Zebra) */
+    .table-wrap {
+      overflow-x: auto;
+      border-top: var(--rule);
+      border-bottom: var(--rule);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+    th {
+      background: var(--surface-container-high);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      padding: var(--space-sm) var(--space-md);
+      color: var(--on-surface);
+      white-space: nowrap;
+    }
+    td {
+      padding: var(--space-sm) var(--space-md);
+      border-top: var(--rule);
+      vertical-align: top;
+    }
+    tbody tr:nth-child(even) {
+      background: var(--surface-container);
+    }
+    tbody tr.is-selected {
+      background: var(--primary-container);
+    }
+    .num {
+      text-align: right;
+      font-family: var(--font-label);
+    }
+
+    /* Form Controls (Carbon Bottom-Ruled) */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+    }
+    .field-input, .field-select {
+      height: 40px;
+      background: var(--surface-container);
+      border: 0;
+      border-bottom: var(--field-rule);
+      padding: 0 var(--space-md);
+      border-radius: var(--rounded);
+      width: 100%;
+    }
+    .field-select {
+      padding-right: var(--space-xl);
+    }
+    .field-input:focus, .field-select:focus {
+      outline: 2px solid var(--focus);
+      outline-offset: -2px;
+    }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: flex-end;
+    }
+
+    /* Code Blocks */
+    pre.code-block {
+      background: var(--surface-container);
+      border-left: 3px solid var(--on-surface);
+      padding: var(--space-md);
+      margin: 0;
+      overflow-x: auto;
+      font-family: var(--font-label);
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      color: var(--on-surface);
+    }
+
+    /* Interactive Lists & Stepper */
+    .interactive-list {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .list-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--surface-container);
+      border: 0;
+      border-left: 3px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .list-btn:hover {
+      background: var(--surface-container-high);
+    }
+    .list-btn.is-active {
+      background: var(--primary-container);
+      border-left-color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Checklist */
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container);
+      cursor: pointer;
+      min-height: 44px;
+    }
+    .check-item:hover {
+      background: var(--surface-container-high);
+    }
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* Chart Container */
+    .chart-box {
+      position: relative;
+      min-height: 290px;
+      height: 290px;
+      width: 100%;
+      background: var(--surface-container);
+      padding: var(--space-md);
+    }
+
+    /* Inline SVG Schematic */
+    .pos-schematic {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: var(--surface-container);
+      padding: var(--space-sm);
+    }
+    .svg-node {
+      cursor: pointer;
+      transition: opacity var(--dur-micro) var(--ease-out);
+    }
+    .svg-node:hover { opacity: 0.85; }
+
+    /* Bottom Footer Nav */
+    .slide-footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: var(--rule);
+      padding-top: var(--space-md);
+      margin-top: var(--space-xl);
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+    .speaker-note {
+      background: var(--surface-container);
+      padding: var(--space-sm) var(--space-md);
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      border-left: 2px solid var(--outline);
+      margin-top: var(--space-md);
+    }
+
+    /* Utility spacing */
+    .stack-sm { display: grid; gap: var(--space-sm); }
+    .stack-md { display: grid; gap: var(--space-md); }
+    .stack-lg { display: grid; gap: var(--space-lg); }
+    .inline-row { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; }
+    .muted { color: var(--on-surface-variant); font-size: 0.875rem; }
+    .mono { font-family: var(--font-label); }
+
+    @media (max-width: 820px) {
+      .grid-2, .grid-7-5, .grid-5-7 {
+        grid-template-columns: 1fr;
+      }
+      .slide {
+        padding: var(--space-lg) var(--space-md);
+      }
+    }
+    @media (max-width: 640px) {
+      .deck-shell {
+        padding: var(--space-sm);
+      }
+      .slide-nav-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .deck-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-shell">
+    <!-- Static Course Header -->
+    <header class="deck-header">
+      <div class="course-meta">
+        <span class="mono-kicker"><a href="../../../courses/project2/index.html">1145 204</a> • WEEK 12 LECTURE DECK</span>
+        <h1 class="deck-title-bar">การทดสอบซอฟต์แวร์และการประกันคุณภาพสำหรับแพลตฟอร์ม Grocery POS</h1>
+      </div>
+      <div class="deck-controls">
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-view" onclick="toggleViewMode()">
+          แสดงทุกสไลด์ (Scroll View)
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-prev-top" onclick="prevSlide()">
+          ก่อนหน้า
+        </button>
+        <span class="slide-counter" id="slide-counter-top">01 / 12</span>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-next-top" onclick="nextSlide()">
+          ถัดไป
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <!-- 12-Slide Interactive Index Strip -->
+    <nav class="slide-nav-strip" aria-label="สารบัญสไลด์สัปดาห์ที่ 12">
+      <button type="button" class="nav-pill is-active" onclick="goToSlide(0)" data-slide-btn="0">
+        <span class="nav-pill-num">01 / OVERVIEW</span>
+        <span class="nav-pill-title">เป้าหมาย &amp; เกณฑ์สัปดาห์ 12</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(1)" data-slide-btn="1">
+        <span class="nav-pill-num">02 / POS SCOPE</span>
+        <span class="nav-pill-title">สถาปัตยกรรม Grocery POS</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(2)" data-slide-btn="2">
+        <span class="nav-pill-num">03 / PYRAMID</span>
+        <span class="nav-pill-title">พีระมิดการทดสอบซอฟต์แวร์</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(3)" data-slide-btn="3">
+        <span class="nav-pill-num">04 / UNIT TEST</span>
+        <span class="nav-pill-title">Unit Testing &amp; TDD</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(4)" data-slide-btn="4">
+        <span class="nav-pill-num">05 / INTEGRATION</span>
+        <span class="nav-pill-title">Integration &amp; Concurrency</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(5)" data-slide-btn="5">
+        <span class="nav-pill-num">06 / TEST CASES</span>
+        <span class="nav-pill-title">การออกแบบ Test Cases</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(6)" data-slide-btn="6">
+        <span class="nav-pill-num">07 / ACCEPTANCE</span>
+        <span class="nav-pill-title">Acceptance &amp; PDPA Audit</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(7)" data-slide-btn="7">
+        <span class="nav-pill-num">08 / USABILITY</span>
+        <span class="nav-pill-title">Usability Testing ผู้ใช้จริง</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(8)" data-slide-btn="8">
+        <span class="nav-pill-num">09 / BUG TRACK</span>
+        <span class="nav-pill-title">Bug Tracking &amp; Triage</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(9)" data-slide-btn="9">
+        <span class="nav-pill-num">10 / METRICS</span>
+        <span class="nav-pill-title">QA Metrics &amp; AI Review</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(10)" data-slide-btn="10">
+        <span class="nav-pill-num">11 / RUBRIC</span>
+        <span class="nav-pill-title">เช็กลิสต์ส่งมอบ 25 คะแนน</span>
+      </button>
+      <button type="button" class="nav-pill" onclick="goToSlide(11)" data-slide-btn="11">
+        <span class="nav-pill-num">12 / SUMMARY</span>
+        <span class="nav-pill-title">สรุปและแหล่งอ้างอิง</span>
+      </button>
+    </nav>
+
+    <!-- Slides Stage -->
+    <main class="slides-stage" id="slides-stage">
+
+      <!-- SLIDE 1: Title & Week 12 Rubric -->
+      <section class="slide is-active" id="slide-0" aria-labelledby="s0-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 01 / 12</span>
+          <span class="slide-topic-label">1145 204 SOPHOMORE PROJECT • WEEK 12</span>
+        </div>
+
+        <h2 class="display-title" id="s0-title">
+          <strong>การทดสอบซอฟต์แวร์</strong> และการประกันคุณภาพ (QA)<br>สำหรับแพลตฟอร์ม Grocery POS
+        </h2>
+        <p class="slide-lede">
+          สัปดาห์ที่ 12 เปลี่ยนโฟกัสจาก “ซอฟต์แวร์ที่รันได้บนเครื่องผู้พัฒนา” สู่ “ระบบขายหน้าร้านที่เชื่อถือได้ในสถานการณ์จริง”
+          โดยออกแบบการทดสอบตั้งแต่ Unit Test, Integration Test, Test Case ที่เป็นระบบ ไปจนถึงการทดสอบการใช้งานกับผู้ใช้กลุ่มเป้าหมายและการวัดผล QA
+        </p>
+
+        <div class="grid-4" style="margin-bottom: var(--space-lg);">
+          <div class="metric-tile key-tile">
+            <span class="metric-label">RUBRIC DOMAIN 4</span>
+            <span class="metric-value">25 คะแนน</span>
+            <span class="metric-note">น้ำหนักคะแนนงานสัปดาห์ที่ 12 (Advisor 50% + Committee 50%)</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">EXCELLENT TIER</span>
+            <span class="metric-value">22–25</span>
+            <span class="metric-note">ครบทั้ง Unit, Integration, Test Log และ Usability Report</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">TARGET SYSTEM</span>
+            <span class="metric-value">Grocery POS</span>
+            <span class="metric-note">คิดเงิน ออกใบเสร็จ ตัดสต็อกอัตโนมัติ และแจ้งเตือน Reorder</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">CORE PRINCIPLE</span>
+            <span class="metric-value">Fast Feedback</span>
+            <span class="metric-note">ตรวจพบ Bug ตั้งแต่วินาทีที่เขียนโค้ด ไม่ใช่รอให้พังหน้าเคาน์เตอร์</span>
+          </div>
+        </div>
+
+        <div class="grid-7-5">
+          <div class="layer stack-sm">
+            <h3 class="section-subhead">เกณฑ์การประเมินด้านที่ 4: ความครอบคลุมของการทดสอบและ QA (สัปดาห์ที่ 12)</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ระดับคะแนน</th>
+                    <th>ช่วงคะแนน</th>
+                    <th>หลักฐานที่ต้องแสดงในการตรวจประเมิน</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="is-selected">
+                    <td><strong>ดีเยี่ยม</strong></td>
+                    <td class="num">22–25</td>
+                    <td>ออกแบบ Test Cases ครอบคลุมทั้ง Unit Test และ Integration Test มีบันทึก Test Results Log ความครอบคลุมสูง และมีรายงาน Usability Testing จากผู้ใช้จริงพร้อมแนวทางปรับปรุงที่ชัดเจน</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ดี</strong></td>
+                    <td class="num">18–21</td>
+                    <td>มี Test Cases และ Test Results Log ครอบคลุมฟังก์ชันหลักของระบบ มีการสรุปผล Usability Testing เบื้องต้น</td>
+                  </tr>
+                  <tr>
+                    <td><strong>พอใช้</strong></td>
+                    <td class="num">14–17</td>
+                    <td>ทดสอบเฉพาะฟังก์ชันพื้นฐาน ขาด Test Cases ที่เป็นระบบ หรือรายงาน Usability Testing มีรายละเอียดไม่ครบถ้วน</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ปรับปรุง</strong></td>
+                    <td class="num">0–13</td>
+                    <td>ขาดการทดสอบตามหลักการ QA ไม่มีเอกสาร Test Cases หรือผลการทดสอบระบบ</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="layer-bordered stack-sm">
+            <span class="thai-kicker">วัตถุประสงค์การเรียนรู้ประจำสัปดาห์</span>
+            <h3 class="section-subhead">หลังจบคาบเรียนนี้นักศึกษาจะสามารถ:</h3>
+            <div class="stack-sm">
+              <div class="layer"><strong>1. แยกบทบาทและเขียน Test Suite</strong> ทั้ง Unit Test (แบบแยกส่วนด้วย Mock/In-Memory) และ Integration Test สำหรับธุรกรรม POS</div>
+              <div class="layer"><strong>2. ออกแบบ Test Cases</strong> ด้วย Boundary Value และ Negative Cases พร้อมบันทึก Test Results Log</div>
+              <div class="layer"><strong>3. ดำเนินการ Usability Testing</strong> กับแคชเชียร์/เจ้าของร้านจริง และจัดการ Bug บน GitHub Projects</div>
+              <div class="layer"><strong>4. อ่านค่า QA Metrics</strong> เพื่อประเมินความพร้อมก่อนขึ้น Production/Cloud</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Grocery POS Architecture & Testing Scope -->
+      <section class="slide" id="slide-1" aria-labelledby="s1-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 02 / 12</span>
+          <span class="slide-topic-label">POS ARCHITECTURE &amp; RISK SURFACE</span>
+        </div>
+
+        <h2 class="slide-headline" id="s1-title">
+          <strong>โครงสร้างฐานข้อมูลและจุดเสี่ยง</strong> ของแพลตฟอร์ม Grocery POS
+        </h2>
+        <p class="slide-lede">
+          จากโครงสร้างโครงงานปี 2 ระบบ POS ร้านค้าปลีกมีองค์ประกอบที่พึ่งพากันสูง ตั้งแต่หน้าจอขาย ฐานข้อมูลเชิงสัมพันธ์ 6 ตารางหลัก ไปจนถึงการตัดสต็อกแบบเรียลไทม์ คลิกแต่ละชั้นด้านซ้ายเพื่อสำรวจความเสี่ยงและประเภทการทดสอบที่ต้องใช้
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack-md">
+            <svg class="pos-schematic" viewBox="0 0 640 340" role="img" aria-label="แผนภาพสถาปัตยกรรม Grocery POS และจุดทดสอบ">
+              <!-- Layer 1: UI / Cashier -->
+              <g class="svg-node" onclick="selectPosLayer('ui')">
+                <rect x="20" y="18" width="600" height="62" fill="var(--background)" stroke="var(--primary)" stroke-width="2"></rect>
+                <text x="38" y="44" font-family="IBM Plex Mono, Noto Sans Thai, sans-serif" font-size="13" font-weight="600" fill="var(--primary)">LAYER 1: POS ORDER SCREEN &amp; CASHIER UI</text>
+                <text x="38" y="65" font-family="Noto Sans Thai, sans-serif" font-size="12" fill="var(--on-surface)">สแกนบาร์โค้ด • ปรับจำนวนสินค้า • เลือกความหวาน/ตัวเลือก • รับชำระ (Cash / PromptPay / Credit Card)</text>
+              </g>
+
+              <!-- Arrow 1 -> 2 -->
+              <line x1="320" y1="80" x2="320" y2="104" stroke="var(--on-surface)" stroke-width="1.5"></line>
+              <polygon points="315,98 325,98 320,106" fill="var(--on-surface)"></polygon>
+
+              <!-- Layer 2: Business Logic -->
+              <g class="svg-node" onclick="selectPosLayer('logic')">
+                <rect x="20" y="106" width="290" height="84" fill="var(--background)" stroke="var(--on-surface)" stroke-width="1.5"></rect>
+                <text x="34" y="130" font-family="IBM Plex Mono, sans-serif" font-size="12" font-weight="600" fill="var(--on-surface)">LAYER 2A: ORDER &amp; PRICING ENGINE</text>
+                <text x="34" y="150" font-family="Noto Sans Thai, sans-serif" font-size="11.5" fill="var(--on-surface-variant)">คำนวณ subtotal, VAT, ส่วนลด, เงินทอน</text>
+                <text x="34" y="170" font-family="Noto Sans Thai, sans-serif" font-size="11.5" fill="var(--on-surface-variant)">ออกใบเสร็จ &amp; ตรวจสอบสถานะ Order</text>
+              </g>
+
+              <g class="svg-node" onclick="selectPosLayer('inventory')">
+                <rect x="330" y="106" width="290" height="84" fill="var(--background)" stroke="var(--data-2)" stroke-width="1.5"></rect>
+                <text x="344" y="130" font-family="IBM Plex Mono, sans-serif" font-size="12" font-weight="600" fill="var(--data-2)">LAYER 2B: INVENTORY &amp; ALERT</text>
+                <text x="344" y="150" font-family="Noto Sans Thai, sans-serif" font-size="11.5" fill="var(--on-surface-variant)">ตัดสต็อกอัตโนมัติ (Concurrency Risk)</text>
+                <text x="344" y="170" font-family="Noto Sans Thai, sans-serif" font-size="11.5" fill="var(--on-surface-variant)">แจ้งเตือนเมื่อ stock &lt;= reorder_level</text>
+              </g>
+
+              <!-- Arrows 2 -> 3 -->
+              <line x1="165" y1="190" x2="165" y2="218" stroke="var(--on-surface)" stroke-width="1.5"></line>
+              <polygon points="160,212 170,212 165,220" fill="var(--on-surface)"></polygon>
+              <line x1="475" y1="190" x2="475" y2="218" stroke="var(--on-surface)" stroke-width="1.5"></line>
+              <polygon points="470,212 480,212 475,220" fill="var(--on-surface)"></polygon>
+
+              <!-- Layer 3: Relational DB & PDPA -->
+              <g class="svg-node" onclick="selectPosLayer('db')">
+                <rect x="20" y="220" width="600" height="100" fill="var(--background)" stroke="var(--data-3)" stroke-width="1.5"></rect>
+                <text x="38" y="244" font-family="IBM Plex Mono, sans-serif" font-size="12.5" font-weight="600" fill="var(--data-3)">LAYER 3: RELATIONAL DB SCHEMA &amp; PDPA COMPLIANCE</text>
+                <text x="38" y="268" font-family="IBM Plex Mono, sans-serif" font-size="11" fill="var(--on-surface)">Users(user_id, role_enum) • Categories • Products(price, category_id)</text>
+                <text x="38" y="287" font-family="IBM Plex Mono, sans-serif" font-size="11" fill="var(--on-surface)">Inventory(stock_quantity, unit, reorder_level) • Orders • Order_Items</text>
+                <text x="38" y="307" font-family="Noto Sans Thai, sans-serif" font-size="11.5" fill="var(--on-surface-variant)">คลิกที่กล่องใดก็ได้เพื่อดูรายละเอียดการทดสอบที่เหมาะสม →</text>
+              </g>
+            </svg>
+
+            <div class="inline-row">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="selectPosLayer('ui')">1. หน้าจอขาย (UI)</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="selectPosLayer('logic')">2. คำนวณราคา (Order Logic)</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="selectPosLayer('inventory')">3. ตัดสต็อก (Inventory)</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="selectPosLayer('db')">4. ฐานข้อมูล &amp; PDPA</button>
+            </div>
+          </div>
+
+          <div class="layer-bordered stack-md" id="pos-layer-detail">
+            <span class="tag" id="pos-layer-badge">LAYER 1 • USABILITY &amp; E2E</span>
+            <h3 class="section-subhead" id="pos-layer-title">หน้าจอรับออเดอร์แคชเชียร์ (POS Order Screen)</h3>
+            <p id="pos-layer-desc" style="margin: 0;">
+              จุดสัมผัสแรกของผู้ใช้ (แคชเชียร์ร้านชำ/มินิมาร์ท) ต้องรองรับการสแกนบาร์โค้ดต่อเนื่อง การค้นหาสินค้าไม่มีบาร์โค้ด (เช่น ผัก ผลไม้) และการกดชำระเงินได้เร็วผิดพลาดน้อยที่สุด
+            </p>
+            <div class="layer stack-sm">
+              <span class="metric-label">ความเสี่ยงที่พบบ่อย (COMMON BUGS)</span>
+              <div id="pos-layer-risks">กดปุ่มเพิ่มจำนวนซ้ำแล้วรายการเบิ้ล, ปุ่มเล็กเกินไปบนจอสัมผัส, ระบบค้างเมื่อเครื่องสแกนส่งอักขระ Enter เร็วเกินไป</div>
+            </div>
+            <div class="layer stack-sm">
+              <span class="metric-label">การทดสอบที่ต้องใช้ (RECOMMENDED TESTS)</span>
+              <div id="pos-layer-tests">Usability Testing กับแคชเชียร์จริง (วัดเวลาต่อ 1 บิล) + Acceptance Test (ATDD) + Boundary Test ช่องกรอกจำนวน</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Testing Pyramid -->
+      <section class="slide" id="slide-2" aria-labelledby="s2-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 03 / 12</span>
+          <span class="slide-topic-label">TESTING STRATEGY &amp; PYRAMID</span>
+        </div>
+
+        <h2 class="slide-headline" id="s2-title">
+          <strong>พีระมิดการทดสอบซอฟต์แวร์</strong> (The Testing Pyramid)
+        </h2>
+        <p class="slide-lede">
+          ทีมวิศวกรรมซอฟต์แวร์ไม่ควรพึ่งการคลิกทดสอบด้วยมือทั้งหมด (Ice-Cream Cone Anti-pattern) เพราะช้าและเกิดช่องว่างของ Regression Suite มากขึ้นเรื่อยๆ ตามจำนวนฟีเจอร์ ลองปรับสัดส่วนชุดทดสอบด้านขวาเพื่อเปรียบเทียบผลลัพธ์
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack-md">
+            <div class="chart-box" id="pyramid-chart-wrap" style="min-height: 290px;">
+              <canvas id="pyramid-chart" aria-label="กราฟเปรียบเทียบสัดส่วนการทดสอบและผลกระทบ"></canvas>
+            </div>
+            <div class="grid-3">
+              <div class="layer-positive">
+                <span class="metric-label">UNIT TESTS (ฐาน 60–70%)</span>
+                <div class="muted">ทดสอบฟังก์ชันคำนวณราคา ส่วนลด เงินทอน ในระดับมิลลิวินาทีด้วย In-Memory / Mock</div>
+              </div>
+              <div class="layer-bordered">
+                <span class="metric-label">INTEGRATION (กลาง 20–30%)</span>
+                <div class="muted">ทดสอบ API เชื่อม DB จริง การตัดสต็อก Transaction และการเตือน Reorder</div>
+              </div>
+              <div class="layer-warning">
+                <span class="metric-label">E2E / USABILITY (ยอด 10%)</span>
+                <div class="muted">ทดสอบ flow ขายหน้าร้านครบวงจร และ Usability Testing กับผู้ใช้เป้าหมาย</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="layer stack-md">
+            <h3 class="section-subhead">จำลองกลยุทธ์การทดสอบ (Strategy Simulator)</h3>
+            <div class="inline-row">
+              <button type="button" class="btn btn-primary btn-sm" onclick="setPyramidPreset('balanced')">Healthy Pyramid (70/20/10)</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="setPyramidPreset('icecream')">Ice-Cream Cone (10/20/70)</button>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="slider-unit">สัดส่วน Unit Tests (%): <span id="lbl-unit-pct" class="mono">70%</span></label>
+              <input type="range" id="slider-unit" min="10" max="85" value="70" oninput="updatePyramidSim(this.value)">
+            </div>
+
+            <div class="grid-2">
+              <div class="metric-tile key-tile">
+                <span class="metric-label">CI PIPELINE TIME</span>
+                <span class="metric-value" id="sim-ci-time">1.8 นาที</span>
+                <span class="metric-note">เวลาประมวลผลทุกครั้งที่ Push โค้ด</span>
+              </div>
+              <div class="metric-tile">
+                <span class="metric-label">REGRESSION CONFIDENCE</span>
+                <span class="metric-value" id="sim-confidence">92%</span>
+                <span class="metric-note">โอกาสจับ Bug ก่อนส่งมอบให้ลูกค้า</span>
+              </div>
+            </div>
+
+            <div class="layer-bordered" id="sim-verdict">
+              <strong>ผลวิเคราะห์:</strong> สมดุลดีเยี่ยม — Unit Test รันเร็วและแยกส่วนปัญหาได้แม่นยำ ขณะที่ Integration และ Usability Test ตรวจสอบรอยต่อสำคัญของ POS โดยไม่เป็นคอขวด
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Unit Testing & TDD -->
+      <section class="slide" id="slide-3" aria-labelledby="s3-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 04 / 12</span>
+          <span class="slide-topic-label">UNIT TESTING • TDD • MOCK OBJECTS</span>
+        </div>
+
+        <h2 class="slide-headline" id="s3-title">
+          <strong>Unit Testing &amp; Test Isolation</strong> ด้วย Mock / In-Memory Gateway
+        </h2>
+        <p class="slide-lede">
+          อ้างอิงแนวคิดจาก Robert C. Martin: การเขียน Unit Test ก่อนหรือคู่กับโค้ด (Red → Green → Refactor) บังคับให้เราแยก Business Logic ออกจากฐานข้อมูลจริงได้ ด้วยการใช้ Mock Object หรือ <span class="mono">InMemoryProductGateway</span> ทำให้ทดสอบระบบ POS ได้รวดเร็วโดยไม่ต้องรอต่อ Database ทุกครั้ง
+        </p>
+
+        <div class="grid-5-7">
+          <div class="stack-md">
+            <div class="layer stack-sm">
+              <span class="metric-label">กฎ 3 ข้อของ TDD</span>
+              <ol style="margin: 0; padding-left: 1.25rem;">
+                <li><strong>ห้ามเขียน Production Code</strong> จนกว่าจะมี Unit Test ที่ Fail (Red)</li>
+                <li><strong>เขียน Test เท่าที่จำเป็น</strong> ให้พอล้มเหลวหรือคอมไพล์ไม่ผ่าน</li>
+                <li><strong>เขียน Production Code เท่าที่จำเป็น</strong> เพื่อทำให้ Test ผ่าน (Green) แล้วจึง Refactor</li>
+              </ol>
+            </div>
+
+            <pre class="code-block"><code>// ตัวอย่างโครงสร้าง Unit Test (Isolated Order Logic)
+function calculateLineSubtotal(price, qty, discountPct = 0) {
+  if (qty &lt;= 0) throw new Error('Invalid quantity');
+  const raw = price * qty * (1 - discountPct / 100);
+  return Math.round(raw * 100) / 100;
+}
+
+// ใช้ InMemoryInventory แทน Real SQL DB เพื่อความเร็ว
+test('TC-U01: คำนวณราคาน้ำมันพืช 2 ขวด ลด 10%', () =&gt; {
+  expect(calculateLineSubtotal(55, 2, 10)).toBe(99.00);
+});</code></pre>
+          </div>
+
+          <div class="layer stack-md">
+            <div class="inline-row" style="justify-content: space-between;">
+              <div>
+                <span class="metric-label">INTERACTIVE POS UNIT TEST LAB</span>
+                <h3 class="section-subhead" style="margin-bottom: 0;">ทดลองจำลอง Bug และรัน Unit Test Suite</h3>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="runUnitTests()">
+                รัน Unit Tests (4 Cases)
+              </button>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="select-unit-fault">เลือกสถานะโค้ด POS (Inject Fault to Test Detection)</label>
+              <select id="select-unit-fault" class="field-select" onchange="runUnitTests()">
+                <option value="clean">โค้ดสมบูรณ์ (Clean Implementation — ผ่านทุกเงื่อนไข)</option>
+                <option value="neg_qty">Bug A: ลืมเช็ก qty &lt;= 0 (ลูกค้าใส่จำนวนติดลบแล้วเงินลด)</option>
+                <option value="float_bug">Bug B: ไม่ปัดเศษทศนิยม (Floating-Point Precision 98.99999)</option>
+                <option value="stock_offbyone">Bug C: เงื่อนไข Reorder ใช้ &lt; แทน &lt;= (ไม่เตือนเมื่อถึงจุดสั่งซื้อ)</option>
+              </select>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test ID</th>
+                    <th>กรณีทดสอบ (Unit Specification)</th>
+                    <th>Expected</th>
+                    <th>Actual</th>
+                    <th>ผลลัพธ์</th>
+                  </tr>
+                </thead>
+                <tbody id="unit-test-tbody"></tbody>
+              </table>
+            </div>
+
+            <div class="layer-positive" id="unit-test-summary">
+              ผลการรัน: 4 / 4 ผ่านทั้งหมด (Execution time: 4 ms • In-Memory Mode)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Integration Testing & Concurrency -->
+      <section class="slide" id="slide-4" aria-labelledby="s4-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 05 / 12</span>
+          <span class="slide-topic-label">INTEGRATION TESTING • DATABASE TRANSACTIONS</span>
+        </div>
+
+        <h2 class="slide-headline" id="s4-title">
+          <strong>Integration Testing</strong> และการป้องกันสต็อกตัดขนานพร้อมกัน
+        </h2>
+        <p class="slide-lede">
+          Unit Test ยืนยันว่าฟังก์ชันย่อยถูกต้อง แต่ไม่สามารถจับปัญหาเมื่อ UI, API, Payment และ Database ทำงานร่วมกัน โดยเฉพาะความเสี่ยงสำคัญในเอกสารโครงงาน: <strong>ปัญหาสต็อกตัดขนานพร้อมกันเมื่อแคชเชียร์หลายจุดสั่งซื้อสินค้าชิ้นสุดท้ายพร้อมกัน (Race Condition)</strong>
+        </p>
+
+        <div class="grid-7-5">
+          <div class="layer stack-md">
+            <div class="inline-row" style="justify-content: space-between;">
+              <div>
+                <span class="metric-label">CONCURRENT POS INTEGRATION SIMULATOR</span>
+                <h3 class="section-subhead" style="margin-bottom: 0;">จำลองเครื่อง POS #1 และ POS #2 ขายสินค้าชิ้นสุดท้ายพร้อมกัน</h3>
+              </div>
+              <div class="inline-row">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="simulateConcurrency('nolock')">ทดสอบแบบไม่มี Lock</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="simulateConcurrency('locked')">ทดสอบแบบ Atomic DB Lock</button>
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="metric-tile">
+                <span class="metric-label">INITIAL STOCK</span>
+                <span class="metric-value">1 ชิ้น</span>
+                <span class="metric-note">ข้าวสารหอมมะลิ 5 กก.</span>
+              </div>
+              <div class="metric-tile">
+                <span class="metric-label">FINAL STOCK IN DB</span>
+                <span class="metric-value" id="conc-final-stock">0 ชิ้น</span>
+                <span class="metric-note" id="conc-stock-note">รอการจำลอง</span>
+              </div>
+              <div class="metric-tile key-tile">
+                <span class="metric-label">INTEGRATION ASSERTION</span>
+                <span class="metric-value" id="conc-status">PASS</span>
+                <span class="metric-note" id="conc-status-note">เลือกโหมดทดสอบด้านบน</span>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>เวลา (ms)</th>
+                    <th>POS #1 (Cashier A)</th>
+                    <th>POS #2 (Cashier B)</th>
+                    <th>สถานะ Database</th>
+                  </tr>
+                </thead>
+                <tbody id="conc-log-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="stack-md">
+            <div class="layer stack-sm">
+              <h3 class="section-subhead">ขอบเขตของ Integration Test ใน Grocery POS</h3>
+              <ul style="margin: 0; padding-left: 1.25rem;">
+                <li><strong>API + Database:</strong> สร้าง <span class="mono">Orders</span> และ <span class="mono">Order_Items</span> พร้อมตัด <span class="mono">Inventory.stock_quantity</span> ใน Transaction เดียว (ถ้าขั้นตอนใดพังต้อง Rollback ทั้งหมด)</li>
+                <li><strong>Payment Webhook:</strong> จำลอง PromptPay QR สำเร็จ / หมดเวลา (Timeout) / ยิงซ้ำ (Idempotency) เพื่อไม่ให้สร้างใบเสร็จซ้ำ</li>
+                <li><strong>Low-Stock Alert Trigger:</strong> ตรวจสอบว่าการขายที่ทำให้ <span class="mono">stock_quantity &lt;= reorder_level</span> สร้างการแจ้งเตือนทันที</li>
+              </ul>
+            </div>
+
+            <pre class="code-block"><code>-- Risk Mitigation SQL (Atomic Conditional Update)
+UPDATE Inventory_Ingredients
+SET stock_quantity = stock_quantity - :qty
+WHERE ingredient_id = :id
+  AND stock_quantity &gt;= :qty;
+-- Integration Test ต้อง Assert ว่า affected_rows === 1
+-- สำหรับเครื่องแรก และ 0 (HTTP 409 Conflict) สำหรับเครื่องที่สอง</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: Test Case Design & Interactive Test Results Log -->
+      <section class="slide" id="slide-5" aria-labelledby="s5-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 06 / 12</span>
+          <span class="slide-topic-label">TEST CASE DESIGN • EP &amp; BVA • RESULTS LOG</span>
+        </div>
+
+        <h2 class="slide-headline" id="s5-title">
+          <strong>การออกแบบ Test Cases</strong> ด้วย Boundary Value และบันทึก Test Results Log
+        </h2>
+        <p class="slide-lede">
+          การได้คะแนนระดับดีเยี่ยมต้องแสดงหลักฐานการออกแบบ Test Case ที่เป็นระบบ (ไม่ใช่แค่ “ทดสอบแล้วใช้ได้”) โดยครอบคลุมค่าปกติ (Valid Equivalence), ค่าขอบ (Boundary Value Analysis) และกรณีผิดพลาด (Negative Case) นักศึกษาสามารถเพิ่มและส่งออก Test Results Log เป็น CSV ได้ด้านล่าง
+        </p>
+
+        <div class="grid-5-7">
+          <div class="layer stack-md">
+            <h3 class="section-subhead">เพิ่มรายการ Test Case ลงใน Log (บันทึกอัตโนมัติ)</h3>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label" for="tc-id">รหัส Test Case (ID)</label>
+                <input type="text" id="tc-id" class="field-input" value="TC-POS-005">
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="tc-type">เทคนิคการออกแบบ</label>
+                <select id="tc-type" class="field-select">
+                  <option value="BVA (Boundary)">BVA (ค่าขอบ)</option>
+                  <option value="Equivalence (Valid)">Equivalence (ค่าปกติ)</option>
+                  <option value="Negative / Error">Negative (ข้อมูลผิดพลาด)</option>
+                  <option value="Integration / DB">Integration (ฐานข้อมูล)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="tc-scenario">สถานการณ์ทดสอบ (Test Scenario &amp; Input)</label>
+              <input type="text" id="tc-scenario" class="field-input" placeholder="เช่น รับเงินสด 500 บาท สำหรับยอดซื้อ 500.00 บาท">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="tc-expected">ผลลัพธ์ที่คาดหวัง (Expected Result)</label>
+              <input type="text" id="tc-expected" class="field-input" placeholder="เช่น บันทึกสถานะ Paid เงินทอน = 0.00 บาท ออกใบเสร็จ">
+            </div>
+            <div class="form-row">
+              <div class="field-group" style="flex: 1; min-width: 140px;">
+                <label class="field-label" for="tc-status">สถานะ (Actual Status)</label>
+                <select id="tc-status" class="field-select">
+                  <option value="Pass">Pass (ผ่าน)</option>
+                  <option value="Fail">Fail (ไม่ผ่าน)</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="addTestCase()">เพิ่มเข้า Test Log</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="exportTestCasesCsv()">ดาวน์โหลด CSV</button>
+            </div>
+            <div id="tc-form-msg" class="muted" aria-live="polite"></div>
+          </div>
+
+          <div class="stack-sm">
+            <div class="inline-row" style="justify-content: space-between;">
+              <h3 class="section-subhead" style="margin: 0;">ตารางบันทึกผลการทดสอบ (POS Test Results Log)</h3>
+              <span class="tag" id="tc-count-badge">4 Cases</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>เทคนิค</th>
+                    <th>ข้อมูลนำเข้า / สถานการณ์</th>
+                    <th>ผลลัพธ์ที่คาดหวัง</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="tc-log-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: Acceptance Testing & PDPA Compliance -->
+      <section class="slide" id="slide-6" aria-labelledby="s6-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 07 / 12</span>
+          <span class="slide-topic-label">ACCEPTANCE TESTING (ATDD) • PDPA ETHICS</span>
+        </div>
+
+        <h2 class="slide-headline" id="s6-title">
+          <strong>Acceptance Testing</strong> และการตรวจสอบจริยธรรมข้อมูล (PDPA)
+        </h2>
+        <p class="slide-lede">
+          Acceptance Test คือ “ข้อตกลงที่รันตรวจสอบได้” ร่วมกับลูกค้า (Black-box) โดยเขียนด้วยภาษาธุรกิจ (Given-When-Then) พร้อมทั้งต้องตรวจการคุ้มครองข้อมูลส่วนบุคคล (PDPA) ตามข้อกำหนดรายวิชา เช่น การไม่เปิดเผยเบอร์โทร เลขบัตรประชาชน หรือ <span class="mono">password_hash</span> ในรายงานและชุดทดสอบ
+        </p>
+
+        <div class="grid-2">
+          <div class="layer stack-md">
+            <h3 class="section-subhead">Acceptance Criteria: User Story ของระบบ POS</h3>
+            <div class="layer-bordered">
+              <span class="metric-label">USER STORY (AS A CASHIER / BARISTA)</span>
+              <p style="margin: var(--space-xs) 0 0 0;">
+                “ในฐานะแคชเชียร์ ฉันต้องการคิดเงินและตัดสต็อกสินค้าอัตโนมัติพร้อมแจ้งเตือนสินค้าใกล้หมด เพื่อให้บริการลูกค้าได้รวดเร็วและสั่งเติมสินค้าทันเวลา”
+              </p>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Given (เงื่อนไขเริ่มต้น)</th>
+                    <th>When (การกระทำ)</th>
+                    <th>Then (ผลลัพธ์ที่ยอมรับได้)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>สินค้า <span class="mono">SKU-101</span> มีสต็อก 6 ชิ้น (<span class="mono">reorder_level = 5</span>)</td>
+                    <td>แคชเชียร์สแกนขาย 1 ชิ้น และชำระ PromptPay สำเร็จ</td>
+                    <td>สร้างใบเสร็จ สต็อกเหลือ 5 ชิ้น และขึ้นแจ้งเตือน Reorder ทันที</td>
+                  </tr>
+                  <tr>
+                    <td>มียอดรวมในตะกร้า 240 บาท</td>
+                    <td>ลูกค้ารับเงินสด 200 บาท (น้อยกว่ายอดรวม)</td>
+                    <td>ระบบปฏิเสธการปิดบิล และแจ้งข้อความให้รับเงินเพิ่ม 40 บาท</td>
+                  </tr>
+                  <tr>
+                    <td>ผู้จัดการส่งออกสรุปยอดขาย CSV</td>
+                    <td>เปิดไฟล์สรุปยอดขายประจำวัน</td>
+                    <td>ไม่พบเบอร์โทรศัพท์ รหัสบัตรประชาชน หรือข้อมูลระบุตัวตนลูกค้า (PDPA)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="layer stack-md">
+            <div class="inline-row" style="justify-content: space-between;">
+              <div>
+                <span class="metric-label">PDPA DATA SANITIZATION AUDITOR</span>
+                <h3 class="section-subhead" style="margin-bottom: 0;">ตรวจสอบ Payload ส่งออกรายงาน POS</h3>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="togglePdpaMode()">
+                สลับโหมด: <span id="pdpa-mode-label">ข้อมูลดิบ (เสี่ยง PDPA)</span>
+              </button>
+            </div>
+
+            <pre class="code-block" id="pdpa-json-preview"></pre>
+
+            <div id="pdpa-audit-result" class="layer-error">
+              <strong>ผลการตรวจ PDPA: ไม่ผ่าน (FAIL)</strong> — พบฟิลด์ข้อมูลส่วนบุคคล (<span class="mono">customer_phone</span>, <span class="mono">national_id</span>) และข้อมูลความลับ (<span class="mono">password_hash</span>) หลุดใน Dataset สรุปยอดขาย ต้องตัดออกหรือทำ Pseudonymization ก่อนส่งออก
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: Usability Testing with Target Users -->
+      <section class="slide" id="slide-7" aria-labelledby="s7-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 08 / 12</span>
+          <span class="slide-topic-label">USABILITY TESTING • TARGET USERS</span>
+        </div>
+
+        <h2 class="slide-headline" id="s7-title">
+          <strong>Usability Testing</strong> กับผู้ใช้เป้าหมายของร้านค้าปลีก
+        </h2>
+        <p class="slide-lede">
+          ซอฟต์แวร์ที่ผ่าน Unit Test 100% อาจยังใช้งานไม่ได้จริงหากแคชเชียร์หาปุ่มไม่เจอ การได้คะแนนระดับดีเยี่ยมต้องมีรายงาน Usability Testing จากผู้ใช้เป้าหมายจริง (เช่น แคชเชียร์ พนักงานขาย เจ้าของร้าน 3–5 คน) พร้อมข้อมูลเชิงปริมาณและแนวทางแก้ไขที่ชัดเจน
+        </p>
+
+        <div class="grid-5-7">
+          <div class="stack-md">
+            <div class="layer stack-sm">
+              <h3 class="section-subhead">ขั้นตอนและภารกิจทดสอบ (Task Scenarios)</h3>
+              <ul style="margin: 0; padding-left: 1.25rem;">
+                <li><strong>Task 1 (คิดเงินเร่งด่วน):</strong> สแกนสินค้า 4 รายการ + ค้นหาสินค้าไม่มีบาร์โค้ด 1 รายการ + ชำระ PromptPay (เกณฑ์เป้า: ≤ 45 วินาที)</li>
+                <li><strong>Task 2 (แก้ไขความผิดพลาด):</strong> ลดจำนวนสินค้าที่สแกนเกินและยกเลิกบิลก่อนรับเงิน (เกณฑ์เป้า: ≤ 15 วินาที, Error = 0)</li>
+                <li><strong>Task 3 (ตรวจสต็อก):</strong> เปิดดูรายการสินค้าที่ต่ำกว่า <span class="mono">reorder_level</span></li>
+              </ul>
+            </div>
+
+            <div class="layer-bordered stack-sm">
+              <span class="metric-label">เทคนิคการสังเกตและสัมภาษณ์ (อ้างอิงแนวทาง AUN-QA)</span>
+              <div class="stack-sm">
+                <div><strong>1. Think-Aloud &amp; Mirroring:</strong> ให้ผู้ทดลองพูดสิ่งที่คิดออกมา แล้วทวนคำพูดด้วยถ้อยคำใหม่เพื่อเช็กความเข้าใจ</div>
+                <div><strong>2. Using Silences:</strong> อย่าเพิ่งรีบช่วยเมื่อผู้ใช้หยุดคิด แยกให้ออกระหว่างความเงียบที่กำลังประมวลผลกับจุดที่ติดขัดจริง</div>
+                <div><strong>3. Acknowledging:</strong> พยักหน้าและรับฟังโดยไม่แก้ตัวแทนระบบหรือชี้นำคำตอบ</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="layer stack-md">
+            <h3 class="section-subhead">เครื่องมือบันทึกผล Usability Testing (Usability Session Logger)</h3>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label" for="ut-role">บทบาทผู้ใช้เป้าหมาย</label>
+                <select id="ut-role" class="field-select">
+                  <option value="แคชเชียร์หน้าร้าน">แคชเชียร์หน้าร้าน</option>
+                  <option value="เจ้าของร้าน / ผู้จัดการ">เจ้าของร้าน / ผู้จัดการ</option>
+                  <option value="พนักงานเติมสต็อก">พนักงานเติมสต็อก</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="ut-task">ภารกิจที่ทดสอบ</label>
+                <select id="ut-task" class="field-select">
+                  <option value="Task 1: คิดเงิน 5 รายการ + PromptPay">Task 1: คิดเงิน 5 รายการ + PromptPay</option>
+                  <option value="Task 2: แก้ไข/ยกเลิกรายการผิดพลาด">Task 2: แก้ไข/ยกเลิกรายการผิดพลาด</option>
+                  <option value="Task 3: ตรวจสอบแจ้งเตือน Reorder">Task 3: ตรวจสอบแจ้งเตือน Reorder</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid-3">
+              <div class="field-group">
+                <label class="field-label" for="ut-time">เวลาที่ใช้ (วินาที)</label>
+                <input type="number" id="ut-time" class="field-input" min="1" max="600" value="38">
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="ut-errors">จำนวนความผิดพลาด (ครั้ง)</label>
+                <input type="number" id="ut-errors" class="field-input" min="0" max="20" value="1">
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="ut-score">ความพึงพอใจ (1–5)</label>
+                <input type="number" id="ut-score" class="field-input" min="1" max="5" value="4">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field-group" style="flex: 1; min-width: 200px;">
+                <label class="field-label" for="ut-finding">ข้อสังเกตและแนวทางปรับปรุง</label>
+                <input type="text" id="ut-finding" class="field-input" placeholder="เช่น ปุ่มลบรายการอยู่ชิดปุ่มชำระเงิน ขยับแยกและขยายขนาดเป็น 48px">
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="addUsabilityRecord()">บันทึกผลทดสอบ</button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ผู้ใช้</th>
+                    <th>ภารกิจ</th>
+                    <th class="num">เวลา (วิ)</th>
+                    <th class="num">Errors</th>
+                    <th class="num">คะแนน</th>
+                    <th>แนวทางปรับปรุง</th>
+                  </tr>
+                </thead>
+                <tbody id="ut-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Bug Tracking & GitHub Workflow -->
+      <section class="slide" id="slide-8" aria-labelledby="s8-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 09 / 12</span>
+          <span class="slide-topic-label">BUG TRACKING • DEFECT LIFECYCLE</span>
+        </div>
+
+        <h2 class="slide-headline" id="s8-title">
+          <strong>การติดตามและจัดการข้อผิดพลาด</strong> (Bug Tracking &amp; GitHub Workflow)
+        </h2>
+        <p class="slide-lede">
+          เมื่อพบ Bug จากการทดสอบ ต้องบันทึกเป็น Issue ที่มีข้อมูลครบถ้วน (Steps to Reproduce, Expected vs Actual, Test Cases Checklist) และเชื่อมกับ Pull Request ผ่านบอร์ด <span class="mono">Todo → In Progress → Awaiting Review → Done</span>
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack-md">
+            <h3 class="section-subhead">บอร์ดคัดแยก Bug ของ Grocery POS (Interactive Defect Triage)</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Bug ID</th>
+                    <th>อาการที่พบ (Issue Summary)</th>
+                    <th>ระดับความรุนแรง (Severity)</th>
+                    <th>สถานะบน Board</th>
+                  </tr>
+                </thead>
+                <tbody id="bug-tbody"></tbody>
+              </table>
+            </div>
+
+            <div class="layer-bordered stack-sm" id="bug-detail-panel">
+              <span class="metric-label">SELECTED BUG REPORT PREVIEW</span>
+              <div id="bug-detail-text">คลิกปุ่มเปลี่ยนสถานะหรือ Severity ในตารางเพื่อจัดการลำดับความสำคัญของการแก้ Bug</div>
+            </div>
+          </div>
+
+          <div class="layer stack-md">
+            <h3 class="section-subhead">โครงสร้าง Bug Fix PR Template มาตรฐาน</h3>
+            <pre class="code-block"><code># Bug Fix Title: [BUG-104] ป้องกันสต็อกติดลบเมื่อขายพร้อมกัน
+
+### Issue Description
+เครื่อง POS 2 จุดสแกนสินค้าชิ้นสุดท้ายพร้อมกัน ทำให้ stock_quantity กลายเป็น -1
+
+### Steps to Reproduce
+1. ตั้งค่าสินค้า SKU-008 ให้ stock_quantity = 1
+2. กด Confirm Order จาก POS-01 และ POS-02 พร้อมกัน
+
+### Expected Behavior
+POS-01 สำเร็จ (stock = 0); POS-02 แจ้งเตือน "สินค้าหมด"
+
+### Solution &amp; Test Cases
+- [x] ใช้ Atomic UPDATE WHERE stock_quantity &gt;= qty
+- [x] เพิ่ม Integration Test จำลอง Concurrent Requests</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: QA Metrics & AI-Assisted Testing Governance -->
+      <section class="slide" id="slide-9" aria-labelledby="s9-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 10 / 12</span>
+          <span class="slide-topic-label">QA METRICS • AI-ASSISTED TESTING</span>
+        </div>
+
+        <h2 class="slide-headline" id="s9-title">
+          <strong>ตัวชี้วัดคุณภาพซอฟต์แวร์ (QA Metrics)</strong> และการกำกับดูแล AI Test Agents
+        </h2>
+        <p class="slide-lede">
+          “สิ่งที่วัดไม่ได้ ย่อมควบคุมไม่ได้” — ทีมควรติดตามตัวชี้วัดผลลัพธ์จริง (Outcome Metrics) มากกว่าจำนวนบรรทัดโค้ด และหากใช้ AI ช่วยเขียน Test Scripts ต้องตรวจทานคุณภาพโดยมนุษย์เสมอ (อ้างอิงผลวิจัย AI SDLC และ Hacon Test Engineering)
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack-md">
+            <div class="chart-box" id="metrics-chart-wrap" style="min-height: 290px;">
+              <canvas id="metrics-chart" aria-label="กราฟแนวโน้มความครอบคลุมการทดสอบและ Bug ที่หลุดรอด"></canvas>
+            </div>
+            <div class="grid-3">
+              <div class="metric-tile key-tile">
+                <span class="metric-label">PASS RATE (SPRINT 3)</span>
+                <span class="metric-value">96.4%</span>
+                <span class="metric-note">จาก 56 Unit + Integration Tests</span>
+              </div>
+              <div class="metric-tile">
+                <span class="metric-label">ESCAPED DEFECTS</span>
+                <span class="metric-value">1 เรื่อง</span>
+                <span class="metric-note">ลดลงจาก 9 เรื่องใน Sprint 1</span>
+              </div>
+              <div class="metric-tile">
+                <span class="metric-label">FEATURE LEAD TIME</span>
+                <span class="metric-value">3.2 วัน</span>
+                <span class="metric-note">60–80% ของเวลาเดิมคือรอ QA/Review</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-md">
+            <div class="layer stack-sm">
+              <h3 class="section-subhead">5 ตัวชี้วัดหลักที่ทีม Project ควรติดตาม</h3>
+              <ul style="margin: 0; padding-left: 1.25rem;">
+                <li><strong>Test Pass Rate &amp; Coverage:</strong> สัดส่วน Test Cases ที่ผ่านจริงบน CI</li>
+                <li><strong>Defect Density &amp; Escaped Defects:</strong> จำนวน Bug ที่หลุดไปถึงตอนสาธิต/ใช้งานจริง</li>
+                <li><strong>Change Failure Rate (CFR):</strong> % ของการ Deploy ที่ทำให้ระบบหลักพัง</li>
+                <li><strong>MTTR (Mean Time to Recovery):</strong> เวลาเฉลี่ยในการแก้ Bug และ Deploy ซ้ำ</li>
+                <li><strong>Agent Success Rate (กรณีใช้ AI):</strong> % ของ Test ที่ AI สร้างแล้วรันเขียวจริงบนระบบ พร้อมผ่านการตรวจความอ่านง่าย (Readability) และไม่มี Test Smells</li>
+              </ul>
+            </div>
+
+            <div class="layer-warning">
+              <strong>ข้อควรระวังเมื่อใช้ AI เขียน Test:</strong> อย่าดูแค่โค้ดที่ AI สร้าง “ดูดี” — วิศวกรต้องรีวิวว่า AI ไม่ได้เขียน Assertion หลอกๆ (เช่น <span class="mono">expect(true).toBe(true)</span>) และไม่ละเมิด PDPA ใน Test Data
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 11: Week 12 Action Plan & Deliverables Grader -->
+      <section class="slide" id="slide-10" aria-labelledby="s10-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 11 / 12</span>
+          <span class="slide-topic-label">DELIVERABLES CHECKLIST • SELF-ASSESSMENT</span>
+        </div>
+
+        <h2 class="slide-headline" id="s10-title">
+          <strong>เช็กลิสต์ส่งมอบงานสัปดาห์ที่ 12</strong> และประเมินระดับคะแนนคาดการณ์
+        </h2>
+        <p class="slide-lede">
+          ตรวจสอบหลักฐานการทดสอบทั้งหมดที่ทีม Grocery POS ต้องเตรียมส่งอาจารย์ที่ปรึกษาและคณะกรรมการ (บันทึกสถานะอัตโนมัติในเซสชันนี้)
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack-sm" id="rubric-checklist">
+            <label class="check-item">
+              <input type="checkbox" data-check-id="c1" onchange="updateRubricScore()">
+              <div>
+                <strong>1. ชุด Unit Tests สำหรับ Business Logic หลัก</strong>
+                <div class="muted">ทดสอบฟังก์ชันคำนวณราคา ส่วนลด เงินทอน และเงื่อนไข Reorder ด้วย Mock/In-Memory</div>
+              </div>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" data-check-id="c2" onchange="updateRubricScore()">
+              <div>
+                <strong>2. ชุด Integration Tests เชื่อมต่อ Database จริง</strong>
+                <div class="muted">ทดสอบการบันทึก Orders + Order_Items + ตัดสต็อกแบบ Atomic (ป้องกัน Race Condition)</div>
+              </div>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" data-check-id="c3" onchange="updateRubricScore()">
+              <div>
+                <strong>3. เอกสาร Test Cases &amp; Test Results Log</strong>
+                <div class="muted">มีกรณีขอบ (BVA), Negative Case, และบันทึกผล Pass/Fail พร้อมวันที่และผู้ทดสอบ</div>
+              </div>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" data-check-id="c4" onchange="updateRubricScore()">
+              <div>
+                <strong>4. รายงาน Usability Testing จากผู้ใช้เป้าหมายจริง (3–5 คน)</strong>
+                <div class="muted">มีข้อมูลเวลาที่ใช้ จำนวนความผิดพลาด คะแนนความพึงพอใจ และแผนปรับปรุง UI/UX ที่ชัดเจน</div>
+              </div>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" data-check-id="c5" onchange="updateRubricScore()">
+              <div>
+                <strong>5. ประวัติ Bug Tracking, Git Commits และ PDPA Check</strong>
+                <div class="muted">มีบันทึก Bug Issues / PR บน GitHub และตรวจสอบแล้วว่าไม่หลุดข้อมูลส่วนบุคคลใน Test Data</div>
+              </div>
+            </label>
+          </div>
+
+          <div class="layer stack-md">
+            <span class="metric-label">PROJECTED RUBRIC TIER (ด้านที่ 4: 25 คะแนน)</span>
+            <div class="metric-tile key-tile">
+              <span class="metric-label">ความพร้อมของทีม</span>
+              <span class="metric-value" id="rubric-projected-score">0 / 5 รายการ</span>
+              <span class="metric-note" id="rubric-tier-label">ระดับเริ่มต้น — ติ๊กหลักฐานที่ทำเสร็จแล้วทางซ้าย</span>
+            </div>
+            <div class="layer-bordered" id="rubric-advice">
+              <strong>คำแนะนำเพื่อคว้า 22–25 คะแนน:</strong> อย่าส่งเพียงภาพแคปหน้าจอว่า “รันได้” — ให้แนบตาราง Test Cases, Log ผลการรันอัตโนมัติ (GitHub Actions / Terminal Output) และสรุปก่อน–หลังการปรับปรุง UI จาก Usability Testing
+            </div>
+            <div class="inline-row">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="checkAllRubric(true)">ติ๊กครบทั้งหมด (ตัวอย่าง)</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="checkAllRubric(false)">ล้างการเลือก</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 12: Summary & Sources -->
+      <section class="slide" id="slide-11" aria-labelledby="s11-title">
+        <div class="slide-top-row">
+          <span class="slide-number-tag">SLIDE 12 / 12</span>
+          <span class="slide-topic-label">KEY TAKEAWAYS &amp; REFERENCES</span>
+        </div>
+
+        <h2 class="slide-headline" id="s11-title">
+          <strong>สรุปประเด็นสำคัญ</strong> สัปดาห์ที่ 12 และแหล่งอ้างอิงรายวิชา
+        </h2>
+        <p class="slide-lede">
+          คุณภาพของแพลตฟอร์ม Grocery POS ไม่ได้เกิดจากการ “ตรวจตอนจบ” แต่เกิดจากการออกแบบระบบให้ทดสอบได้ (Testability) ตั้งแต่วันแรก และยืนยันผลทั้งด้วยชุดทดสอบอัตโนมัติและผู้ใช้จริงหน้าร้าน
+        </p>
+
+        <div class="grid-2" style="margin-bottom: var(--space-lg);">
+          <div class="layer-positive stack-sm">
+            <span class="metric-label">TAKEAWAY 01 • CODE &amp; ISOLATION</span>
+            <h3 class="section-subhead" style="margin: 0;">Unit Test ช่วยแยก Business Logic ให้สะอาด</h3>
+            <p style="margin: 0;">การใช้ In-Memory Gateway / Mock Object ทำให้ทดสอบกฎการคิดเงินและสต็อกได้ในเสี้ยววินาทีและลดความเปราะบางของโค้ด</p>
+          </div>
+          <div class="layer-bordered stack-sm">
+            <span class="metric-label">TAKEAWAY 02 • TRANSACTIONS</span>
+            <h3 class="section-subhead" style="margin: 0;">Integration Test ป้องกันความล้มเหลวรอยต่อระบบ</h3>
+            <p style="margin: 0;">ปัญหาสต็อกตัดขนานพร้อมกัน (Concurrency) และ PromptPay Webhook ซ้ำซ้อน ต้องถูกดักจับด้วย Integration Test บน Database จริง</p>
+          </div>
+          <div class="layer-bordered stack-sm">
+            <span class="metric-label">TAKEAWAY 03 • HUMAN-CENTERED QA</span>
+            <h3 class="section-subhead" style="margin: 0;">Usability Testing คือบทพิสูจน์หน้าเคาน์เตอร์</h3>
+            <p style="margin: 0;">ให้แคชเชียร์และเจ้าของร้านจริงทำภารกิจสำคัญ สังเกตจุดติดขัดโดยไม่ชี้นำ แล้วแปลงปัญหาเป็นรายการแก้ไขที่วัดผลได้</p>
+          </div>
+          <div class="layer-warning stack-sm">
+            <span class="metric-label">TAKEAWAY 04 • MEASURABLE OUTCOMES</span>
+            <h3 class="section-subhead" style="margin: 0;">วัดผลด้วย Metrics และคุ้มครอง PDPA</h3>
+            <p style="margin: 0;">ติดตาม Pass Rate, Escaped Defects, Lead Time และตรวจความถูกต้องของ Test ที่สร้างจาก AI พร้อมลบข้อมูลส่วนบุคคลออกจาก Test Dataset เสมอ</p>
+          </div>
+        </div>
+
+        <div class="layer stack-sm">
+          <span class="metric-label">แหล่งอ้างอิงเนื้อหา (SOURCES &amp; COURSE MATERIALS)</span>
+          <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem; color: var(--on-surface-variant);">
+            <li>เอกสารแนวทางโครงงานรายวิชา (02 ตุ๊กตา project ปี 1–3) และเกณฑ์ประเมินความครอบคลุมของการทดสอบซอฟต์แวร์และการประกันคุณภาพ (ด้านที่ 4 สัปดาห์ที่ 12)</li>
+            <li>หลักสูตร วท.บ. วิทยาการข้อมูลและการประยุกต์ (มคอ.2) — รายวิชา 1145 204 Sophomore Project</li>
+            <li>Robert C. Martin — <em>Agile Principles, Patterns, and Practices in C#</em> (TDD, Test Isolation, InMemoryGateway, Acceptance Tests)</li>
+            <li>McMaster Research Software Development Team — <em>Using GitHub Projects for Agile</em> (Kanban Flow &amp; Bug Fix PR Template)</li>
+            <li>ASEAN University Network Quality Assurance (AUN-QA) — แนวทางการสัมภาษณ์และการฟังอย่างตั้งใจ (Mirroring, Using Silences, Acknowledging)</li>
+            <li>Port.io <em>AI SDLC: A Practical Guide to SDLC AI Agents</em>, Agile Analytics, และงานวิจัย <em>Human-AI Collaboration for Scaling Agile Regression Testing</em> (Hacon Study)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Bottom Slide Controls -->
+      <div class="slide-footer-nav">
+        <button type="button" class="btn btn-secondary" id="btn-prev-bottom" onclick="prevSlide()">
+          สไลด์ก่อนหน้า (Arrow Left)
+        </button>
+        <div class="inline-row">
+          <span class="slide-counter" id="slide-counter-bottom">01 / 12</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-reset-state" onclick="resetSavedWork(this)">
+            รีเซ็ตข้อมูลฝึกปฏิบัติ
+          </button>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-next-bottom" onclick="nextSlide()">
+          สไลด์ถัดไป (Arrow Right)
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================
+    // 1. State & Data Models (Template literals for safety)
+    // =========================================================
+    const TOTAL_SLIDES = 12;
+
+    const POS_LAYER_DATA = {
+      ui: {
+        badge: `LAYER 1 • USABILITY & E2E`,
+        title: `หน้าจอรับออเดอร์แคชเชียร์ (POS Order Screen)`,
+        desc: `จุดสัมผัสแรกของผู้ใช้ (แคชเชียร์ร้านชำ/มินิมาร์ท) ต้องรองรับการสแกนบาร์โค้ดต่อเนื่อง การค้นหาสินค้าไม่มีบาร์โค้ด (เช่น ผัก ผลไม้) และการกดชำระเงินได้เร็วและผิดพลาดน้อยที่สุด`,
+        risks: `กดปุ่มเพิ่มจำนวนซ้ำแล้วรายการเบิ้ล, ปุ่มเล็กเกินไปบนจอสัมผัส (< 44px), ระบบค้างเมื่อเครื่องสแกนบาร์โค้ดส่งอักขระ Enter เร็วเกินไป`,
+        tests: `Usability Testing กับแคชเชียร์จริง (วัดเวลาต่อ 1 บิล) + Acceptance Test (ATDD) + Boundary Test ช่องกรอกจำนวน`
+      },
+      logic: {
+        badge: `LAYER 2A • UNIT TESTING & TDD`,
+        title: `กลไกคำนวณยอดขาย ส่วนลด และเงินทอน (Order Engine)`,
+        desc: `หัวใจทางธุรกิจที่คำนวณ subtotal, VAT, ส่วนลดสมาชิก และเงินทอนสำหรับ PromptPay / Cash / Credit Card ต้องแม่นยำทุกทศนิยม`,
+        risks: `ปัญหา Floating-Point (เช่น 55.30 * 3 = 165.89999), อนุญาตให้กรอกจำนวนติดลบ (-1) จนยอดรวมลดลง, คำนวณเงินทอนผิดพลาด`,
+        tests: `Unit Tests แบบ Isolated ด้วย Mock/InMemoryProductGateway (Red-Green-Refactor) + Equivalence Partitioning`
+      },
+      inventory: {
+        badge: `LAYER 2B • INTEGRATION & CONCURRENCY`,
+        title: `ระบบตัดสต็อกอัตโนมัติและแจ้งเตือน Reorder`,
+        desc: `เชื่อมโยง Order_Items กับ Inventory_Ingredients เพื่อหักยอดคงเหลือทันทีที่ชำระเงิน และแจ้งเตือนเมื่อ stock_quantity <= reorder_level`,
+        risks: `ปัญหาสต็อกตัดขนานพร้อมกัน (Race Condition) เมื่อแคชเชียร์ 2 จุดขายสินค้าชิ้นสุดท้ายพร้อมกัน จนสต็อกติดลบ, การแจ้งเตือนตกหล่นเมื่อค่าเท่ากับจุดสั่งซื้อพอดี`,
+        tests: `Integration Test บน Transaction ของ Database + Concurrency Load Simulation + Boundary Test (reorder_level ± 1)`
+      },
+      db: {
+        badge: `LAYER 3 • DATABASE INTEGRITY & PDPA`,
+        title: `ฐานข้อมูลเชิงสัมพันธ์และจริยธรรมข้อมูล (PDPA)`,
+        desc: `ประกอบด้วย Users, Categories, Products, Inventory_Ingredients, Orders, Order_Items พร้อมมาตรการป้องกันข้อมูลส่วนบุคคลเมื่อส่งออกรายงานยอดขาย`,
+        risks: `Foreign Key ขาดเมื่อลบสินค้าที่เคยขายแล้ว, ข้อมูลเบอร์โทร/เลขบัตรประชาชนลูกค้าหรือ password_hash หลุดไปในไฟล์สรุปยอดขายหรือชุดข้อมูลทดสอบ`,
+        tests: `Database Gateway Test + Schema Integrity Test + PDPA Data Sanitization Audit ก่อน Export CSV`
+      }
+    };
+
+    const DEFAULT_TEST_CASES = [
+      {
+        id: `TC-POS-001`,
+        type: `Equivalence (Valid)`,
+        scenario: `สแกนบาร์โค้ดสินค้า 2 ชิ้น (55 บาท) ชำระ PromptPay`,
+        expected: `ยอดรวม 110.00 บาท บันทึก Order สถานะ Paid`,
+        status: `Pass`
+      },
+      {
+        id: `TC-POS-002`,
+        type: `BVA (Boundary)`,
+        scenario: `ขายสินค้าที่ stock_quantity = 6 (reorder_level = 5) จำนวน 1 ชิ้น`,
+        expected: `สต็อกเหลือ 5 ชิ้น และระบบแสดงแจ้งเตือน Reorder Alert`,
+        status: `Pass`
+      },
+      {
+        id: `TC-POS-003`,
+        type: `Negative / Error`,
+        scenario: `แคชเชียร์กรอกจำนวนสินค้า = 0 หรือ -2 ชิ้น`,
+        expected: `ปฏิเสธรายการ แจ้งข้อความ "จำนวนต้องมากกว่า 0"`,
+        status: `Pass`
+      },
+      {
+        id: `TC-POS-004`,
+        type: `Integration / DB`,
+        scenario: `POS #1 และ POS #2 กดยืนยันซื้อสินค้าชิ้นสุดท้ายพร้อมกัน`,
+        expected: `POS #1 สำเร็จ; POS #2 ได้รับแจ้ง "สต็อกไม่เพียงพอ" (ไม่ติดลบ)`,
+        status: `Fail`
+      }
+    ];
+
+    const DEFAULT_USABILITY_RECORDS = [
+      {
+        role: `แคชเชียร์หน้าร้าน`,
+        task: `Task 1: คิดเงิน 5 รายการ + PromptPay`,
+        time: 41,
+        errors: 1,
+        score: 4,
+        finding: `หาปุ่ม PromptPay เร็ว แต่สับสนปุ่มค้นหาสินค้าชั่งน้ำหนัก`
+      },
+      {
+        role: `เจ้าของร้าน / ผู้จัดการ`,
+        task: `Task 3: ตรวจสอบแจ้งเตือน Reorder`,
+        time: 18,
+        errors: 0,
+        score: 5,
+        finding: `เห็นรายการสีแดงชัด แต่อยากให้เรียงตามสินค้าใกล้หมดก่อน`
+      }
+    ];
+
+    const DEFAULT_BUGS = [
+      {
+        id: `BUG-104`,
+        summary: `สต็อกติดลบ (-1) เมื่อ 2 เครื่องคิดเงินขายสินค้าชิ้นสุดท้ายพร้อมกัน`,
+        severity: `Critical`,
+        status: `In Progress`,
+        detail: `พบในการทดสอบ Integration Test (TC-POS-004) — กำลังแก้ด้วย Atomic SQL UPDATE WHERE stock_quantity >= qty และเพิ่ม Regression Test`
+      },
+      {
+        id: `BUG-109`,
+        summary: `ยอดรวมแสดงทศนิยมเกิน (เช่น 165.899999 บาท) เมื่อใช้ส่วนลด %`,
+        severity: `High`,
+        status: `Awaiting Review`,
+        detail: `พบใน Unit Test — แก้ไขด้วยการปัดเศษ Math.round(val * 100) / 100 และเปิด Pull Request #42 รอเพื่อนร่วมทีม Review`
+      },
+      {
+        id: `BUG-112`,
+        summary: `ปุ่มลบรายการสินค้าในหน้าจอมือถือ/แท็บเล็ตเล็กเกินไป กดพลาดบ่อย`,
+        severity: `Medium`,
+        status: `Done`,
+        detail: `พบจาก Usability Testing กับแคชเชียร์ — ขยายพื้นที่สัมผัสเป็น 48x48px และแยกออกจากปุ่มชำระเงินเรียบร้อยแล้ว`
+      }
+    ];
+
+    let appState = {
+      currentSlide: 0,
+      viewMode: `single`,
+      pdpaSanitized: false,
+      testCases: JSON.parse(JSON.stringify(DEFAULT_TEST_CASES)),
+      usabilityRecords: JSON.parse(JSON.stringify(DEFAULT_USABILITY_RECORDS)),
+      bugs: JSON.parse(JSON.stringify(DEFAULT_BUGS)),
+      rubricChecks: { c1: false, c2: false, c3: false, c4: false, c5: false }
+    };
+
+    let pyramidChartInstance = null;
+    let metricsChartInstance = null;
+
+    // =========================================================
+    // 2. Navigation & View Mode (Hoisted Functions)
+    // =========================================================
+    function goToSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= TOTAL_SLIDES) index = TOTAL_SLIDES - 1;
+      appState.currentSlide = index;
+      renderSlideState();
+      persistAppState();
+    }
+
+    function prevSlide() {
+      goToSlide(appState.currentSlide - 1);
+    }
+
+    function nextSlide() {
+      goToSlide(appState.currentSlide + 1);
+    }
+
+    function toggleViewMode() {
+      appState.viewMode = appState.viewMode === `single` ? `all` : `single`;
+      renderSlideState();
+      persistAppState();
+    }
+
+    function renderSlideState() {
+      const stage = document.getElementById(`slides-stage`);
+      const toggleBtn = document.getElementById(`btn-toggle-view`);
+      const progressFill = document.getElementById(`progress-fill`);
+      const counterTop = document.getElementById(`slide-counter-top`);
+      const counterBottom = document.getElementById(`slide-counter-bottom`);
+      const prevTop = document.getElementById(`btn-prev-top`);
+      const nextTop = document.getElementById(`btn-next-top`);
+      const prevBot = document.getElementById(`btn-prev-bottom`);
+      const nextBot = document.getElementById(`btn-next-bottom`);
+
+      const isAll = appState.viewMode === `all`;
+      if (stage) {
+        stage.classList.toggle(`view-all`, isAll);
+      }
+      if (toggleBtn) {
+        toggleBtn.textContent = isAll ? `กลับโหมดทีละสไลด์` : `แสดงทุกสไลด์ (Scroll View)`;
+      }
+
+      const slides = document.querySelectorAll(`.slide`);
+      slides.forEach(function (el, idx) {
+        el.classList.toggle(`is-active`, idx === appState.currentSlide);
+      });
+
+      const pills = document.querySelectorAll(`.nav-pill`);
+      pills.forEach(function (pill, idx) {
+        pill.classList.toggle(`is-active`, idx === appState.currentSlide);
+      });
+
+      const numStr = String(appState.currentSlide + 1).padStart(2, `0`);
+      const totalStr = String(TOTAL_SLIDES).padStart(2, `0`);
+      const label = `${numStr} / ${totalStr}`;
+      if (counterTop) counterTop.textContent = label;
+      if (counterBottom) counterBottom.textContent = label;
+
+      if (progressFill) {
+        const pct = ((appState.currentSlide + 1) / TOTAL_SLIDES) * 100;
+        progressFill.style.width = `${pct}%`;
+      }
+
+      const atFirst = appState.currentSlide === 0;
+      const atLast = appState.currentSlide === TOTAL_SLIDES - 1;
+      if (prevTop) prevTop.disabled = atFirst || isAll;
+      if (prevBot) prevBot.disabled = atFirst || isAll;
+      if (nextTop) nextTop.disabled = atLast || isAll;
+      if (nextBot) nextBot.disabled = atLast || isAll;
+
+      // Render/Resize Charts when their slides are visible
+      if (isAll || appState.currentSlide === 2) {
+        ensurePyramidChart();
+      }
+      if (isAll || appState.currentSlide === 9) {
+        ensureMetricsChart();
+      }
+    }
+
+    // =========================================================
+    // 3. Slide 2: POS Architecture Explorer
+    // =========================================================
+    function selectPosLayer(layerKey) {
+      const data = POS_LAYER_DATA[layerKey];
+      if (!data) return;
+      const badge = document.getElementById(`pos-layer-badge`);
+      const title = document.getElementById(`pos-layer-title`);
+      const desc = document.getElementById(`pos-layer-desc`);
+      const risks = document.getElementById(`pos-layer-risks`);
+      const tests = document.getElementById(`pos-layer-tests`);
+
+      if (badge) badge.textContent = data.badge;
+      if (title) title.textContent = data.title;
+      if (desc) desc.textContent = data.desc;
+      if (risks) risks.textContent = data.risks;
+      if (tests) tests.textContent = data.tests;
+    }
+
+    // =========================================================
+    // 4. Slide 3: Testing Pyramid Chart & Simulator
+    // =========================================================
+    function getToken(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function ensurePyramidChart() {
+      const canvas = document.getElementById(`pyramid-chart`);
+      if (!canvas || typeof Chart === `undefined`) return;
+
+      const unitVal = parseInt((document.getElementById(`slider-unit`) || { value: 70 }).value, 10);
+      const integVal = 20;
+      const e2eVal = Math.max(5, 100 - unitVal - integVal);
+
+      if (pyramidChartInstance) {
+        pyramidChartInstance.data.datasets[0].data = [unitVal, integVal, e2eVal];
+        pyramidChartInstance.update();
+        return;
+      }
+
+      const ctx = canvas.getContext(`2d`);
+      pyramidChartInstance = new Chart(ctx, {
+        type: `bar`,
+        data: {
+          labels: [`Unit Tests (Isolated)`, `Integration Tests (API+DB)`, `E2E / Manual UI Tests`],
+          datasets: [{
+            label: `สัดส่วนชุดทดสอบ (%)`,
+            data: [unitVal, integVal, e2eVal],
+            backgroundColor: [getToken(`--data-1`), getToken(`--data-2`), getToken(`--data-4`)],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          indexAxis: `y`,
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: `สัดส่วนชุดทดสอบตามระดับความเร็วและความครอบคลุม (%)`,
+              align: `start`,
+              color: getToken(`--on-surface`),
+              font: { family: `Noto Sans Thai, IBM Plex Sans, sans-serif`, size: 14, weight: `600` }
+            }
+          },
+          scales: {
+            x: {
+              min: 0,
+              max: 90,
+              grid: { color: getToken(`--outline-variant`) },
+              ticks: { color: getToken(`--on-surface-variant`), font: { family: `IBM Plex Mono, monospace` } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: getToken(`--on-surface`), font: { family: `Noto Sans Thai, IBM Plex Sans, sans-serif`, size: 12 } }
+            }
+          }
+        }
+      });
+    }
+
+    function setPyramidPreset(preset) {
+      const slider = document.getElementById(`slider-unit`);
+      if (!slider) return;
+      slider.value = preset === `balanced` ? 70 : 10;
+      updatePyramidSim(slider.value);
+    }
+
+    function updatePyramidSim(val) {
+      const unitPct = parseInt(val, 10);
+      const e2ePct = Math.max(5, 100 - unitPct - 20);
+      const lbl = document.getElementById(`lbl-unit-pct`);
+      const ciEl = document.getElementById(`sim-ci-time`);
+      const confEl = document.getElementById(`sim-confidence`);
+      const verdictEl = document.getElementById(`sim-verdict`);
+
+      if (lbl) lbl.textContent = `${unitPct}%`;
+
+      // Model CI time (E2E tests are ~8x slower than Unit tests)
+      const minutes = (unitPct * 0.01 + 20 * 0.05 + e2ePct * 0.25).toFixed(1);
+      const confidence = Math.min(96, Math.max(48, Math.round(45 + unitPct * 0.68)));
+
+      if (ciEl) ciEl.textContent = `${minutes} นาที`;
+      if (confEl) confEl.textContent = `${confidence}%`;
+
+      if (verdictEl) {
+        if (unitPct >= 55) {
+          verdictEl.className = `layer-positive`;
+          verdictEl.innerHTML = `<strong>ผลวิเคราะห์:</strong> สมดุลดีเยี่ยม — Unit Test รันเร็วและชี้จุดบกพร่องได้ทันที ขณะที่ Integration และ Usability Test ดูแลรอยต่อสำคัญของ POS`;
+        } else if (unitPct >= 30) {
+          verdictEl.className = `layer-warning`;
+          verdictEl.innerHTML = `<strong>ผลวิเคราะห์:</strong> สัดส่วน E2E/Manual เริ่มสูง — การทดสอบใช้เวลานานขึ้นและเปราะบางเมื่อแก้ UI`;
+        } else {
+          verdictEl.className = `layer-error`;
+          verdictEl.innerHTML = `<strong>ผลวิเคราะห์ (Ice-Cream Cone Anti-Pattern):</strong> พึ่งการคลิกทดสอบหน้าเว็บมากเกินไป คอขวดสูงมากและมักทิ้ง Bug คำนวณใน Logic`;
+        }
+      }
+
+      ensurePyramidChart();
+    }
+
+    // =========================================================
+    // 5. Slide 4: Unit Test Runner Simulator
+    // =========================================================
+    function runUnitTests() {
+      const select = document.getElementById(`select-unit-fault`);
+      const fault = select ? select.value : `clean`;
+      const tbody = document.getElementById(`unit-test-tbody`);
+      const summary = document.getElementById(`unit-test-summary`);
+      if (!tbody) return;
+
+      // Simulated functions under test
+      function calcTotal(price, qty, disc) {
+        if (fault !== `neg_qty` && qty <= 0) {
+          return `Error: Invalid qty`;
+        }
+        const raw = price * qty * (1 - disc / 100);
+        if (fault === `float_bug`) {
+          return Number((raw + 0.00001).toFixed(5));
+        }
+        return Math.round(raw * 100) / 100;
+      }
+
+      function shouldAlertReorder(stock, reorderLevel) {
+        if (fault === `stock_offbyone`) {
+          return stock < reorderLevel;
+        }
+        return stock <= reorderLevel;
+      }
+
+      const cases = [
+        {
+          id: `TC-U01`,
+          desc: `สินค้า 55 บาท x 2 ชิ้น ลด 10% (InMemoryProduct)`,
+          expected: 99,
+          actual: calcTotal(55, 2, 10)
+        },
+        {
+          id: `TC-U02`,
+          desc: `ป้องกันจำนวนสินค้าติดลบ (qty = -2)`,
+          expected: `Error: Invalid qty`,
+          actual: calcTotal(55, -2, 0)
+        },
+        {
+          id: `TC-U03`,
+          desc: `คำนวณเงินทอน 500 - ยอด 342.50 บาท`,
+          expected: 157.5,
+          actual: fault === `float_bug` ? 157.50001 : 157.5
+        },
+        {
+          id: `TC-U04`,
+          desc: `Boundary Reorder: stock = 5, reorder_level = 5`,
+          expected: true,
+          actual: shouldAlertReorder(5, 5)
+        }
+      ];
+
+      let passCount = 0;
+      tbody.innerHTML = cases.map(function (c) {
+        const passed = c.expected === c.actual;
+        if (passed) passCount += 1;
+        const badgeClass = passed ? `tag tag-pass` : `tag tag-fail`;
+        const statusText = passed ? `PASS` : `FAIL`;
+        return `<tr>
+          <td class="mono">${c.id}</td>
+          <td>${c.desc}</td>
+          <td class="mono">${String(c.expected)}</td>
+          <td class="mono">${String(c.actual)}</td>
+          <td><span class="${badgeClass}">${statusText}</span></td>
+        </tr>`;
+      }).join(``);
+
+      if (summary) {
+        if (passCount === cases.length) {
+          summary.className = `layer-positive`;
+          summary.textContent = `ผลการรัน: ${passCount} / ${cases.length} ผ่านทั้งหมด (Execution time: 4 ms • In-Memory Mode)`;
+        } else {
+          summary.className = `layer-error`;
+          summary.textContent = `ผลการรัน: ${passCount} / ${cases.length} ผ่าน — ตรวจพบ Regression Bug ทันทีก่อนโค้ดถูก Merge เข้า Main!`;
+        }
+      }
+    }
+
+    // =========================================================
+    // 6. Slide 5: Integration & Concurrency Simulator
+    // =========================================================
+    function simulateConcurrency(mode) {
+      const tbody = document.getElementById(`conc-log-tbody`);
+      const stockEl = document.getElementById(`conc-final-stock`);
+      const stockNote = document.getElementById(`conc-stock-note`);
+      const statusEl = document.getElementById(`conc-status`);
+      const statusNote = document.getElementById(`conc-status-note`);
+      if (!tbody) return;
+
+      if (mode === `nolock`) {
+        tbody.innerHTML = `
+          <tr><td class="mono">00 ms</td><td>SELECT stock_quantity (= 1)</td><td>SELECT stock_quantity (= 1)</td><td>อ่านค่าเก่าพร้อมกัน (Dirty Read)</td></tr>
+          <tr><td class="mono">12 ms</td><td>รับเงิน &amp; UPDATE stock = 1 - 1</td><td>รับเงิน &amp; UPDATE stock = stock - 1</td><td>ไม่มี Row Lock / Condition</td></tr>
+          <tr><td class="mono">25 ms</td><td>ออกใบเสร็จสำเร็จ</td><td>ออกใบเสร็จสำเร็จ (ขายซ้ำ!)</td><td><span class="tag tag-fail">stock_quantity = -1</span></td></tr>
+        `;
+        if (stockEl) stockEl.textContent = `-1 ชิ้น`;
+        if (stockNote) stockNote.textContent = `ขายเกินสต็อกจริง!`;
+        if (statusEl) {
+          statusEl.textContent = `FAIL`;
+          statusEl.style.color = `var(--error)`;
+        }
+        if (statusNote) statusNote.textContent = `Data Corruption Detected`;
+      } else {
+        tbody.innerHTML = `
+          <tr><td class="mono">00 ms</td><td>BEGIN TX + UPDATE ... WHERE stock &gt;= 1</td><td>BEGIN TX + รอ Lock แถวสินค้า</td><td>Row-level Lock ทำงาน</td></tr>
+          <tr><td class="mono">14 ms</td><td>affected_rows = 1 → COMMIT</td><td>ได้รับ Lock → UPDATE (affected_rows = 0)</td><td><span class="tag tag-pass">stock_quantity = 0</span></td></tr>
+          <tr><td class="mono">22 ms</td><td>ออกใบเสร็จสำเร็จ</td><td>ROLLBACK → แจ้ง "สินค้าหมด" (HTTP 409)</td><td>ฐานข้อมูลถูกต้อง 100%</td></tr>
+        `;
+        if (stockEl) stockEl.textContent = `0 ชิ้น`;
+        if (stockNote) stockNote.textContent = `สต็อกสอดคล้องความจริง`;
+        if (statusEl) {
+          statusEl.textContent = `PASS`;
+          statusEl.style.color = `var(--positive)`;
+        }
+        if (statusNote) statusNote.textContent = `Atomic Constraint Verified`;
+      }
+    }
+
+    // =========================================================
+    // 7. Slide 6: Test Case Builder & CSV Export
+    // =========================================================
+    function renderTestCases() {
+      const tbody = document.getElementById(`tc-log-tbody`);
+      const countBadge = document.getElementById(`tc-count-badge`);
+      if (!tbody) return;
+
+      tbody.innerHTML = appState.testCases.map(function (tc, idx) {
+        const badgeCls = tc.status === `Pass` ? `tag tag-pass` : `tag tag-fail`;
+        return `<tr>
+          <td class="mono">${escapeHtml(tc.id)}</td>
+          <td>${escapeHtml(tc.type)}</td>
+          <td>${escapeHtml(tc.scenario)}</td>
+          <td>${escapeHtml(tc.expected)}</td>
+          <td><span class="${badgeCls}">${escapeHtml(tc.status)}</span></td>
+          <td><button type="button" class="btn btn-ghost btn-sm" onclick="removeTestCase(${idx})" aria-label="ลบ ${escapeHtml(tc.id)}">ลบ</button></td>
+        </tr>`;
+      }).join(``);
+
+      if (countBadge) {
+        countBadge.textContent = `${appState.testCases.length} Cases`;
+      }
+    }
+
+    function addTestCase() {
+      const idEl = document.getElementById(`tc-id`);
+      const typeEl = document.getElementById(`tc-type`);
+      const scenEl = document.getElementById(`tc-scenario`);
+      const expEl = document.getElementById(`tc-expected`);
+      const statEl = document.getElementById(`tc-status`);
+      const msgEl = document.getElementById(`tc-form-msg`);
+
+      const id = (idEl ? idEl.value : ``).trim();
+      const type = typeEl ? typeEl.value : `BVA (Boundary)`;
+      const scenario = (scenEl ? scenEl.value : ``).trim();
+      const expected = (expEl ? expEl.value : ``).trim();
+      const status = statEl ? statEl.value : `Pass`;
+
+      if (!id || !scenario || !expected) {
+        if (msgEl) {
+          msgEl.textContent = `กรุณากรอก รหัส Test Case, สถานการณ์ทดสอบ และผลลัพธ์ที่คาดหวังให้ครบถ้วน`;
+          msgEl.style.color = `var(--error)`;
+        }
+        return;
+      }
+
+      appState.testCases.push({ id, type, scenario, expected, status });
+      renderTestCases();
+      persistAppState();
+
+      if (idEl) idEl.value = `TC-POS-${String(appState.testCases.length + 1).padStart(3, `0`)}`;
+      if (scenEl) scenEl.value = ``;
+      if (expEl) expEl.value = ``;
+      if (msgEl) {
+        msgEl.textContent = `บันทึก ${id} ลงใน Test Results Log เรียบร้อยแล้ว`;
+        msgEl.style.color = `var(--positive)`;
+      }
+    }
+
+    function removeTestCase(idx) {
+      appState.testCases.splice(idx, 1);
+      renderTestCases();
+      persistAppState();
+    }
+
+    function exportTestCasesCsv() {
+      const headers = [`Test_ID`, `Technique`, `Scenario`, `Expected_Result`, `Status`];
+      const rows = appState.testCases.map(function (tc) {
+        return [tc.id, tc.type, tc.scenario, tc.expected, tc.status]
+          .map(function (cell) {
+            return `"${String(cell).replace(/"/g, `""`)}"`;
+          })
+          .join(`,`);
+      });
+      const csvContent = `\uFEFF` + headers.join(`,`) + `\n` + rows.join(`\n`);
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: csvContent,
+          contentType: `text/csv`,
+          encoding: `UTF-8`,
+          filename: `grocery_pos_test_results_wk12.csv`
+        });
+      } else {
+        const blob = new Blob([csvContent], { type: `text/csv;charset=utf-8;` });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement(`a`);
+        link.href = url;
+        link.download = `grocery_pos_test_results_wk12.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      const msgEl = document.getElementById(`tc-form-msg`);
+      if (msgEl) {
+        msgEl.textContent = `ส่งออกไฟล์ grocery_pos_test_results_wk12.csv แล้ว`;
+        msgEl.style.color = `var(--primary)`;
+      }
+    }
+
+    // =========================================================
+    // 8. Slide 7: PDPA Audit Toggle
+    // =========================================================
+    function togglePdpaMode() {
+      appState.pdpaSanitized = !appState.pdpaSanitized;
+      renderPdpaAudit();
+      persistAppState();
+    }
+
+    function renderPdpaAudit() {
+      const lbl = document.getElementById(`pdpa-mode-label`);
+      const pre = document.getElementById(`pdpa-json-preview`);
+      const res = document.getElementById(`pdpa-audit-result`);
+      if (!pre || !res) return;
+
+      if (!appState.pdpaSanitized) {
+        if (lbl) lbl.textContent = `ข้อมูลดิบ (เสี่ยง PDPA)`;
+        pre.textContent = `{
+  "order_id": "ORD-2026-001",
+  "timestamp": "2026-10-27 08:30:15",
+  "menu_name": "Iced Matcha Latte",
+  "payment_method": "PromptPay",
+  "customer_phone": "089-xxx-4321",
+  "national_id": "1-3499-00123-45-6",
+  "cashier_password_hash": "$2b$10$9xK..."
+}`;
+        res.className = `layer-error`;
+        res.innerHTML = `<strong>ผลการตรวจ PDPA: ไม่ผ่าน (FAIL)</strong> — พบฟิลด์ข้อมูลส่วนบุคคล (<span class="mono">customer_phone</span>, <span class="mono">national_id</span>) และความลับ (<span class="mono">password_hash</span>) ในชุดข้อมูลทดสอบ/รายงาน ต้องลบออกทันที`;
+      } else {
+        if (lbl) lbl.textContent = `ข้อมูลที่ผ่านการคัดกรอง PDPA`;
+        pre.textContent = `{
+  "order_id": "ORD-2026-001",
+  "timestamp": "2026-10-27 08:30:15",
+  "menu_name": "Iced Matcha Latte",
+  "category": "Non-Coffee",
+  "quantity": 1,
+  "price_per_unit": 55,
+  "payment_method": "PromptPay"
+}`;
+        res.className = `layer-positive`;
+        res.innerHTML = `<strong>ผลการตรวจ PDPA: ผ่าน (PASS)</strong> — โครงสร้างตรงตามมาตรฐาน Cleaned POS Dataset ของรายวิชา ลบข้อมูลส่วนบุคคลที่ไม่จำเป็นต่อการวิเคราะห์ยอดขายแล้ว`;
+      }
+    }
+
+    // =========================================================
+    // 9. Slide 8: Usability Testing Logger
+    // =========================================================
+    function renderUsabilityRecords() {
+      const tbody = document.getElementById(`ut-tbody`);
+      if (!tbody) return;
+      tbody.innerHTML = appState.usabilityRecords.map(function (r) {
+        const cls = r.score >= 4 ? `tag tag-pass` : (r.score === 3 ? `tag tag-warn` : `tag tag-fail`);
+        return `<tr>
+          <td>${escapeHtml(r.role)}</td>
+          <td>${escapeHtml(r.task)}</td>
+          <td class="num">${r.time}</td>
+          <td class="num">${r.errors}</td>
+          <td class="num"><span class="${cls}">${r.score}/5</span></td>
+          <td>${escapeHtml(r.finding)}</td>
+        </tr>`;
+      }).join(``);
+    }
+
+    function addUsabilityRecord() {
+      const role = (document.getElementById(`ut-role`) || {}).value || `แคชเชียร์หน้าร้าน`;
+      const task = (document.getElementById(`ut-task`) || {}).value || `Task 1`;
+      const time = parseInt((document.getElementById(`ut-time`) || {}).value || `30`, 10);
+      const errors = parseInt((document.getElementById(`ut-errors`) || {}).value || `0`, 10);
+      const score = Math.min(5, Math.max(1, parseInt((document.getElementById(`ut-score`) || {}).value || `4`, 10)));
+      const findingInput = document.getElementById(`ut-finding`);
+      const finding = (findingInput ? findingInput.value : ``).trim() || `ใช้งานได้ตามลำดับขั้นตอน`;
+
+      appState.usabilityRecords.push({ role, task, time, errors, score, finding });
+      if (findingInput) findingInput.value = ``;
+      renderUsabilityRecords();
+      persistAppState();
+    }
+
+    // =========================================================
+    // 10. Slide 9: Bug Triage Board
+    // =========================================================
+    function renderBugs() {
+      const tbody = document.getElementById(`bug-tbody`);
+      if (!tbody) return;
+      const statuses = [`Todo`, `In Progress`, `Awaiting Review`, `Done`];
+
+      tbody.innerHTML = appState.bugs.map(function (b, idx) {
+        const sevClass = b.severity === `Critical` ? `tag tag-fail` : (b.severity === `High` ? `tag tag-warn` : `tag tag-neutral`);
+        const optionsHtml = statuses.map(function (st) {
+          const sel = b.status === st ? ` selected` : ``;
+          return `<option value="${st}"${sel}>${st}</option>`;
+        }).join(``);
+
+        return `<tr onclick="showBugDetail(${idx})" style="cursor: pointer;">
+          <td class="mono">${escapeHtml(b.id)}</td>
+          <td>${escapeHtml(b.summary)}</td>
+          <td><span class="${sevClass}">${escapeHtml(b.severity)}</span></td>
+          <td>
+            <select class="field-select" aria-label="สถานะ ${escapeHtml(b.id)}" onclick="event.stopPropagation()" onchange="updateBugStatus(${idx}, this.value)">
+              ${optionsHtml}
+            </select>
+          </td>
+        </tr>`;
+      }).join(``);
+    }
+
+    function showBugDetail(idx) {
+      const b = appState.bugs[idx];
+      const panel = document.getElementById(`bug-detail-text`);
+      if (!b || !panel) return;
+      panel.innerHTML = `<strong>${escapeHtml(b.id)} [${escapeHtml(b.status)}]:</strong> ${escapeHtml(b.detail)}`;
+    }
+
+    function updateBugStatus(idx, newStatus) {
+      if (!appState.bugs[idx]) return;
+      appState.bugs[idx].status = newStatus;
+      showBugDetail(idx);
+      persistAppState();
+    }
+
+    // =========================================================
+    // 11. Slide 10: QA Metrics Trend Chart
+    // =========================================================
+    function ensureMetricsChart() {
+      const canvas = document.getElementById(`metrics-chart`);
+      if (!canvas || typeof Chart === `undefined`) return;
+      if (metricsChartInstance) {
+        metricsChartInstance.resize();
+        return;
+      }
+
+      const ctx = canvas.getContext(`2d`);
+      metricsChartInstance = new Chart(ctx, {
+        type: `line`,
+        data: {
+          labels: [`Sprint 1 (DB & Auth)`, `Sprint 2 (POS Screen)`, `Sprint 3 (Inventory & QA)`],
+          datasets: [
+            {
+              label: `ความครอบคลุมชุดทดสอบอัตโนมัติ (%)`,
+              data: [28, 62, 86],
+              borderColor: getToken(`--data-1`),
+              backgroundColor: getToken(`--data-1`),
+              borderWidth: 2,
+              tension: 0.2
+            },
+            {
+              label: `Bug ที่หลุดไปถึงช่วงสาธิต (จำนวนเรื่อง)`,
+              data: [9, 4, 1],
+              borderColor: getToken(`--data-4`),
+              backgroundColor: getToken(`--data-4`),
+              borderWidth: 2,
+              tension: 0.2,
+              yAxisID: `y1`
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: `top`,
+              align: `start`,
+              labels: { color: getToken(`--on-surface`), boxWidth: 12, font: { family: `Noto Sans Thai, sans-serif`, size: 12 } }
+            },
+            title: {
+              display: true,
+              text: `ความสัมพันธ์ระหว่าง Test Coverage และ Escaped Defects รายสปรินต์`,
+              align: `start`,
+              color: getToken(`--on-surface`),
+              font: { family: `Noto Sans Thai, IBM Plex Sans, sans-serif`, size: 14, weight: `600` }
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              grid: { color: getToken(`--outline-variant`) },
+              ticks: { color: getToken(`--on-surface-variant`), font: { family: `IBM Plex Mono, monospace` } }
+            },
+            y1: {
+              position: `right`,
+              min: 0,
+              max: 12,
+              grid: { display: false },
+              ticks: { color: getToken(`--data-4`), font: { family: `IBM Plex Mono, monospace` } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: getToken(`--on-surface`), font: { family: `Noto Sans Thai, sans-serif`, size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // =========================================================
+    // 12. Slide 11: Rubric Checklist Grader
+    // =========================================================
+    function updateRubricScore() {
+      const boxes = document.querySelectorAll(`#rubric-checklist input[type="checkbox"]`);
+      let checked = 0;
+      boxes.forEach(function (box) {
+        const key = box.dataset.checkId;
+        if (key) appState.rubricChecks[key] = box.checked;
+        if (box.checked) checked += 1;
+      });
+      renderRubricScore(checked);
+      persistAppState();
+    }
+
+    function checkAllRubric(flag) {
+      const boxes = document.querySelectorAll(`#rubric-checklist input[type="checkbox"]`);
+      boxes.forEach(function (box) {
+        box.checked = flag;
+        const key = box.dataset.checkId;
+        if (key) appState.rubricChecks[key] = flag;
+      });
+      renderRubricScore(flag ? boxes.length : 0);
+      persistAppState();
+    }
+
+    function renderRubricScore(checkedCount) {
+      const scoreEl = document.getElementById(`rubric-projected-score`);
+      const tierEl = document.getElementById(`rubric-tier-label`);
+      if (scoreEl) scoreEl.textContent = `${checkedCount} / 5 รายการ`;
+      if (!tierEl) return;
+
+      if (checkedCount === 5) {
+        tierEl.textContent = `ระดับดีเยี่ยม (22–25 คะแนน) — หลักฐานครบสมบูรณ์ตามเกณฑ์`;
+        tierEl.style.color = `var(--positive)`;
+      } else if (checkedCount >= 3) {
+        tierEl.textContent = `ระดับดี (18–21 คะแนน) — ครอบคลุมหลักการสำคัญ`;
+        tierEl.style.color = `var(--primary)`;
+      } else if (checkedCount >= 1) {
+        tierEl.textContent = `ระดับพอใช้ (14–17 คะแนน) — ควรเพิ่ม Test Log และ Usability Report`;
+        tierEl.style.color = `var(--warning)`;
+      } else {
+        tierEl.textContent = `ระดับเริ่มต้น (0–13 คะแนน) — ติ๊กหลักฐานที่เตรียมพร้อมแล้ว`;
+        tierEl.style.color = `var(--on-surface-variant)`;
+      }
+    }
+
+    function applyCheckboxesFromState() {
+      const boxes = document.querySelectorAll(`#rubric-checklist input[type="checkbox"]`);
+      let count = 0;
+      boxes.forEach(function (box) {
+        const key = box.dataset.checkId;
+        const val = Boolean(key && appState.rubricChecks && appState.rubricChecks[key]);
+        box.checked = val;
+        if (val) count += 1;
+      });
+      renderRubricScore(count);
+    }
+
+    // =========================================================
+    // 13. Persistence & Initialization
+    // =========================================================
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, `&amp;`)
+        .replace(/</g, `&lt;`)
+        .replace(/>/g, `&gt;`)
+        .replace(/"/g, `&quot;`);
+    }
+
+    async function persistAppState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+        try {
+          await window.notebookAppApi.setAppState(appState);
+        } catch (err) {
+          // Ignore storage quota / sandbox errors safely
+        }
+      }
+    }
+
+    async function resetSavedWork(btn) {
+      if (btn && btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `คลิกอีกครั้งเพื่อยืนยันรีเซ็ต`;
+        return;
+      }
+      if (btn) {
+        btn.dataset.armed = `false`;
+        btn.textContent = `รีเซ็ตข้อมูลฝึกปฏิบัติ`;
+      }
+      appState = {
+        currentSlide: 0,
+        viewMode: `single`,
+        pdpaSanitized: false,
+        testCases: JSON.parse(JSON.stringify(DEFAULT_TEST_CASES)),
+        usabilityRecords: JSON.parse(JSON.stringify(DEFAULT_USABILITY_RECORDS)),
+        bugs: JSON.parse(JSON.stringify(DEFAULT_BUGS)),
+        rubricChecks: { c1: false, c2: false, c3: false, c4: false, c5: false }
+      };
+      renderAllWidgets();
+      await persistAppState();
+    }
+
+    function renderAllWidgets() {
+      renderSlideState();
+      runUnitTests();
+      simulateConcurrency(`locked`);
+      renderTestCases();
+      renderPdpaAudit();
+      renderUsabilityRecords();
+      renderBugs();
+      applyCheckboxesFromState();
+    }
+
+    document.addEventListener(`keydown`, function (e) {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : ``;
+      if (tag === `input` || tag === `textarea` || tag === `select`) return;
+      if (appState.viewMode !== `single`) return;
+      if (e.key === `ArrowRight`) {
+        nextSlide();
+      } else if (e.key === `ArrowLeft`) {
+        prevSlide();
+      }
+    });
+
+    async function initDeck() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            if (typeof saved.currentSlide === `number`) appState.currentSlide = saved.currentSlide;
+            if (saved.viewMode === `single` || saved.viewMode === `all`) appState.viewMode = saved.viewMode;
+            if (typeof saved.pdpaSanitized === `boolean`) appState.pdpaSanitized = saved.pdpaSanitized;
+            if (Array.isArray(saved.testCases)) appState.testCases = saved.testCases;
+            if (Array.isArray(saved.usabilityRecords)) appState.usabilityRecords = saved.usabilityRecords;
+            if (Array.isArray(saved.bugs)) appState.bugs = saved.bugs;
+            if (saved.rubricChecks) appState.rubricChecks = saved.rubricChecks;
+          }
+        } catch (err) {
+          // Fallback to defaults if getAppState fails
+        }
+      }
+
+      renderAllWidgets();
+      if (typeof lucide !== `undefined` && typeof lucide.createIcons === `function`) {
+        lucide.createIcons();
+      }
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    window.addEventListener(`DOMContentLoaded`, initDeck);
+  </script>
+</body>
+</html>

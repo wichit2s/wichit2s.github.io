@@ -1,0 +1,2456 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="carbon">
+  <title>สัปดาห์ที่ 10: System Integration &amp; API Alignment — Grocery POS (1145 204)</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Carbon) */
+      --background: #ffffff;
+      --surface-container-low: #f4f4f4;
+      --surface-container: #f4f4f4;
+      --surface-container-high: #e0e0e0;
+
+      /* Ink */
+      --on-surface: #161616;
+      --on-surface-variant: #525252;
+
+      /* Rules */
+      --outline: #8d8d8d;
+      --outline-variant: #e0e0e0;
+
+      /* Accents */
+      --primary: #0f62fe;
+      --primary-hover: #0353e9;
+      --on-primary: #ffffff;
+      --primary-container: #d0e2ff;
+      --on-primary-container: #161616;
+      --secondary: #6f6f6f;
+      --tertiary: #198038;
+      --tertiary-container: #defbe6;
+      --error: #da1e28;
+      --error-container: #fff1f1;
+      --on-error: #ffffff;
+
+      /* Semantic */
+      --positive: #198038;
+      --warning: #8e6a00;
+      --warning-container: #fcf4d6;
+      --warning-border: #f1c21b;
+      --focus: #0f62fe;
+
+      /* Code surface tokens */
+      --code-bg: #161616;
+      --code-fg: #f4f4f4;
+      --code-muted: #a8a8a8;
+      --code-accent: #78a9ff;
+      --code-green: #42be65;
+      --code-red: #ff8389;
+      --code-yellow: #f1c21b;
+
+      /* Data series */
+      --data-1: #0f62fe;
+      --data-2: #6929c4;
+      --data-3: #005d5d;
+      --data-4: #9f1853;
+      --data-context: #8d8d8d;
+
+      /* Fonts (Thai-first with Carbon IBM Plex Sans & Mono) */
+      --font-headline: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-body: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-label: 'IBM Plex Mono', 'IBM Plex Sans Thai', monospace;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.25rem;
+      --rounded-full: 0.75rem;
+
+      /* Style effects */
+      --shadow-1: 0 2px 6px rgb(0 0 0 / 0.1);
+      --shadow-2: 0 4px 12px rgb(0 0 0 / 0.12);
+      --rule: 1px solid var(--outline-variant);
+      --field-rule: 1px solid var(--outline);
+      --indicator: 2px solid var(--primary);
+      --indicator-error: 3px solid var(--error);
+      --indicator-positive: 3px solid var(--positive);
+      --indicator-warning: 3px solid var(--warning-border);
+
+      /* Type scale */
+      --display-size: clamp(1.85rem, 1.3rem + 2.1vw, 2.85rem);
+      --headline-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+      --body-size: clamp(0.95rem, 0.92rem + 0.15vw, 1.0625rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    button, input, select, textarea { font-family: inherit; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Shell layout */
+    .deck-shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: var(--space-md) var(--space-lg) var(--space-2xl);
+      display: grid;
+      gap: var(--space-lg);
+    }
+    .deck-shell * { min-width: 0; }
+
+    /* Top Bar (static, flush-left Carbon) */
+    .deck-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: var(--rule);
+    }
+    .deck-brand {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .deck-kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      letter-spacing: 0.06em;
+    }
+    .deck-title-inline {
+      font-family: var(--font-headline);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Buttons (Carbon sharp corners, min 44px touch target) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: 0;
+      border: 1px solid transparent;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out),
+                  color var(--dur-micro) var(--ease-out),
+                  border-color var(--dur-micro) var(--ease-out);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: var(--background);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .btn-ghost {
+      background: var(--surface-container);
+      color: var(--on-surface);
+      border-color: var(--outline-variant);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--surface-container-high);
+    }
+    .btn-ghost.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+    .btn-danger {
+      background: var(--error);
+      color: var(--on-error);
+    }
+
+    /* Slide Counter & Progress Rail */
+    .slide-counter {
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--on-surface);
+      padding: 0 var(--space-sm);
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-rail {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: var(--space-xs);
+    }
+    .progress-segment {
+      height: 6px;
+      background: var(--surface-container-high);
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .progress-segment:hover {
+      background: var(--outline);
+    }
+    .progress-segment.is-visited {
+      background: var(--primary-container);
+    }
+    .progress-segment.is-active {
+      background: var(--primary);
+    }
+
+    /* Slide Index Drawer */
+    .index-drawer {
+      background: var(--surface-container);
+      border: var(--rule);
+      padding: var(--space-md);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .index-drawer[hidden] { display: none; }
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-sm);
+    }
+    .index-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      background: var(--background);
+      border: var(--rule);
+      border-left: 3px solid transparent;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .index-item:hover {
+      background: var(--surface-container-high);
+    }
+    .index-item.is-active {
+      border-left-color: var(--primary);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .index-num {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+    .index-item.is-active .index-num {
+      color: var(--on-primary-container);
+      font-weight: 600;
+    }
+    .index-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    /* Slide Stage */
+    .slides-stage {
+      display: grid;
+      gap: var(--space-xl);
+    }
+    .slide {
+      display: none;
+      background: var(--background);
+      border: var(--rule);
+      padding: var(--space-xl);
+      animation: slideEnter var(--dur-short) var(--ease-out);
+    }
+    .slide.is-active {
+      display: block;
+    }
+    body.handout-mode .slide {
+      display: block;
+    }
+    body.handout-mode .slide-footer-nav,
+    body.handout-mode .progress-rail {
+      display: none;
+    }
+    @keyframes slideEnter {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Carbon Typography & Treatments */
+    .slide-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      border-bottom: var(--rule);
+    }
+    .label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      letter-spacing: 0.04em;
+    }
+    .label-latin {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 var(--space-sm);
+      border-radius: var(--rounded-full);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-size: var(--label-size);
+      font-weight: 500;
+    }
+    .tag-positive {
+      background: var(--tertiary-container);
+      color: var(--on-surface);
+    }
+    .tag-error {
+      background: var(--error-container);
+      color: var(--error);
+    }
+    .tag-warning {
+      background: var(--warning-container);
+      color: var(--on-surface);
+    }
+
+    .display-title {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 300;
+      line-height: 1.2;
+      margin: 0 0 var(--space-md) 0;
+      color: var(--on-surface);
+    }
+    .display-title strong {
+      font-weight: 600;
+    }
+    .slide-headline {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 300;
+      line-height: 1.25;
+      margin: 0 0 var(--space-sm) 0;
+      color: var(--on-surface);
+    }
+    .slide-headline strong {
+      font-weight: 600;
+    }
+    .slide-lede {
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      max-width: 68ch;
+      margin: 0 0 var(--space-lg) 0;
+      line-height: 1.55;
+    }
+    .small-heading {
+      font-family: var(--font-headline);
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 var(--space-xs) 0;
+      color: var(--on-surface);
+    }
+    .prose {
+      max-width: 65ch;
+      margin: 0;
+      color: var(--on-surface);
+    }
+
+    /* Carbon Flat Gray Layers */
+    .layer {
+      background: var(--surface-container);
+      border-radius: 0;
+      padding: var(--space-md);
+    }
+    .layer .layer {
+      background: var(--surface-container-high);
+    }
+    .key-tile {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-bottom: var(--indicator);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .key-value {
+      font-family: var(--font-label);
+      font-weight: 300;
+      font-size: 1.85rem;
+      line-height: 1.15;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Asymmetric & Card Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+    .grid-7-5 {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--space-lg);
+    }
+    .grid-5-7 {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-lg);
+    }
+    .grid-4-8 {
+      display: grid;
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: var(--space-lg);
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .stack {
+      display: grid;
+      gap: var(--space-md);
+    }
+    .stack-sm {
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    /* Notification / Callout Strips */
+    .callout {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-left: 3px solid var(--primary);
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .callout-positive {
+      border-left: var(--indicator-positive);
+    }
+    .callout-error {
+      border-left: var(--indicator-error);
+    }
+    .callout-warning {
+      border-left: var(--indicator-warning);
+    }
+
+    /* Tables (Carbon: zebra rows, mono headers, no vertical lines) */
+    .table-wrap {
+      overflow-x: auto;
+      border-bottom: var(--rule);
+    }
+    table.carbon-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    table.carbon-table th {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--outline);
+    }
+    table.carbon-table td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule);
+      vertical-align: top;
+    }
+    table.carbon-table tbody tr:nth-child(even) {
+      background: var(--surface-container-low);
+    }
+    table.carbon-table .num {
+      text-align: right;
+      font-family: var(--font-label);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Code & JSON Inspector */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-fg);
+      font-family: var(--font-label);
+      font-size: 0.8125rem;
+      line-height: 1.55;
+      padding: var(--space-md);
+      overflow-x: auto;
+      margin: 0;
+      white-space: pre;
+    }
+    .code-key { color: var(--code-accent); }
+    .code-ok { color: var(--code-green); }
+    .code-err { color: var(--code-red); }
+    .code-warn { color: var(--code-yellow); }
+    .code-muted { color: var(--code-muted); }
+
+    /* Interactive Tabs (Carbon) */
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: var(--rule);
+      gap: var(--space-xs);
+    }
+    .tab-btn {
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: color var(--dur-micro) var(--ease-out),
+                  background-color var(--dur-micro) var(--ease-out);
+    }
+    .tab-btn:hover {
+      color: var(--on-surface);
+      background: var(--surface-container-low);
+    }
+    .tab-btn.is-active {
+      color: var(--on-surface);
+      font-weight: 600;
+      border-bottom: var(--indicator);
+    }
+
+    /* Architecture Node Stepper */
+    .arch-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+    .arch-node {
+      background: var(--surface-container);
+      border: 0;
+      border-bottom: 2px solid var(--outline-variant);
+      padding: var(--space-md);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      min-height: 96px;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .arch-node:hover {
+      background: var(--surface-container-high);
+    }
+    .arch-node.is-active {
+      background: var(--primary-container);
+      border-bottom: var(--indicator);
+    }
+
+    /* Form Controls (Carbon underline inputs, always-visible labels) */
+    .field-group {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+    }
+    .carbon-select, .carbon-input {
+      height: 40px;
+      background: var(--surface-container-low);
+      border: 0;
+      border-bottom: var(--field-rule);
+      padding: 0 var(--space-md);
+      font-size: 0.9rem;
+      color: var(--on-surface);
+      border-radius: 0;
+      width: 100%;
+    }
+    .carbon-select {
+      padding-right: var(--space-xl);
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-md);
+    }
+
+    /* FSM States */
+    .fsm-diagram {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(155px, 100%), 1fr));
+      gap: var(--space-sm);
+    }
+    .fsm-state {
+      padding: var(--space-md);
+      background: var(--surface-container);
+      border-left: 3px solid var(--outline-variant);
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .fsm-state.is-current {
+      background: var(--primary-container);
+      border-left: 3px solid var(--primary);
+    }
+    .fsm-state.is-error-state {
+      background: var(--error-container);
+      border-left: 3px solid var(--error);
+    }
+    .fsm-state.is-ok-state {
+      background: var(--tertiary-container);
+      border-left: 3px solid var(--positive);
+    }
+
+    /* Checklist items */
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container);
+      border-bottom: var(--rule);
+      cursor: pointer;
+    }
+    .check-item:hover {
+      background: var(--surface-container-high);
+    }
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* Footer Slide Nav */
+    .slide-footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: var(--rule);
+    }
+    .kbd-hint {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+
+    /* List hairline divider */
+    .hairline-list > * + * {
+      border-top: var(--rule);
+      padding-top: var(--space-sm);
+    }
+
+    /* Container queries for interactive POS modules */
+    .pos-wrapper { container-type: inline-size; }
+    @container (max-width: 560px) {
+      .pos-inner-split { grid-template-columns: 1fr; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .grid-2, .grid-7-5, .grid-5-7, .grid-4-8 {
+        grid-template-columns: 1fr;
+      }
+      .arch-flow {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .deck-shell {
+        padding: var(--space-sm) var(--space-sm) var(--space-xl);
+      }
+      .slide {
+        padding: var(--space-md);
+      }
+      .deck-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-shell">
+    <!-- Top Bar -->
+    <header class="deck-header">
+      <div class="deck-brand">
+        <span class="deck-kicker"><a href="../../../courses/project2/index.html">1145 204</a> · WEEK 10 · GROCERY POS PLATFORM</span>
+        <h1 class="deck-title-inline">System Integration &amp; API Alignment</h1>
+      </div>
+      <div class="deck-controls">
+        <button type="button" class="btn btn-ghost" id="btn-toggle-index" onclick="toggleIndexDrawer()" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/>
+            <rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/>
+          </svg>
+          สารบัญสไลด์
+        </button>
+        <button type="button" class="btn btn-ghost" id="btn-toggle-mode" onclick="toggleViewMode()">
+          โหมดอ่านทั้งหมด
+        </button>
+        <button type="button" class="btn btn-secondary" id="btn-prev-top" onclick="prevSlide()">← ก่อนหน้า</button>
+        <span class="slide-counter" id="slide-counter-top">01 / 12</span>
+        <button type="button" class="btn btn-primary" id="btn-next-top" onclick="nextSlide()">ถัดไป →</button>
+      </div>
+    </header>
+
+    <!-- Progress Rail -->
+    <nav class="progress-rail" id="progress-rail" aria-label="ความคืบหน้าสไลด์"></nav>
+
+    <!-- Collapsible Slide Index Drawer -->
+    <section class="index-drawer" id="index-drawer" hidden aria-label="สารบัญสไลด์ทั้งหมด">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-md);">
+        <span class="small-heading">เลือกสไลด์ที่ต้องการนำเสนอ (12 สไลด์)</span>
+        <button type="button" class="btn btn-ghost" onclick="toggleIndexDrawer()">ปิดหน้าต่าง</button>
+      </div>
+      <div class="index-grid" id="index-grid"></div>
+    </section>
+
+    <!-- Slides Stage -->
+    <main class="slides-stage" id="slides-stage">
+
+      <!-- SLIDE 1: Title & Objectives -->
+      <article class="slide is-active" data-slide="0" data-title="บทนำ: System Integration & API Alignment">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 01 · COURSE 1145 204 · WEEK 10</span>
+          <span class="tag">Sprint Integration Milestone</span>
+        </div>
+
+        <h2 class="display-title">
+          <strong>System Integration</strong> &amp; <strong>API Alignment</strong><br>
+          สำหรับแพลตฟอร์ม Grocery POS
+        </h2>
+        <p class="slide-lede">
+          จุดเปลี่ยนสำคัญของโครงงานชั้นปีที่ 2 จากโมดูลที่แยกกันทำงาน (UI, API, Database) สู่ระบบขายหน้าร้านที่เชื่อมต่อกันอย่างสมบูรณ์ เที่ยงตรงด้านข้อมูล และรับมือความผิดพลาดหน้างานได้จริง
+        </p>
+
+        <div class="card-grid" style="margin-bottom: var(--space-lg);">
+          <div class="key-tile">
+            <span class="label">01 · FULL-STACK</span>
+            <span class="key-value">FE + BE + DB</span>
+            <span class="label" style="text-transform:none;">เชื่อมต่อหน้าจอแคชเชียร์ API และฐานข้อมูล 3NF ไร้รอยต่อ</span>
+          </div>
+          <div class="key-tile">
+            <span class="label">02 · CONTRACT</span>
+            <span class="key-value">API Schema</span>
+            <span class="label" style="text-transform:none;">ตกลงรูปแบบ JSON, ชื่อฟิลด์ และ HTTP Status ให้ตรงกัน</span>
+          </div>
+          <div class="key-tile">
+            <span class="label">03 · STATE &amp; ACID</span>
+            <span class="key-value">FSM + Lock</span>
+            <span class="label" style="text-transform:none;">คุมสถานะหน้าจอ ป้องกันกดจ่ายซ้ำ และกันสต็อกติดลบ</span>
+          </div>
+          <div class="key-tile">
+            <span class="label">04 · RESILIENCE</span>
+            <span class="key-value">Error Flow</span>
+            <span class="label" style="text-transform:none;">ระบบล้มเหลวอย่างปลอดภัย ตะกร้าไม่หาย ข้อมูลไม่พัง</span>
+          </div>
+        </div>
+
+        <div class="grid-7-5">
+          <div class="layer stack-sm">
+            <h3 class="small-heading">ทำไมสัปดาห์ที่ 10 จึงเป็นจุดชี้วัดความสำเร็จของทีม?</h3>
+            <p class="prose">
+              ใน Sprint 1–2 นักศึกษามักแบ่งงานกันทำ: ทีมหน้าบ้าน (Frontend) ใช้ข้อมูลจำลอง (Mock JSON), ทีมหลังบ้าน (Backend) เขียน Endpoint ตามความเข้าใจ, และฐานข้อมูล (Database) ถูกออกแบบแยกไว้ เมื่อนำมารวมกันจึงมักเกิดอาการ <strong>Integration Hell</strong> เช่น ชื่อฟิลด์ไม่ตรงกัน คำนวณราคารวมเพี้ยน หรือสต็อกถูกตัดซ้ำซ้อน
+            </p>
+          </div>
+          <div class="callout">
+            <span class="label label-latin">AGILE SPRINT ALIGNMENT (1145 204)</span>
+            <div class="hairline-list stack-sm">
+              <div><strong>Sprint 1:</strong> Database Schema (3NF) &amp; User Authentication</div>
+              <div><strong>Sprint 2:</strong> POS Order Screen &amp; Barcode Lookup</div>
+              <div><strong>Sprint 3 (Week 10+):</strong> Full Integration, Stock Alert &amp; Error Handling</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 2: Full-Stack Architecture -->
+      <article class="slide" data-slide="1" data-title="สถาปัตยกรรม Full-Stack (FE - BE - DB)">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 02 · FULL-STACK ARCHITECTURE</span>
+          <span class="tag">3-Tier Separation of Concerns</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>สถาปัตยกรรม 3 ชั้น</strong> แยกหน้าที่ชัดเจน ไม่ผูกติดกัน</h2>
+        <p class="slide-lede">
+          คลิกเลือกแต่ละขั้นตอนด้านล่างเพื่อดูว่าคำสั่งจากเครื่องแคชเชียร์ (Frontend) เดินทางผ่าน Business Layer (Backend) ไปยังฐานข้อมูล (Database) และย้อนกลับมาแสดงผลอย่างไร
+        </p>
+
+        <div class="arch-flow" style="margin-bottom: var(--space-lg);">
+          <button type="button" class="arch-node is-active" data-arch="0" onclick="selectArchStep(0)">
+            <span class="label">STEP 01 · UI</span>
+            <strong>1. Cashier POS</strong>
+            <span class="label" style="text-transform:none;">สแกนบาร์โค้ด &amp; ตะกร้า</span>
+          </button>
+          <button type="button" class="arch-node" data-arch="1" onclick="selectArchStep(1)">
+            <span class="label">STEP 02 · HTTP</span>
+            <strong>2. API Gateway</strong>
+            <span class="label" style="text-transform:none;">REST + JWT Auth</span>
+          </button>
+          <button type="button" class="arch-node" data-arch="2" onclick="selectArchStep(2)">
+            <span class="label">STEP 03 · LOGIC</span>
+            <strong>3. Service Layer</strong>
+            <span class="label" style="text-transform:none;">คำนวณราคา &amp; ตรวจสิทธิ์</span>
+          </button>
+          <button type="button" class="arch-node" data-arch="3" onclick="selectArchStep(3)">
+            <span class="label">STEP 04 · DATA</span>
+            <strong>4. DB Gateway</strong>
+            <span class="label" style="text-transform:none;">ACID Transaction</span>
+          </button>
+          <button type="button" class="arch-node" data-arch="4" onclick="selectArchStep(4)">
+            <span class="label">STEP 05 · SYNC</span>
+            <strong>5. State Update</strong>
+            <span class="label" style="text-transform:none;">ใบเสร็จ &amp; แจ้งเตือนสต็อก</span>
+          </button>
+        </div>
+
+        <div class="grid-5-7">
+          <div class="layer stack-sm" id="arch-detail-text">
+            <span class="label" id="arch-step-badge">STEP 01 · FRONTEND PRESENTATION</span>
+            <h3 class="small-heading" id="arch-step-title">Frontend (HTML/CSS/JS): รับอินพุตและจัดการ UI State</h3>
+            <p class="prose" id="arch-step-desc">
+              หน้าจอ POS มีหน้าที่สแกนบาร์โค้ด จัดการรายการในตะกร้า และแสดงผลสถานะให้รวดเร็ว ห้ามเก็บ Logic การคำนวณภาษี/ส่วนลดสุทธิเป็นความจริงเด็ดขาด และห้ามเชื่อมต่อ SQL โดยตรง
+            </p>
+            <div class="callout" id="arch-step-rule">
+              <strong>กฎเหล็กสถาปัตยกรรม:</strong> ส่งเฉพาะ product_id และ quantity ไปให้ Backend เป็นผู้คำนวณยอดเงินจากราคาจริงในฐานข้อมูลเสมอ
+            </div>
+          </div>
+          <div class="stack-sm">
+            <span class="label label-latin">LIVE LAYER PAYLOAD / BOUNDARY</span>
+            <pre class="code-block" id="arch-step-code"></pre>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 3: Database Alignment (3NF) -->
+      <article class="slide" data-slide="2" data-title="การเชื่อมโยงฐานข้อมูล 3NF กับหน้าจอ POS">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 03 · DATABASE SCHEMA ALIGNMENT</span>
+          <span class="tag">MySQL / PostgreSQL (3NF)</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>โครงสร้างฐานข้อมูลเชิงสัมพันธ์ (3NF)</strong> ของระบบ Grocery POS</h2>
+        <p class="slide-lede">
+          ฐานข้อมูลที่ดีต้องป้องกันข้อมูลขยะตั้งแต่ระดับ Schema (Constraints) ไม่ใช่รอเช็กแค่ฝั่งหน้าจอ
+        </p>
+
+        <div class="table-wrap" style="margin-bottom: var(--space-lg);">
+          <table class="carbon-table">
+            <thead>
+              <tr>
+                <th>ตาราง (Table)</th>
+                <th>คอลัมน์หลัก (Key Columns)</th>
+                <th>การเชื่อมโยงกับ POS Flow</th>
+                <th>Constraint ที่ต้องมี</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Users</strong></td>
+                <td><code>user_id, username, password_hash, role_enum</code></td>
+                <td>ระบุตัวตนแคชเชียร์ (Cashier / Manager) เพื่อบันทึกผู้เปิดบิล</td>
+                <td><code>UNIQUE(username)</code></td>
+              </tr>
+              <tr>
+                <td><strong>Categories</strong></td>
+                <td><code>category_id, category_name</code></td>
+                <td>จัดกลุ่มสินค้า (เครื่องดื่ม, อาหารแห้ง, ของสด, ของใช้) บนปุ่มลัด</td>
+                <td><code>NOT NULL</code></td>
+              </tr>
+              <tr>
+                <td><strong>Products</strong></td>
+                <td><code>product_id, barcode, category_id, name, price</code></td>
+                <td>แหล่งความจริงเดียว (Single Source of Truth) ของราคาขายต่อหน่วย</td>
+                <td><code>UNIQUE(barcode), CHECK(price &gt;= 0)</code></td>
+              </tr>
+              <tr>
+                <td><strong>Inventory</strong></td>
+                <td><code>inventory_id, product_id, stock_quantity, unit, reorder_level</code></td>
+                <td>ตัดสต็อกอัตโนมัติและเช็กเกณฑ์แจ้งเตือนใกล้หมด (Reorder Alert)</td>
+                <td><code>CHECK(stock_quantity &gt;= 0)</code></td>
+              </tr>
+              <tr>
+                <td><strong>Orders</strong></td>
+                <td><code>order_id, user_id, order_datetime, total_amount, payment_method, status</code></td>
+                <td>เก็บหัวบิล ยอดสุทธิ ช่องทางชำระ (PromptPay/Cash/Card) และสถานะ</td>
+                <td><code>FK(user_id), ENUM status</code></td>
+              </tr>
+              <tr>
+                <td><strong>Order_Items</strong></td>
+                <td><code>order_item_id, order_id, product_id, quantity, unit_price, subtotal</code></td>
+                <td>บันทึกรายการสินค้าและ <strong>Snapshot ราคา ณ วันที่ขาย</strong></td>
+                <td><code>CHECK(quantity &gt; 0)</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid-2">
+          <div class="callout callout-positive">
+            <strong>ทำไม Order_Items ต้องเก็บ unit_price ซ้ำอีกครั้ง?</strong>
+            <span>หากเดือนหน้าปรับราคาสินค้าในตาราง Products ยอดขายย้อนหลังในใบเสร็จเก่าต้องไม่เปลี่ยนตาม การ Snapshot ราคาไว้ใน Order_Items คือมาตรฐานระบบ POS ที่ถูกต้อง</span>
+          </div>
+          <div class="callout callout-warning">
+            <strong>Abstraction Layer (Table Data Gateway):</strong>
+            <span>เขียนโค้ด SQL ไว้ในชั้น Repository / Gateway เท่านั้น ห้ามเขียน SQL ปนใน Route Handler หรือ Controller เพื่อให้ทดสอบ Logic ได้โดยไม่ต้องต่อ DB จริงทุกครั้ง</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 4: API Alignment & Contract Design -->
+      <article class="slide" data-slide="3" data-title="API Alignment & Contract Design">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 04 · API CONTRACT ALIGNMENT</span>
+          <span class="tag">Contract-First Development</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>API Alignment:</strong> สัญญาระหว่างหน้าบ้านกับหลังบ้านต้องตรงกัน 100%</h2>
+        <p class="slide-lede">
+          สลับดูความแตกต่างระหว่าง API ที่ต่างคนต่างเขียน (Unaligned) กับ API ที่ทำ Contract ร่วมกันก่อนลงมือเชื่อมต่อ (Aligned)
+        </p>
+
+        <div class="tab-bar" style="margin-bottom: var(--space-md);">
+          <button type="button" class="tab-btn is-active" id="tab-api-aligned" onclick="setApiComparison('aligned')">
+            Aligned Contract (แนะนำ)
+          </button>
+          <button type="button" class="tab-btn" id="tab-api-broken" onclick="setApiComparison('broken')">
+            Unaligned / ปัญหาที่พบบ่อย
+          </button>
+        </div>
+
+        <div class="grid-2" id="api-compare-view" style="margin-bottom: var(--space-lg);">
+          <div class="stack-sm">
+            <span class="label label-latin" id="api-req-label">REQUEST · POST /api/v1/orders</span>
+            <pre class="code-block" id="api-req-code"></pre>
+          </div>
+          <div class="stack-sm">
+            <span class="label label-latin" id="api-res-label">RESPONSE · 201 CREATED</span>
+            <pre class="code-block" id="api-res-code"></pre>
+          </div>
+        </div>
+
+        <div class="callout" id="api-compare-note">
+          <strong>จุดที่ต้องตกลงร่วมกันใน API Spec ก่อนเริ่มเชื่อมต่อ:</strong>
+          <span>1) รูปแบบชื่อคีย์ (camelCase หรือ snake_case ต้องเหมือนกันทั้งระบบ) · 2) รูปแบบวันเวลา (ISO-8601 UTC) · 3) ชนิดข้อมูลของราคา (Number/Decimal ไม่ใช่ String) · 4) รูปแบบ Error Envelope เดียวกันทุก Endpoint</span>
+        </div>
+      </article>
+
+      <!-- SLIDE 5: Interactive Checkout Payload Simulator -->
+      <article class="slide" data-slide="4" data-title="จำลองการส่ง Checkout Payload ครบวงจร">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 05 · LIVE INTEGRATION SANDBOX</span>
+          <span class="tag">Interactive POS Flow</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>ทดลองเชื่อมต่อจริง:</strong> ตะกร้าสินค้า → API Payload → SQL Transaction</h2>
+        <p class="slide-lede">
+          เพิ่มสินค้าในตะกร้าและกด <strong>ส่งคำสั่งซื้อ (Checkout)</strong> เพื่อดู Request JSON, การทำงานของ SQL Transaction และ Response ที่ระบบส่งกลับมาแบบเรียลไทม์
+        </p>
+
+        <div class="pos-wrapper">
+          <div class="grid-7-5 pos-inner-split">
+            <!-- Left: POS Controls -->
+            <div class="layer stack">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="small-heading" style="margin:0;">แคตตาล็อกสินค้า Grocery POS</h3>
+                <button type="button" class="btn btn-ghost" onclick="resetPosSim()">รีเซ็ตสต็อกเริ่มต้น</button>
+              </div>
+
+              <div class="table-wrap">
+                <table class="carbon-table" id="pos-catalog-table">
+                  <thead>
+                    <tr>
+                      <th>สินค้า (SKU)</th>
+                      <th class="num">ราคา (฿)</th>
+                      <th class="num">คงเหลือ</th>
+                      <th>เพิ่มลงตะกร้า</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pos-catalog-body"></tbody>
+                </table>
+              </div>
+
+              <div class="control-row">
+                <div class="field-group" style="flex:1; min-width:160px;">
+                  <label class="field-label" for="pos-payment-select">ช่องทางชำระเงิน (payment_method)</label>
+                  <select id="pos-payment-select" class="carbon-select" onchange="updatePosPreview()">
+                    <option value="PromptPay">PromptPay (QR)</option>
+                    <option value="Cash">Cash (เงินสด)</option>
+                    <option value="Credit Card">Credit Card</option>
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary" id="btn-pos-checkout" onclick="runPosCheckout()">
+                  ส่งคำสั่ง POST /api/v1/orders
+                </button>
+                <button type="button" class="btn btn-ghost" onclick="clearPosCart()">ล้างตะกร้า</button>
+              </div>
+
+              <div id="pos-status-banner" class="callout">
+                <span class="label">สถานะตะกร้าสินค้า</span>
+                <span id="pos-status-text">เลือกสินค้าอย่างน้อย 1 รายการเพื่อจำลองการ Checkout</span>
+              </div>
+            </div>
+
+            <!-- Right: Live Request / SQL / Response -->
+            <div class="stack-sm">
+              <span class="label label-latin">1. FRONTEND REQUEST JSON (CLIENT → SERVER)</span>
+              <pre class="code-block" id="pos-sim-req" style="max-height:170px;"></pre>
+
+              <span class="label label-latin">2. BACKEND DB TRANSACTION TRACE</span>
+              <pre class="code-block" id="pos-sim-sql" style="max-height:170px;"></pre>
+
+              <span class="label label-latin">3. SERVER RESPONSE</span>
+              <pre class="code-block" id="pos-sim-res" style="max-height:180px;"></pre>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 6: Concurrency & Database Transactions -->
+      <article class="slide" data-slide="5" data-title="Database Transactions &amp; ปัญหาสต็อกตัดซ้ำ">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 06 · CONCURRENCY &amp; ACID TRANSACTIONS</span>
+          <span class="tag">Risk Mitigation (1145 204)</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>ป้องกัน Race Condition:</strong> เมื่อ 2 แคชเชียร์ขายสินค้าชิ้นสุดท้ายพร้อมกัน</h2>
+        <p class="slide-lede">
+          โจทย์ความเสี่ยงหลักของระบบ POS คือการตัดสต็อกขนานกันหลายจุด กดจำลองสถานการณ์ด้านล่างเมื่อสต็อกคงเหลือ <strong>2 ชิ้น</strong> แต่แคชเชียร์ A ต้องการ 2 ชิ้น และแคชเชียร์ B ต้องการ 1 ชิ้นในเวลาเดียวกัน
+        </p>
+
+        <div class="control-row" style="margin-bottom: var(--space-md);">
+          <button type="button" class="btn btn-ghost is-selected" id="btn-race-naive" onclick="runRaceDemo('naive')">
+            แบบที่ 1: ไม่ใช้ Transaction (เกิด Race Condition)
+          </button>
+          <button type="button" class="btn btn-ghost" id="btn-race-acid" onclick="runRaceDemo('acid')">
+            แบบที่ 2: ใช้ ACID Transaction + Atomic Update (ปลอดภัย)
+          </button>
+        </div>
+
+        <div class="grid-7-5">
+          <div class="table-wrap">
+            <table class="carbon-table">
+              <thead>
+                <tr>
+                  <th>เวลา</th>
+                  <th>แคชเชียร์ A (สั่ง 2 ชิ้น)</th>
+                  <th>แคชเชียร์ B (สั่ง 1 ชิ้น)</th>
+                  <th class="num">สต็อกใน DB</th>
+                </tr>
+              </thead>
+              <tbody id="race-timeline-body"></tbody>
+            </table>
+          </div>
+          <div class="stack">
+            <div class="callout" id="race-verdict-box">
+              <strong id="race-verdict-title">ผลลัพธ์: สต็อกติดลบและข้อมูลคลาดเคลื่อน (-1 ชิ้น!)</strong>
+              <span id="race-verdict-desc">ทั้งสองเครื่องอ่านค่าสต็อกได้ 2 ชิ้นพร้อมกัน แล้วคำนวณในหน่วยความจำแยกกัน ส่งผลให้ขายเกินสต็อกจริง</span>
+            </div>
+            <pre class="code-block" id="race-sql-snippet"></pre>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 7: State Management & Finite State Machine -->
+      <article class="slide" data-slide="6" data-title="State Management &amp; Finite State Machine">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 07 · FRONTEND STATE &amp; FSM</span>
+          <span class="tag">Prevent Double-Submit</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>State Management:</strong> คุมวงจรหน้าจอ POS ด้วย Finite State Machine</h2>
+        <p class="slide-lede">
+          การสร้างตัวแปร boolean กระจัดกระจาย (<code>isLoading</code>, <code>isPaid</code>, <code>hasError</code>) ทำให้ปุ่มค้างหรือเผลอกดตัดเงินซ้ำได้ ใช้ <strong>State Machine</strong> เพื่อบังคับเฉพาะการเปลี่ยนสถานะที่ถูกต้อง
+        </p>
+
+        <div class="fsm-diagram" style="margin-bottom: var(--space-lg);" id="fsm-diagram">
+          <div class="fsm-state is-current" data-fsm="IDLE">
+            <span class="label">STATE 1</span>
+            <strong>IDLE</strong>
+            <span class="label" style="text-transform:none;">ตะกร้าว่าง พร้อมสแกน</span>
+          </div>
+          <div class="fsm-state" data-fsm="CART_READY">
+            <span class="label">STATE 2</span>
+            <strong>CART_READY</strong>
+            <span class="label" style="text-transform:none;">มีสินค้า แก้ไข/กดจ่ายได้</span>
+          </div>
+          <div class="fsm-state" data-fsm="SUBMITTING">
+            <span class="label">STATE 3</span>
+            <strong>SUBMITTING</strong>
+            <span class="label" style="text-transform:none;">ล็อกปุ่มจ่าย รอ API</span>
+          </div>
+          <div class="fsm-state" data-fsm="PAID_RECEIPT">
+            <span class="label">STATE 4</span>
+            <strong>PAID_RECEIPT</strong>
+            <span class="label" style="text-transform:none;">สำเร็จ พิมพ์ใบเสร็จ</span>
+          </div>
+          <div class="fsm-state" data-fsm="ERROR_RETRY">
+            <span class="label">STATE 5</span>
+            <strong>ERROR_RETRY</strong>
+            <span class="label" style="text-transform:none;">ล้มเหลว คงตะกร้าไว้</span>
+          </div>
+        </div>
+
+        <div class="grid-5-7">
+          <div class="layer stack">
+            <h3 class="small-heading">จำลองการส่ง Event ให้ State Machine</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+              <button type="button" class="btn btn-secondary" id="fsm-ev-scan" onclick="triggerFsm('SCAN_ITEM')">+ SCAN_ITEM</button>
+              <button type="button" class="btn btn-primary" id="fsm-ev-pay" onclick="triggerFsm('SUBMIT_PAYMENT')">CLICK_PAY</button>
+              <button type="button" class="btn btn-ghost" id="fsm-ev-ok" onclick="triggerFsm('API_201_OK')">API_201_OK</button>
+              <button type="button" class="btn btn-danger" id="fsm-ev-err" onclick="triggerFsm('API_ERROR')">API_ERROR</button>
+              <button type="button" class="btn btn-ghost" id="fsm-ev-reset" onclick="triggerFsm('NEW_ORDER')">NEW_ORDER</button>
+            </div>
+            <div class="callout" id="fsm-log-box">
+              <span class="label">สถานะปัจจุบันและการป้องกัน UI</span>
+              <span id="fsm-log-text">สถานะเริ่มต้น IDLE: ปุ่มชำระเงินถูกปิด (Disabled) จนกว่าจะสแกนสินค้า</span>
+            </div>
+          </div>
+
+          <div class="layer stack-sm">
+            <h3 class="small-heading">แยกประเภท State ให้ชัดเจน</h3>
+            <div class="hairline-list stack-sm">
+              <div>
+                <strong>1. Server State (มาจาก Backend):</strong> รายการสินค้า, ราคา, ยอดคงเหลือล่าสุด — ต้อง Re-fetch หรืออัปเดตหลัง Checkout เสมอ
+              </div>
+              <div>
+                <strong>2. Client UI State (อยู่ในเบราว์เซอร์):</strong> ตะกร้าสินค้าชั่วคราว, ช่องทางชำระเงินที่เลือก, สถานะ Modal/Loading
+              </div>
+              <div>
+                <strong>3. Idempotency Key:</strong> สร้าง UUID ประจำออเดอร์ตั้งแต่ตอนเข้า <code>SUBMITTING</code> เพื่อกันการสร้างบิลซ้ำหากแคชเชียร์กด Retry
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 8: Robust Error Handling Architecture -->
+      <article class="slide" data-slide="7" data-title="การออกแบบ Error Handling ทั้ง 3 ชั้น">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 08 · ROBUST ERROR HANDLING</span>
+          <span class="tag">HTTP Status &amp; Error Envelope</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>Error Handling ที่ดี:</strong> ไม่เงียบ ไม่พังทั้งระบบ และบอกทางออกชัดเจน</h2>
+        <p class="slide-lede">
+          ห้ามส่ง HTTP <code>200 OK</code> พร้อมข้อความ <code>{"error": "fail"}</code> และห้ามปล่อยให้แคชเชียร์เห็นข้อความดิบของฐานข้อมูล (SQL Stack Trace)
+        </p>
+
+        <div class="table-wrap" style="margin-bottom: var(--space-lg);">
+          <table class="carbon-table">
+            <thead>
+              <tr>
+                <th>HTTP Status</th>
+                <th>ความหมายทางธุรกิจ (Grocery POS)</th>
+                <th>การจัดการฝั่ง Backend</th>
+                <th>การตอบสนองฝั่ง Frontend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag tag-positive">201 Created</span></td>
+                <td>สร้างบิลและตัดสต็อกสำเร็จสมบูรณ์</td>
+                <td><code>COMMIT</code> และส่งข้อมูลใบเสร็จกลับ</td>
+                <td>ล้างตะกร้า แสดงใบเสร็จ + แจ้งเตือนหากมีสินค้าใกล้หมด</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-warning">400 Bad Request</span></td>
+                <td>จำนวนสินค้าติดลบ หรือ Payload ผิดรูปแบบ</td>
+                <td>Schema Validation ปฏิเสธก่อนแตะ DB</td>
+                <td>ชี้ช่องที่ผิด (Inline Error) ให้แก้ไขทันที</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-warning">401 / 403</span></td>
+                <td>เซสชันหมดอายุ หรือแคชเชียร์ไม่มีสิทธิ์แก้ไขราคา</td>
+                <td>Middleware ตรวจ JWT &amp; Role</td>
+                <td>เก็บตะกร้าไว้ชั่วคราว เปิดหน้า Login ซ้ำโดยข้อมูลไม่หาย</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-warning">404 Not Found</span></td>
+                <td>สแกนบาร์โค้ดแล้วไม่พบสินค้าในฐานข้อมูล</td>
+                <td>คืน Error Code <code>PRODUCT_NOT_FOUND</code></td>
+                <td>ส่งเสียงเตือนสั้นๆ เปิดช่องค้นหาชื่อสินค้าด้วยมือ</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-error">409 Conflict</span></td>
+                <td>สินค้าในสต็อกเหลือไม่พอตามจำนวนที่สั่ง</td>
+                <td><code>ROLLBACK</code> คืนค่า <code>available_qty</code></td>
+                <td>แจ้งจำนวนที่เหลือจริง ปุ่มปรับลดจำนวนใน 1 คลิก</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-error">500 / 503</span></td>
+                <td>ฐานข้อมูลล่ม หรือ Payment Gateway Timeout</td>
+                <td>บันทึก Log ภายใน ปิดบัง Stack Trace</td>
+                <td>แสดงปุ่ม "ลองส่งใหม่" (ใช้ Idempotency Key เดิม)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-error">
+          <strong>มาตรฐาน Standard Error Envelope:</strong>
+          <code>{ "success": false, "error": { "code": "INSUFFICIENT_STOCK", "message": "สินค้าเหลือไม่พอ", "details": { "available": 1, "requested": 3 }, "retryable": false } }</code>
+        </div>
+      </article>
+
+      <!-- SLIDE 9: Interactive Error Scenario Lab -->
+      <article class="slide" data-slide="8" data-title="ห้องทดลองรับมือ Error หน้างานจริง">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 09 · FAILURE RECOVERY LAB</span>
+          <span class="tag">Resilient POS UX</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>ห้องทดลองสถานการณ์วิกฤต:</strong> เลือกเหตุการณ์เพื่อดูวิธีรับมือที่ถูกต้อง</h2>
+        <p class="slide-lede">
+          ในร้านขายของชำที่มีลูกค้าต่อแถว การจัดการข้อผิดพลาดต้องคำนึงถึงทั้งความถูกต้องของข้อมูลและประสบการณ์การทำงานของแคชเชียร์
+        </p>
+
+        <div class="grid-4-8">
+          <div class="stack-sm">
+            <button type="button" class="btn btn-ghost is-selected" data-err="0" onclick="selectErrorScenario(0)" style="justify-content:flex-start;">
+              1. สินค้าหมดระหว่างรอจ่าย (409)
+            </button>
+            <button type="button" class="btn btn-ghost" data-err="1" onclick="selectErrorScenario(1)" style="justify-content:flex-start;">
+              2. อินเทอร์เน็ตหลุดขณะชำระเงิน (Timeout)
+            </button>
+            <button type="button" class="btn btn-ghost" data-err="2" onclick="selectErrorScenario(2)" style="justify-content:flex-start;">
+              3. บาร์โค้ดขาด/สแกนไม่ออก (Fallback)
+            </button>
+            <button type="button" class="btn btn-ghost" data-err="3" onclick="selectErrorScenario(3)" style="justify-content:flex-start;">
+              4. Token หมดอายุกลางกะ (401)
+            </button>
+          </div>
+
+          <div class="layer stack" id="err-lab-panel">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-sm);">
+              <h3 class="small-heading" id="err-lab-title" style="margin:0;">1. สินค้าหมดระหว่างรอจ่ายเงิน (409 Conflict)</h3>
+              <span class="tag tag-error" id="err-lab-code">HTTP 409 · INSUFFICIENT_STOCK</span>
+            </div>
+            <div class="grid-2">
+              <div class="callout callout-error">
+                <span class="label">สิ่งที่พังหากไม่ป้องกัน</span>
+                <span id="err-lab-bad">Backend ยอมให้ตัดสต็อกจนติดลบ หรือส่ง 500 ทำให้หน้าจอค้างและตะกร้า 15 รายการหายหมด</span>
+              </div>
+              <div class="callout callout-positive">
+                <span class="label">ทางออกที่ถูกต้อง (BE + FE)</span>
+                <span id="err-lab-good">DB Rollback ทันที และส่งจำนวนคงเหลือจริงกลับมา หน้าจอไฮไลต์เฉพาะรายการที่มีปัญหาให้แคชเชียร์ปรับจำนวน</span>
+              </div>
+            </div>
+            <pre class="code-block" id="err-lab-json"></pre>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 10: Integration Testing & Pitfalls -->
+      <article class="slide" data-slide="9" data-title="Integration Testing &amp; จุดพลาดที่พบบ่อย">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 10 · INTEGRATION TESTING &amp; CI</span>
+          <span class="tag">Verification Before Demo</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>ทดสอบการเชื่อมต่อ</strong> อย่าเชื่อคำว่า "เครื่องผมรันผ่านแล้ว"</h2>
+        <p class="slide-lede">
+          Continuous Integration ที่แท้จริงคือการทดสอบเส้นทางจาก UI ผ่าน API ลง Database ให้ทำงานร่วมกันได้สม่ำเสมอทุกครั้งที่แก้โค้ด
+        </p>
+
+        <div class="grid-2" style="margin-bottom: var(--space-lg);">
+          <div class="layer stack-sm">
+            <span class="label label-latin">TESTING PYRAMID FOR 1145 204</span>
+            <h3 class="small-heading">3 ระดับการทดสอบก่อนส่งงาน</h3>
+            <div class="hairline-list stack-sm">
+              <div>
+                <strong>1. Unit Test (ใช้ In-Memory Gateway):</strong> ทดสอบฟังก์ชันคำนวณส่วนลด/ภาษี และกฎตัดสต็อกให้รวดเร็วโดยไม่ต้องรอ DB จริง
+              </div>
+              <div>
+                <strong>2. API Integration Test:</strong> ยิง HTTP Request จริงเข้า Endpoint แล้วตรวจทั้ง Status Code, JSON Schema และการเปลี่ยนค่าในตาราง <code>Orders</code> / <code>Inventory</code>
+              </div>
+              <div>
+                <strong>3. E2E Smoke Test (หน้างาน):</strong> สแกนสินค้า → กดจ่าย PromptPay → สต็อกลดลง → แจ้งเตือน Reorder ทำงานเมื่อสต็อกต่ำกว่าเกณฑ์
+              </div>
+            </div>
+          </div>
+
+          <div class="layer stack-sm">
+            <span class="label label-latin">COMMON INTEGRATION PITFALLS</span>
+            <h3 class="small-heading">4 จุดตายตอนรวมโค้ดหน้าบ้าน-หลังบ้าน</h3>
+            <div class="hairline-list stack-sm">
+              <div>
+                <strong>CORS Blocked:</strong> หน้าบ้านรันพอร์ต 5173 แต่หลังบ้านพอร์ต 3000 แล้วลืมตั้งค่า <code>Access-Control-Allow-Origin</code>
+              </div>
+              <div>
+                <strong>Hardcoded localhost URL:</strong> ฝัง URL ตายตัวในโค้ด JS แทนการใช้ Environment Variable (<code>.env</code>)
+              </div>
+              <div>
+                <strong>Silent Catch Block:</strong> เขียน <code>catch (err) { console.log(err) }</code> โดยไม่แจ้งเตือนผู้ใช้
+              </div>
+              <div>
+                <strong>Time Zone Mismatch:</strong> เวลาหน้าจอไทย (+07:00) ไม่ตรงกับเวลาเซิร์ฟเวอร์ (UTC) ทำให้สรุปยอดขายรายวันผิดวัน
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>เคล็ดลับ Clean Code:</strong> ตั้งไฟล์กลางเพียงจุดเดียวฝั่ง Frontend (เช่น <code>apiClient.js</code>) สำหรับแนบ Authorization Header, แปลง JSON และดักจับ HTTP 401/500 แบบรวมศูนย์ ไม่ต้องเขียน <code>fetch()</code> ซ้ำซ้อนทุกหน้า
+        </div>
+      </article>
+
+      <!-- SLIDE 11: Course Rubric & Interactive Readiness Checklist -->
+      <article class="slide" data-slide="10" data-title="เกณฑ์ประเมิน &amp; เช็กลิสต์ความพร้อมของทีม">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 11 · EVALUATION RUBRIC &amp; READINESS</span>
+          <span class="tag">25 Points Integration Criteria</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>เกณฑ์ประเมินการเชื่อมต่อระบบ</strong> &amp; แบบประเมินความพร้อมของทีม</h2>
+        <p class="slide-lede">
+          อ้างอิงเกณฑ์ให้คะแนนการบูรณาการระบบ (25 คะแนน) ของรายวิชา และติ๊กเช็กลิสต์เพื่อประเมินสถานะโครงงานของกลุ่มคุณ (บันทึกสถานะให้อัตโนมัติ)
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack-sm">
+            <span class="label label-latin">TEAM INTEGRATION CHECKLIST (8 MILESTONES)</span>
+            <div class="stack-sm" id="readiness-checklist"></div>
+          </div>
+
+          <div class="stack">
+            <div class="key-tile" id="readiness-score-tile">
+              <span class="label">สถานะความพร้อมของกลุ่ม</span>
+              <span class="key-value" id="readiness-count">0 / 8</span>
+              <span id="readiness-tier-badge" class="tag tag-warning">ปรับปรุง (0–13 คะแนน)</span>
+              <span class="label" id="readiness-advice" style="text-transform:none;">เริ่มตรวจเช็กจาก API Contract และ DB Transaction ก่อน</span>
+            </div>
+
+            <div class="table-wrap">
+              <table class="carbon-table">
+                <thead>
+                  <tr>
+                    <th>ระดับคะแนน</th>
+                    <th>เกณฑ์การพิจารณา (1145 204)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>ดีเยี่ยม (22–25)</strong></td>
+                    <td>เชื่อมต่อ FE–BE–DB สมบูรณ์ API Contracts ชัดเจน Error Handling ครบถ้วน และโค้ดตามมาตรฐาน Clean Code</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ดี (18–21)</strong></td>
+                    <td>เชื่อมต่อทำงานตามฟังก์ชันหลักได้ API specs ถูกต้อง มีระบบจัดการข้อผิดพลาดพื้นฐาน</td>
+                  </tr>
+                  <tr>
+                    <td><strong>พอใช้ (14–17)</strong></td>
+                    <td>ยังพบ Bugs ในบางกรณี Error Handling ไม่ครอบคลุม หรือโครงสร้างโค้ดยังซับซ้อน</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ปรับปรุง (0–13)</strong></td>
+                    <td>ไม่สามารถเชื่อมต่อ FE และ BE ให้ทำงานร่วมกันได้ หรือเกิด Error รุนแรงระหว่างทำงาน</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SLIDE 12: Quick Knowledge Check & Week 10 Action Plan -->
+      <article class="slide" data-slide="11" data-title="ทบทวนความเข้าใจ &amp; แผนปฏิบัติการหลังคาบ">
+        <div class="slide-meta-row">
+          <span class="label label-latin">SLIDE 12 · WRAP-UP &amp; ACTION PLAN</span>
+          <span class="tag">Interactive Check</span>
+        </div>
+
+        <h2 class="slide-headline"><strong>ทบทวนความเข้าใจ</strong> &amp; สิ่งที่ต้องส่งมอบในสัปดาห์ถัดไป</h2>
+        <p class="slide-lede">
+          ตอบคำถามสถานการณ์สั้น 3 ข้อเพื่อตรวจสอบความเข้าใจ ก่อนนำทีมไปปฏิบัติจริงใน Sprint ปิดงาน
+        </p>
+
+        <div class="grid-7-5">
+          <div class="stack" id="quiz-container"></div>
+
+          <div class="layer stack">
+            <span class="label label-latin">NEXT STEPS · WEEK 10 → WEEK 11</span>
+            <h3 class="small-heading">แผนปฏิบัติการ 4 ขั้นตอนหลังจบคาบ</h3>
+            <div class="hairline-list stack-sm">
+              <div><strong>1. Freeze API Contract:</strong> ตกลง JSON Request/Response ของทุก Endpoint ในเอกสาร/Swagger ให้จบภายในสัปดาห์นี้</div>
+              <div><strong>2. Implement Atomic Checkout:</strong> ใช้ DB Transaction + เช็กสต็อกระดับ SQL ใน <code>POST /api/v1/orders</code></div>
+              <div><strong>3. Wire Central Error Handler:</strong> ทำให้ทุกหน้าจอรับ Error Envelope และคงตะกร้าสินค้าไว้เมื่อเกิดความผิดพลาด</div>
+              <div><strong>4. Record Demo &amp; Test Cases:</strong> ทดสอบกรณี Normal Flow + Out-of-Stock + Network Error เพื่อเตรียมประเมิน</div>
+            </div>
+            <div class="callout callout-positive">
+              <span class="label">ผลคะแนนแบบทดสอบ</span>
+              <strong id="quiz-score-summary">ตอบคำถามทั้ง 3 ข้อเพื่อดูสรุปผล</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- Bottom Slide Navigation -->
+    <footer class="slide-footer-nav">
+      <button type="button" class="btn btn-secondary" id="btn-prev-bottom" onclick="prevSlide()">← สไลด์ก่อนหน้า</button>
+      <span class="kbd-hint">ใช้ปุ่มลูกศร ← / → เพื่อเปลี่ยนสไลด์ · <span id="slide-counter-bottom">01 / 12</span></span>
+      <button type="button" class="btn btn-primary" id="btn-next-bottom" onclick="nextSlide()">สไลด์ถัดไป →</button>
+    </footer>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // DATA DEFINITIONS (All strings in backtick literals for JS safety)
+    // =========================================================================
+
+    const SLIDE_ARCH_DATA = [
+      {
+        badge: `STEP 01 · FRONTEND PRESENTATION`,
+        title: `Frontend (HTML/CSS/JS): รับอินพุตและจัดการ UI State`,
+        desc: `หน้าจอ POS มีหน้าที่สแกนบาร์โค้ด จัดการรายการในตะกร้า และแสดงผลสถานะให้รวดเร็ว ห้ามเก็บ Logic การคำนวณภาษี/ส่วนลดสุทธิเป็นความจริงเด็ดขาด และห้ามเชื่อมต่อ SQL โดยตรง`,
+        rule: `กฎเหล็กสถาปัตยกรรม: ส่งเฉพาะ product_id และ quantity ไปให้ Backend เป็นผู้คำนวณยอดเงินจากราคาจริงในฐานข้อมูลเสมอ`,
+        code: `// Frontend: เตรียมข้อมูลส่ง Checkout (ไม่ส่ง price)
+const payload = {
+  payment_method: 'PromptPay',
+  idempotency_key: currentOrderUuid,
+  items: cart.map(item => ({
+    product_id: item.product_id,
+    quantity: item.quantity
+  }))
+};`
+      },
+      {
+        badge: `STEP 02 · API GATEWAY & AUTHENTICATION`,
+        title: `API Endpoint & Middleware: ตรวจสิทธิ์และรูปแบบข้อมูล`,
+        desc: `รับ HTTP Request ผ่าน REST API ตรวจสอบ JWT Token ว่าแคชเชียร์เข้าสู่ระบบถูกต้อง และตรวจ Schema (เช่น quantity ต้องเป็นจำนวนเต็มมากกว่า 0) ก่อนส่งต่อเข้า Business Logic`,
+        rule: `หาก Token หมดอายุหรือข้อมูลผิดรูป ให้ปฏิเสธทันทีด้วย 401 หรือ 400 โดยไม่เสียเวลาเปิดการเชื่อมต่อฐานข้อมูล`,
+        code: `POST /api/v1/orders HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+Content-Type: application/json
+Idempotency-Key: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d`
+      },
+      {
+        badge: `STEP 03 · SERVICE / BUSINESS LOGIC LAYER`,
+        title: `Service Layer: คำนวณยอดสุทธิและตรวจสอบกฎธุรกิจ`,
+        desc: `ดึงราคาสินค้าปัจจุบันจากฐานข้อมูลมาคูณกับจำนวนที่สั่ง คำนวณ VAT/ส่วนลด และตรวจสอบว่าหากสต็อกหลังตัดต่ำกว่า reorder_level ให้สร้าง Event แจ้งเตือนผู้จัดการร้าน`,
+        rule: `แยก Business Rules ออกจาก Route Controller และ Database Driver เพื่อให้อ่านง่ายและเขียน Unit Test ได้`,
+        code: `// Backend Service: คำนวณยอดจากราคาใน DB จริง
+let totalAmount = 0;
+for (const reqItem of payload.items) {
+  const dbProduct = await productRepo.findById(reqItem.product_id);
+  const subtotal = dbProduct.price * reqItem.quantity;
+  totalAmount += subtotal;
+}`
+      },
+      {
+        badge: `STEP 04 · DATA ACCESS / DB GATEWAY`,
+        title: `Database Gateway: บันทึกและตัดสต็อกใน Transaction เดียว`,
+        desc: `ใช้ Pattern Table Data Gateway ครอบคำสั่ง SQL ทั้งหมด ทำงานภายใต้ BEGIN ... COMMIT เพื่อรับประกันว่า Order, Order_Items และ Inventory ถูกอัปเดตพร้อมกันหรือยกเลิกทั้งหมด`,
+        rule: `ห้ามปล่อยให้บันทึก Order สำเร็จแต่ตัดสต็อกไม่สำเร็จ (Partial Save) เพราะจะทำให้บัญชีร้านพังทันที`,
+        code: `BEGIN;
+UPDATE inventory SET stock_quantity = stock_quantity - 2
+  WHERE product_id = 101 AND stock_quantity >= 2;
+-- หาก affected_rows === 0 ให้สั่ง ROLLBACK ทันที
+INSERT INTO orders (user_id, total_amount, status) VALUES (...);
+COMMIT;`
+      },
+      {
+        badge: `STEP 05 · RESPONSE & CLIENT STATE SYNC`,
+        title: `Response Envelope: ส่งใบเสร็จและซิงก์สต็อกหน้าจอ`,
+        desc: `Backend ส่ง HTTP 201 Created พร้อมเลขที่ใบเสร็จ ยอดสุทธิ และรายการสินค้าที่สต็อกใกล้หมด ฝั่ง Frontend เปลี่ยน State เป็น PAID_RECEIPT ล้างตะกร้า และอัปเดตยอดสต็อกที่แสดง`,
+        rule: `ส่ง Standard Envelope เดียวกันทั้งระบบเพื่อให้ Frontend จัดการผลลัพธ์ได้จากฟังก์ชันกลางจุดเดียว`,
+        code: `{
+  "success": true,
+  "data": {
+    "order_id": "ORD-2026-0842",
+    "total_amount": 135.00,
+    "low_stock_alerts": [
+      { "product_id": 102, "name": "นมพาสเจอร์ไรส์", "remaining": 2 }
+    ]
+  }
+}`
+      }
+    ];
+
+    const API_COMPARE_DATA = {
+      aligned: {
+        reqLabel: `REQUEST · POST /api/v1/orders (ALIGNED CONTRACT)`,
+        resLabel: `RESPONSE · 201 CREATED (STANDARD ENVELOPE)`,
+        reqCode: `{
+  "payment_method": "PromptPay",
+  "idempotency_key": "ord-7f9c-2026",
+  "items": [
+    { "product_id": 101, "quantity": 2 },
+    { "product_id": 102, "quantity": 1 }
+  ]
+}`,
+        resCode: `{
+  "success": true,
+  "data": {
+    "order_id": "ORD-2026-1042",
+    "order_datetime": "2026-11-13T10:15:30Z",
+    "total_amount": 84.00,
+    "status": "PAID",
+    "items": [
+      { "product_id": 101, "unit_price": 12.00, "quantity": 2, "subtotal": 24.00 },
+      { "product_id": 102, "unit_price": 60.00, "quantity": 1, "subtotal": 60.00 }
+    ]
+  }
+}`,
+        note: `จุดที่ต้องตกลงร่วมกันใน API Spec ก่อนเริ่มเชื่อมต่อ: 1) รูปแบบชื่อคีย์ (snake_case หรือ camelCase ให้เหมือนกันทั้งระบบ) · 2) รูปแบบวันเวลา (ISO-8601) · 3) ชนิดข้อมูลตัวเลข (Decimal/Number) · 4) Server เป็นผู้คำนวณราคาทั้งหมด`
+      },
+      broken: {
+        reqLabel: `REQUEST · POST /checkout (UNALIGNED - อันตราย)`,
+        resLabel: `RESPONSE · 200 OK (สับสนและแก้ไขยาก)`,
+        reqCode: `{
+  "payType": "qr",
+  "totalPrice": "84",      // อันตราย! เชื่อยอดรวมจากหน้าบ้าน
+  "cart": [
+    { "id": 101, "qty": 2, "price": 1 } // แก้ราคาเป็น 1 บาทได้!
+  ]
+}`,
+        resCode: `{
+  "status": "ok",          // ส่ง 200 แม้บางรายการตัดสต็อกไม่ได้
+  "orderId": 1042,
+  "msg": "Saved",          // ไม่มีโครงสร้างใบเสร็จกลับไปพิมพ์
+  "err": null              // ปนทั้ง camelCase และข้อความคลุมเครือ
+}`,
+        note: `ปัญหาที่เกิดเมื่อไม่ทำ API Alignment: 1) ลูกค้าแอบแก้ราคาใน DevTools ส่งไปจ่าย 1 บาทได้ · 2) ชื่อคีย์ Frontend (payType) ไม่ตรง Backend (payment_method) · 3) ส่ง 200 OK แม้มีข้อผิดพลาด ทำให้ UI คิดว่าขายสำเร็จแล้ว`
+      }
+    };
+
+    const INITIAL_GROCERY_CATALOG = [
+      { id: 101, sku: `88501234001`, name: `น้ำดื่มบริสุทธิ์ 600 มล.`, price: 7, stock: 12, reorder: 5 },
+      { id: 102, sku: `88501234002`, name: `นมพาสเจอร์ไรส์ 830 มล.`, price: 48, stock: 3, reorder: 4 },
+      { id: 103, sku: `88501234003`, name: `ข้าวหอมมะลิ 5 กก.`, price: 185, stock: 5, reorder: 3 },
+      { id: 104, sku: `88501234004`, name: `กาแฟกระป๋องพร้อมดื่ม`, price: 17, stock: 2, reorder: 5 }
+    ];
+
+    const ERROR_SCENARIOS = [
+      {
+        title: `1. สินค้าหมดระหว่างรอจ่ายเงิน (409 Conflict)`,
+        code: `HTTP 409 · INSUFFICIENT_STOCK`,
+        bad: `Backend ยอมให้ตัดสต็อกจนติดลบ (-2 ชิ้น) หรือโยน HTTP 500 ทำให้หน้าจอค้างและรายการในตะกร้า 15 ชิ้นหายหมด`,
+        good: `Database สั่ง ROLLBACK ทันทีและคืนจำนวนคงเหลือจริงกลับมา Frontend ไฮไลต์เฉพาะสินค้าที่ขาดให้แคชเชียร์กดปรับจำนวนใน 1 คลิก`,
+        json: `{
+  "success": false,
+  "error": {
+    "code": "INSUFFICIENT_STOCK",
+    "message": "สินค้า นมพาสเจอร์ไรส์ เหลือไม่พอจำหน่าย",
+    "details": { "product_id": 102, "requested": 4, "available": 2 },
+    "retryable": false
+  }
+}`
+      },
+      {
+        title: `2. อินเทอร์เน็ตหลุดขณะกดชำระเงิน (Network Timeout)`,
+        code: `CLIENT TIMEOUT · IDEMPOTENCY KEY`,
+        bad: `แคชเชียร์นึกว่าระบบค้างจึงกดปุ่มชำระเงินซ้ำ 2 รอบ ทำให้เกิดบิลซ้อน 2 ใบและตัดสต็อกเบิ้ล 2 เท่า`,
+        good: `Frontend แนบ Idempotency-Key ประจำตะกร้าไว้ หากกด Retry หลังเน็ตกลับมา Backend จะตรวจ Key เดิมและคืนใบเสร็จเดิมโดยไม่ตัดสต็อกซ้ำ`,
+        json: `// Request Header ที่ส่งซ้ำพร้อม Key เดิม
+Idempotency-Key: "pos-reg1-9f82a10c"
+
+// Backend ตรวจพบว่า Key นี้สำเร็จไปแล้ว -> ส่งผลเดิมกลับทันที
+{
+  "success": true,
+  "idempotent_replay": true,
+  "data": { "order_id": "ORD-2026-1042", "status": "PAID" }
+}`
+      },
+      {
+        title: `3. เครื่องสแกนบาร์โค้ดอ่านไม่ออก (Hardware Fallback)`,
+        code: `UI FALLBACK · MANUAL SKU LOOKUP`,
+        bad: `ระบบบังคับรับค่าจาก Barcode Scanner เท่านั้น ทำให้เมื่อฉลากยับหรือบาร์โค้ดขาด แคชเชียร์ขายสินค้าไม่ได้`,
+        good: `เตรียมช่องค้นหาด้วยรหัส SKU หรือชื่อสินค้าสำรองไว้เสมอ (GET /api/v1/products?q=...) และคืน 404 แบบสุภาพเมื่อค้นหาไม่พบ`,
+        json: `// GET /api/v1/products?barcode=00009999
+// HTTP 404 Not Found
+{
+  "success": false,
+  "error": {
+    "code": "PRODUCT_NOT_FOUND",
+    "message": "ไม่พบรหัสบาร์โค้ดนี้ในระบบ กรุณาค้นหาด้วยชื่อสินค้า",
+    "retryable": false
+  }
+}`
+      },
+      {
+        title: `4. Token หมดอายุกลางกะการทำงาน (401 Unauthorized)`,
+        code: `HTTP 401 · TOKEN_EXPIRED`,
+        bad: `ระบบ Redirect กลับหน้า Login ทันที ทำให้รายการสินค้าที่สแกนค้างไว้ในตะกร้าหายไปทั้งหมด ลูกค้าต้องรอสแกนใหม่`,
+        good: `Axios/Fetch Interceptor ดักจับ 401 แล้วเก็บรัฐตะกร้าปัจจุบันไว้ เปิดหน้าต่างกรอกรหัสผ่านซ้ำ (Re-auth Modal) เมื่อผ่านแล้วกดส่งออเดอร์ต่อได้ทันที`,
+        json: `// HTTP 401 Unauthorized
+{
+  "success": false,
+  "error": {
+    "code": "TOKEN_EXPIRED",
+    "message": "เซสชันหมดอายุ กรุณายืนยันตัวตนอีกครั้ง (ตะกร้าสินค้ายังถูกเก็บไว้)",
+    "retryable": true
+  }
+}`
+      }
+    ];
+
+    const READINESS_MILESTONES = [
+      { id: `m1`, title: `1. API Contract ชัดเจนและตรงกัน`, desc: `กำหนด Request/Response Schema, ชื่อฟิลด์ และชนิดข้อมูลไว้เป็นเอกสารกลางก่อนโค้ด` },
+      { id: `m2`, title: `2. Server-Side Price & Total Calculation`, desc: `Frontend ส่งเฉพาะ product_id และ quantity เท่านั้น ไม่เชื่อราคาจากฝั่ง Client` },
+      { id: `m3`, title: `3. Database Transaction (ACID)`, desc: `การสร้าง Order, Order_Items และตัดสต็อกทำงานใน Transaction เดียวพร้อม Rollback` },
+      { id: `m4`, title: `4. Concurrency / Stock Guard`, desc: `ใช้เงื่อนไข WHERE stock_quantity >= ? หรือ Row Lock ป้องกันสต็อกติดลบ` },
+      { id: `m5`, title: `5. State Machine ป้องกันกดซ้ำ`, desc: `หน้าจอ POS ล็อกปุ่มชำระเงินระหว่างกำลังส่ง API และมีกลไก Idempotency` },
+      { id: `m6`, title: `6. Standard Error Envelope & HTTP Status`, desc: `แยก 400, 401, 404, 409, 500 ชัดเจน ไม่ส่ง 200 OK ซ่อน Error` },
+      { id: `m7`, title: `7. Resilient POS Recovery UX`, desc: `เมื่อเกิด Error ตะกร้าสินค้าไม่หาย มีข้อความภาษาไทยและปุ่มทางออกชัดเจน` },
+      { id: `m8`, title: `8. End-to-End & Automated Tests`, desc: `ทดสอบครบ Flow ตั้งแต่สแกนสินค้า ตัดสต็อก จนถึงแจ้งเตือนวัตถุดิบ/สินค้าใกล้หมด` }
+    ];
+
+    const QUIZ_QUESTIONS = [
+      {
+        id: `q1`,
+        prompt: `ข้อใดเป็นแนวทางที่ถูกต้องที่สุดในการส่งข้อมูล Checkout จากหน้าจอ POS ไปยัง Backend?`,
+        options: [
+          `ส่งทั้ง product_id, quantity, price_per_unit และ total_amount เพื่อลดภาระ Backend`,
+          `ส่งเฉพาะ product_id, quantity และ payment_method แล้วให้ Backend ดึงราคาจาก DB มาคำนวณ`,
+          `ให้ Frontend ตัดสต็อกผ่าน SQL โดยตรงก่อน แล้วค่อยแจ้ง Backend`
+        ],
+        correct: 1,
+        explain: `ถูกต้อง: Backend ต้องเป็นผู้ดึงราคาจริงจากตาราง Products มาคำนวณเพื่อป้องกันการปลอมแปลงราคาฝั่ง Client`
+      },
+      {
+        id: `q2`,
+        prompt: `เมื่อแคชเชียร์ A และ B สแกนสินค้าชิ้นสุดท้ายพร้อมกัน Backend ควรป้องกันสต็อกติดลบอย่างไร?`,
+        options: [
+          `ใช้ JavaScript setTimeout รอคิวฝั่ง Frontend`,
+          `ตรวจสอบ stock > 0 แค่ตอนเปิดหน้าเว็บครั้งแรก`,
+          `ใช้ DB Transaction ร่วมกับ Atomic Update (WHERE stock_quantity >= qty) และสั่ง ROLLBACK หากไม่พอ`
+        ],
+        correct: 2,
+        explain: `ถูกต้อง: การตรวจและตัดสต็อกต้องเกิดขึ้นอย่างเป็นอะตอมมิกในระดับฐานข้อมูล (Transaction + Conditional Update)`
+      },
+      {
+        id: `q3`,
+        prompt: `หากลูกค้าสั่ง 4 ชิ้น แต่ในคลังเหลือ 2 ชิ้น Backend ควรคืน HTTP Status Code ใด?`,
+        options: [
+          `200 OK พร้อมข้อความ {"error": "not enough"}`,
+          `409 Conflict พร้อมระบุ available: 2 ใน Error Envelope`,
+          `404 Not Found`
+        ],
+        correct: 1,
+        explain: `ถูกต้อง: 409 Conflict สื่อความหมายว่าคำขอขัดแย้งกับสถานะทรัพยากรปัจจุบัน (สต็อกไม่พอ) ได้ตรงมาตรฐานที่สุด`
+      }
+    ];
+
+    // =========================================================================
+    // APPLICATION STATE (Persisted via window.notebookAppApi)
+    // =========================================================================
+    let appState = {
+      currentSlide: 0,
+      visitedSlides: [0],
+      handoutMode: false,
+      archStep: 0,
+      apiCompare: `aligned`,
+      raceMode: `naive`,
+      fsmState: `IDLE`,
+      errScenario: 0,
+      checklist: {},
+      quizAnswers: {},
+      posCart: [{ product_id: 101, quantity: 2 }, { product_id: 102, quantity: 1 }],
+      posCatalog: INITIAL_GROCERY_CATALOG.map(item => ({ ...item }))
+    };
+
+    const TOTAL_SLIDES = 12;
+
+    async function persistState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+        try {
+          await window.notebookAppApi.setAppState(appState);
+        } catch (e) {
+          // Ignore persistence errors in restricted preview
+        }
+      }
+    }
+
+    // =========================================================================
+    // SLIDE NAVIGATION & VIEW MODE
+    // =========================================================================
+    function renderSlideChrome() {
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach((s, idx) => {
+        if (idx === appState.currentSlide) {
+          s.classList.add('is-active');
+        } else {
+          s.classList.remove('is-active');
+        }
+      });
+
+      const labelText = `${String(appState.currentSlide + 1).padStart(2, '0')} / ${TOTAL_SLIDES}`;
+      const topCounter = document.getElementById('slide-counter-top');
+      const botCounter = document.getElementById('slide-counter-bottom');
+      if (topCounter) topCounter.textContent = labelText;
+      if (botCounter) botCounter.textContent = labelText;
+
+      const prevTop = document.getElementById('btn-prev-top');
+      const prevBot = document.getElementById('btn-prev-bottom');
+      const nextTop = document.getElementById('btn-next-top');
+      const nextBot = document.getElementById('btn-next-bottom');
+
+      if (prevTop) prevTop.disabled = appState.currentSlide === 0;
+      if (prevBot) prevBot.disabled = appState.currentSlide === 0;
+      if (nextTop) nextTop.disabled = appState.currentSlide === TOTAL_SLIDES - 1;
+      if (nextBot) nextBot.disabled = appState.currentSlide === TOTAL_SLIDES - 1;
+
+      const rail = document.getElementById('progress-rail');
+      if (rail) {
+        rail.innerHTML = '';
+        for (let i = 0; i < TOTAL_SLIDES; i++) {
+          const seg = document.createElement('button');
+          seg.type = 'button';
+          seg.className = 'progress-segment';
+          if (appState.visitedSlides.includes(i)) seg.classList.add('is-visited');
+          if (i === appState.currentSlide) seg.classList.add('is-active');
+          seg.setAttribute('aria-label', `ไปยังสไลด์ที่ ${i + 1}`);
+          seg.onclick = function () { goToSlide(i); };
+          rail.appendChild(seg);
+        }
+      }
+
+      const indexGrid = document.getElementById('index-grid');
+      if (indexGrid) {
+        indexGrid.innerHTML = '';
+        slides.forEach((s, idx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'index-item' + (idx === appState.currentSlide ? ' is-active' : '');
+          btn.onclick = function () {
+            goToSlide(idx);
+            const drawer = document.getElementById('index-drawer');
+            const toggleBtn = document.getElementById('btn-toggle-index');
+            if (drawer) drawer.hidden = true;
+            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+          };
+          const numSpan = document.createElement('span');
+          numSpan.className = 'index-num';
+          numSpan.textContent = `SLIDE ${String(idx + 1).padStart(2, '0')}`;
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'index-name';
+          nameSpan.textContent = s.getAttribute('data-title') || `สไลด์ ${idx + 1}`;
+          btn.appendChild(numSpan);
+          btn.appendChild(nameSpan);
+          indexGrid.appendChild(btn);
+        });
+      }
+
+      const modeBtn = document.getElementById('btn-toggle-mode');
+      if (appState.handoutMode) {
+        document.body.classList.add('handout-mode');
+        if (modeBtn) {
+          modeBtn.textContent = 'กลับสู่โหมดสไลด์';
+          modeBtn.classList.add('is-selected');
+        }
+      } else {
+        document.body.classList.remove('handout-mode');
+        if (modeBtn) {
+          modeBtn.textContent = 'โหมดอ่านทั้งหมด';
+          modeBtn.classList.remove('is-selected');
+        }
+      }
+    }
+
+    function goToSlide(idx) {
+      if (idx < 0 || idx >= TOTAL_SLIDES) return;
+      appState.currentSlide = idx;
+      if (!appState.visitedSlides.includes(idx)) {
+        appState.visitedSlides.push(idx);
+      }
+      renderSlideChrome();
+      persistState();
+      if (appState.handoutMode) {
+        const target = document.querySelector(`.slide[data-slide="${idx}"]`);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function nextSlide() {
+      goToSlide(appState.currentSlide + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(appState.currentSlide - 1);
+    }
+
+    function toggleIndexDrawer() {
+      const drawer = document.getElementById('index-drawer');
+      const btn = document.getElementById('btn-toggle-index');
+      if (!drawer || !btn) return;
+      const willOpen = drawer.hidden;
+      drawer.hidden = !willOpen;
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    }
+
+    function toggleViewMode() {
+      appState.handoutMode = !appState.handoutMode;
+      renderSlideChrome();
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 2: ARCHITECTURE STEPPER
+    // =========================================================================
+    function selectArchStep(idx) {
+      appState.archStep = idx;
+      const item = SLIDE_ARCH_DATA[idx] || SLIDE_ARCH_DATA[0];
+      const nodes = document.querySelectorAll('.arch-node');
+      nodes.forEach((n, i) => {
+        if (i === idx) n.classList.add('is-active');
+        else n.classList.remove('is-active');
+      });
+
+      const badge = document.getElementById('arch-step-badge');
+      const title = document.getElementById('arch-step-title');
+      const desc = document.getElementById('arch-step-desc');
+      const rule = document.getElementById('arch-step-rule');
+      const code = document.getElementById('arch-step-code');
+
+      if (badge) badge.textContent = item.badge;
+      if (title) title.textContent = item.title;
+      if (desc) desc.textContent = item.desc;
+      if (rule) rule.innerHTML = `<strong>กฎเหล็กสถาปัตยกรรม:</strong> ${item.rule}`;
+      if (code) code.textContent = item.code;
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 4: API COMPARISON
+    // =========================================================================
+    function setApiComparison(mode) {
+      appState.apiCompare = mode;
+      const data = API_COMPARE_DATA[mode] || API_COMPARE_DATA.aligned;
+
+      const tabAligned = document.getElementById('tab-api-aligned');
+      const tabBroken = document.getElementById('tab-api-broken');
+      if (tabAligned) tabAligned.classList.toggle('is-active', mode === 'aligned');
+      if (tabBroken) tabBroken.classList.toggle('is-active', mode === 'broken');
+
+      const reqLabel = document.getElementById('api-req-label');
+      const resLabel = document.getElementById('api-res-label');
+      const reqCode = document.getElementById('api-req-code');
+      const resCode = document.getElementById('api-res-code');
+      const note = document.getElementById('api-compare-note');
+
+      if (reqLabel) reqLabel.textContent = data.reqLabel;
+      if (resLabel) resLabel.textContent = data.resLabel;
+      if (reqCode) reqCode.textContent = data.reqCode;
+      if (resCode) resCode.textContent = data.resCode;
+      if (note) {
+        note.className = mode === 'broken' ? 'callout callout-error' : 'callout callout-positive';
+        note.innerHTML = `<strong>สรุปการออกแบบ:</strong> <span>${data.note}</span>`;
+      }
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 5: LIVE GROCERY POS INTEGRATION SANDBOX
+    // =========================================================================
+    function renderPosCatalog() {
+      const tbody = document.getElementById('pos-catalog-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      appState.posCatalog.forEach(prod => {
+        const cartEntry = appState.posCart.find(c => c.product_id === prod.id);
+        const inCartQty = cartEntry ? cartEntry.quantity : 0;
+
+        const tr = document.createElement('tr');
+        const tdName = document.createElement('td');
+        tdName.innerHTML = `<strong>${prod.name}</strong><br><span class="label">SKU: ${prod.sku}</span>`;
+
+        const tdPrice = document.createElement('td');
+        tdPrice.className = 'num';
+        tdPrice.textContent = `${prod.price.toFixed(2)}`;
+
+        const tdStock = document.createElement('td');
+        tdStock.className = 'num';
+        tdStock.innerHTML = prod.stock <= prod.reorder
+          ? `<span class="tag tag-warning">${prod.stock} (ใกล้หมด)</span>`
+          : `${prod.stock}`;
+
+        const tdAction = document.createElement('td');
+        tdAction.innerHTML = `
+          <div style="display:flex; align-items:center; gap:var(--space-xs);">
+            <button type="button" class="btn btn-ghost" style="min-height:36px; padding:0 var(--space-sm);" onclick="adjustPosCart(${prod.id}, -1)" aria-label="ลดจำนวน ${prod.name}">-</button>
+            <span class="label" style="min-width:24px; text-align:center;">${inCartQty}</span>
+            <button type="button" class="btn btn-secondary" style="min-height:36px; padding:0 var(--space-sm);" onclick="adjustPosCart(${prod.id}, 1)" aria-label="เพิ่มจำนวน ${prod.name}">+</button>
+          </div>
+        `;
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdPrice);
+        tr.appendChild(tdStock);
+        tr.appendChild(tdAction);
+        tbody.appendChild(tr);
+      });
+      updatePosPreview();
+    }
+
+    function adjustPosCart(productId, delta) {
+      const idx = appState.posCart.findIndex(c => c.product_id === productId);
+      if (idx === -1 && delta > 0) {
+        appState.posCart.push({ product_id: productId, quantity: delta });
+      } else if (idx !== -1) {
+        appState.posCart[idx].quantity += delta;
+        if (appState.posCart[idx].quantity <= 0) {
+          appState.posCart.splice(idx, 1);
+        }
+      }
+      renderPosCatalog();
+      persistState();
+    }
+
+    function clearPosCart() {
+      appState.posCart = [];
+      const banner = document.getElementById('pos-status-banner');
+      const txt = document.getElementById('pos-status-text');
+      if (banner) banner.className = 'callout';
+      if (txt) txt.textContent = 'ล้างตะกร้าแล้ว เลือกสินค้าเพื่อเริ่มคำสั่งซื้อใหม่';
+      renderPosCatalog();
+      persistState();
+    }
+
+    function resetPosSim() {
+      appState.posCatalog = INITIAL_GROCERY_CATALOG.map(item => ({ ...item }));
+      appState.posCart = [{ product_id: 101, quantity: 2 }, { product_id: 102, quantity: 1 }];
+      const banner = document.getElementById('pos-status-banner');
+      const txt = document.getElementById('pos-status-text');
+      if (banner) banner.className = 'callout';
+      if (txt) txt.textContent = 'รีเซ็ตสต็อกเริ่มต้นเรียบร้อย พร้อมทดสอบส่ง API';
+      renderPosCatalog();
+      persistState();
+    }
+
+    function updatePosPreview() {
+      const paySelect = document.getElementById('pos-payment-select');
+      const paymentMethod = paySelect ? paySelect.value : 'PromptPay';
+      const reqEl = document.getElementById('pos-sim-req');
+      const sqlEl = document.getElementById('pos-sim-sql');
+      const resEl = document.getElementById('pos-sim-res');
+
+      const payload = {
+        payment_method: paymentMethod,
+        idempotency_key: `pos-wk10-demo`,
+        items: appState.posCart
+      };
+      if (reqEl) reqEl.textContent = JSON.stringify(payload, null, 2);
+
+      if (appState.posCart.length === 0) {
+        if (sqlEl) sqlEl.textContent = `-- รอรายการสินค้าในตะกร้า --`;
+        if (resEl) resEl.textContent = `// กด + เพิ่มสินค้า แล้วคลิก "ส่งคำสั่ง POST /api/v1/orders"`;
+      }
+    }
+
+    function runPosCheckout() {
+      const paySelect = document.getElementById('pos-payment-select');
+      const paymentMethod = paySelect ? paySelect.value : 'PromptPay';
+      const sqlEl = document.getElementById('pos-sim-sql');
+      const resEl = document.getElementById('pos-sim-res');
+      const banner = document.getElementById('pos-status-banner');
+      const txt = document.getElementById('pos-status-text');
+
+      if (appState.posCart.length === 0) {
+        if (banner) banner.className = 'callout callout-warning';
+        if (txt) txt.textContent = 'HTTP 400 Bad Request: ตะกร้าว่าง ไม่สามารถสร้าง Order ได้';
+        if (sqlEl) sqlEl.textContent = `-- Validation rejected before DB connection`;
+        if (resEl) resEl.textContent = JSON.stringify({
+          success: false,
+          error: { code: `EMPTY_CART`, message: `กรุณาเลือกสินค้าอย่างน้อย 1 รายการ` }
+        }, null, 2);
+        return;
+      }
+
+      // Check stock atomically in simulated transaction
+      let conflictItem = null;
+      for (const cartItem of appState.posCart) {
+        const dbProd = appState.posCatalog.find(p => p.id === cartItem.product_id);
+        if (!dbProd || dbProd.stock < cartItem.quantity) {
+          conflictItem = {
+            product_id: cartItem.product_id,
+            name: dbProd ? dbProd.name : `Unknown`,
+            requested: cartItem.quantity,
+            available: dbProd ? dbProd.stock : 0
+          };
+          break;
+        }
+      }
+
+      if (conflictItem) {
+        if (banner) banner.className = 'callout callout-error';
+        if (txt) txt.textContent = `HTTP 409 Conflict: ${conflictItem.name} เหลือ ${conflictItem.available} ชิ้น (สั่ง ${conflictItem.requested} ชิ้น) -> สั่ง ROLLBACK`;
+        if (sqlEl) sqlEl.textContent = `BEGIN;\nUPDATE inventory SET stock_quantity = stock_quantity - ${conflictItem.requested}\n  WHERE product_id = ${conflictItem.product_id} AND stock_quantity >= ${conflictItem.requested};\n-- 0 rows affected!\nROLLBACK; -- ยกเลิกทั้งออเดอร์ ตะกร้าไม่พัง`;
+        if (resEl) resEl.textContent = JSON.stringify({
+          success: false,
+          error: {
+            code: `INSUFFICIENT_STOCK`,
+            message: `สินค้า ${conflictItem.name} เหลือไม่พอ`,
+            details: conflictItem,
+            retryable: false
+          }
+        }, null, 2);
+        return;
+      }
+
+      // Commit transaction
+      let totalAmount = 0;
+      const orderItemsRes = [];
+      const lowStockAlerts = [];
+      const sqlLines = [`BEGIN;`];
+
+      appState.posCart.forEach(cartItem => {
+        const dbProd = appState.posCatalog.find(p => p.id === cartItem.product_id);
+        dbProd.stock -= cartItem.quantity;
+        const subtotal = dbProd.price * cartItem.quantity;
+        totalAmount += subtotal;
+        sqlLines.push(`UPDATE inventory SET stock_quantity = ${dbProd.stock} WHERE product_id = ${dbProd.id};`);
+        orderItemsRes.push({
+          product_id: dbProd.id,
+          name: dbProd.name,
+          unit_price: dbProd.price,
+          quantity: cartItem.quantity,
+          subtotal: subtotal
+        });
+        if (dbProd.stock <= dbProd.reorder) {
+          lowStockAlerts.push({ product_id: dbProd.id, name: dbProd.name, remaining: dbProd.stock });
+        }
+      });
+
+      sqlLines.push(`INSERT INTO orders (total_amount, payment_method, status) VALUES (${totalAmount.toFixed(2)}, '${paymentMethod}', 'PAID');`);
+      sqlLines.push(`COMMIT;`);
+
+      if (sqlEl) sqlEl.textContent = sqlLines.join('\n');
+      if (resEl) resEl.textContent = JSON.stringify({
+        success: true,
+        data: {
+          order_id: `ORD-2026-1099`,
+          payment_method: paymentMethod,
+          total_amount: totalAmount,
+          items: orderItemsRes,
+          low_stock_alerts: lowStockAlerts
+        }
+      }, null, 2);
+
+      appState.posCart = [];
+      if (banner) banner.className = 'callout callout-positive';
+      if (txt) {
+        const alertMsg = lowStockAlerts.length > 0
+          ? ` · แจ้งเตือนสต็อกใกล้หมด ${lowStockAlerts.length} รายการ!`
+          : ``;
+        txt.textContent = `HTTP 201 Created: ชำระเงิน ${totalAmount.toFixed(2)} บาท (${paymentMethod}) สำเร็จ${alertMsg}`;
+      }
+      renderPosCatalog();
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 6: RACE CONDITION SIMULATOR
+    // =========================================================================
+    function runRaceDemo(mode) {
+      appState.raceMode = mode;
+      const btnNaive = document.getElementById('btn-race-naive');
+      const btnAcid = document.getElementById('btn-race-acid');
+      if (btnNaive) btnNaive.classList.toggle('is-selected', mode === 'naive');
+      if (btnAcid) btnAcid.classList.toggle('is-selected', mode === 'acid');
+
+      const tbody = document.getElementById('race-timeline-body');
+      const vBox = document.getElementById('race-verdict-box');
+      const vTitle = document.getElementById('race-verdict-title');
+      const vDesc = document.getElementById('race-verdict-desc');
+      const snippet = document.getElementById('race-sql-snippet');
+
+      if (!tbody) return;
+
+      if (mode === 'naive') {
+        tbody.innerHTML = `
+          <tr><td><strong>T1 (0ms)</strong></td><td>SELECT stock → ได้ค่า 2</td><td>—</td><td class="num">2</td></tr>
+          <tr><td><strong>T2 (5ms)</strong></td><td>เช็กผ่าน (2 &gt;= 2)</td><td>SELECT stock → ได้ค่า 2</td><td class="num">2</td></tr>
+          <tr><td><strong>T3 (12ms)</strong></td><td>UPDATE SET stock = 2 - 2 = 0</td><td>เช็กผ่าน (2 &gt;= 1)</td><td class="num">0</td></tr>
+          <tr><td><strong>T4 (18ms)</strong></td><td>ส่ง 201 Created (ขายสำเร็จ)</td><td>UPDATE SET stock = 0 - 1 = -1</td><td class="num"><span class="tag tag-error">-1 (พัง!)</span></td></tr>
+        `;
+        if (vBox) vBox.className = 'callout callout-error';
+        if (vTitle) vTitle.textContent = `ผลลัพธ์: เกิด Overselling สต็อกติดลบ (-1 ชิ้น)`;
+        if (vDesc) vDesc.textContent = `ทั้งสองเครื่องอ่านสต็อกได้ 2 พร้อมกันก่อนที่อีกเครื่องจะบันทึกเสร็จ ทำให้ขายสินค้าที่ไม่มีอยู่จริงออกไป`;
+        if (snippet) snippet.textContent = `// โค้ดแบบอันตราย (Read-then-Write ใน App)\nconst item = await db.query('SELECT stock FROM inventory WHERE id=102');\nif (item.stock >= qty) {\n  // ช่องโหว่! ระหว่างบรรทัดนี้เครื่องอื่นแทรกได้\n  await db.query('UPDATE inventory SET stock = stock - ? WHERE id=102', [qty]);\n}`;
+      } else {
+        tbody.innerHTML = `
+          <tr><td><strong>T1 (0ms)</strong></td><td>BEGIN; UPDATE ... WHERE stock &gt;= 2</td><td>—</td><td class="num">2 → 0</td></tr>
+          <tr><td><strong>T2 (5ms)</strong></td><td>affected_rows = 1 (ล็อกแถว)</td><td>BEGIN; รอแถวปลดล็อก (Row Lock)</td><td class="num">0</td></tr>
+          <tr><td><strong>T3 (12ms)</strong></td><td>INSERT order; COMMIT; (201 OK)</td><td>รันต่อ → stock (0) &gt;= 1 เป็นเท็จ!</td><td class="num">0</td></tr>
+          <tr><td><strong>T4 (15ms)</strong></td><td>เสร็จสมบูรณ์</td><td>affected_rows = 0 → ROLLBACK (409)</td><td class="num"><span class="tag tag-positive">0 (ถูกต้อง)</span></td></tr>
+        `;
+        if (vBox) vBox.className = 'callout callout-positive';
+        if (vTitle) vTitle.textContent = `ผลลัพธ์: ปลอดภัย 100% แคชเชียร์ A ได้ของ แคชเชียร์ B ได้รับแจ้งเตือน 409`;
+        if (vDesc) vDesc.textContent = `ฐานข้อมูลล็อกแถวข้อมูลชั่วคราวและตรวจเงื่อนไข stock_quantity >= qty ในคำสั่ง UPDATE เดียวกัน`;
+        if (snippet) snippet.textContent = `// โค้ดที่ถูกต้อง (Atomic Conditional Update)\nawait db.beginTransaction();\nconst [res] = await db.query(\n  'UPDATE inventory SET stock_quantity = stock_quantity - ? WHERE product_id = ? AND stock_quantity >= ?',\n  [qty, productId, qty]\n);\nif (res.affectedRows === 0) {\n  await db.rollback();\n  throw new ConflictError('INSUFFICIENT_STOCK');\n}`;
+      }
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 7: FINITE STATE MACHINE PLAYGROUND
+    // =========================================================================
+    function renderFsm() {
+      const states = document.querySelectorAll('.fsm-state');
+      states.forEach(el => {
+        const name = el.getAttribute('data-fsm');
+        el.classList.remove('is-current', 'is-error-state', 'is-ok-state');
+        if (name === appState.fsmState) {
+          if (name === 'ERROR_RETRY') el.classList.add('is-error-state');
+          else if (name === 'PAID_RECEIPT') el.classList.add('is-ok-state');
+          else el.classList.add('is-current');
+        }
+      });
+
+      const btnScan = document.getElementById('fsm-ev-scan');
+      const btnPay = document.getElementById('fsm-ev-pay');
+      const btnOk = document.getElementById('fsm-ev-ok');
+      const btnErr = document.getElementById('fsm-ev-err');
+      const btnReset = document.getElementById('fsm-ev-reset');
+      const logBox = document.getElementById('fsm-log-box');
+      const logText = document.getElementById('fsm-log-text');
+
+      const s = appState.fsmState;
+      if (btnScan) btnScan.disabled = (s === 'SUBMITTING' || s === 'PAID_RECEIPT');
+      if (btnPay) btnPay.disabled = (s !== 'CART_READY' && s !== 'ERROR_RETRY');
+      if (btnOk) btnOk.disabled = (s !== 'SUBMITTING');
+      if (btnErr) btnErr.disabled = (s !== 'SUBMITTING');
+      if (btnReset) btnReset.disabled = (s === 'IDLE' || s === 'SUBMITTING');
+
+      const descriptions = {
+        IDLE: { cls: 'callout', msg: `สถานะ IDLE: ตะกร้ายังว่าง ปุ่ม CLICK_PAY ถูกปิด (Disabled) เพื่อกันการส่งบิลเปล่า` },
+        CART_READY: { cls: 'callout', msg: `สถานะ CART_READY: มีสินค้าในตะกร้า กดสแกนเพิ่มหรือกด CLICK_PAY เพื่อชำระเงินได้` },
+        SUBMITTING: { cls: 'callout callout-warning', msg: `สถานะ SUBMITTING: ปุ่ม CLICK_PAY และ SCAN ถูก Lock ทันที ป้องกันแคชเชียร์กดเบิ้ลระหว่างรอ API` },
+        PAID_RECEIPT: { cls: 'callout callout-positive', msg: `สถานะ PAID_RECEIPT: ชำระเงินสำเร็จ พิมพ์ใบเสร็จแล้ว กด NEW_ORDER เพื่อเริ่มลูกค้ารายถัดไป` },
+        ERROR_RETRY: { cls: 'callout callout-error', msg: `สถานะ ERROR_RETRY: API ล้มเหลว ตะกร้าสินค้ายังคงอยู่ครบ กด CLICK_PAY เพื่อลองส่งใหม่ (ใช้ Idempotency Key เดิม)` }
+      };
+
+      const info = descriptions[s] || descriptions.IDLE;
+      if (logBox) logBox.className = info.cls;
+      if (logText) logText.textContent = info.msg;
+    }
+
+    function triggerFsm(event) {
+      const s = appState.fsmState;
+      if (event === 'SCAN_ITEM' && (s === 'IDLE' || s === 'CART_READY' || s === 'ERROR_RETRY')) {
+        appState.fsmState = 'CART_READY';
+      } else if (event === 'SUBMIT_PAYMENT' && (s === 'CART_READY' || s === 'ERROR_RETRY')) {
+        appState.fsmState = 'SUBMITTING';
+      } else if (event === 'API_201_OK' && s === 'SUBMITTING') {
+        appState.fsmState = 'PAID_RECEIPT';
+      } else if (event === 'API_ERROR' && s === 'SUBMITTING') {
+        appState.fsmState = 'ERROR_RETRY';
+      } else if (event === 'NEW_ORDER' && s !== 'SUBMITTING') {
+        appState.fsmState = 'IDLE';
+      }
+      renderFsm();
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 9: ERROR SCENARIO LAB
+    // =========================================================================
+    function selectErrorScenario(idx) {
+      appState.errScenario = idx;
+      const data = ERROR_SCENARIOS[idx] || ERROR_SCENARIOS[0];
+      const btns = document.querySelectorAll('[data-err]');
+      btns.forEach((b, i) => {
+        b.classList.toggle('is-selected', i === idx);
+      });
+
+      const t = document.getElementById('err-lab-title');
+      const c = document.getElementById('err-lab-code');
+      const bad = document.getElementById('err-lab-bad');
+      const good = document.getElementById('err-lab-good');
+      const json = document.getElementById('err-lab-json');
+
+      if (t) t.textContent = data.title;
+      if (c) c.textContent = data.code;
+      if (bad) bad.textContent = data.bad;
+      if (good) good.textContent = data.good;
+      if (json) json.textContent = data.json;
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 11: READINESS CHECKLIST
+    // =========================================================================
+    function renderChecklist() {
+      const container = document.getElementById('readiness-checklist');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let checkedCount = 0;
+      READINESS_MILESTONES.forEach(item => {
+        const isChecked = Boolean(appState.checklist[item.id]);
+        if (isChecked) checkedCount++;
+
+        const label = document.createElement('label');
+        label.className = 'check-item';
+        label.htmlFor = `chk-${item.id}`;
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = `chk-${item.id}`;
+        cb.checked = isChecked;
+        cb.onchange = function () {
+          appState.checklist[item.id] = cb.checked;
+          renderChecklist();
+          persistState();
+        };
+
+        const txt = document.createElement('div');
+        txt.innerHTML = `<strong>${item.title}</strong><br><span class="label" style="text-transform:none;">${item.desc}</span>`;
+
+        label.appendChild(cb);
+        label.appendChild(txt);
+        container.appendChild(label);
+      });
+
+      const countEl = document.getElementById('readiness-count');
+      const badgeEl = document.getElementById('readiness-tier-badge');
+      const adviceEl = document.getElementById('readiness-advice');
+
+      if (countEl) countEl.textContent = `${checkedCount} / ${READINESS_MILESTONES.length}`;
+      if (badgeEl && adviceEl) {
+        if (checkedCount >= 7) {
+          badgeEl.className = 'tag tag-positive';
+          badgeEl.textContent = `ดีเยี่ยม (22–25 คะแนน)`;
+          adviceEl.textContent = `พร้อมขึ้นสาธิตและการประเมินโครงงาน Clean Code & Error Handling ครบถ้วน`;
+        } else if (checkedCount >= 5) {
+          badgeEl.className = 'tag';
+          badgeEl.textContent = `ดี (18–21 คะแนน)`;
+          adviceEl.textContent = `ฟังก์ชันหลักทำงานได้แล้ว เติมเต็มจุดป้องกัน Error และการทดสอบ E2E เพื่อขยับสู่ดีเยี่ยม`;
+        } else if (checkedCount >= 3) {
+          badgeEl.className = 'tag tag-warning';
+          badgeEl.textContent = `พอใช้ (14–17 คะแนน)`;
+          adviceEl.textContent = `เร่งเชื่อม API Contract และ DB Transaction เพื่อลดจุดเสี่ยงข้อมูลไม่สอดคล้อง`;
+        } else {
+          badgeEl.className = 'tag tag-error';
+          badgeEl.textContent = `ปรับปรุง (0–13 คะแนน)`;
+          adviceEl.textContent = `เริ่มตรวจเช็กจาก API Contract และ DB Transaction เป็นอันดับแรก`;
+        }
+      }
+    }
+
+    // =========================================================================
+    // SLIDE 12: QUICK KNOWLEDGE CHECK
+    // =========================================================================
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let answered = 0;
+      let score = 0;
+
+      QUIZ_QUESTIONS.forEach((q, qIdx) => {
+        const chosen = appState.quizAnswers[q.id];
+        const hasAnswer = chosen !== undefined && chosen !== null;
+        if (hasAnswer) {
+          answered++;
+          if (chosen === q.correct) score++;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'layer stack-sm';
+
+        const title = document.createElement('p');
+        title.className = 'small-heading';
+        title.textContent = `${qIdx + 1}. ${q.prompt}`;
+        card.appendChild(title);
+
+        const btnRow = document.createElement('div');
+        btnRow.className = 'stack-sm';
+        q.options.forEach((optText, optIdx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn btn-ghost' + (chosen === optIdx ? ' is-selected' : '');
+          btn.style.justifyContent = 'flex-start';
+          btn.style.whiteSpace = 'normal';
+          btn.style.textAlign = 'left';
+          btn.textContent = optText;
+          btn.onclick = function () {
+            appState.quizAnswers[q.id] = optIdx;
+            renderQuiz();
+            persistState();
+          };
+          btnRow.appendChild(btn);
+        });
+        card.appendChild(btnRow);
+
+        if (hasAnswer) {
+          const fb = document.createElement('div');
+          const isRight = chosen === q.correct;
+          fb.className = isRight ? 'callout callout-positive' : 'callout callout-error';
+          fb.textContent = isRight
+            ? q.explain
+            : `ยังไม่ตรงจุด — ลองทบทวนดูอีกครั้ง (${q.explain})`;
+          card.appendChild(fb);
+        }
+
+        container.appendChild(card);
+      });
+
+      const summary = document.getElementById('quiz-score-summary');
+      if (summary) {
+        if (answered === 0) {
+          summary.textContent = `ตอบคำถามทั้ง 3 ข้อเพื่อดูสรุปผล`;
+        } else {
+          summary.textContent = `ตอบแล้ว ${answered}/3 ข้อ · ถูกต้อง ${score} ข้อ`;
+        }
+      }
+    }
+
+    // =========================================================================
+    // KEYBOARD NAVIGATION
+    // =========================================================================
+    document.addEventListener('keydown', function (e) {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+      if (e.key === 'ArrowRight') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      } else if (e.key === 'Escape') {
+        const drawer = document.getElementById('index-drawer');
+        const btn = document.getElementById('btn-toggle-index');
+        if (drawer && !drawer.hidden) {
+          drawer.hidden = true;
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+
+    // =========================================================================
+    // INITIALIZATION
+    // =========================================================================
+    async function initApp() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            appState = {
+              ...appState,
+              ...saved,
+              checklist: saved.checklist || {},
+              quizAnswers: saved.quizAnswers || {},
+              visitedSlides: Array.isArray(saved.visitedSlides) ? saved.visitedSlides : [0],
+              posCart: Array.isArray(saved.posCart) ? saved.posCart : appState.posCart,
+              posCatalog: Array.isArray(saved.posCatalog) ? saved.posCatalog : appState.posCatalog
+            };
+          }
+        } catch (e) {
+          // Proceed with default state if host state unavailable
+        }
+      }
+
+      renderSlideChrome();
+      selectArchStep(appState.archStep || 0);
+      setApiComparison(appState.apiCompare || 'aligned');
+      renderPosCatalog();
+      runRaceDemo(appState.raceMode || 'naive');
+      renderFsm();
+      selectErrorScenario(appState.errScenario || 0);
+      renderChecklist();
+      renderQuiz();
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>

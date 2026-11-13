@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="briefing">
+  <title>1145 204 Sophomore Project — Week 11: Project Risk &amp; Quality Review (Grocery POS)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Briefing style tokens */
+      --background: #faf9f5;
+      --surface-container-low: #ffffff;
+      --surface-container: #f1efe8;
+      --surface-container-high: #e6e2d6;
+
+      --on-surface: #17181a;
+      --on-surface-variant: #56585c;
+
+      --outline: #17181a;
+      --outline-variant: #dedad0;
+
+      --primary: #17181a;
+      --on-primary: #faf9f5;
+      --primary-container: #f2b705;
+      --on-primary-container: #17181a;
+      --secondary: #1f4e5f;
+      --tertiary: #785008;
+      --error: #b42318;
+      --on-error: #ffffff;
+
+      /* Data series */
+      --data-1: #1f4e5f;
+      --data-2: #d99000;
+      --data-3: #2b6e52;
+      --data-4: #b84a39;
+      --data-context: #c4bfb2;
+
+      /* Semantic & tint tokens */
+      --positive: #2b6e52;
+      --positive-bg: #e8f3ed;
+      --warning: #9a5b00;
+      --warning-bg: #fcf1dc;
+      --error-bg: #fbeae8;
+      --info-bg: #e7f0f3;
+      --tag-bg: #f5e6c4;
+      --focus: #1f4e5f;
+
+      /* Fonts (Thai families first, paired with Briefing typography) */
+      --font-headline: 'Noto Serif Thai', 'Source Serif 4', serif;
+      --font-body: 'Noto Sans Thai', 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Geist Mono', 'Noto Sans Thai', monospace;
+
+      /* Shape & rules */
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 0.25rem;
+      --section-rule: 1.5px solid var(--outline);
+      --card-border: 1px solid var(--outline-variant);
+      --badge-radius: 2px;
+      --heading-tracking: 0;
+      --label-tracking: 0.08em;
+
+      /* Type scale */
+      --display-size: clamp(2rem, 1.35rem + 2.4vw, 3.15rem);
+      --headline-size: clamp(1.5rem, 1.15rem + 1.3vw, 2.15rem);
+      --subhead-size: clamp(1.1rem, 1rem + 0.45vw, 1.35rem);
+      --body-size: clamp(0.96875rem, 0.94rem + 0.2vw, 1.0625rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Deck Header & Controls */
+    .deck-header {
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    .deck-brand {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .dossier-pill {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--badge-radius);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .dossier-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.04em;
+    }
+
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      border: 1px solid var(--outline-variant);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      transition: background-color var(--dur-micro) var(--ease-out),
+                  box-shadow var(--dur-micro) var(--ease-out),
+                  transform var(--dur-micro) var(--ease-out);
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--surface-container-high);
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+    .btn-toggle.is-active {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-color: var(--outline);
+    }
+
+    .slide-counter {
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      font-variant-numeric: tabular-nums;
+      min-width: 72px;
+      text-align: center;
+    }
+
+    /* Progress bar + quick slide index */
+    .deck-progress-wrap {
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--surface-container-high);
+      border-radius: var(--badge-radius);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 8.33%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    .slide-nav-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    .nav-chip {
+      min-height: 36px;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+      border: var(--card-border);
+      background: var(--surface-container-low);
+      color: var(--on-surface-variant);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      transition: background-color var(--dur-micro) var(--ease-out),
+                  color var(--dur-micro) var(--ease-out);
+    }
+    .nav-chip:hover {
+      background: var(--surface-container);
+      color: var(--on-surface);
+    }
+    .nav-chip.is-current {
+      background: var(--secondary);
+      color: var(--on-primary);
+      border-color: var(--secondary);
+      font-weight: 600;
+    }
+    .nav-chip .chip-num {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+
+    /* Slide Stage & Card */
+    .slides-stage {
+      display: grid;
+      gap: var(--space-xl);
+    }
+
+    .tag-crit {
+      background: var(--data-4);
+      color: var(--on-error);
+    }
+
+    .perf-results-col,
+    .pdpa-list-col,
+    .pdpa-detail-col {
+      display: grid;
+      gap: var(--space-md);
+    }
+    .pdpa-list-col {
+      gap: var(--space-sm);
+    }
+    .pdpa-artifact-stack,
+    .ethics-options-stack,
+    .rubric-checklist-stack {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .risk-header-row,
+    .pdpa-score-header,
+    .ethics-header-row,
+    .rubric-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .pdpa-score-header {
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-sm);
+    }
+    .risk-mode-actions,
+    .ethics-tabs-row,
+    .rubric-actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+    .risk-mode-actions { justify-content: flex-end; }
+    .ethics-tabs-row { gap: var(--space-xs); }
+    .risk-legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-xs);
+      font-size: 0.78rem;
+    }
+    .subcard-title {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-size: 1.25rem;
+    }
+    .subcard-title-sm {
+      margin: var(--space-xs) 0 0 0;
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+    }
+    .spaced-label { margin-top: var(--space-xs); }
+    .spaced-label-sm { margin-top: var(--space-sm); }
+    .note-sm { font-size: 0.84rem; }
+    .note-md { font-size: 0.88rem; }
+    .sources-text { font-size: 0.86rem; }
+    .feedback-hidden { display: none; }
+    .inherit-color { color: inherit; }
+
+    .slide {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-xl);
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      min-height: 540px;
+      animation: slideFadeIn var(--dur-short) var(--ease-out);
+    }
+    .slide.is-active {
+      display: flex;
+    }
+    .slides-stage.show-all .slide {
+      display: flex;
+    }
+
+    @keyframes slideFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dossier-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-sm);
+    }
+    .dossier-bar-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .slide-title-display {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: var(--display-size);
+      line-height: 1.2;
+      letter-spacing: var(--heading-tracking);
+      color: var(--on-surface);
+      margin: 0;
+    }
+
+    .slide-title {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: var(--headline-size);
+      line-height: 1.22;
+      letter-spacing: var(--heading-tracking);
+      color: var(--on-surface);
+      margin: 0;
+    }
+
+    .standfirst {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--subhead-size);
+      color: var(--secondary);
+      line-height: 1.45;
+      margin: var(--space-xs) 0 0 0;
+      max-width: 72ch;
+    }
+
+    .prose {
+      max-width: 68ch;
+      margin: 0;
+      color: var(--on-surface);
+    }
+
+    /* Editorial Layout Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .grid-asymmetric {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .grid-asymmetric-rev {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    .figure-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .stone-card {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .index-num {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--secondary);
+      letter-spacing: 0.06em;
+    }
+
+    .kpi-value {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: clamp(1.5rem, 1.2rem + 1vw, 2.2rem);
+      font-variant-numeric: lining-nums tabular-nums;
+      line-height: 1.15;
+      color: var(--on-surface);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px var(--space-sm);
+      border-radius: var(--rounded);
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--tag-bg);
+      color: var(--tertiary);
+    }
+    .tag-positive { background: var(--positive-bg); color: var(--positive); }
+    .tag-warning { background: var(--warning-bg); color: var(--warning); }
+    .tag-error { background: var(--error-bg); color: var(--error); }
+    .tag-info { background: var(--info-bg); color: var(--secondary); }
+
+    /* Tables */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      background: var(--surface-container-low);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    thead th {
+      font-family: var(--font-label);
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--section-rule);
+      background: var(--surface-container);
+    }
+    tbody td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--outline-variant);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* Cost Escalation & Flow Visual */
+    .flow-chain {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+      gap: var(--space-sm);
+    }
+    .flow-step {
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-left: 4px solid var(--secondary);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .flow-step.is-critical { border-left-color: var(--error); }
+    .flow-step.is-warn { border-left-color: var(--data-2); }
+
+    /* Interactive 5x5 Risk Matrix */
+    .risk-matrix-wrap {
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .risk-matrix-grid {
+      display: grid;
+      grid-template-columns: 34px repeat(5, minmax(0, 1fr));
+      gap: 4px;
+      align-items: stretch;
+    }
+    .matrix-axis-label {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      color: var(--on-surface-variant);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .matrix-cell {
+      min-height: 58px;
+      border-radius: var(--rounded);
+      padding: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 4px;
+      border: 1px solid var(--outline-variant);
+      position: relative;
+    }
+    .sev-low { background: var(--positive-bg); }
+    .sev-med { background: var(--warning-bg); }
+    .sev-high { background: var(--error-bg); }
+    .sev-crit { background: var(--data-4); color: var(--on-error); }
+
+    .risk-dot {
+      min-height: 28px;
+      min-width: 34px;
+      padding: 2px 6px;
+      border-radius: var(--rounded);
+      border: 1.5px solid var(--on-surface);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out),
+                  background-color var(--dur-micro) var(--ease-out);
+    }
+    .risk-dot:hover { transform: scale(1.06); }
+    .risk-dot.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      box-shadow: 0 0 0 2px var(--outline);
+    }
+
+    /* Sliders & Form Controls (always-visible labels above inputs) */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .control-label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    .control-val {
+      font-family: var(--font-label);
+      color: var(--secondary);
+      font-weight: 600;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--secondary);
+      min-height: 32px;
+      cursor: pointer;
+    }
+
+    .check-tile {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      cursor: pointer;
+      min-height: 44px;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .check-tile:hover {
+      background: var(--surface-container);
+    }
+    .check-tile input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--secondary);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Chart container explicit min-height */
+    .chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 320px;
+      height: 320px;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+    }
+
+    /* PDPA Artifact Pill Selector */
+    .artifact-btn {
+      width: 100%;
+      text-align: left;
+      min-height: 48px;
+      padding: var(--space-sm) var(--space-md);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .artifact-btn:hover { background: var(--surface-container); }
+    .artifact-btn.is-selected {
+      background: var(--secondary);
+      color: var(--on-primary);
+      border-color: var(--secondary);
+    }
+
+    /* Ethics Scenario Options */
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      min-height: 46px;
+      padding: var(--space-sm) var(--space-md);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .option-btn:hover { background: var(--surface-container); }
+    .option-btn.is-chosen-good {
+      background: var(--positive-bg);
+      border-color: var(--positive);
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+    .option-btn.is-chosen-bad {
+      background: var(--error-bg);
+      border-color: var(--error);
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+
+    .feedback-banner {
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+      border-left: 4px solid var(--secondary);
+      background: var(--surface-container);
+      font-size: 0.92rem;
+    }
+    .feedback-banner.is-pass {
+      border-left-color: var(--positive);
+      background: var(--positive-bg);
+    }
+    .feedback-banner.is-fail {
+      border-left-color: var(--error);
+      background: var(--error-bg);
+    }
+
+    /* Slide Footer Navigation */
+    .deck-footer {
+      border-top: var(--section-rule);
+      padding-top: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .footer-hint {
+      font-size: 0.84rem;
+      color: var(--on-surface-variant);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .list-clean {
+      margin: 0;
+      padding-left: 1.25rem;
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    @media (max-width: 820px) {
+      .grid-2,
+      .grid-asymmetric,
+      .grid-asymmetric-rev {
+        grid-template-columns: 1fr;
+      }
+      .slide {
+        padding: var(--space-lg);
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-sm);
+        gap: var(--space-md);
+      }
+      .slide {
+        padding: var(--space-md);
+      }
+      .risk-matrix-grid {
+        grid-template-columns: 26px repeat(5, minmax(0, 1fr));
+      }
+      .chart-box {
+        min-height: 260px;
+        height: 260px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media print {
+      .deck-controls,
+      .slide-nav-strip,
+      .deck-footer,
+      .progress-track {
+        display: none !important;
+      }
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        border: none;
+        padding: var(--space-md) 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+
+    <header class="deck-header">
+      <div class="deck-brand">
+        <span class="dossier-pill"><a href="../../../courses/project2/index.html">1145 204</a></span>
+        <span class="dossier-meta">WEEK 11 · GROCERY POS QUALITY &amp; RISK REVIEW</span>
+      </div>
+
+      <div class="deck-controls" role="toolbar" aria-label="ตัวควบคุมสไลด์">
+        <button type="button" class="btn" id="btn-prev" onclick="changeSlide(-1)">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          ก่อนหน้า
+        </button>
+        <span class="slide-counter" id="slide-counter" aria-live="polite">01 / 12</span>
+        <button type="button" class="btn btn-primary" id="btn-next" onclick="changeSlide(1)">
+          ถัดไป
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button type="button" class="btn btn-toggle" id="btn-view-mode" onclick="toggleAllSlides()" aria-pressed="false">
+          ดูทุกสไลด์ (Scroll)
+        </button>
+      </div>
+    </header>
+
+    <div class="deck-progress-wrap">
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <nav class="slide-nav-strip" id="slide-nav-strip" aria-label="สารบัญสไลด์ 12 หน้า"></nav>
+    </div>
+
+    <main class="slides-stage" id="slides-stage">
+
+      <!-- SLIDE 1: COVER -->
+      <section class="slide is-active" id="slide-1" data-title="บทนำและภาพรวม">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 01 · BRIEFING</span>
+            <span class="dossier-meta">PROJECT RISK &amp; QUALITY REVIEW</span>
+          </div>
+          <span class="dossier-meta">GROCERY POS PLATFORM</span>
+        </div>
+
+        <div>
+          <h1 class="slide-title-display">การทบทวนความเสี่ยงและคุณภาพซอฟต์แวร์สำหรับแพลตฟอร์ม Grocery POS</h1>
+          <p class="standfirst">เปลี่ยนผ่านจากระบบต้นแบบที่ “รันได้บนเครื่องผู้พัฒนา” สู่จุดขายหน้าร้านที่รองรับงานจริงอย่างเสถียร รวดเร็ว คุ้มครองข้อมูลส่วนบุคคลตาม PDPA และมีจริยธรรมทางวิศวกรรม</p>
+        </div>
+
+        <div class="card-grid">
+          <article class="figure-card">
+            <span class="index-num">01 · TECHNICAL RISK</span>
+            <strong>การประเมินความเสี่ยงเชิงเทคนิค</strong>
+            <p class="prose">ชี้จุดเปราะบางของสถาปัตยกรรม ปัญหาการตัดสต็อกพร้อมกัน และแผนบรรเทาความเสี่ยง (Mitigation Plan) ใน Risk Log</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">02 · PERFORMANCE</span>
+            <strong>การแก้ไขคอขวดประสิทธิภาพ</strong>
+            <p class="prose">วิเคราะห์ N+1 Query, Lock Contention และ Sync I/O เมื่อแค็ตตาล็อกโตเป็นหมื่นรายการในชั่วโมงเร่งด่วน</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">03 · DATA PRIVACY &amp; PDPA</span>
+            <strong>ความเป็นส่วนตัวและ พ.ร.บ. PDPA</strong>
+            <p class="prose">จัดการเบอร์โทรสมาชิก ใบกำกับภาษี ประวัติตะกร้าสินค้า และป้องกันข้อมูลลูกค้ารั่วไหลใน Log หรือ Prompt</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">04 · SOFTWARE ETHICS</span>
+            <strong>จริยธรรมและการกำกับดูแล AI</strong>
+            <p class="prose">ป้องกัน Dark Patterns ความเอนเอียงของราคา และกำหนด Human Review สำหรับโค้ดหรือแพ็กเกจจาก AI Agent</p>
+          </article>
+        </div>
+
+        <aside class="stone-card">
+          <div class="grid-asymmetric">
+            <div>
+              <span class="index-num">COURSE EVALUATION CONTEXT · 1145 204</span>
+              <p class="prose"><strong>เป้าหมายสัปดาห์ที่ 11:</strong> เตรียมความพร้อมก่อนสอบป้องกันโครงงาน (Advisor 50% + Committee 50%) โดยเฉพาะหมวด <strong>การบริหารความเสี่ยงและจริยธรรมข้อมูล (25 คะแนน)</strong> ซึ่งผู้ประเมินจะตรวจดู Risk Log จริงและหลักฐานการทดสอบคุณภาพ</p>
+            </div>
+            <div>
+              <span class="index-num">วิธีใช้งานสไลด์นี้</span>
+              <p class="prose">ใช้ปุ่ม <strong>ก่อนหน้า / ถัดไป</strong> หรือปุ่มลูกศรซ้าย-ขวาบนคีย์บอร์ด และทดลองปรับค่าในหน้าปฏิบัติการ (Lab) บนสไลด์ที่ 4, 6, 9 และ 11 ได้ทันที</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- SLIDE 2: WHY WEEK 11 MATTERS -->
+      <section class="slide" id="slide-2" data-title="ทำไมต้องทบทวนความเสี่ยง">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 02 · RATIONALE</span>
+            <span class="dossier-meta">COST OF CHANGE &amp; SYSTEM INTEGRITY</span>
+          </div>
+          <span class="dossier-meta">BOEHM &amp; LEAN PRINCIPLES</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">ข้อบกพร่องที่พบหลังส่งมอบหน้าร้าน มีต้นทุนแก้ไขสูงกว่าช่วงออกแบบ 5 ถึง 100 เท่า</h2>
+          <p class="standfirst">ข้อมูลจาก Barry Boehm และหลัก Lean Software Development ย้ำว่าความผิดพลาดของระบบ POS ไม่ได้หยุดแค่โปรแกรมค้าง แต่กระทบยอดเงิน สต็อก และความเชื่อมั่นของลูกค้าทันที</p>
+        </div>
+
+        <div class="grid-asymmetric">
+          <div class="figure-card">
+            <span class="index-num">FAILURE CASCADE IN GROCERY POS</span>
+            <strong>ห่วงโซ่ผลกระทบเมื่อขาดการทบทวนคุณภาพ</strong>
+            <div class="flow-chain">
+              <div class="flow-step is-warn">
+                <span class="index-num">STEP 1 · SCAN</span>
+                <strong>สแกนบาร์โค้ดช้า</strong>
+                <p class="prose">คิวแคชเชียร์สะสมหน้าเคาน์เตอร์ในชั่วโมงเร่งด่วน</p>
+              </div>
+              <div class="flow-step is-critical">
+                <span class="index-num">STEP 2 · CHECKOUT</span>
+                <strong>ตัดสต็อกชนกัน</strong>
+                <p class="prose">ยอดคงเหลือติดลบ หรือคิดราคาโปรโมชันผิดพลาด</p>
+              </div>
+              <div class="flow-step is-critical">
+                <span class="index-num">STEP 3 · DATA LEAK</span>
+                <strong>Dump Error ลง Log</strong>
+                <p class="prose">เบอร์โทรและรายการซื้อของลูกค้าหลุดในไฟล์ Debug</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="stone-card">
+            <span class="index-num">LEAN PRINCIPLE · SEE THE WHOLE</span>
+            <strong>ระวังกับดัก Suboptimization</strong>
+            <p class="prose">ทีมที่แยกคนทำ Backend, Frontend และ Database มักเร่งปรับแต่งเฉพาะส่วนของตนเอง เช่น ทำหน้าจอแคชเชียร์ให้แอนิเมชันลื่น แต่ปล่อยให้ยิง API เช็กโปรโมชันทีละชิ้นจน Database ล่มทั้งร้าน</p>
+            <p class="prose"><strong>แนวทาง Agile Risk Reduction:</strong> Mike Cohn ระบุว่าความเสี่ยงสูงสุดของโครงงานคือ <em>การสร้างผลิตภัณฑ์ที่ไม่ตรงกับสภาพหน้างานจริง</em> จึงต้องทดสอบ End-to-End และทบทวนความเสี่ยงเป็นรอบสั้น ๆ</p>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="figure-card">
+            <span class="index-num">SMALL SYSTEM ESCALATION</span>
+            <span class="kpi-value">5 : 1</span>
+            <p class="prose">อัตราส่วนต้นทุนแก้ไขบั๊กหลังส่งมอบในระบบขนาดเล็กเทียบกับระยะออกแบบ (Boehm, 2001)</p>
+          </div>
+          <div class="figure-card">
+            <span class="index-num">PRODUCTION SYSTEM ESCALATION</span>
+            <span class="kpi-value">100 : 1</span>
+            <p class="prose">ต้นทุนความเสียหายเมื่อระบบขนาดใหญ่เปิดใช้งานจริงแล้วต้องย้อนรื้อโครงสร้างข้อมูล</p>
+          </div>
+          <div class="figure-card">
+            <span class="index-num">DYNAMIC REQUIREMENTS</span>
+            <span class="kpi-value">≥ 25%</span>
+            <p class="prose">สัดส่วนความต้องการหรือเงื่อนไขโปรโมชัน/ภาษีที่มักเปลี่ยนแปลงระหว่างพัฒนาซอฟต์แวร์</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: TECHNICAL RISK ASSESSMENT -->
+      <section class="slide" id="slide-3" data-title="ความเสี่ยงเชิงเทคนิค">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 03 · TECHNICAL RISK</span>
+            <span class="dossier-meta">ARCHITECTURE &amp; DEPENDENCY SIGNALS</span>
+          </div>
+          <span class="dossier-meta">ROBERT C. MARTIN PRINCIPLES</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">แยก “ปัญหาทั่วไป” ออกจาก “ความเสี่ยงเชิงเทคนิค” เพื่อยกระดับโครงงาน</h2>
+          <p class="standfirst">เกณฑ์ระดับพอใช้มักบันทึกแค่ “งานไม่ทัน” หรือ “เครื่องค้าง” แต่ระดับดีเยี่ยมต้องวิเคราะห์สาเหตุจากโครงสร้างโค้ด สถาปัตยกรรม และ Dependency</p>
+        </div>
+
+        <div class="grid-2">
+          <article class="figure-card">
+            <span class="index-num">01 · FRAGILITY (ความเปราะบางของโค้ด)</span>
+            <strong>แก้ส่วนลดท้ายบิล แล้วภาษีมูลค่าเพิ่มพัง</strong>
+            <p class="prose">เกิดขึ้นเมื่อโมดูลคำนวณราคา คูปอง และบัญชีสต็อกผูกติดกันแน่น (Tight Coupling) แก้จุดเดียวแต่กระทบหลายจุดที่ไม่มีความสัมพันธ์กันเชิงแนวคิด</p>
+            <span class="tag tag-info">การบรรเทา: แยก Policy/Strategy Pattern และเขียน Unit Test ครอบทุกกรณี</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">02 · VISCOSITY &amp; WEEKLY BUILD PENALTY</span>
+            <strong>สภาพแวดล้อมหนืด จนทีมยอมเขียนโค้ดมักง่าย</strong>
+            <p class="prose">หากการรัน Test หรือการ Merge โค้ดสัปดาห์ละครั้ง (Weekly Build) ใช้เวลานานและชนกันยับ นักศึกษาจะเลี่ยงการ Refactor และปล่อยหนี้ทางเทคนิคสะสม</p>
+            <span class="tag tag-info">การบรรเทา: ใช้ Continuous Integration (CI) และแบ่ง Component ย่อย</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">03 · STABLE-DEPENDENCIES PRINCIPLE (SDP)</span>
+            <strong>โมดูลแกนหลักห้ามพึ่งพาโมดูลที่เปลี่ยนบ่อย</strong>
+            <p class="prose">โมดูล Core Ledger / Stock Transaction ที่ต้องเสถียร ห้ามไป Import โมดูล Promotion UI หรือ Third-party SDK ที่เปลี่ยนสเปกทุกสัปดาห์โดยตรง</p>
+            <span class="tag tag-positive">การบรรเทา: กลับทิศทางการพึ่งพาด้วย Interface / Abstraction</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">04 · AI &amp; SUPPLY CHAIN RISK</span>
+            <strong>ความเสี่ยงจากโค้ดและแพ็กเกจที่ AI แนะนำ</strong>
+            <p class="prose">การใช้ AI ช่วยเขียนโค้ด POS อาจนำแพ็กเกจปลอม (Typosquatting), ไลบรารีล้าสมัย หรือตรรกะ Edge Case ที่ผิดพลาด เช่น ปัดเศษสตางค์ไม่ตรง</p>
+            <span class="tag tag-warning">การบรรเทา: Strict Dependency Governance + Human PR Review</span>
+          </article>
+        </div>
+
+        <aside class="stone-card">
+          <span class="index-num">RUBRIC INSIGHT · 25 POINTS</span>
+          <p class="prose"><strong>ข้อแตกต่างใน Risk Log:</strong> แทนที่จะเขียนว่า <em>“กลัวเซิร์ฟเวอร์ล่ม”</em> ให้ระบุเชิงเทคนิคเป็น <em>“Race Condition เมื่อ 2 แคชเชียร์ตัดสต็อกสินค้า SKU เดียวกันพร้อมกันใน Isolation Level READ COMMITTED — บรรเทาด้วย Atomic Conditional Update หรือ Optimistic Locking พร้อม Version Column”</em></p>
+        </aside>
+      </section>
+
+      <!-- SLIDE 4: INTERACTIVE RISK MATRIX -->
+      <section class="slide" id="slide-4" data-title="Lab: ตารางความเสี่ยง 5×5">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 04 · INTERACTIVE LAB</span>
+            <span class="dossier-meta">GROCERY POS RISK MATRIX (5×5)</span>
+          </div>
+          <span class="dossier-meta">LIKELIHOOD × IMPACT</span>
+        </div>
+
+        <div class="grid-asymmetric-rev">
+          <div>
+            <h2 class="slide-title">จำลอง Risk Matrix 5×5: ก่อนและหลังใช้แผนบรรเทาความเสี่ยง</h2>
+            <p class="standfirst">คลิกเลือกป้ายรหัสความเสี่ยง (R1–R6) บนตารางเพื่ออ่านรายละเอียด Risk Log และสลับโหมดดูการลดระดับความเสี่ยง</p>
+          </div>
+          <div class="risk-mode-actions">
+            <button type="button" class="btn btn-toggle is-active" id="btn-risk-inherent" onclick="setRiskMode('inherent')">
+              ก่อนบรรเทา (Inherent Risk)
+            </button>
+            <button type="button" class="btn btn-toggle" id="btn-risk-residual" onclick="setRiskMode('residual')">
+              หลังบรรเทา (Residual Risk)
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-asymmetric">
+          <div class="figure-card">
+            <div class="risk-header-row">
+              <span class="index-num">แกนตั้ง: โอกาสเกิด (Likelihood 5→1) · แกนนอน: ผลกระทบ (Impact 1→5)</span>
+              <span class="tag" id="risk-mode-badge">โหมด: ก่อนบรรเทา</span>
+            </div>
+            <div class="risk-matrix-wrap" id="risk-matrix-wrap"></div>
+            <div class="risk-legend-row">
+              <span class="tag tag-positive">ต่ำ (1–4)</span>
+              <span class="tag tag-warning">ปานกลาง (5–9)</span>
+              <span class="tag tag-error">สูง (10–15)</span>
+              <span class="tag tag-crit">วิกฤต (16–25)</span>
+            </div>
+          </div>
+
+          <div class="stone-card" id="risk-detail-panel" aria-live="polite">
+            <span class="index-num" id="rd-id">R1 · CRITICAL TECHNICAL RISK</span>
+            <h3 class="subcard-title" id="rd-title">กำลังโหลดข้อมูล...</h3>
+            <div class="risk-legend-row">
+              <span class="tag" id="rd-score">Score: --</span>
+              <span class="tag tag-info" id="rd-owner">Owner: --</span>
+            </div>
+            <p class="prose"><strong>สาเหตุเชิงเทคนิค:</strong> <span id="rd-cause"></span></p>
+            <p class="prose"><strong>ตัวชี้วัดเตือนภัย (Early Signal):</strong> <span id="rd-metric"></span></p>
+            <p class="prose"><strong>แผนบรรเทาความเสี่ยง (Mitigation Plan):</strong> <span id="rd-mitigation"></span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: PERFORMANCE BOTTLENECK ANATOMY -->
+      <section class="slide" id="slide-5" data-title="คอขวดประสิทธิภาพ POS">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 05 · PERFORMANCE</span>
+            <span class="dossier-meta">BOTTLENECK ANATOMY IN GROCERY POS</span>
+          </div>
+          <span class="dossier-meta">TARGET SLA &lt; 500 MS / CHECKOUT</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">4 คอขวดที่ทำให้ Grocery POS ค้างเมื่อลูกค้าต่อคิวพร้อมกันในชั่วโมงเร่งด่วน</h2>
+          <p class="standfirst">ระบบที่ทดสอบบนเครื่องนักพัฒนาด้วยข้อมูล 50 ชิ้นจะไม่แสดงอาการ แต่เมื่อฐานข้อมูลมี 12,000 SKUs และเปิด 4 เครื่องพร้อมกัน คอขวดเหล่านี้จะปรากฏทันที</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ลำดับ &amp; จุดคอขวด</th>
+                <th>อาการหน้างาน (Symptom)</th>
+                <th>สาเหตุระดับโค้ดและฐานข้อมูล</th>
+                <th>แนวทางแก้ไขเชิงวิศวกรรม</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="index-num">01</span><br><strong>N+1 Query &amp; Table Scan</strong></td>
+                <td>สแกนสินค้าชิ้นที่ 20 ในตะกร้าแล้วหน้าจอหน่วง 1.5–3 วินาที</td>
+                <td>ลูปยิง Query หาส่วนลดและภาษีแยกทีละ SKU โดยไม่มี Composite Index บนคอลัมน์ <code>barcode</code></td>
+                <td>สร้าง Index บน <code>barcode</code>, ใช้ <code>WHERE IN (...)</code> แบบ Batch และ Cache กฎโปรโมชัน</td>
+              </tr>
+              <tr>
+                <td><span class="index-num">02</span><br><strong>Stock Lock Contention</strong></td>
+                <td>แคชเชียร์เครื่อง 2 กดชำระเงินแล้วหมุนค้าง Timeout</td>
+                <td>Transaction เปิดค้างยาวเพื่อล็อกตารางสต็อกระหว่างรอสลิป/PromptPay</td>
+                <td>ใช้ Optimistic Concurrency (<code>version</code>) หรือ Atomic <code>UPDATE stock = stock - qty WHERE stock &gt;= qty</code></td>
+              </tr>
+              <tr>
+                <td><span class="index-num">03</span><br><strong>Synchronous Blocking I/O</strong></td>
+                <td>กดปุ่มจ่ายเงินแล้วเครื่องค้างจนกว่าเครื่องพิมพ์หรือ API ธนาคารจะตอบ</td>
+                <td>ประมวลผล Webhook, Email/LINE ใบเสร็จ และสร้าง PDF แบบ Blocking ใน Request หลัก</td>
+                <td>ย้ายงานที่ไม่ใช่แกนหลักเข้า Background Queue (Async Worker) หลังยืนยัน Transaction</td>
+              </tr>
+              <tr>
+                <td><span class="index-num">04</span><br><strong>Heavy Payload &amp; Re-render</strong></td>
+                <td>สลับหน้าจอบิลช้า กิน RAM บนแท็บเล็ตหรือเครื่อง POS สเปกต่ำ</td>
+                <td>ดึงแค็ตตาล็อกทั้งหมด 12,000 แถวผ่าน JSON ทุกครั้งที่โหลดหน้า</td>
+                <td>ทำ Pagination, Virtualized List และเก็บ Local Indexed/In-Memory Cache เฉพาะชุดสินค้าขายดี</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <aside class="stone-card">
+          <span class="index-num">MEASUREMENT RULE · AI SDLC GUIDE</span>
+          <p class="prose"><strong>ห้ามปรับจูนแบบเดาสุ่ม:</strong> ต้องวัดค่า <strong>Baseline</strong> ด้วย Load Test / Profiler ก่อนเปิดใช้งานการแก้ไขทุกครั้ง เพื่อให้พิสูจน์ได้ด้วยตัวเลขจริงว่า P95 Latency ลดลงกี่เปอร์เซ็นต์และไม่ทำให้ความถูกต้องของยอดเงินลดลง</p>
+        </aside>
+      </section>
+
+      <!-- SLIDE 6: INTERACTIVE PERFORMANCE PROFILER -->
+      <section class="slide" id="slide-6" data-title="Lab: จำลองความเร็ว POS">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 06 · INTERACTIVE LAB</span>
+            <span class="dossier-meta">POS CHECKOUT LATENCY PROFILER</span>
+          </div>
+          <span class="dossier-meta">BASELINE VS OPTIMIZED</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">จำลองภาระงานหน้าร้านและเปรียบเทียบ Baseline กับหลังแก้คอขวด</h2>
+          <p class="standfirst">ปรับจำนวนเครื่องแคชเชียร์ ขนาดแค็ตตาล็อก และจำนวนสินค้าต่อตะกร้า จากนั้นเปิดใช้เทคนิคปรับจูนเพื่อดูผลต่อ P95 Checkout Latency</p>
+        </div>
+
+        <div class="grid-asymmetric-rev">
+          <div class="stone-card">
+            <span class="index-num">พารามิเตอร์ภาระงาน (WORKLOAD INPUTS)</span>
+
+            <div class="control-group">
+              <label class="control-label" for="slider-cashiers">
+                <span>จำนวนแคชเชียร์ทำงานพร้อมกัน</span>
+                <span class="control-val" id="val-cashiers">4 เครื่อง</span>
+              </label>
+              <input type="range" id="slider-cashiers" min="1" max="10" value="4" oninput="updatePerfSim()">
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="slider-skus">
+                <span>จำนวนสินค้าในระบบ (Catalog SKUs)</span>
+                <span class="control-val" id="val-skus">12,000 SKUs</span>
+              </label>
+              <input type="range" id="slider-skus" min="1000" max="25000" step="1000" value="12000" oninput="updatePerfSim()">
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="slider-items">
+                <span>จำนวนสินค้าเฉลี่ยต่อตะกร้า</span>
+                <span class="control-val" id="val-items">18 ชิ้น</span>
+              </label>
+              <input type="range" id="slider-items" min="5" max="40" value="18" oninput="updatePerfSim()">
+            </div>
+
+            <span class="index-num spaced-label">มาตรการแก้คอขวด (OPTIMIZATIONS)</span>
+
+            <label class="check-tile">
+              <input type="checkbox" id="opt-index" checked onchange="updatePerfSim()">
+              <span><strong>Barcode Index + Batch Query</strong><br><small>ลด Table Scan และ N+1 Query เหลือ 1 Round-trip</small></span>
+            </label>
+            <label class="check-tile">
+              <input type="checkbox" id="opt-lock" checked onchange="updatePerfSim()">
+              <span><strong>Atomic Row-Level Stock Update</strong><br><small>ลดคิวรอ Lock ฐานข้อมูลระหว่างตัดสต็อกพร้อมกัน</small></span>
+            </label>
+            <label class="check-tile">
+              <input type="checkbox" id="opt-async" onchange="updatePerfSim()">
+              <span><strong>Async Receipt &amp; Webhook Queue</strong><br><small>แยกการออกใบกำกับ/ส่ง Line Notify ออกจาก Request ปิดบิล</small></span>
+            </label>
+          </div>
+
+          <div class="perf-results-col">
+            <div class="card-grid">
+              <div class="figure-card">
+                <span class="index-num">BASELINE (UNOPTIMIZED)</span>
+                <span class="kpi-value" id="kpi-base-ms">-- ms</span>
+                <span class="tag tag-error" id="kpi-base-status">เกิน SLA 500 ms</span>
+              </div>
+              <div class="figure-card">
+                <span class="index-num">OPTIMIZED (CURRENT CONFIG)</span>
+                <span class="kpi-value" id="kpi-opt-ms">-- ms</span>
+                <span class="tag" id="kpi-opt-status">กำลังคำนวณ...</span>
+              </div>
+              <div class="figure-card">
+                <span class="index-num">SPEEDUP FACTOR</span>
+                <span class="kpi-value" id="kpi-speedup">--x</span>
+                <span class="prose note-sm" id="kpi-throughput">รองรับ -- บิล/นาที</span>
+              </div>
+            </div>
+
+      <div class="figure-card">
+        <span class="index-num">LATENCY BREAKDOWN BY PIPELINE STAGE (MS)</span>
+        <div class="chart-box">
+          <canvas id="perf-chart" aria-label="กราฟเปรียบเทียบเวลาประมวลผลแต่ละขั้นตอนของ POS"></canvas>
+        </div>
+      </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: CONTINUOUS QUALITY & 5 METRICS -->
+      <section class="slide" id="slide-7" data-title="วัดผลคุณภาพอย่างยั่งยืน">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 07 · QUALITY GOVERNANCE</span>
+            <span class="dossier-meta">CONTINUOUS VALIDATION &amp; 5 CORE METRICS</span>
+          </div>
+          <span class="dossier-meta">AI SDLC &amp; DEVSECOPS</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">วัดผลคุณภาพด้วย 5 ตัวชี้วัดหลัก แทนการเก็บตัวเลขฟุ่มเฟือย 25 ตัว</h2>
+          <p class="standfirst">แนวคิดจาก AI SDLC Practical Guide และ Governance-Aware Agile: เลือกเพียง 1 ตัวชี้วัดต่อหมวดที่มีผู้รับผิดชอบลงมือแก้ไขทันทีเมื่อตัวเลขเข้าเขตสีแดง</p>
+        </div>
+
+        <div class="card-grid">
+          <article class="figure-card">
+            <span class="index-num">METRIC 01 · DELIVERY SPEED</span>
+            <strong>ความเร็วในการส่งมอบและแก้บั๊ก</strong>
+            <p class="prose">เวลาตั้งแต่เปิด Pull Request จนถึง Deploy ขึ้น Staging สำเร็จ และ Lead Time ในการแก้บั๊กวิกฤตหน้าร้าน</p>
+            <span class="tag tag-info">CI Pipeline &lt; 10 นาที</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">METRIC 02 · OUTPUT QUALITY</span>
+            <strong>ความถูกต้องของผลลัพธ์ (P95 &amp; Defect Rate)</strong>
+            <p class="prose">อัตราผ่านของ Automated Test กรณีคำนวณภาษี/ส่วนลด/สต็อก และจำนวน Bug ที่หลุดไปถึงรอบ UAT</p>
+            <span class="tag tag-positive">0 Critical Billing Bugs</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">METRIC 03 · MANUAL TOIL</span>
+            <strong>งานกระทบยอดที่ยังต้องทำด้วยมือ</strong>
+            <p class="prose">ชั่วโมงที่ทีมหรือผู้จัดการร้านยังต้องมานั่งเทียบยอดเงินสด ยอด PromptPay และสต็อกตกหล่นใน Excel</p>
+            <span class="tag tag-warning">ลดลงต่อเนื่องทุก Sprint</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">METRIC 04 · OUTCOME VS COST</span>
+            <strong>ความคุ้มค่าเทียบต้นทุนระบบและ AI</strong>
+            <p class="prose">ค่า Cloud DB/Cache และ AI Token ที่ใช้ เทียบกับจำนวนบิลที่ปิดได้อย่างถูกต้องจริงในระบบ</p>
+            <span class="tag tag-info">Positive ROI Margin</span>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">METRIC 05 · EMBEDDED SECURITY</span>
+            <strong>การผ่านเกณฑ์ DevSecOps อัตโนมัติ</strong>
+            <p class="prose">ผลสแกนช่องโหว่ Dependency, การตรวจ Leak ของ Secret Key และการผ่านเกณฑ์ PDPA ก่อน Merge ทุกครั้ง</p>
+            <span class="tag tag-positive">Zero High CVEs</span>
+          </article>
+        </div>
+
+        <aside class="stone-card">
+          <span class="index-num">EMBEDDED GOVERNANCE · NO FINAL-WEEK BOTTLENECK</span>
+          <p class="prose"><strong>ฝัง Compliance ใน Pipeline:</strong> องค์กรยุคใหม่ไม่รอตรวจความปลอดภัยหรือความสอดคล้องกฎหมายก่อนวันส่งมอบเพียงครั้งเดียว แต่ฝังการตรวจ Vulnerability Scan, Dependency Policy และ Audit Trail ลงใน CI/CD เพื่อให้ทีมพัฒนาได้เร็วโดยไม่ละเมิดมาตรฐาน</p>
+        </aside>
+      </section>
+
+      <!-- SLIDE 8: DATA PRIVACY & PDPA COMPLIANCE -->
+      <section class="slide" id="slide-8" data-title="ความเป็นส่วนตัวและ PDPA">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 08 · PDPA COMPLIANCE</span>
+            <span class="dossier-meta">พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</span>
+          </div>
+          <span class="dossier-meta">PRIVACY BY DESIGN</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">ข้อมูลบนเคาน์เตอร์ Grocery POS กับข้อกำหนด PDPA ที่ทีมพัฒนาห้ามมองข้าม</h2>
+          <p class="standfirst">แม้จะเป็นร้านค้าปลีกทั่วไป แต่ทันทีที่ระบบ POS เก็บเบอร์โทรศัพท์สมาชิก เลขประจำตัวผู้เสียภาษี หรือประวัติการซื้อที่ระบุตัวตนได้ ระบบอยู่ภายใต้ขอบเขต PDPA ทันที</p>
+        </div>
+
+        <div class="grid-2">
+          <article class="figure-card">
+            <span class="index-num">01 · LAWFUL BASIS &amp; GRANULAR CONSENT</span>
+            <strong>แยกความยินยอม (ห้ามมัดรวม)</strong>
+            <p class="prose">การเก็บข้อมูลเพื่อ <em>ออกใบกำกับภาษี (Legal Obligation)</em> หรือ <em>สะสมแต้มสมาชิก (Contract)</em> ต้องแยกจาก Checkbox ยินยอมส่งโปรโมชันการตลาด (Explicit Consent) และห้ามติ๊กเลือกไว้ล่วงหน้า</p>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">02 · DATA MINIMIZATION</span>
+            <strong>เก็บข้อมูลเท่าที่จำเป็นต่อวัตถุประสงค์</strong>
+            <p class="prose">ลูกค้าที่จ่ายเงินสดและไม่เป็นสมาชิกไม่ควรถูกบังคับกรอกเบอร์โทรหรือเลขบัตรประชาชน เพื่อความสะดวกในการออกใบเสร็จย่อ</p>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">03 · SECURITY SAFEGUARDS &amp; MASKING</span>
+            <strong>เข้ารหัสและพรางข้อมูลบนหน้าจอแคชเชียร์</strong>
+            <p class="prose">เบอร์โทรศัพท์บนหน้าจอ POS และสลิปควรพรางเป็น <code>089-xxx-4321</code> เข้ารหัส PII ในฐานข้อมูล และส่งผ่าน HTTPS/TLS เสมอ</p>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">04 · RETENTION, RIGHTS &amp; AUDIT TRAIL</span>
+            <strong>สิทธิเจ้าของข้อมูลและการลบทิ้งเมื่อพ้นกำหนด</strong>
+            <p class="prose">รองรับคำขอเข้าถึง แก้ไข หรือลบ/ทำให้เป็นนิรนาม (Anonymize) ประวัติสมาชิก พร้อมบันทึก Log ว่าพนักงานคนใดเปิดดูข้อมูลลูกค้าเวลาใด</p>
+          </article>
+        </div>
+
+        <aside class="stone-card">
+          <span class="index-num">COMMON STUDENT PITFALL · LOG &amp; AI PROMPT LEAK</span>
+          <p class="prose"><strong>จุดรั่วไหลที่พบบ่อยในโปรเจกต์นักศึกษา:</strong> การใช้ <code>console.log(req.body)</code> หรือส่งไฟล์ Database Dump ที่มีชื่อ-เบอร์โทรลูกค้าจริงเข้าไปถาม AI Chatbot เพื่อแก้บั๊ก — ถือเป็นการละเมิดการคุ้มครองข้อมูลส่วนบุคคล</p>
+        </aside>
+      </section>
+
+      <!-- SLIDE 9: INTERACTIVE PDPA INSPECTOR -->
+      <section class="slide" id="slide-9" data-title="Lab: ตรวจสอบข้อมูล PDPA">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 09 · INTERACTIVE LAB</span>
+            <span class="dossier-meta">POS DATA FLOW &amp; PDPA AUDIT</span>
+          </div>
+          <span class="dossier-meta">PRIVACY SAFEGUARDS SIMULATOR</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">ตรวจสอบจุดเสี่ยงข้อมูลส่วนบุคคลใน Grocery POS และเปิดใช้มาตรการป้องกัน</h2>
+          <p class="standfirst">เลือกชุดข้อมูลด้านซ้ายเพื่อดูระดับความเสี่ยงทางกฎหมาย จากนั้นเปิดใช้มาตรการควบคุมด้านล่างเพื่อประเมินคะแนนความพร้อม PDPA</p>
+        </div>
+
+        <div class="grid-asymmetric">
+          <div class="pdpa-list-col">
+            <span class="index-num">เลือกชุดข้อมูลในระบบ (DATA ARTIFACTS)</span>
+            <div id="pdpa-artifact-list" class="pdpa-artifact-stack"></div>
+
+            <span class="index-num spaced-label-sm">เปิดใช้มาตรการควบคุม PDPA (SAFEGUARDS)</span>
+            <label class="check-tile">
+              <input type="checkbox" id="pdpa-mask" checked onchange="updatePdpaAudit()">
+              <span><strong>UI &amp; Receipt Masking</strong> — พรางเบอร์โทรและเลขผู้เสียภาษีบนหน้าจอ/สลิป</span>
+            </label>
+            <label class="check-tile">
+              <input type="checkbox" id="pdpa-consent" onchange="updatePdpaAudit()">
+              <span><strong>Granular Consent Toggle</strong> — แยกความยินยอมการตลาดออกจากใบเสร็จและแต้มสะสม</span>
+            </label>
+            <label class="check-tile">
+              <input type="checkbox" id="pdpa-rbac" onchange="updatePdpaAudit()">
+              <span><strong>RBAC &amp; Audit Trail</strong> — จำกัดสิทธิ์ดูข้อมูลลูกค้าเฉพาะ Role ผู้จัดการพร้อม Log</span>
+            </label>
+            <label class="check-tile">
+              <input type="checkbox" id="pdpa-sanitize" onchange="updatePdpaAudit()">
+              <span><strong>Log &amp; AI Prompt Sanitization</strong> — ตัด PII ออกจาก Error Log และใช้ Mock Data ทดสอบ</span>
+            </label>
+          </div>
+
+          <div class="figure-card" aria-live="polite">
+            <div class="pdpa-score-header">
+              <div>
+                <span class="index-num">PDPA READINESS SCORE</span>
+                <div class="kpi-value" id="pdpa-score-val">25%</div>
+              </div>
+              <span class="tag" id="pdpa-score-badge">ยังไม่ผ่านเกณฑ์ขั้นต่ำ</span>
+            </div>
+
+            <div class="pdpa-detail-col" id="pdpa-detail-box">
+              <span class="index-num" id="pdpa-art-type">PII CLASSIFICATION</span>
+              <h3 class="subcard-title" id="pdpa-art-name">--</h3>
+              <p class="prose"><strong>ฐานทางกฎหมาย (Lawful Basis):</strong> <span id="pdpa-art-basis"></span></p>
+              <p class="prose"><strong>ระยะเวลาจัดเก็บ (Retention):</strong> <span id="pdpa-art-retention"></span></p>
+              <p class="prose"><strong>ความเสี่ยงหากละเลย:</strong> <span id="pdpa-art-risk"></span></p>
+              <div class="feedback-banner" id="pdpa-art-status"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: ETHICS IN SOFTWARE DEVELOPMENT -->
+      <section class="slide" id="slide-10" data-title="จริยธรรมในการพัฒนาซอฟต์แวร์">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 10 · SOFTWARE ETHICS</span>
+            <span class="dossier-meta">FAIRNESS, ACCOUNTABILITY &amp; AI GOVERNANCE</span>
+          </div>
+          <span class="dossier-meta">ENGINEERING PROFESSIONALISM</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">4 มิติจริยธรรมวิศวกรรมซอฟต์แวร์ในยุคระบบอัตโนมัติและ Agentic AI</h2>
+          <p class="standfirst">ซอฟต์แวร์ที่ดีไม่ใช่แค่ทำงานเร็วและถูกกฎหมาย แต่ต้องไม่เอาเปรียบผู้บริโภค ไม่บิดเบือนความจริง และมีมนุษย์รับผิดชอบต่อโค้ดที่ส่งขึ้นระบบ</p>
+        </div>
+
+        <div class="grid-2">
+          <article class="figure-card">
+            <span class="index-num">01 · NO DARK PATTERNS &amp; PRICING FAIRNESS</span>
+            <strong>โปร่งใสต่อผู้ซื้อและแคชเชียร์</strong>
+            <p class="prose">ห้ามออกแบบหน้าจอ POS หรือ Loyalty Portal ที่ซ่อนปุ่มยกเลิกสมาชิก ปัดเศษราคาขึ้นโดยไม่แจ้ง หรือแอบเปิดการเก็บข้อมูลโฆษณาเป็นค่าเริ่มต้น ความผิดพลาดของโปรโมชันต้องแสดงรายการชัดเจนบนใบเสร็จ</p>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">02 · HUMAN-IN-THE-LOOP FOR AGENTIC AI</span>
+            <strong>AI เขียนได้ แต่มนุษย์ต้องตรวจรับผิดชอบ</strong>
+            <p class="prose">Google Cloud และคู่มือ Agentic AI ย้ำว่าโค้ดที่สร้างโดย AI ต้องผ่านการ Review จากสมาชิกในทีมแบบ Standard Pull Request ทุกครั้ง เพื่อป้องกันช่องโหว่ ตรรกะหลอน (Hallucination) และความเอนเอียง (Consensus/Coverage Bias)</p>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">03 · TRACEABILITY &amp; ACCOUNTABILITY</span>
+            <strong>ไม่โยนความผิดให้ “บั๊ก” หรือ “AI”</strong>
+            <p class="prose">เมื่อยอดเงินไม่ตรงหรือระบบตัดเงินซ้ำ ทีมพัฒนาต้องมี Audit Log ที่ตรวจสอบย้อนกลับได้จริง (Verification &amp; Traceability) และรับผิดชอบแก้ไขเชิงระบบ แทนการแก้ตัวเลขในฐานข้อมูลแบบปกปิด</p>
+          </article>
+
+          <article class="figure-card">
+            <span class="index-num">04 · SUSTAINABLE PACE &amp; COLLECTIVE OWNERSHIP</span>
+            <strong>จริยธรรมต่อทีมพัฒนาด้วยกัน</strong>
+            <p class="prose">Extreme Programming สอนเรื่อง <em>Sustainable Pace</em> และ <em>Collective Code Ownership</em> — การเร่งเขียนโค้ดข้ามคืนจนเปราะบางหรือหวงโค้ดไม่ให้เพื่อนตรวจ คือความเสี่ยงทางจริยธรรมที่ทำให้ทั้งทีมล้มเหลว</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- SLIDE 11: INTERACTIVE ETHICS & RUBRIC READINESS -->
+      <section class="slide" id="slide-11" data-title="Lab: จริยธรรม &amp; เกณฑ์ 25 คะแนน">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 11 · INTERACTIVE LAB</span>
+            <span class="dossier-meta">ETHICAL DILEMMA &amp; 25-PT RUBRIC CHECKER</span>
+          </div>
+          <span class="dossier-meta">COURSE ASSESSMENT ALIGNMENT</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">ฝึกตัดสินใจเชิงจริยธรรม และตรวจความพร้อมตามเกณฑ์คะแนน 25 คะแนน</h2>
+          <p class="standfirst">เลือกคำตอบในสถานการณ์จำลองด้านซ้าย และเช็กรายการส่งมอบด้านขวาเพื่อประเมินระดับคะแนนคาดการณ์ของทีม (ระบบบันทึกสถานะให้อัตโนมัติ)</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="figure-card">
+            <div class="ethics-header-row">
+              <span class="index-num">สถานการณ์จริยธรรม (ETHICS SCENARIOS)</span>
+              <div class="ethics-tabs-row">
+                <button type="button" class="nav-chip is-current" id="sc-tab-0" onclick="selectEthicsScenario(0)">กรณี 1</button>
+                <button type="button" class="nav-chip" id="sc-tab-1" onclick="selectEthicsScenario(1)">กรณี 2</button>
+                <button type="button" class="nav-chip" id="sc-tab-2" onclick="selectEthicsScenario(2)">กรณี 3</button>
+              </div>
+            </div>
+
+            <h3 class="subcard-title-sm" id="sc-title">--</h3>
+            <p class="prose" id="sc-prompt">--</p>
+            <div id="sc-options" class="ethics-options-stack"></div>
+            <div class="feedback-banner feedback-hidden" id="sc-feedback" aria-live="polite"></div>
+          </div>
+
+          <div class="stone-card">
+            <div class="rubric-header-row">
+              <div>
+                <span class="index-num">เกณฑ์การบริหารความเสี่ยง (25 คะแนน)</span>
+                <div class="kpi-value" id="rubric-band-title">ปรับปรุง (0–13 คะแนน)</div>
+              </div>
+              <span class="tag" id="rubric-score-pill">0 / 25</span>
+            </div>
+
+            <div class="rubric-checklist-stack" id="rubric-checklist">
+              <label class="check-tile">
+                <input type="checkbox" id="rub-1" onchange="updateRubricScore()">
+                <span><strong>วิเคราะห์ความเสี่ยงเชิงเทคนิค</strong> (แยกจากปัญหาทั่วไป ระบุสาเหตุระดับโค้ด/DB)</span>
+              </label>
+              <label class="check-tile">
+                <input type="checkbox" id="rub-2" onchange="updateRubricScore()">
+                <span><strong>บันทึก Risk Log ครบถ้วน</strong> (ระบุโอกาสเกิด ผลกระทบ เจ้าของงาน และวันอัปเดต)</span>
+              </label>
+              <label class="check-tile">
+                <input type="checkbox" id="rub-3" onchange="updateRubricScore()">
+                <span><strong>ดำเนินการตาม Mitigation Plan สำเร็จ</strong> (มีผลเทสต์/Profiler ยืนยันว่าลดความเสี่ยงได้จริง)</span>
+              </label>
+              <label class="check-tile">
+                <input type="checkbox" id="rub-4" onchange="updateRubricScore()">
+                <span><strong>มาตรฐาน PDPA และจริยธรรมข้อมูล</strong> (Masking, Consent, ไม่นำ PII จริงไปทดสอบหรือป้อน AI)</span>
+              </label>
+              <label class="check-tile">
+                <input type="checkbox" id="rub-5" onchange="updateRubricScore()">
+                <span><strong>หลักฐาน PR Review &amp; Dependency Audit</strong> (มีประวัติตรวจโค้ดและความปลอดภัยก่อน Merge)</span>
+              </label>
+            </div>
+
+            <p class="prose note-md" id="rubric-guidance">ติ๊กเลือกหลักฐานที่ทีมของนักศึกษามีครบถ้วนแล้ว เพื่อเทียบระดับคะแนนตามเกณฑ์รายวิชา</p>
+            <div class="rubric-actions-row">
+              <button type="button" class="btn" id="btn-reset-state" onclick="handleResetState(this)">ล้างค่าที่ทดลองทั้งหมด</button>
+              <span class="dossier-meta" id="save-status-text">พร้อมบันทึกสถานะอัตโนมัติ</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 12: SUMMARY & ACTION PLAN -->
+      <section class="slide" id="slide-12" data-title="สรุปและแผนปฏิบัติการ">
+        <div class="dossier-bar">
+          <div class="dossier-bar-left">
+            <span class="dossier-pill">SLIDE 12 · SUMMARY &amp; TAKEAWAYS</span>
+            <span class="dossier-meta">WEEK 11 TO FINAL DEFENSE ROADMAP</span>
+          </div>
+          <span class="dossier-meta">1145 204 SOPHOMORE PROJECT</span>
+        </div>
+
+        <div>
+          <h2 class="slide-title">5 สิ่งที่ทุกทีม Grocery POS ต้องทำให้เสร็จภายในสัปดาห์หน้า</h2>
+          <p class="standfirst">เปลี่ยนผลการทบทวนในห้องเรียนวันนี้ให้เป็นหลักฐานเชิงประจักษ์สำหรับอาจารย์ที่ปรึกษา (50%) และคณะกรรมการสอบ (50%)</p>
+        </div>
+
+        <div class="card-grid">
+          <article class="figure-card">
+            <span class="index-num">ACTION 01</span>
+            <strong>อัปเดต Risk Log เชิงเทคนิค</strong>
+            <p class="prose">ใส่ความเสี่ยงระดับสถาปัตยกรรมอย่างน้อย 4–6 รายการ พร้อม Mitigation Plan ที่มีหลักฐานการทดลอง</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">ACTION 02</span>
+            <strong>วัด Baseline &amp; Profile จุดคอขวด</strong>
+            <p class="prose">ทดสอบยิง Checkout พร้อมกันด้วยข้อมูลจำลอง ≥ 10,000 SKUs และเก็บตัวเลข P95 Latency ก่อน-หลังปรับจูน</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">ACTION 03</span>
+            <strong>ปิดรอยรั่ว PDPA ทั้ง UI และ Log</strong>
+            <p class="prose">เปิดใช้ Phone Masking, แยก Checkbox ยินยอมการตลาด และล้างข้อมูล PII ออกจาก Error Log</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">ACTION 04</span>
+            <strong>บังคับ Human PR Review &amp; Audit</strong>
+            <p class="prose">ตรวจแพ็กเกจใน <code>package.json</code> / <code>requirements.txt</code> และไม่ Merge โค้ด AI โดยไม่อ่านและเขียน Test</p>
+          </article>
+          <article class="figure-card">
+            <span class="index-num">ACTION 05</span>
+            <strong>รวบรวม 5 Metrics ขึ้นสไลด์สอบ</strong>
+            <p class="prose">สรุปความเร็ว, คุณภาพ Test, งาน Manual ที่ลดลง, ความคุ้มค่า และผลสแกนความปลอดภัยให้กรรมการเห็นชัดเจน</p>
+          </article>
+        </div>
+
+        <aside class="stone-card">
+          <span class="index-num">SOURCES &amp; REFERENCES</span>
+          <p class="prose sources-text">เรียบเรียงจาก: Robert C. Martin (Agile Principles, Patterns, and Practices in C#); Mary &amp; Tom Poppendieck (Lean Software Development); Mike Cohn (Agile Estimating and Planning); Barry Boehm (Cost of Change &amp; Risk Analysis); AI SDLC: A Practical Guide to SDLC AI Agents; Google Cloud (What is agentic coding?); 10Pearls (Agile Software Development Trends in 2026); AI Agent &amp; Agile Software Development (Wikipedia); และเกณฑ์การประเมินรายวิชา 1145 204 Sophomore Project</p>
+        </aside>
+      </section>
+
+    </main>
+
+    <footer class="deck-footer">
+      <span class="footer-hint">เคล็ดลับการสอน: กดปุ่มลูกศร <strong>←</strong> / <strong>→</strong> เพื่อเปลี่ยนสไลด์ หรือคลิก “ดูทุกสไลด์ (Scroll)” เพื่ออ่านสรุปทั้งชุด</span>
+      <span class="dossier-meta">1145 204 · WEEK 11 QUALITY &amp; RISK BRIEFING</span>
+    </footer>
+
+  </div>
+
+  <api-shim></api-shim>
+
+  <script>
+    const TOTAL_SLIDES = 12;
+    let currentSlide = 1;
+    let showAllMode = false;
+    let riskMode = 'inherent';
+    let selectedRiskId = 'R1';
+    let selectedArtifactId = 'loyalty';
+    let activeEthicsIdx = 0;
+    let perfChartInstance = null;
+
+    const appState = {
+      currentSlide: 1,
+      showAllMode: false,
+      riskMode: 'inherent',
+      selectedRiskId: 'R1',
+      cashiers: 4,
+      skus: 12000,
+      items: 18,
+      optIndex: true,
+      optLock: true,
+      optAsync: false,
+      selectedArtifactId: 'loyalty',
+      pdpaMask: true,
+      pdpaConsent: false,
+      pdpaRbac: false,
+      pdpaSanitize: false,
+      ethicsAnswers: { 0: null, 1: null, 2: null },
+      rubricChecks: [false, false, false, false, false]
+    };
+
+    const SLIDE_TITLES = [
+      `ภาพรวมสัปดาห์ที่ 11`,
+      `ต้นทุนความล้มเหลว`,
+      `ความเสี่ยงเชิงเทคนิค`,
+      `Lab: Risk Matrix 5×5`,
+      `คอขวดประสิทธิภาพ POS`,
+      `Lab: จำลอง Latency`,
+      `5 ตัวชี้วัดคุณภาพ`,
+      `กฎหมาย PDPA กับ POS`,
+      `Lab: ตรวจสอบ PDPA`,
+      `จริยธรรมและ AI Oversight`,
+      `Lab: จริยธรรม & เกณฑ์`,
+      `สรุปแผนปฏิบัติการ`
+    ];
+
+    const RISKS = [
+      {
+        id: `R1`,
+        title: `Race Condition ตัดสต็อกพร้อมกัน 2 แคชเชียร์`,
+        owner: `Backend Lead`,
+        inherent: { l: 4, i: 5 },
+        residual: { l: 1, i: 4 },
+        cause: `อ่านค่าคงเหลือก่อนแล้วค่อย Update แยกคำสั่งใน Transaction ระดับ READ COMMITTED ทำให้สินค้าชิ้นสุดท้ายถูกขายซ้ำ 2 บิล`,
+        metric: `Stock Mismatch Count > 0 หรือ Concurrent Checkout Test ล้มเหลว`,
+        mitigation: `เปลี่ยนเป็น Atomic Conditional Update (WHERE stock >= qty) หรือ Optimistic Locking ด้วยคอลัมน์ version พร้อม Unit Test แบบ Concurrent`
+      },
+      {
+        id: `R2`,
+        title: `Offline POS Sync Conflict เมื่อเน็ตหน้าร้านหลุด`,
+        owner: `Systems Architect`,
+        inherent: { l: 4, i: 4 },
+        residual: { l: 2, i: 3 },
+        cause: `แคชเชียร์ทำงานต่อในโหมดออฟไลน์แต่ไม่มี Idempotency Key เมื่อเชื่อมต่อกลับมาจึงยิงบิลซ้ำหรือทับข้อมูลราคาใหม่`,
+        metric: `Duplicate Invoice Rate หรือ Sync Queue Backlog > 20 รายการ`,
+        mitigation: `สร้าง UUID Idempotency Key ต่อ 1 บิลตั้งแต่เครื่อง POS และใช้ Conflict Resolution Policy ที่ยึดลำดับเวลาและราคา ณ เวลาสแกน`
+      },
+      {
+        id: `R3`,
+        title: `Fragile Coupling ระหว่างโมดูล Billing และ Promotion`,
+        owner: `Core Developer`,
+        inherent: { l: 5, i: 3 },
+        residual: { l: 2, i: 2 },
+        cause: `ผิดหลัก Stable-Dependencies Principle (SDP) โดยให้โมดูลคำนวณบิลพึ่งพาโค้ดโปรโมชันที่เปลี่ยนแปลงทุกสัปดาห์โดยตรง`,
+        metric: `จำนวนไฟล์ที่ต้องแก้ข้ามโมดูล > 5 ไฟล์ต่อ 1 ฟีเจอร์ส่วนลด`,
+        mitigation: `แยก Discount Engine ผ่าน Interface Abstraction และบังคับ Regression Test Suite สำหรับภาษีและส่วนลดทุก Commit`
+      },
+      {
+        id: `R4`,
+        title: `Unreviewed AI Code & Typosquatting Dependency`,
+        owner: `DevSecOps / QA`,
+        inherent: { l: 3, i: 5 },
+        residual: { l: 1, i: 3 },
+        cause: `นักพัฒนาคัดลอกโค้ดหรือติดตั้ง npm/pip package จากคำแนะนำของ AI Agent โดยไม่ตรวจสอบแหล่งที่มาหรือเขียน Test รองรับ`,
+        metric: `High/Critical CVE ใน Dependency Lockfile หรือ PR ที่ไม่มีคนรีวิว`,
+        mitigation: `เปิด Automated Dependency Audit ใน CI, ล็อกเวอร์ชันใน lockfile และกำหนดให้ทุก PR ต้องมีมนุษย์ตรวจอย่างน้อย 1 คน`
+      },
+      {
+        id: `R5`,
+        title: `ข้อมูลสมาชิก PDPA รั่วไหลใน Error Log / Receipt`,
+        owner: `Security & Privacy Lead`,
+        inherent: { l: 4, i: 5 },
+        residual: { l: 1, i: 3 },
+        cause: `ระบบบันทึก Request Payload ที่มีเบอร์โทรศัพท์และเลขภาษีลง Log แบบ Plaintext และแสดงเบอร์เต็มบนหน้าจอ/ใบเสร็จ`,
+        metric: `ตรวจพบ Pattern เบอร์โทร 10 หลักหรือเลขบัตร 13 หลักใน Log`,
+        mitigation: `ติดตั้ง Log Sanitizer ตัดฟิลด์ PII อัตโนมัติ, ทำ Phone Masking และจำกัดสิทธิ์เข้าถึงข้อมูลลูกค้าด้วย RBAC`
+      },
+      {
+        id: `R6`,
+        title: `Weekly Build Merge Conflict ก่อนวันส่งงาน`,
+        owner: `Scrum Master / Team`,
+        inherent: { l: 4, i: 3 },
+        residual: { l: 1, i: 2 },
+        cause: `สมาชิกแยกกันพัฒนาบน Branch ยาวนานตลอดสัปดาห์แล้วค่อยรวมโค้ดคืนวันพฤหัสบดี เกิด Integration Penalty รุนแรง`,
+        metric: `Branch Divergence > 3 วัน หรือ CI Broken นานเกิน 2 ชั่วโมง`,
+        mitigation: `ทำ Continuous Integration รวมโค้ดเข้า main อย่างน้อยวันละครั้ง พร้อม Automated Smoke Test ในทุก Pull Request`
+      }
+    ];
+
+    const PDPA_ARTIFACTS = [
+      {
+        id: `loyalty`,
+        name: `ข้อมูลสมาชิก Loyalty (เบอร์โทร / ชื่อ / วันเกิด)`,
+        classification: `ข้อมูลส่วนบุคคลทั่วไป (General PII)`,
+        basis: `ฐานสัญญา (Contract) เพื่อสะสมแต้ม และฐานความยินยอม (Consent) หากส่งโปรโมชันการตลาด`,
+        retention: `เก็บตลอดอายุสมาชิก และลบ/Anonymize ภายใน 30–90 วันหลังผู้ใช้ขอยกเลิกบัญชี`,
+        risk: `แคชเชียร์หรือบุคคลภายนอกเห็นเบอร์โทรเต็มจากหน้าจอ/ใบเสร็จ หรือถูกนำไปยิง SMS โฆษณาโดยไม่ยินยอม`,
+        needs: [`pdpaMask`, `pdpaConsent`]
+      },
+      {
+        id: `tax`,
+        name: `ใบกำกับภาษีเต็มรูป (เลขผู้เสียภาษี / ที่อยู่)`,
+        classification: `ข้อมูลระบุตัวตนทางกฎหมายและภาษี`,
+        basis: `การปฏิบัติตามกฎหมาย (Legal Obligation) ตามประมวลรัษฎากร`,
+        retention: `จัดเก็บตามอายุความทางบัญชีและภาษี (อย่างน้อย 5–10 ปีในพื้นที่จัดเก็บที่เข้ารหัส)`,
+        risk: `พนักงานทั่วไปดึงประวัติที่อยู่และเลขประจำตัวผู้เสียภาษีของลูกค้าไปใช้งานนอกวัตถุประสงค์`,
+        needs: [`pdpaMask`, `pdpaRbac`]
+      },
+      {
+        id: `basket`,
+        name: `ประวัติตะกร้าสินค้าและพฤติกรรมการซื้อ`,
+        classification: `ข้อมูลพฤติกรรม (Behavioral Profiling เมื่อผูกกับ ID ลูกค้า)`,
+        basis: `ฐานประโยชน์อันชอบด้วยกฎหมาย (Legitimate Interest) สำหรับการวิเคราะห์แบบไม่ระบุตัวตน หรือ Consent หากวิเคราะห์รายบุคคล`,
+        retention: `ตัดความเชื่อมโยงกับตัวตนลูกค้า (Pseudonymization) เมื่อนำไปทำรายงานยอดขายระยะยาว`,
+        risk: `การนำประวัติการซื้อสินค้าอ่อนไหว (เช่น ยา/เวชภัณฑ์) ไปแสดงผลหรือจัดโปรโมชันเชิงรุกล้ำความเป็นส่วนตัว`,
+        needs: [`pdpaConsent`, `pdpaRbac`]
+      },
+      {
+        id: `payment`,
+        name: `ข้อมูลการชำระเงิน PromptPay / บัตรเครดิต`,
+        classification: `ข้อมูลธุรกรรมทางการเงิน (Financial Data)`,
+        basis: `ฐานสัญญา (Contract) เพื่อชำระค่าสินค้า`,
+        retention: `เก็บเฉพาะ Transaction Reference และ Mask Token; ห้ามเก็บ CVV หรือหมายเลขบัตรเต็มในระบบ POS เด็ดขาด`,
+        risk: `ความเสียหายทางการเงินโดยตรงและการละเมิดมาตรฐานความปลอดภัยชำระเงินหากหลุดจากระบบ`,
+        needs: [`pdpaRbac`, `pdpaSanitize`]
+      },
+      {
+        id: `logs`,
+        name: `System Error Logs & AI Debugging Prompts`,
+        classification: `ข้อมูลเทคนิคที่มักปนเปื้อน PII โดยไม่ตั้งใจ`,
+        basis: `ผลประโยชน์อันชอบด้วยกฎหมายในการบำรุงรักษาระบบ (ต้องตัดข้อมูลส่วนบุคคลออกก่อน)`,
+        retention: `Log เชิงเทคนิคเก็บ 30–90 วัน และห้ามนำฐานข้อมูลจริงไปวางในเครื่องมือ AI ภายนอก`,
+        risk: `ข้อมูลลูกค้าจริงรั่วไหลผ่านไฟล์ Log สาธารณะหรือประวัติการสนทนากับ Public LLM`,
+        needs: [`pdpaSanitize`, `pdpaRbac`]
+      }
+    ];
+
+    const ETHICS_SCENARIOS = [
+      {
+        title: `กรณีที่ 1: ลูกค้าต้องการซื้อของด้วยเงินสดแต่หน้าจอ POS บังคับกรอกเบอร์โทร`,
+        prompt: `เจ้าของร้านขอให้ทีมเพิ่มกฎว่า “ถ้าไม่กรอกเบอร์โทรลูกค้า จะกดปุ่มรับเงินสดไม่ได้” เพื่อเก็บฐานข้อมูลทำ SMS Marketing นักศึกษาควรเสนอแนวทางใด?`,
+        options: [
+          {
+            text: `ทำตามคำสั่งเจ้าของร้านโดยเพิ่มช่องกรอกเบอร์โทรแบบบังคับและติ๊กยินยอมรับข่าวสารไว้ล่วงหน้า`,
+            isGood: false,
+            feedback: `ไม่เหมาะสม: ขัดหลัก Data Minimization และ PDPA (การยินยอมต้องเป็นอิสระ ไม่บังคับ และห้าม Pre-ticked) รวมถึงเป็น Dark Pattern`
+          },
+          {
+            text: `แยกปุ่ม “ลูกค้าทั่วไป (ไม่ระบุตัวตน)” สำหรับการจ่ายเงินสด และแยก Checkbox ความยินยอมการตลาดแบบไม่ติ๊กล่วงหน้าสำหรับสมาชิก`,
+            isGood: true,
+            feedback: `ถูกต้องตามหลักจริยธรรมและ PDPA: เคารพสิทธิความเป็นส่วนตัวของลูกค้าที่จ่ายเงินสด ขณะเดียวกันยังช่วยให้ร้านเก็บข้อมูลสมาชิกอย่างโปร่งใสและถูกกฎหมาย`
+          },
+          {
+            text: `แอบใส่เบอร์โทรศัพท์สมมติของแคชเชียร์ลงในระบบแทนเพื่อให้กดผ่านหน้าจอไปได้`,
+            isGood: false,
+            feedback: `ไม่เหมาะสม: ทำให้ข้อมูลในระบบบิดเบือน (Data Integrity เสียหาย) และส่งข้อความการตลาดไปยังเจ้าของเบอร์ที่ผิดพลาด`
+          }
+        ]
+      },
+      {
+        title: `กรณีที่ 2: AI Coding Agent แนะนำโค้ดคำนวณส่วนลดพร้อมไลบรารีชื่อแปลก`,
+        prompt: `ก่อนส่งงาน 1 วัน เพื่อนร่วมทีมใช้ AI Agent สร้างโมดูลคำนวณโปรโมชันและรันติดตั้งแพ็กเกจใหม่ชื่อคล้ายไลบรารียอดนิยมโดยไม่มีการเปิด Pull Request Review ทีมควรทำอย่างไร?`,
+        options: [
+          {
+            text: `ยอม Merge เข้า main ทันทีเพราะทดสอบหน้าจอแล้วเห็นว่ายอดเงินลดถูกต้อง และใกล้ถึงเวลาส่งงานแล้ว`,
+            isGood: false,
+            feedback: `เสี่ยงสูงมาก: ไลบรารีชื่อคล้ายอาจเป็น Typosquatting Malware และโค้ดที่ไม่มีมนุษย์ตรวจมักมี Edge Case ผิดพลาดเมื่อเจอกรณีคืนสินค้าหรือภาษี`
+          },
+          {
+            text: `ระงับการ Merge ชั่วคราว ตรวจสอบความน่าเชื่อถือของแพ็กเกจใน Registry, รัน Security Audit และให้เพื่อนร่วมทีมอีกคนตรวจโค้ด + Test กรณีขอบ`,
+            isGood: true,
+            feedback: `ถูกต้องตามหลัก Governance: รักษา Strict Dependency Governance และ Human-in-the-Loop PR Review แม้ในภาวะเร่งด่วน เพื่อป้องกันความเสียหายระดับ Production`
+          },
+          {
+            text: `นำข้อมูลขายจริงของร้านตัวอย่างไปให้ AI Agent ช่วยเขียน Unit Test เพิ่มให้ครอบคลุมแทนการตรวจโค้ดเอง`,
+            isGood: false,
+            feedback: `ไม่เหมาะสม: การส่งข้อมูลจริงของร้านค้าและลูกค้าเข้า AI ภายนอกเสี่ยงข้อมูลรั่วไหล และไม่สามารถทดแทนความรับผิดชอบของมนุษย์ในการตรวจโค้ดได้`
+          }
+        ]
+      },
+      {
+        title: `กรณีที่ 3: พบความคลาดเคลื่อนของทศนิยมสตางค์ในการปัดเศษบิล`,
+        prompt: `ระหว่างตรวจคุณภาพสัปดาห์ที่ 11 พบว่าระบบคำนวณ VAT และส่วนลดปัดเศษขึ้นเกินจริงบิลละ 0.25–0.50 บาท ทีมควรจัดการอย่างไร?`,
+        options: [
+          {
+            text: `ปล่อยผ่านไว้ก่อนเพราะตัวเลขเล็กน้อยลูกค้ามักไม่สังเกต และช่วยให้ร้านได้กำไรเพิ่มขึ้น`,
+            isGood: false,
+            feedback: `ผิดจริยธรรมวิชาชีพ: การปล่อยให้ซอฟต์แวร์คิดเงินเกินจริงโดยเจตนาเป็นการเอาเปรียบผู้บริโภคและสร้างความเสี่ยงทางกฎหมาย/บัญชีระยะยาว`
+          },
+          {
+            text: `บันทึกเข้า Risk Log แก้ไขตรรกะด้วย Decimal/Integer Cents ที่โปร่งใสตามมาตรฐานบัญชี และเขียน Regression Test ป้องกันซ้ำ`,
+            isGood: true,
+            feedback: `ถูกต้องและเป็นมืออาชีพ: แสดงความซื่อสัตย์ (Accountability) ใช้ชนิดข้อมูลทศนิยมทางการเงินที่แม่นยำ และมีหลักฐานบันทึกการแก้ไขใน Risk Log`
+          },
+          {
+            text: `แก้ตัวเลขผลรวมใน Database ย้อนหลังเฉพาะบิลที่มีปัญหาโดยไม่แจ้งใครและไม่แก้โค้ดหลัก`,
+            isGood: false,
+            feedback: `ไม่เหมาะสม: ทำลาย Audit Trail และความถูกต้องทางบัญชี ปัญหาเดิมจะเกิดซ้ำในบิลถัดไป`
+          }
+        ]
+      }
+    ];
+
+    async function persistState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+          await window.notebookAppApi.setAppState(appState);
+        }
+      } catch (err) {
+        // Ignore persistence errors outside sandbox
+      }
+    }
+
+    async function loadPersistedState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            if (typeof saved.currentSlide === 'number' && saved.currentSlide >= 1 && saved.currentSlide <= TOTAL_SLIDES) {
+              appState.currentSlide = saved.currentSlide;
+            }
+            if (typeof saved.showAllMode === 'boolean') appState.showAllMode = saved.showAllMode;
+            if (saved.riskMode === 'inherent' || saved.riskMode === 'residual') appState.riskMode = saved.riskMode;
+            if (typeof saved.selectedRiskId === 'string') appState.selectedRiskId = saved.selectedRiskId;
+            if (typeof saved.cashiers === 'number') appState.cashiers = saved.cashiers;
+            if (typeof saved.skus === 'number') appState.skus = saved.skus;
+            if (typeof saved.items === 'number') appState.items = saved.items;
+            if (typeof saved.optIndex === 'boolean') appState.optIndex = saved.optIndex;
+            if (typeof saved.optLock === 'boolean') appState.optLock = saved.optLock;
+            if (typeof saved.optAsync === 'boolean') appState.optAsync = saved.optAsync;
+            if (typeof saved.selectedArtifactId === 'string') appState.selectedArtifactId = saved.selectedArtifactId;
+            if (typeof saved.pdpaMask === 'boolean') appState.pdpaMask = saved.pdpaMask;
+            if (typeof saved.pdpaConsent === 'boolean') appState.pdpaConsent = saved.pdpaConsent;
+            if (typeof saved.pdpaRbac === 'boolean') appState.pdpaRbac = saved.pdpaRbac;
+            if (typeof saved.pdpaSanitize === 'boolean') appState.pdpaSanitize = saved.pdpaSanitize;
+            if (saved.ethicsAnswers && typeof saved.ethicsAnswers === 'object') {
+              appState.ethicsAnswers = saved.ethicsAnswers;
+            }
+            if (Array.isArray(saved.rubricChecks) && saved.rubricChecks.length === 5) {
+              appState.rubricChecks = saved.rubricChecks;
+            }
+          }
+        }
+      } catch (err) {
+        // Fallback to defaults
+      }
+    }
+
+    function applyLoadedStateToDom() {
+      currentSlide = appState.currentSlide;
+      showAllMode = appState.showAllMode;
+      riskMode = appState.riskMode;
+      selectedRiskId = appState.selectedRiskId;
+      selectedArtifactId = appState.selectedArtifactId;
+
+      const sCash = document.getElementById('slider-cashiers');
+      const sSku = document.getElementById('slider-skus');
+      const sItem = document.getElementById('slider-items');
+      const oIdx = document.getElementById('opt-index');
+      const oLock = document.getElementById('opt-lock');
+      const oAsync = document.getElementById('opt-async');
+      if (sCash) sCash.value = String(appState.cashiers);
+      if (sSku) sSku.value = String(appState.skus);
+      if (sItem) sItem.value = String(appState.items);
+      if (oIdx) oIdx.checked = appState.optIndex;
+      if (oLock) oLock.checked = appState.optLock;
+      if (oAsync) oAsync.checked = appState.optAsync;
+
+      const pMask = document.getElementById('pdpa-mask');
+      const pCon = document.getElementById('pdpa-consent');
+      const pRbac = document.getElementById('pdpa-rbac');
+      const pSan = document.getElementById('pdpa-sanitize');
+      if (pMask) pMask.checked = appState.pdpaMask;
+      if (pCon) pCon.checked = appState.pdpaConsent;
+      if (pRbac) pRbac.checked = appState.pdpaRbac;
+      if (pSan) pSan.checked = appState.pdpaSanitize;
+
+      for (let i = 0; i < 5; i++) {
+        const rb = document.getElementById(`rub-${i + 1}`);
+        if (rb) rb.checked = Boolean(appState.rubricChecks[i]);
+      }
+    }
+
+    function renderNavStrip() {
+      const strip = document.getElementById('slide-nav-strip');
+      if (!strip) return;
+      let html = ``;
+      for (let i = 1; i <= TOTAL_SLIDES; i++) {
+        const numStr = i < 10 ? `0${i}` : `${i}`;
+        const activeCls = i === currentSlide ? `is-current` : ``;
+        html += `<button type="button" class="nav-chip ${activeCls}" onclick="goToSlide(${i})"><span class="chip-num">${numStr}</span><span>${SLIDE_TITLES[i - 1]}</span></button>`;
+      }
+      strip.innerHTML = html;
+    }
+
+    function updateSlideView() {
+      const stage = document.getElementById('slides-stage');
+      if (stage) {
+        if (showAllMode) {
+          stage.classList.add('show-all');
+        } else {
+          stage.classList.remove('show-all');
+        }
+      }
+
+      for (let i = 1; i <= TOTAL_SLIDES; i++) {
+        const el = document.getElementById(`slide-${i}`);
+        if (el) {
+          if (i === currentSlide) {
+            el.classList.add('is-active');
+          } else {
+            el.classList.remove('is-active');
+          }
+        }
+      }
+
+      const counter = document.getElementById('slide-counter');
+      if (counter) {
+        const numStr = currentSlide < 10 ? `0${currentSlide}` : `${currentSlide}`;
+        counter.textContent = `${numStr} / ${TOTAL_SLIDES}`;
+      }
+
+      const fill = document.getElementById('progress-fill');
+      if (fill) {
+        fill.style.width = `${(currentSlide / TOTAL_SLIDES) * 100}%`;
+      }
+
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      if (btnPrev) btnPrev.disabled = !showAllMode && currentSlide <= 1;
+      if (btnNext) btnNext.disabled = !showAllMode && currentSlide >= TOTAL_SLIDES;
+
+      const btnView = document.getElementById('btn-view-mode');
+      if (btnView) {
+        btnView.classList.toggle('is-active', showAllMode);
+        btnView.setAttribute('aria-pressed', showAllMode ? 'true' : 'false');
+        btnView.textContent = showAllMode ? `กลับสู่โหมดนำเสนอทีละสไลด์` : `ดูทุกสไลด์ (Scroll)`;
+      }
+
+      renderNavStrip();
+
+      if (currentSlide === 6 || showAllMode) {
+        if (perfChartInstance) {
+          setTimeout(function () {
+            if (perfChartInstance) perfChartInstance.resize();
+          }, 40);
+        }
+      }
+    }
+
+    function changeSlide(delta) {
+      const target = currentSlide + delta;
+      if (target >= 1 && target <= TOTAL_SLIDES) {
+        goToSlide(target);
+      }
+    }
+
+    function goToSlide(num) {
+      if (num < 1 || num > TOTAL_SLIDES) return;
+      currentSlide = num;
+      appState.currentSlide = num;
+      updateSlideView();
+      if (showAllMode) {
+        const targetEl = document.getElementById(`slide-${num}`);
+        if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      persistState();
+    }
+
+    function toggleAllSlides() {
+      showAllMode = !showAllMode;
+      appState.showAllMode = showAllMode;
+      updateSlideView();
+      persistState();
+    }
+
+    /* --- SLIDE 4: RISK MATRIX --- */
+    function getSeverityClass(l, i) {
+      const score = l * i;
+      if (score >= 16) return `sev-crit`;
+      if (score >= 10) return `sev-high`;
+      if (score >= 5) return `sev-med`;
+      return `sev-low`;
+    }
+
+    function getSeverityLabel(score) {
+      if (score >= 16) return `วิกฤต (Critical)`;
+      if (score >= 10) return `สูง (High)`;
+      if (score >= 5) return `ปานกลาง (Medium)`;
+      return `ต่ำ (Low)`;
+    }
+
+    function setRiskMode(mode) {
+      riskMode = mode;
+      appState.riskMode = mode;
+      const bInh = document.getElementById('btn-risk-inherent');
+      const bRes = document.getElementById('btn-risk-residual');
+      const badge = document.getElementById('risk-mode-badge');
+      if (bInh) bInh.classList.toggle('is-active', mode === 'inherent');
+      if (bRes) bRes.classList.toggle('is-active', mode === 'residual');
+      if (badge) badge.textContent = mode === 'inherent' ? `โหมด: ก่อนบรรเทา` : `โหมด: หลังใช้ Mitigation Plan`;
+      renderRiskMatrix();
+      renderRiskDetail();
+      persistState();
+    }
+
+    function selectRisk(id) {
+      selectedRiskId = id;
+      appState.selectedRiskId = id;
+      renderRiskMatrix();
+      renderRiskDetail();
+      persistState();
+    }
+
+    function renderRiskMatrix() {
+      const wrap = document.getElementById('risk-matrix-wrap');
+      if (!wrap) return;
+
+      let html = `<div class="risk-matrix-grid">`;
+      for (let l = 5; l >= 1; l--) {
+        html += `<div class="matrix-axis-label">L${l}</div>`;
+        for (let i = 1; i <= 5; i++) {
+          const sevCls = getSeverityClass(l, i);
+          const dots = RISKS.filter(function (r) {
+            const pos = riskMode === 'inherent' ? r.inherent : r.residual;
+            return pos.l === l && pos.i === i;
+          }).map(function (r) {
+            const selCls = r.id === selectedRiskId ? `is-selected` : ``;
+            return `<button type="button" class="risk-dot ${selCls}" onclick="selectRisk('${r.id}')" title="${r.title}">${r.id}</button>`;
+          }).join('');
+          html += `<div class="matrix-cell ${sevCls}" aria-label="โอกาส ${l} ผลกระทบ ${i}">${dots}</div>`;
+        }
+      }
+      html += `<div class="matrix-axis-label"></div>`;
+      for (let i = 1; i <= 5; i++) {
+        html += `<div class="matrix-axis-label">I${i}</div>`;
+      }
+      html += `</div>`;
+      wrap.innerHTML = html;
+    }
+
+    function renderRiskDetail() {
+      const risk = RISKS.find(function (r) { return r.id === selectedRiskId; }) || RISKS[0];
+      const pos = riskMode === 'inherent' ? risk.inherent : risk.residual;
+      const score = pos.l * pos.i;
+
+      const elId = document.getElementById('rd-id');
+      const elTitle = document.getElementById('rd-title');
+      const elScore = document.getElementById('rd-score');
+      const elOwner = document.getElementById('rd-owner');
+      const elCause = document.getElementById('rd-cause');
+      const elMetric = document.getElementById('rd-metric');
+      const elMit = document.getElementById('rd-mitigation');
+
+      if (elId) elId.textContent = `${risk.id} · ${riskMode === 'inherent' ? 'INHERENT RISK' : 'RESIDUAL RISK'}`;
+      if (elTitle) elTitle.textContent = risk.title;
+      if (elScore) {
+        elScore.textContent = `คะแนน ${score}/25 — ${getSeverityLabel(score)}`;
+        elScore.className = `tag ${score >= 16 ? 'tag-error' : score >= 10 ? 'tag-error' : score >= 5 ? 'tag-warning' : 'tag-positive'}`;
+      }
+      if (elOwner) elOwner.textContent = `ผู้รับผิดชอบ: ${risk.owner}`;
+      if (elCause) elCause.textContent = risk.cause;
+      if (elMetric) elMetric.textContent = risk.metric;
+      if (elMit) elMit.textContent = risk.mitigation;
+    }
+
+    /* --- SLIDE 6: PERFORMANCE SIMULATOR --- */
+    function updatePerfSim() {
+      const sCash = document.getElementById('slider-cashiers');
+      const sSku = document.getElementById('slider-skus');
+      const sItem = document.getElementById('slider-items');
+      const oIdx = document.getElementById('opt-index');
+      const oLock = document.getElementById('opt-lock');
+      const oAsync = document.getElementById('opt-async');
+
+      const cashiers = sCash ? parseInt(sCash.value, 10) : 4;
+      const skus = sSku ? parseInt(sSku.value, 10) : 12000;
+      const items = sItem ? parseInt(sItem.value, 10) : 18;
+      const useIndex = oIdx ? oIdx.checked : true;
+      const useLock = oLock ? oLock.checked : true;
+      const useAsync = oAsync ? oAsync.checked : false;
+
+      appState.cashiers = cashiers;
+      appState.skus = skus;
+      appState.items = items;
+      appState.optIndex = useIndex;
+      appState.optLock = useLock;
+      appState.optAsync = useAsync;
+
+      const vCash = document.getElementById('val-cashiers');
+      const vSku = document.getElementById('val-skus');
+      const vItem = document.getElementById('val-items');
+      if (vCash) vCash.textContent = `${cashiers} เครื่อง`;
+      if (vSku) vSku.textContent = `${skus.toLocaleString('en-US')} SKUs`;
+      if (vItem) vItem.textContent = `${items} ชิ้น`;
+
+      // Realistic POS latency model (ms)
+      const skuFactor = skus / 1000;
+      const baseQuery = Math.round(items * (8 + skuFactor * 1.4));
+      const baseLock = Math.round(45 + Math.pow(cashiers, 1.85) * 14);
+      const baseIo = Math.round(280 + items * 4.5);
+      const baseRender = Math.round(35 + skuFactor * 4.2);
+
+      const optQuery = useIndex ? Math.round(14 + items * 1.1) : baseQuery;
+      const optLock = useLock ? Math.round(18 + cashiers * 5.5) : baseLock;
+      const optIo = useAsync ? Math.round(45) : baseIo;
+      const optRender = useIndex ? Math.round(22 + items * 0.6) : baseRender;
+
+      const baseTotal = baseQuery + baseLock + baseIo + baseRender;
+      const optTotal = optQuery + optLock + optIo + optRender;
+      const speedup = (baseTotal / Math.max(1, optTotal)).toFixed(1);
+      const ordersPerMin = Math.round((60000 / Math.max(80, optTotal)) * cashiers * 0.65);
+
+      const kBase = document.getElementById('kpi-base-ms');
+      const kOpt = document.getElementById('kpi-opt-ms');
+      const kOptStat = document.getElementById('kpi-opt-status');
+      const kSpeed = document.getElementById('kpi-speedup');
+      const kThru = document.getElementById('kpi-throughput');
+
+      if (kBase) kBase.textContent = `${baseTotal.toLocaleString('en-US')} ms`;
+      if (kOpt) kOpt.textContent = `${optTotal.toLocaleString('en-US')} ms`;
+      if (kOptStat) {
+        if (optTotal <= 500) {
+          kOptStat.textContent = `ผ่านเกณฑ์ SLA (< 500 ms)`;
+          kOptStat.className = `tag tag-positive`;
+        } else if (optTotal <= 900) {
+          kOptStat.textContent = `เริ่มหน่วง (${optTotal} ms)`;
+          kOptStat.className = `tag tag-warning`;
+        } else {
+          kOptStat.textContent = `เกิน SLA วิกฤต`;
+          kOptStat.className = `tag tag-error`;
+        }
+      }
+      if (kSpeed) kSpeed.textContent = `${speedup}x`;
+      if (kThru) kThru.textContent = `รองรับประมาณ ${ordersPerMin} บิล/นาที`;
+
+      renderPerfChart([baseQuery, baseLock, baseIo, baseRender], [optQuery, optLock, optIo, optRender]);
+      persistState();
+    }
+
+    function renderPerfChart(baseArr, optArr) {
+      const canvas = document.getElementById('perf-chart');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      const labels = [
+        `Query & Price Calc`,
+        `Stock Lock Wait`,
+        `Receipt & Payment I/O`,
+        `POS UI Render`
+      ];
+
+      if (perfChartInstance) {
+        perfChartInstance.data.datasets[0].data = baseArr;
+        perfChartInstance.data.datasets[1].data = optArr;
+        perfChartInstance.update();
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const style = getComputedStyle(document.documentElement);
+      const colorBase = style.getPropertyValue('--data-4').trim() || '#b84a39';
+      const colorOpt = style.getPropertyValue('--data-1').trim() || '#1f4e5f';
+      const colorGrid = style.getPropertyValue('--outline-variant').trim() || '#dedad0';
+      const colorInk = style.getPropertyValue('--on-surface-variant').trim() || '#56585c';
+
+      perfChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: `Baseline (ก่อนปรับจูน)`,
+              data: baseArr,
+              backgroundColor: colorBase
+            },
+            {
+              label: `Optimized (หลังแก้คอขวด)`,
+              data: optArr,
+              backgroundColor: colorOpt
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { color: colorInk }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: `Latency (ms)`, color: colorInk },
+              grid: { color: colorGrid },
+              ticks: { color: colorInk }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: colorInk }
+            }
+          }
+        }
+      });
+    }
+
+    /* --- SLIDE 9: PDPA INSPECTOR --- */
+    function selectPdpaArtifact(id) {
+      selectedArtifactId = id;
+      appState.selectedArtifactId = id;
+      renderPdpaArtifacts();
+      updatePdpaAudit();
+      persistState();
+    }
+
+    function renderPdpaArtifacts() {
+      const list = document.getElementById('pdpa-artifact-list');
+      if (!list) return;
+      let html = ``;
+      for (let i = 0; i < PDPA_ARTIFACTS.length; i++) {
+        const art = PDPA_ARTIFACTS[i];
+        const sel = art.id === selectedArtifactId ? `is-selected` : ``;
+        html += `<button type="button" class="artifact-btn ${sel}" onclick="selectPdpaArtifact('${art.id}')"><span>${art.name}</span><span class="index-num inherit-color">ดูรายละเอียด</span></button>`;
+      }
+      list.innerHTML = html;
+    }
+
+    function updatePdpaAudit() {
+      const cMask = document.getElementById('pdpa-mask');
+      const cCon = document.getElementById('pdpa-consent');
+      const cRbac = document.getElementById('pdpa-rbac');
+      const cSan = document.getElementById('pdpa-sanitize');
+
+      const states = {
+        pdpaMask: cMask ? cMask.checked : false,
+        pdpaConsent: cCon ? cCon.checked : false,
+        pdpaRbac: cRbac ? cRbac.checked : false,
+        pdpaSanitize: cSan ? cSan.checked : false
+      };
+
+      appState.pdpaMask = states.pdpaMask;
+      appState.pdpaConsent = states.pdpaConsent;
+      appState.pdpaRbac = states.pdpaRbac;
+      appState.pdpaSanitize = states.pdpaSanitize;
+
+      let count = 0;
+      if (states.pdpaMask) count++;
+      if (states.pdpaConsent) count++;
+      if (states.pdpaRbac) count++;
+      if (states.pdpaSanitize) count++;
+      const pct = count * 25;
+
+      const scoreEl = document.getElementById('pdpa-score-val');
+      const badgeEl = document.getElementById('pdpa-score-badge');
+      if (scoreEl) scoreEl.textContent = `${pct}%`;
+      if (badgeEl) {
+        if (pct === 100) {
+          badgeEl.textContent = `สอดคล้องตามหลัก PDPA`;
+          badgeEl.className = `tag tag-positive`;
+        } else if (pct >= 50) {
+          badgeEl.textContent = `ผ่านบางส่วน (ยังมีจุดเสี่ยง)`;
+          badgeEl.className = `tag tag-warning`;
+        } else {
+          badgeEl.textContent = `ยังไม่ผ่านเกณฑ์ขั้นต่ำ`;
+          badgeEl.className = `tag tag-error`;
+        }
+      }
+
+      const art = PDPA_ARTIFACTS.find(function (a) { return a.id === selectedArtifactId; }) || PDPA_ARTIFACTS[0];
+      const eType = document.getElementById('pdpa-art-type');
+      const eName = document.getElementById('pdpa-art-name');
+      const eBasis = document.getElementById('pdpa-art-basis');
+      const eRet = document.getElementById('pdpa-art-retention');
+      const eRisk = document.getElementById('pdpa-art-risk');
+      const eStat = document.getElementById('pdpa-art-status');
+
+      if (eType) eType.textContent = art.classification;
+      if (eName) eName.textContent = art.name;
+      if (eBasis) eBasis.textContent = art.basis;
+      if (eRet) eRet.textContent = art.retention;
+      if (eRisk) eRisk.textContent = art.risk;
+
+      const allMet = art.needs.every(function (k) { return states[k]; });
+      if (eStat) {
+        if (allMet) {
+          eStat.className = `feedback-banner is-pass`;
+          eStat.textContent = `สถานะข้อมูลชุดนี้: ปลอดภัยและสอดคล้องมาตรการหลักครบถ้วนแล้ว`;
+        } else {
+          eStat.className = `feedback-banner is-fail`;
+          eStat.textContent = `สถานะข้อมูลชุดนี้: ยังขาดมาตรการป้องกันสำคัญ กรุณาเปิดใช้ Safeguards ด้านซ้ายให้ครบ`;
+        }
+      }
+      persistState();
+    }
+
+    /* --- SLIDE 11: ETHICS & RUBRIC --- */
+    function selectEthicsScenario(idx) {
+      activeEthicsIdx = idx;
+      for (let i = 0; i < 3; i++) {
+        const tab = document.getElementById(`sc-tab-${i}`);
+        if (tab) tab.classList.toggle('is-current', i === idx);
+      }
+      renderEthicsScenario();
+    }
+
+    function chooseEthicsOption(optIdx) {
+      appState.ethicsAnswers[activeEthicsIdx] = optIdx;
+      renderEthicsScenario();
+      persistState();
+    }
+
+    function renderEthicsScenario() {
+      const sc = ETHICS_SCENARIOS[activeEthicsIdx];
+      if (!sc) return;
+      const elTitle = document.getElementById('sc-title');
+      const elPrompt = document.getElementById('sc-prompt');
+      const elOpts = document.getElementById('sc-options');
+      const elFb = document.getElementById('sc-feedback');
+
+      if (elTitle) elTitle.textContent = sc.title;
+      if (elPrompt) elPrompt.textContent = sc.prompt;
+
+      const chosen = appState.ethicsAnswers[activeEthicsIdx];
+      if (elOpts) {
+        let html = ``;
+        for (let i = 0; i < sc.options.length; i++) {
+          const opt = sc.options[i];
+          let cls = ``;
+          if (chosen === i) {
+            cls = opt.isGood ? `is-chosen-good` : `is-chosen-bad`;
+          }
+          html += `<button type="button" class="option-btn ${cls}" onclick="chooseEthicsOption(${i})">${opt.text}</button>`;
+        }
+        elOpts.innerHTML = html;
+      }
+
+      if (elFb) {
+        if (chosen !== null && chosen !== undefined && sc.options[chosen]) {
+          const chosenOpt = sc.options[chosen];
+          elFb.classList.remove('feedback-hidden');
+          elFb.className = `feedback-banner ${chosenOpt.isGood ? 'is-pass' : 'is-fail'}`;
+          elFb.textContent = chosenOpt.feedback;
+        } else {
+          elFb.className = `feedback-banner feedback-hidden`;
+        }
+      }
+    }
+
+    function updateRubricScore() {
+      let checkedCount = 0;
+      for (let i = 0; i < 5; i++) {
+        const el = document.getElementById(`rub-${i + 1}`);
+        const isChecked = el ? el.checked : false;
+        appState.rubricChecks[i] = isChecked;
+        if (isChecked) checkedCount++;
+      }
+
+      const bandEl = document.getElementById('rubric-band-title');
+      const pillEl = document.getElementById('rubric-score-pill');
+      const guideEl = document.getElementById('rubric-guidance');
+
+      let bandText = `ปรับปรุง (0–13 คะแนน)`;
+      let scoreText = `0–13 / 25`;
+      let tagCls = `tag-error`;
+      let guide = `ยังขาดการประเมินและบันทึกการบริหารความเสี่ยงเชิงเทคนิคระหว่างพัฒนาซอฟต์แวร์`;
+
+      if (checkedCount === 5) {
+        bandText = `ดีเยี่ยม (22–25 คะแนน)`;
+        scoreText = `22–25 / 25`;
+        tagCls = `tag-positive`;
+        guide = `ยอดเยี่ยม! ครอบคลุมทั้งความเสี่ยงเชิงเทคนิค หลักฐาน Mitigation Plan จริยธรรมข้อมูล PDPA และการตรวจทานโค้ด`;
+      } else if (checkedCount >= 3) {
+        bandText = `ดี (18–21 คะแนน)`;
+        scoreText = `18–21 / 25`;
+        tagCls = `tag-info`;
+        guide = `ระบุความเสี่ยงเชิงเทคนิคและมี Risk Log เรียบร้อยแล้ว แนะนำเพิ่มหลักฐาน PDPA และ PR Review ให้ครบเพื่อขึ้นระดับดีเยี่ยม`;
+      } else if (checkedCount >= 1) {
+        bandText = `พอใช้ (14–17 คะแนน)`;
+        scoreText = `14–17 / 25`;
+        tagCls = `tag-warning`;
+        guide = `ยังบันทึกเพียงปัญหาทั่วไปหรือขาดความชัดเจนของแผนแก้ไขเชิงเทคนิค ควรเพิ่มตัวชี้วัดและผลทดสอบยืนยัน`;
+      }
+
+      if (bandEl) bandEl.textContent = bandText;
+      if (pillEl) {
+        pillEl.textContent = scoreText;
+        pillEl.className = `tag ${tagCls}`;
+      }
+      if (guideEl) guideEl.textContent = guide;
+
+      persistState();
+    }
+
+    function handleResetState(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== 'true') {
+        btn.dataset.armed = 'true';
+        btn.textContent = `คลิกอีกครั้งเพื่อยืนยันการล้างค่า`;
+        return;
+      }
+      btn.dataset.armed = 'false';
+      btn.textContent = `ล้างค่าที่ทดลองทั้งหมด`;
+
+      appState.riskMode = 'inherent';
+      appState.selectedRiskId = 'R1';
+      appState.cashiers = 4;
+      appState.skus = 12000;
+      appState.items = 18;
+      appState.optIndex = true;
+      appState.optLock = true;
+      appState.optAsync = false;
+      appState.selectedArtifactId = 'loyalty';
+      appState.pdpaMask = true;
+      appState.pdpaConsent = false;
+      appState.pdpaRbac = false;
+      appState.pdpaSanitize = false;
+      appState.ethicsAnswers = { 0: null, 1: null, 2: null };
+      appState.rubricChecks = [false, false, false, false, false];
+
+      applyLoadedStateToDom();
+      setRiskMode('inherent');
+      updatePerfSim();
+      renderPdpaArtifacts();
+      updatePdpaAudit();
+      renderEthicsScenario();
+      updateRubricScore();
+
+      const statusText = document.getElementById('save-status-text');
+      if (statusText) statusText.textContent = `รีเซ็ตค่าเริ่มต้นเรียบร้อยแล้ว`;
+      persistState();
+    }
+
+    document.addEventListener('keydown', function (e) {
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (e.key === 'ArrowRight') {
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+      }
+    });
+
+    async function initDeck() {
+      await loadPersistedState();
+      applyLoadedStateToDom();
+      updateSlideView();
+      setRiskMode(riskMode);
+      updatePerfSim();
+      renderPdpaArtifacts();
+      updatePdpaAudit();
+      renderEthicsScenario();
+      updateRubricScore();
+
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+          window.notebookAppApi.notifyAppReady();
+        }
+      } catch (err) {
+        // Safe fallback outside iframe
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDeck);
+    } else {
+      initDeck();
+    }
+  </script>
+</body>
+</html>

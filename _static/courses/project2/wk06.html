@@ -1,0 +1,2919 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="carbon">
+  <title>สัปดาห์ที่ 6: Sprint 1 Planning &amp; Environment Setup — 1145 204 Sophomore Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Carbon) */
+      --background: #ffffff;
+      --surface-container-low: #f4f4f4;
+      --surface-container: #f4f4f4;
+      --surface-container-high: #e0e0e0;
+
+      /* Ink */
+      --on-surface: #161616;
+      --on-surface-variant: #525252;
+
+      /* Rules */
+      --outline: #8d8d8d;
+      --outline-variant: #e0e0e0;
+
+      /* Accents */
+      --primary: #0f62fe;
+      --primary-hover: #0043ce;
+      --on-primary: #ffffff;
+      --primary-container: #d0e2ff;
+      --on-primary-container: #161616;
+      --secondary: #6f6f6f;
+      --tertiary: #198038;
+      --error: #da1e28;
+      --on-error: #ffffff;
+
+      /* Semantic & code surfaces */
+      --positive: #198038;
+      --positive-container: #defbe6;
+      --warning: #8e6a00;
+      --warning-container: #fcf4d6;
+      --error-container: #fff1f1;
+      --focus: #0f62fe;
+      --focus-ring-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0f62fe;
+      --code-bg: #161616;
+      --code-fg: #f4f4f4;
+      --code-muted: #a8a8a8;
+      --code-accent: #78a9ff;
+      --code-green: #42be65;
+
+      /* Data series */
+      --data-1: #0f62fe;
+      --data-2: #6929c4;
+      --data-3: #005d5d;
+      --data-4: #9f1853;
+      --data-context: #8d8d8d;
+
+      /* Fonts */
+      --font-headline: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-body: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-label: 'IBM Plex Mono', 'IBM Plex Sans Thai', monospace;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.25rem;
+      --rounded-full: 0.75rem;
+      --rounded-none: 0;
+
+      /* Style effects */
+      --shadow-1: 0 2px 6px rgb(0 0 0 / 0.1);
+      --shadow-2: 0 4px 12px rgb(0 0 0 / 0.12);
+      --rule: 1px solid var(--outline-variant);
+      --rule-strong: 1px solid var(--on-surface);
+      --field-rule: 1px solid var(--outline);
+      --indicator: 2px solid var(--primary);
+      --indicator-wide: 3px solid var(--primary);
+
+      /* Type scale */
+      --display-size: clamp(2rem, 1.4rem + 2.2vw, 3rem);
+      --headline-size: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+      --subhead-size: clamp(1.125rem, 1.02rem + 0.4vw, 1.3125rem);
+      --body-size: clamp(1rem, 0.96rem + 0.15vw, 1.0625rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Fonts & Carbon defaults */
+    .course-header-note {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      margin: var(--space-xs) 0 0;
+    }
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Top Course Header */
+    .course-header {
+      background: var(--background);
+      border-bottom: var(--rule);
+      padding: var(--space-lg) var(--space-lg) var(--space-md);
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .course-header-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: var(--rule);
+    }
+
+    .course-kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+      margin: 0 0 var(--space-xs);
+    }
+
+    .course-title {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 300;
+      line-height: 1.18;
+      margin: 0;
+      color: var(--on-surface);
+    }
+
+    .course-title strong {
+      font-weight: 600;
+    }
+
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .deck-progress-track {
+      width: 100%;
+      height: 2px;
+      background: var(--surface-container-high);
+      margin-top: var(--space-md);
+      position: relative;
+    }
+
+    .deck-progress-fill {
+      height: 100%;
+      width: 11.11%;
+      background: var(--primary);
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    /* Page Grid: Asymmetric 3 + 9 */
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(220px, 270px) minmax(0, 1fr);
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Left Navigation Rail */
+    .slide-rail {
+      align-self: start;
+      border-right: var(--rule);
+      padding-right: var(--space-md);
+    }
+
+    .rail-section-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 var(--space-sm);
+    }
+
+    .rail-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .rail-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      border-left: 2px solid transparent;
+      padding: var(--space-sm) var(--space-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-height: 44px;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+
+    .rail-btn:hover {
+      background: var(--surface-container);
+    }
+
+    .rail-btn.is-active {
+      border-left: var(--indicator);
+      background: var(--surface-container);
+    }
+
+    .rail-btn-num {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .rail-btn-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--on-surface);
+      line-height: 1.35;
+    }
+
+    .rail-summary-box {
+      margin-top: var(--space-lg);
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-bottom: var(--indicator);
+    }
+
+    .rail-summary-value {
+      font-family: var(--font-label);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--on-surface);
+      margin: var(--space-xs) 0;
+    }
+
+    .rail-summary-note {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+    }
+
+    /* Main Slide Stream */
+    .slide-deck {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xl);
+    }
+
+    .slide-frame {
+      background: var(--background);
+      border-top: var(--rule-strong);
+      padding-top: var(--space-lg);
+      scroll-margin-top: var(--space-lg);
+    }
+
+    body.presenter-mode .slide-frame {
+      display: none;
+    }
+
+    body.presenter-mode .slide-frame.is-current-slide {
+      display: block;
+    }
+
+    .slide-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+      padding-bottom: var(--space-md);
+      border-bottom: var(--rule);
+      margin-bottom: var(--space-lg);
+    }
+
+    .slide-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .slide-code {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .slide-heading {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 300;
+      line-height: 1.25;
+      margin: var(--space-xs) 0 0;
+      color: var(--on-surface);
+      width: 100%;
+    }
+
+    .slide-heading strong {
+      font-weight: 600;
+    }
+
+    .slide-lede {
+      font-size: var(--body-size);
+      color: var(--on-surface-variant);
+      max-width: 65ch;
+      margin: 0 0 var(--space-lg);
+    }
+
+    /* Carbon Layers & Grid Layouts */
+    .layer {
+      background: var(--surface-container);
+      border-radius: var(--rounded-none);
+      padding: var(--space-md);
+    }
+
+    .layer .layer {
+      background: var(--surface-container-high);
+    }
+
+    .layer-white {
+      background: var(--background);
+      border: var(--rule);
+      padding: var(--space-md);
+    }
+
+    .key-tile {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-bottom: var(--indicator);
+    }
+
+    .metric-tile {
+      background: var(--surface-container);
+      padding: var(--space-md);
+    }
+
+    .label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      display: block;
+      margin-bottom: var(--space-xs);
+    }
+
+    .label-en {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+      display: block;
+      margin-bottom: var(--space-xs);
+    }
+
+    .key-value {
+      font-family: var(--font-label);
+      font-weight: 300;
+      font-size: 2rem;
+      line-height: 1.15;
+      color: var(--on-surface);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+
+    .grid-asymmetric-8-4 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .grid-asymmetric-5-7 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      gap: var(--space-md);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    .stack-sm { display: flex; flex-direction: column; gap: var(--space-sm); }
+    .stack-md { display: flex; flex-direction: column; gap: var(--space-md); }
+    .stack-lg { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+    /* Subheadings */
+    .subhead {
+      font-family: var(--font-headline);
+      font-size: var(--subhead-size);
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0 0 var(--space-sm);
+      color: var(--on-surface);
+    }
+
+    .section-head {
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    /* Hairline Lists */
+    .hairline-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .hairline-list > li {
+      padding: var(--space-sm) 0;
+    }
+
+    .hairline-list > li + li {
+      border-top: var(--rule);
+    }
+
+    /* Buttons (Carbon: square, 40/44px min-height, left-aligned) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-lg) var(--space-sm) var(--space-md);
+      border-radius: var(--rounded-none);
+      border: 1px solid transparent;
+      font-weight: 400;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--background);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-secondary:hover {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+    }
+    .btn-ghost:hover {
+      background: var(--surface-container);
+    }
+
+    .btn-compact {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+    }
+
+    .btn[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Tags (Carbon: only tags use --rounded-full, 24px pill) */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 var(--space-sm);
+      border-radius: var(--rounded-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      white-space: nowrap;
+    }
+
+    .tag-neutral {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+
+    .tag-positive {
+      background: var(--positive-container);
+      color: var(--positive);
+    }
+
+    .tag-warning {
+      background: var(--warning-container);
+      color: var(--warning);
+    }
+
+    .tag-error {
+      background: var(--error-container);
+      color: var(--error);
+    }
+
+    /* Tabs */
+    .tab-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      border-bottom: var(--rule);
+      margin-bottom: var(--space-md);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      cursor: pointer;
+      color: var(--on-surface-variant);
+      font-weight: 400;
+      transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+
+    .tab-btn:hover {
+      color: var(--on-surface);
+      background: var(--surface-container);
+    }
+
+    .tab-btn.is-active {
+      color: var(--on-surface);
+      font-weight: 600;
+      border-bottom: var(--indicator);
+    }
+
+    /* Carbon Tables */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .carbon-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9375rem;
+    }
+
+    .carbon-table thead th {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule);
+    }
+
+    .carbon-table tbody td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule);
+      vertical-align: top;
+    }
+
+    .carbon-table tbody tr:nth-child(even) {
+      background: var(--surface-container-low);
+    }
+
+    .carbon-table tbody tr.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+
+    .num-col {
+      text-align: right !important;
+      font-family: var(--font-label);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Carbon Notifications */
+    .notice {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-left: 3px solid var(--primary);
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+    }
+
+    .notice-success {
+      border-left-color: var(--positive);
+    }
+
+    .notice-warning {
+      border-left-color: var(--warning);
+    }
+
+    .notice-error {
+      border-left-color: var(--error);
+    }
+
+    .notice-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--primary);
+    }
+
+    .notice-success .notice-icon { color: var(--positive); }
+    .notice-warning .notice-icon { color: var(--warning); }
+    .notice-error .notice-icon { color: var(--error); }
+
+    /* Inputs & Controls */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .field-label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+    }
+
+    .carbon-input, .carbon-select {
+      height: 44px;
+      background: var(--surface-container);
+      border: 0;
+      border-bottom: var(--field-rule);
+      border-radius: var(--rounded);
+      padding: 0 var(--space-md);
+      color: var(--on-surface);
+      width: 100%;
+    }
+
+    .carbon-select {
+      padding-right: var(--space-xl);
+    }
+
+    .carbon-range {
+      width: 100%;
+      accent-color: var(--primary);
+      min-height: 44px;
+      cursor: pointer;
+    }
+
+    /* Code blocks */
+    .code-panel {
+      background: var(--code-bg);
+      color: var(--code-fg);
+      font-family: var(--font-label);
+      font-size: 0.8125rem;
+      line-height: 1.55;
+      padding: var(--space-md);
+      overflow-x: auto;
+      margin: 0;
+      white-space: pre;
+    }
+
+    .code-inline {
+      font-family: var(--font-label);
+      font-size: 0.85em;
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+      padding: 1px 6px;
+    }
+
+    /* Interactive Backlog Cards */
+    .story-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--surface-container);
+      border: 0;
+      border-left: 3px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      min-height: 48px;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+
+    .story-btn:hover {
+      background: var(--surface-container-high);
+    }
+
+    .story-btn.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-left-color: var(--primary);
+    }
+
+    /* Planning Poker Cards */
+    .poker-deck {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .poker-card {
+      min-width: 58px;
+      min-height: 72px;
+      background: var(--background);
+      border: 1px solid var(--outline);
+      border-bottom: 3px solid var(--outline);
+      font-family: var(--font-label);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+
+    .poker-card:hover {
+      background: var(--surface-container);
+      transform: translateY(-2px);
+    }
+
+    .poker-card.is-picked {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    /* Boilerplate Tree */
+    .tree-item {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      border-left: 2px solid transparent;
+      padding: var(--space-xs) var(--space-sm);
+      min-height: 44px;
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--on-surface);
+    }
+
+    .tree-item:hover {
+      background: var(--surface-container-high);
+    }
+
+    .tree-item.is-active {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-left-color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Kanban Board */
+    .kanban-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .kanban-col {
+      background: var(--surface-container);
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      min-height: 240px;
+    }
+
+    .kanban-col-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: var(--space-xs);
+      border-bottom: var(--rule);
+    }
+
+    .kanban-task {
+      background: var(--background);
+      border: var(--rule);
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .kanban-task-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-xs);
+      margin-top: var(--space-xs);
+    }
+
+    .mini-btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--on-surface);
+    }
+
+    .mini-btn:hover:not(:disabled) {
+      background: var(--primary-container);
+      border-color: var(--primary);
+    }
+
+    .mini-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* Checklist items */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--surface-container);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .check-row.is-checked {
+      border-left-color: var(--positive);
+    }
+
+    .check-box {
+      width: 22px;
+      height: 22px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* Chart container */
+    .chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 280px;
+      height: 280px;
+      background: var(--background);
+      border: var(--rule);
+      padding: var(--space-md);
+    }
+
+    /* Footer */
+    .deck-footer {
+      max-width: 1320px;
+      margin: var(--space-xl) auto var(--space-2xl);
+      padding: var(--space-lg);
+      border-top: var(--rule);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: var(--space-md);
+      color: var(--on-surface-variant);
+      font-size: 0.875rem;
+    }
+
+    .slide-bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: var(--rule);
+      gap: var(--space-sm);
+    }
+
+    /* Container query example for dense inner cards */
+    .card-wrapper { container-type: inline-size; }
+    @container (min-width: 520px) {
+      .adaptive-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-md);
+      }
+    }
+    @container (max-width: 519px) {
+      .adaptive-split {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+    }
+
+    /* Responsive breakpoints */
+    @media (max-width: 960px) {
+      .page-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+      .slide-rail {
+        border-right: 0;
+        border-bottom: var(--rule);
+        padding-right: 0;
+        padding-bottom: var(--space-md);
+      }
+      .rail-list {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: var(--space-xs);
+      }
+      .rail-btn {
+        min-width: 180px;
+        border-left: 0;
+        border-bottom: 2px solid transparent;
+      }
+      .rail-btn.is-active {
+        border-left: 0;
+        border-bottom: var(--indicator);
+      }
+      .kanban-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid, .course-header {
+        padding: var(--space-md);
+      }
+      .grid-2, .grid-asymmetric-8-4, .grid-asymmetric-5-7, .kanban-grid {
+        grid-template-columns: 1fr;
+      }
+      .deck-controls {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Static Course Header -->
+  <header class="course-header">
+    <div class="course-header-top">
+      <div>
+        <p class="course-kicker"> <a href="../../../courses/project2/index.html">1145 204 SOPHOMORE PROJECT</a> · WEEK 06 · GROCERY POS PLATFORM</p>
+        <h1 class="course-title">การวางแผน <strong>Sprint 1</strong> และตั้งค่า <strong>Environment Setup</strong></h1>
+      </div>
+      <div class="deck-controls" aria-label="ตัวควบคุมสไลด์">
+        <button type="button" class="btn btn-secondary btn-compact" id="btn-prev-slide" onclick="navigateSlide(-1)">
+          <i data-lucide="arrow-left" aria-hidden="true"></i>
+          <span>ก่อนหน้า</span>
+        </button>
+        <span class="tag tag-neutral" id="slide-counter-badge">01 / 09</span>
+        <button type="button" class="btn btn-secondary btn-compact" id="btn-next-slide" onclick="navigateSlide(1)">
+          <span>ถัดไป</span>
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn btn-primary btn-compact" id="btn-mode-toggle" onclick="togglePresenterMode()">
+          <i data-lucide="monitor" aria-hidden="true"></i>
+          <span id="mode-toggle-label">โหมดนำเสนอทีละสไลด์</span>
+        </button>
+      </div>
+    </div>
+    <div class="deck-progress-track" aria-hidden="true">
+      <div class="deck-progress-fill" id="deck-progress-fill"></div>
+    </div>
+  </header>
+
+  <div class="page-grid">
+    <!-- Left Rail: Slide Index + Classroom Progress -->
+    <aside class="slide-rail" aria-label="สารบัญสไลด์">
+      <p class="rail-section-label">Slide Index (01–09)</p>
+      <ul class="rail-list" id="rail-nav-list">
+        <li>
+          <button type="button" class="rail-btn is-active" data-slide-target="1" onclick="goToSlide(1)">
+            <span class="rail-btn-num">01</span>
+            <span class="rail-btn-title">ภาพรวมสัปดาห์ที่ 6 &amp; 3-Sprint Roadmap</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="2" onclick="goToSlide(2)">
+            <span class="rail-btn-num">02</span>
+            <span class="rail-btn-title">Sprint 1 Backlog Grooming &amp; MoSCoW</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="3" onclick="goToSlide(3)">
+            <span class="rail-btn-num">03</span>
+            <span class="rail-btn-title">Story Point &amp; Planning Poker</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="4" onclick="goToSlide(4)">
+            <span class="rail-btn-num">04</span>
+            <span class="rail-btn-title">DB Schema &amp; Boilerplate Setup</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="5" onclick="goToSlide(5)">
+            <span class="rail-btn-num">05</span>
+            <span class="rail-btn-title">Docker Environment &amp; Troubleshooting</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="6" onclick="goToSlide(6)">
+            <span class="rail-btn-num">06</span>
+            <span class="rail-btn-title">GitHub Projects Board &amp; CI Gate</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="7" onclick="goToSlide(7)">
+            <span class="rail-btn-num">07</span>
+            <span class="rail-btn-title">Sprint Capacity &amp; Commitment</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="8" onclick="goToSlide(8)">
+            <span class="rail-btn-num">08</span>
+            <span class="rail-btn-title">Definition of Done, Risk &amp; เกณฑ์ 25 คะแนน</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rail-btn" data-slide-target="9" onclick="goToSlide(9)">
+            <span class="rail-btn-num">09</span>
+            <span class="rail-btn-title">Workshop &amp; รายการส่งมอบงานสัปดาห์หน้า</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="rail-summary-box">
+        <span class="label-en">DELIVERABLES READY</span>
+        <div class="rail-summary-value" id="rail-checklist-count">0 / 6</div>
+        <p class="rail-summary-note">สถานะบันทึกอัตโนมัติในสมุดบันทึก ใช้คีย์ลูกศรซ้าย/ขวาเพื่อเลื่อนสไลด์</p>
+      </div>
+    </aside>
+
+    <!-- Main Content: 9 Teaching Slides -->
+    <main class="slide-deck" id="slide-deck">
+
+      <!-- SLIDE 01 -->
+      <section class="slide-frame is-current-slide" id="slide-1" data-slide="1">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 01 · ORIENTATION</span>
+            <span class="tag">Sprint 1: Database &amp; Auth</span>
+          </div>
+          <h2 class="slide-heading">เปลี่ยนเอกสารออกแบบสัปดาห์ที่ 5 ให้พร้อม <strong>ลงมือโค้ดใน Sprint 1</strong></h2>
+        </div>
+
+        <p class="slide-lede">
+          สัปดาห์ที่ 6 เป็นจุดเปลี่ยนจากการออกแบบระบบ Grocery POS Platform สู่การพัฒนาซอฟต์แวร์จริงตามแนวทาง Agile/Scrum ทีมจะต้องจัดระเบียบ Backlog, ประเมินขนาดงานด้วย Story Points, วางโครงสร้างโปรเจกต์มาตรฐาน, ตั้งค่า Docker ให้ทุกเครื่องรันเหมือนกัน และลงนามใน Sprint Commitment
+        </p>
+
+        <div class="grid-asymmetric-8-4">
+          <div class="stack-md">
+            <div class="layer">
+              <span class="label-en">3-SPRINT ROADMAP · GROCERY POS PLATFORM</span>
+              <h3 class="subhead">แผนส่งมอบซอฟต์แวร์ 3 สปรินต์ (อ้างอิงโครงสร้างชิ้นงานปี 2)</h3>
+              <div class="table-wrap">
+                <table class="carbon-table">
+                  <thead>
+                    <tr>
+                      <th>Sprint</th>
+                      <th>ขอบเขตหลัก (Core Scope)</th>
+                      <th>ผลลัพธ์ที่ใช้งานได้ (Increment)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="is-selected">
+                      <td><strong>Sprint 1 (สัปดาห์นี้)</strong></td>
+                      <td>Database &amp; Auth + Dev Environment</td>
+                      <td>Docker Compose ทำงาน, DB Schema + Seed, Login/RBAC API พร้อมเทสต์</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Sprint 2</strong></td>
+                      <td>POS Order Screen &amp; Payment</td>
+                      <td>หน้าคิดเงินสแกนสินค้า, คำนวณยอด, PromptPay/Cash, ออกใบเสร็จ</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Sprint 3</strong></td>
+                      <td>Inventory Alert &amp; Analytics</td>
+                      <td>ตัดสต็อกอัตโนมัติ, แจ้งเตือนวัตถุดิบ/สินค้าใกล้หมด, รายงานยอดขาย PDPA</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-md">
+            <div class="key-tile">
+              <span class="label">เป้าหมายการเรียนรู้สัปดาห์ที่ 6</span>
+              <ul class="hairline-list">
+                <li><strong>1. Backlog Grooming:</strong> คัดกรองและแตก User Story ตามหลัก MoSCoW พร้อม Acceptance Criteria</li>
+                <li><strong>2. Estimation:</strong> ประเมินความซับซ้อนสัมพัทธ์ด้วย Planning Poker และ Story Points</li>
+                <li><strong>3. Boilerplate &amp; Docker:</strong> ตั้งค่าโครงสร้างโค้ดและ Container ให้ทุกคนรันคำสั่งเดียวติด</li>
+                <li><strong>4. Sprint Commitment:</strong> คำนวณ Capacity และกำหนด Definition of Done ที่วัดผลได้</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 02 -->
+      <section class="slide-frame" id="slide-2" data-slide="2">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 02 · BACKLOG GROOMING</span>
+            <span class="tag">Walking Skeleton &amp; MoSCoW</span>
+          </div>
+          <h2 class="slide-heading"><strong>Backlog Grooming:</strong> คัดงานที่สร้างคุณค่าแรกด้วย Walking Skeleton</h2>
+        </div>
+
+        <p class="slide-lede">
+          Product Backlog ไม่ใช่รายการสิ่งที่ต้องทำทั้งหมดในคราวเดียว การทำ Refinement (Grooming) คือการเรียงลำดับความสำคัญด้วยโมเดล MoSCoW (Must, Should, Could, Won't) และเลือกชุดงานขั้นต่ำที่เชื่อมต่อระบบตั้งแต่ฐานข้อมูลถึงหน้าจอได้จริง (Walking Skeleton) เพื่อเข้าสู่ Sprint 1
+        </p>
+
+        <div class="tab-row" role="tablist" aria-label="กรองรายการ Backlog ตามลำดับความสำคัญ">
+          <button type="button" class="tab-btn is-active" data-filter="all" onclick="filterBacklog('all', this)">ทั้งหมด (6 รายการ)</button>
+          <button type="button" class="tab-btn" data-filter="must" onclick="filterBacklog('must', this)">Must Have — Sprint 1</button>
+          <button type="button" class="tab-btn" data-filter="should" onclick="filterBacklog('should', this)">Should Have — Sprint 2</button>
+          <button type="button" class="tab-btn" data-filter="could" onclick="filterBacklog('could', this)">Could Have — Sprint 3</button>
+          <button type="button" class="tab-btn" data-filter="spike" onclick="filterBacklog('spike', this)">Spike (งานสำรวจ)</button>
+        </div>
+
+        <div class="grid-asymmetric-5-7">
+          <div class="stack-sm" id="backlog-list-container">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="layer" id="backlog-detail-panel">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="notice" style="margin-top: var(--space-md);">
+          <i data-lucide="info" class="notice-icon" aria-hidden="true"></i>
+          <div>
+            <strong>ข้อควรระวังในการเขียน User Story:</strong> รูปแบบมาตรฐานต้องระบุ <span class="code-inline">As a [บทบาท], I want to [สิ่งที่ต้องการ] so that [คุณค่าที่ได้]</span> และต้องมี Acceptance Criteria แบบ <span class="code-inline">Given–When–Then</span> ที่ทดสอบได้จริง มิฉะนั้นคะแนนประเมินหมวด Requirements &amp; Backlog จะตกอยู่ในระดับพอใช้ (14–17 คะแนน)
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 03 -->
+      <section class="slide-frame" id="slide-3" data-slide="3">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 03 · ESTIMATION</span>
+            <span class="tag">Story Points &amp; Planning Poker</span>
+          </div>
+          <h2 class="slide-heading"><strong>Story Points</strong> วัดขนาดและความเสี่ยงสัมพัทธ์ ไม่ใช่จำนวนชั่วโมง</h2>
+        </div>
+
+        <p class="slide-lede">
+          ตามหลักของ Mike Cohn นักพัฒนามักประเมินเวลาเป็นชั่วโมงพลาดเมื่อเจอความไม่แน่นอน การใช้ Story Points แบบลำดับฟีโบนัชชี (1, 2, 3, 5, 8, 13) ช่วยให้ทีมเปรียบเทียบขนาดสัมพัทธ์ได้รวดเร็ว เช่น งาน 8 คะแนนใช้แรงและความซับซ้อนประมาณสองเท่าของงาน 4 คะแนน และหากงานใดเกิน 8 คะแนนต้องแบ่ง (Split) ให้เล็กลงก่อนนำเข้า Sprint
+        </p>
+
+        <div class="grid-2">
+          <div class="layer stack-md">
+            <div>
+              <span class="label-en">INTERACTIVE LAB · PLANNING POKER SIMULATOR</span>
+              <h3 class="subhead">ทดลองโหวต Story Points สำหรับ Sprint 1</h3>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="poker-story-select">เลือก User Story ที่ต้องการประเมิน</label>
+              <select id="poker-story-select" class="carbon-select" onchange="selectPokerStory(this.value)">
+                <option value="0">US-101: ออกแบบและ Migrate ฐานข้อมูล POS 6 ตารางหลัก</option>
+                <option value="1">US-102: ระบบ Login &amp; Role-Based Access (Cashier / Manager)</option>
+                <option value="2">US-103: จัดการแคตตาล็อกสินค้าและบาร์โค้ดร้านชำ (CRUD)</option>
+                <option value="3">US-104: ระบบเปิด-ปิดกะแคชเชียร์และบันทึกเงินทอนตั้งต้น</option>
+              </select>
+            </div>
+
+            <div>
+              <span class="field-label" style="display:block; margin-bottom: var(--space-xs);">เลือกไพ่คะแนนของคุณ (Your Estimate)</span>
+              <div class="poker-deck" id="poker-deck">
+                <button type="button" class="poker-card" data-pts="1" onclick="pickPokerCard(1)">1</button>
+                <button type="button" class="poker-card" data-pts="2" onclick="pickPokerCard(2)">2</button>
+                <button type="button" class="poker-card" data-pts="3" onclick="pickPokerCard(3)">3</button>
+                <button type="button" class="poker-card" data-pts="5" onclick="pickPokerCard(5)">5</button>
+                <button type="button" class="poker-card" data-pts="8" onclick="pickPokerCard(8)">8</button>
+                <button type="button" class="poker-card" data-pts="13" onclick="pickPokerCard(13)">13</button>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+              <button type="button" class="btn btn-primary" onclick="revealPokerVotes()">
+                <i data-lucide="eye" aria-hidden="true"></i>
+                <span>เปิดไพ่พร้อมกัน (Reveal Votes)</span>
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="resetPokerVotes()">
+                <span>รีเซ็ตการโหวต</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="layer-white stack-md" id="poker-result-panel">
+            <span class="label-en">TEAM CONSENSUS &amp; DISCUSSION</span>
+            <h3 class="subhead" id="poker-story-title">US-101: ออกแบบและ Migrate ฐานข้อมูล POS 6 ตารางหลัก</h3>
+            <p id="poker-story-context" style="margin:0; color:var(--on-surface-variant);">
+              ครอบคลุมตาราง Users, Categories, Products, Inventory_Stock, Orders และ Order_Items พร้อมข้อมูลทดสอบเริ่มต้น 20 รายการ
+            </p>
+            <div id="poker-votes-display" class="layer">
+              <span class="label">ผลการเปิดไพ่ของทีม (4 Developers)</span>
+              <p style="margin:0; color:var(--on-surface-variant);">เลือกไพ่ของคุณทางซ้าย แล้วกด "เปิดไพ่พร้อมกัน" เพื่อดูความเห็นต่างของทีม</p>
+            </div>
+            <div class="notice">
+              <i data-lucide="git-branch" class="notice-icon" aria-hidden="true"></i>
+              <div>
+                <strong>Velocity คือเข็มทิศวางแผน ไม่ใช่เกมแข่งขัน:</strong> คะแนนรวมที่ทำสำเร็จในแต่ละ Sprint (Velocity) ใช้คำนวณงบประมาณงานของ Sprint ถัดไป ห้ามนำไปเปรียบเทียบข้ามทีมเพราะแต่ละทีมนิยามฐาน 1 Point ต่างกัน
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 04 -->
+      <section class="slide-frame" id="slide-4" data-slide="4">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 04 · ARCHITECTURE &amp; BOILERPLATE</span>
+            <span class="tag">Relational Schema &amp; Greenfield Setup</span>
+          </div>
+          <h2 class="slide-heading"><strong>Boilerplate Setup:</strong> โครงสร้างฐานข้อมูล POS และ Repository มาตรฐาน</h2>
+        </div>
+
+        <p class="slide-lede">
+          หลักการ Simple Design ของ Agile แนะนำให้สร้างโครงสร้างที่เรียบง่าย ชัดเจน และรองรับงาน Sprint 1 ได้ทันที โดยแยกชั้น Business Logic ออกจาก Third-party API และกำหนดโครงสร้างไฟล์กลาง (Scaffolding) ให้สมาชิกทุกคนเขียนโค้ดและเทสต์ในมาตรฐานเดียวกัน
+        </p>
+
+        <div class="grid-asymmetric-5-7">
+          <div class="layer stack-sm">
+            <span class="label-en">PROJECT DIRECTORY TREE · CLICK TO INSPECT</span>
+            <div id="boilerplate-tree">
+              <button type="button" class="tree-item is-active" data-node="root" onclick="selectTreeNode('root', this)">
+                <i data-lucide="folder" aria-hidden="true"></i>
+                <span>grocery-pos-platform/</span>
+              </button>
+              <button type="button" class="tree-item" data-node="backend" onclick="selectTreeNode('backend', this)">
+                <i data-lucide="folder-code" aria-hidden="true"></i>
+                <span>├── backend/ (API, Auth, Models)</span>
+              </button>
+              <button type="button" class="tree-item" data-node="frontend" onclick="selectTreeNode('frontend', this)">
+                <i data-lucide="layout-dashboard" aria-hidden="true"></i>
+                <span>├── frontend/ (POS UI &amp; Admin)</span>
+              </button>
+              <button type="button" class="tree-item" data-node="db" onclick="selectTreeNode('db', this)">
+                <i data-lucide="database" aria-hidden="true"></i>
+                <span>├── database/ (schema.sql, seed.sql)</span>
+              </button>
+              <button type="button" class="tree-item" data-node="tests" onclick="selectTreeNode('tests', this)">
+                <i data-lucide="flask-conical" aria-hidden="true"></i>
+                <span>├── tests/ (Unit &amp; Acceptance)</span>
+              </button>
+              <button type="button" class="tree-item" data-node="compose" onclick="selectTreeNode('compose', this)">
+                <i data-lucide="container" aria-hidden="true"></i>
+                <span>├── docker-compose.yml</span>
+              </button>
+              <button type="button" class="tree-item" data-node="env" onclick="selectTreeNode('env', this)">
+                <i data-lucide="shield-check" aria-hidden="true"></i>
+                <span>└── .env.example &amp; AGENTS.md</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="stack-md">
+            <div class="layer-white" id="boilerplate-inspector">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="layer">
+              <span class="label-en">CORE RELATIONAL SCHEMA (SPRINT 1 TARGET)</span>
+              <div class="table-wrap">
+                <table class="carbon-table">
+                  <thead>
+                    <tr>
+                      <th>Table</th>
+                      <th>Key Columns</th>
+                      <th>หมายเหตุด้านวิศวกรรม &amp; PDPA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="code-inline">Users</span></td>
+                      <td>user_id, username, password_hash, role_enum</td>
+                      <td>เก็บรหัสผ่านแบบ Hash (bcrypt/argon2) เท่านั้น</td>
+                    </tr>
+                    <tr>
+                      <td><span class="code-inline">Categories</span></td>
+                      <td>category_id, category_name</td>
+                      <td>เช่น เครื่องดื่ม, ของแห้ง, ของสด, เบเกอรี่</td>
+                    </tr>
+                    <tr>
+                      <td><span class="code-inline">Products</span></td>
+                      <td>product_id, category_id, sku_barcode, name, price</td>
+                      <td>ราคาต่อหน่วยใช้ชนิด Decimal/Numeric ป้องกันทศนิยมเพี้ยน</td>
+                    </tr>
+                    <tr>
+                      <td><span class="code-inline">Inventory_Stock</span></td>
+                      <td>stock_id, product_id, stock_quantity, unit, reorder_level</td>
+                      <td>รองรับ Atomic Update ป้องกันตัดสต็อกซ้อนกัน</td>
+                    </tr>
+                    <tr>
+                      <td><span class="code-inline">Orders &amp; Order_Items</span></td>
+                      <td>order_id, user_id, order_datetime, payment_method, total_amount</td>
+                      <td>PromptPay / Cash / Credit Card และไม่เก็บเลขบัตร/เบอร์โทรเกินจำเป็น</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 05 -->
+      <section class="slide-frame" id="slide-5" data-slide="5">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 05 · DOCKER ENVIRONMENT</span>
+            <span class="tag">Eliminate Environment Viscosity</span>
+          </div>
+          <h2 class="slide-heading"><strong>Docker Environment:</strong> จบปัญหา "เครื่องฉันรันได้" ด้วย Container เดียวกัน</h2>
+        </div>
+
+        <p class="slide-lede">
+          เมื่อทีมมีสมาชิกหลายคนที่ใช้ Windows, macOS หรือ Linux ต่างกัน ความหนืดของสภาพแวดล้อม (Viscosity) จะทำให้เสียเวลากับเวอร์ชัน Database หรือ Runtime ไม่ตรงกัน Docker Compose ช่วยให้ทั้ง Frontend, Backend API และ PostgreSQL ทำงานด้วยคำสั่งเดียวและตั้งค่าผ่าน <span class="code-inline">.env</span> อย่างปลอดภัย
+        </p>
+
+        <div class="grid-asymmetric-8-4">
+          <div class="stack-md">
+            <div class="tab-row" role="tablist" aria-label="ดูไฟล์กำหนดค่า Docker">
+              <button type="button" class="tab-btn is-active" data-docker-tab="compose" onclick="switchDockerTab('compose', this)">docker-compose.yml</button>
+              <button type="button" class="tab-btn" data-docker-tab="env" onclick="switchDockerTab('env', this)">.env.example</button>
+              <button type="button" class="tab-btn" data-docker-tab="commands" onclick="switchDockerTab('commands', this)">คำสั่งใช้งานประจำวัน</button>
+            </div>
+            <pre class="code-panel" id="docker-code-view"></pre>
+            <div style="display:flex; align-items:center; gap:var(--space-md); flex-wrap:wrap;">
+              <button type="button" class="btn btn-primary btn-compact" onclick="copyDockerSnippet()">
+                <i data-lucide="copy" aria-hidden="true"></i>
+                <span>คัดลอกโค้ดชุดนี้</span>
+              </button>
+              <span id="copy-status-msg" style="font-size:0.875rem; color:var(--positive);" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="stack-md">
+            <div class="layer">
+              <span class="label-en">TROUBLESHOOTING LAB · ปัญหาที่พบบ่อยในสัปดาห์แรก</span>
+              <h3 class="subhead">คลิกเลือกอาการเพื่อดูวิธีแก้ไข</h3>
+              <div class="stack-sm">
+                <button type="button" class="story-btn is-selected" data-err="port" onclick="selectDockerError('port', this)">
+                  <span><strong>1.</strong> Port 5432 is already allocated</span>
+                  <span class="tag tag-warning">Port ชน</span>
+                </button>
+                <button type="button" class="story-btn" data-err="race" onclick="selectDockerError('race', this)">
+                  <span><strong>2.</strong> API แครชเพราะ DB ยังบูตไม่เสร็จ</span>
+                  <span class="tag tag-error">Startup Race</span>
+                </button>
+                <button type="button" class="story-btn" data-err="secret" onclick="selectDockerError('secret', this)">
+                  <span><strong>3.</strong> เผลอ Push ไฟล์ .env ขึ้น GitHub</span>
+                  <span class="tag tag-error">Security</span>
+                </button>
+              </div>
+              <div id="docker-error-detail" class="layer-white" style="margin-top:var(--space-sm);">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 06 -->
+      <section class="slide-frame" id="slide-6" data-slide="6">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 06 · WORKFLOW &amp; CI GATE</span>
+            <span class="tag">GitHub Projects &amp; Continuous Integration</span>
+          </div>
+          <h2 class="slide-heading"><strong>GitHub Projects &amp; CI:</strong> ทำงานเป็นทีมเหมือนทีม Pit Crew Formula 1</h2>
+        </div>
+
+        <p class="slide-lede">
+          Continuous Integration (CI) ป้องกันอาการ "Morning-After Syndrome" ที่โค้ดพังเมื่อรวมงานปลายสัปดาห์ ทุก Task ใน Sprint 1 ต้องเชื่อมกับ GitHub Issue ผ่าน Branch ย่อยและ Pull Request พร้อมผ่านด่าน Automated Test ก่อนย้ายการ์ดไป Done
+        </p>
+
+        <div class="layer" style="margin-bottom: var(--space-md);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-sm); margin-bottom:var(--space-sm);">
+            <div>
+              <span class="label-en">INTERACTIVE KANBAN SIMULATION · SPRINT 1 BOARD</span>
+              <h3 class="subhead" style="margin:0;">ลองเลื่อนสถานะงาน Sprint 1 ผ่าน Pipeline (Todo → Done)</h3>
+            </div>
+            <button type="button" class="btn btn-secondary btn-compact" onclick="resetKanbanBoard()">
+              <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+              <span>รีเซ็ตบอร์ด</span>
+            </button>
+          </div>
+
+          <div class="kanban-grid" id="kanban-board">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="metric-tile">
+            <span class="label-en">STEP 01 · ISSUE TEMPLATE</span>
+            <strong>User Story + Linked Tasks</strong>
+            <p style="margin:var(--space-xs) 0 0; font-size:0.9375rem; color:var(--on-surface-variant);">
+              แตก User Story เป็น Task ย่อยที่ใช้เวลา ≤ 1 วัน แล้วเชื่อมด้วย <span class="code-inline">#issue</span> บน GitHub Projects
+            </p>
+          </div>
+          <div class="metric-tile">
+            <span class="label-en">STEP 02 · BRANCH &amp; PR</span>
+            <strong>ห้าม Commit ตรงเข้า main</strong>
+            <p style="margin:var(--space-xs) 0 0; font-size:0.9375rem; color:var(--on-surface-variant);">
+              ตั้งชื่อ Branch เช่น <span class="code-inline">feat/us102-auth-jwt</span> เปิด Pull Request และให้เพื่อนอย่างน้อย 1 คนรีวิว
+            </p>
+          </div>
+          <div class="metric-tile">
+            <span class="label-en">STEP 03 · AUTOMATED CI</span>
+            <strong>Build + Lint + Unit Test</strong>
+            <p style="margin:var(--space-xs) 0 0; font-size:0.9375rem; color:var(--on-surface-variant);">
+              บอร์ดย้ายไป <span class="code-inline">Done</span> ได้ก็ต่อเมื่อ Acceptance Criteria ผ่านและ CI เป็นสีเขียว
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 07 -->
+      <section class="slide-frame" id="slide-7" data-slide="7">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 07 · CAPACITY &amp; COMMITMENT</span>
+            <span class="tag">Sprint 1 Planning Simulator</span>
+          </div>
+          <h2 class="slide-heading"><strong>Sprint Commitment:</strong> วางคำมั่นสัญญาให้สมดุลกับ Capacity จริงของทีม</h2>
+        </div>
+
+        <p class="slide-lede">
+          Scrum Guide กำหนดให้ Sprint Planning ตอบ 3 คำถาม: (1) ทำไม Sprint นี้จึงมีคุณค่า (Sprint Goal), (2) ทำอะไรได้บ้างตามกำลังจริงของทีม, และ (3) จะส่งมอบให้ผ่าน Definition of Done อย่างไร ทดลองปรับกำลังคนและเลือก Story เพื่อคำนวณความเสี่ยงก่อนลงนาม Commitment
+        </p>
+
+        <div class="grid-asymmetric-5-7">
+          <div class="layer stack-md">
+            <span class="label-en">TEAM CAPACITY INPUTS</span>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label" for="cap-members">จำนวนสมาชิกในทีม (คน)</label>
+                <input type="number" id="cap-members" class="carbon-input" min="2" max="8" value="4" oninput="recalcCapacity()">
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="cap-weeks">ระยะเวลา Sprint (สัปดาห์)</label>
+                <select id="cap-weeks" class="carbon-select" onchange="recalcCapacity()">
+                  <option value="1">1 สัปดาห์</option>
+                  <option value="2" selected>2 สัปดาห์ (แนะนำ)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="cap-focus-slider">
+                Focus Factor (สัดส่วนเวลาโค้ดจริง หักคาบเรียน/ประชุม): <strong id="cap-focus-label">75%</strong>
+              </label>
+              <input type="range" id="cap-focus-slider" class="carbon-range" min="50" max="90" step="5" value="75" oninput="syncFocusFromSlider(this.value)">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="cap-focus-number">ปรับ Focus Factor เป็นตัวเลข (%)</label>
+              <input type="number" id="cap-focus-number" class="carbon-input" min="50" max="90" step="5" value="75" oninput="syncFocusFromNumber(this.value)">
+            </div>
+
+            <div class="stack-sm">
+              <span class="field-label">เลือก Backlog ที่จะ Commit เข้า Sprint 1:</span>
+              <div id="commit-story-toggles" class="stack-sm">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-md">
+            <div class="grid-2">
+              <div class="key-tile">
+                <span class="label">กำลังรองรับสูงสุด (Capacity)</span>
+                <div class="key-value" id="cap-max-pts">18 pts</div>
+                <span style="font-size:0.8125rem; color:var(--on-surface-variant);" id="cap-hours-note">คำนวณจาก 4 คน · 2 สัปดาห์ · 75%</span>
+              </div>
+              <div class="key-tile" id="commit-status-tile">
+                <span class="label">งานที่เลือกรวม (Committed)</span>
+                <div class="key-value" id="cap-committed-pts">16 pts</div>
+                <span id="cap-status-tag" class="tag tag-positive">สมดุลดี (89% ของ Capacity)</span>
+              </div>
+            </div>
+
+            <div class="chart-box" id="burndown-chart-wrap" style="min-height: 280px;">
+              <canvas id="burndown-chart"></canvas>
+            </div>
+
+            <div class="notice" id="sprint-goal-preview">
+              <i data-lucide="target" class="notice-icon" aria-hidden="true"></i>
+              <div>
+                <strong>Sprint 1 Goal (Draft):</strong> ส่งมอบโครงสร้างฐานข้อมูล Grocery POS 6 ตาราง ระบบยืนยันตัวตนแยกสิทธิ์ Cashier/Manager และสภาพแวดล้อม Docker Compose ที่รันทดสอบผ่าน CI ได้ทุกเครื่อง
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 08 -->
+      <section class="slide-frame" id="slide-8" data-slide="8">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 08 · DOD, RISKS &amp; RUBRIC</span>
+            <span class="tag">Quality &amp; 25-Point Evaluation</span>
+          </div>
+          <h2 class="slide-heading"><strong>Definition of Done</strong>, แผนลดความเสี่ยง และเกณฑ์ประเมิน 25 คะแนน</h2>
+        </div>
+
+        <p class="slide-lede">
+          งานที่ยังเขียนไม่เสร็จหรือยังไม่มี Automated Test จะไม่ถูกนับเป็น Increment ในวัน Sprint Review ทีมต้องกำหนด Definition of Done (DoD) ที่ชัดเจน ระบุความเสี่ยงทางเทคนิคตั้งแต่ต้น และตรวจสอบคุณภาพ Backlog ให้ตรงตามรูบริกของรายวิชา
+        </p>
+
+        <div class="grid-2" style="margin-bottom: var(--space-md);">
+          <div class="layer">
+            <span class="label-en">DEFINITION OF DONE (SPRINT 1: DATABASE &amp; AUTH)</span>
+            <ul class="hairline-list">
+              <li><strong>1. Code &amp; PR:</strong> โค้ดถูก Merge ผ่าน Pull Request และมีเพื่อนร่วมทีม Review อย่างน้อย 1 คน</li>
+              <li><strong>2. Tests Pass:</strong> Unit Test และ Acceptance Criteria (Given–When–Then) ผ่านครบ 100%</li>
+              <li><strong>3. Clean Build:</strong> รัน <span class="code-inline">docker compose up --build</span> บนเครื่องสมาชิกอื่นแล้วใช้งานได้ทันที</li>
+              <li><strong>4. Security &amp; PDPA:</strong> ไม่มีรหัสผ่านแบบ Plain-text, ไม่ Commit <span class="code-inline">.env</span>, และไม่เก็บ PII เกินความจำเป็น</li>
+            </ul>
+          </div>
+
+          <div class="layer">
+            <span class="label-en">SPRINT 1 RISK REGISTER (GROCERY POS)</span>
+            <ul class="hairline-list">
+              <li><strong>ความเสี่ยงตัดสต็อกซ้อนกัน (Concurrency):</strong> ออกแบบ Transaction &amp; Row Lock ไว้ใน Schema ตั้งแต่ Sprint 1</li>
+              <li><strong>OS / Port Conflict ระหว่างสมาชิก:</strong> บังคับใช้ Docker Compose พร้อม Healthcheck และคู่มือแก้พอร์ตชน</li>
+              <li><strong>ขอบเขต Sprint 1 บานปลาย (Scope Creep):</strong> ย้ายฟีเจอร์เสริม (เช่น สะสมแต้ม) ไปไว้ใน Icebox/Sprint 3</li>
+              <li><strong>Backlog ขาด Acceptance Criteria:</strong> ใช้ GitHub Issue Template บังคับกรอกช่อง Given–When–Then</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="layer-white">
+          <span class="label-en">COURSE GRADING RUBRIC · REQUIREMENTS &amp; AGILE BACKLOG (25 คะแนน)</span>
+          <div class="table-wrap">
+            <table class="carbon-table">
+              <thead>
+                <tr>
+                  <th>ระดับคุณภาพ</th>
+                  <th class="num-col">ช่วงคะแนน</th>
+                  <th>เกณฑ์พิจารณาจากอาจารย์ที่ปรึกษาและกรรมการ (50% + 50%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="is-selected">
+                  <td><strong>ดีเยี่ยม</strong></td>
+                  <td class="num-col">22–25</td>
+                  <td>วิเคราะห์ Functional/Non-functional Requirements ครบถ้วน เขียน User Stories ตามมาตรฐาน Agile พร้อมประเมิน Story Points และระบุ Acceptance Criteria สมบูรณ์</td>
+                </tr>
+                <tr>
+                  <td><strong>ดี</strong></td>
+                  <td class="num-col">18–21</td>
+                  <td>Requirements และ User Stories ครอบคลุมฟังก์ชันหลักของระบบ มีการประเมิน Story Points โดยมีจุดต้องปรับแก้เล็กน้อย</td>
+                </tr>
+                <tr>
+                  <td><strong>พอใช้</strong></td>
+                  <td class="num-col">14–17</td>
+                  <td>User Stories เขียนไม่ถูกรูปแบบ ขาดรายละเอียด Acceptance Criteria หรือวิเคราะห์ Requirements ไม่ครอบคลุม</td>
+                </tr>
+                <tr>
+                  <td><strong>ปรับปรุง</strong></td>
+                  <td class="num-col">0–13</td>
+                  <td>ไม่มีการวิเคราะห์ Requirements หรือจัดทำ User Story Backlog ตามหลักวิศวกรรมซอฟต์แวร์</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 09 -->
+      <section class="slide-frame" id="slide-9" data-slide="9">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-code">SLIDE 09 · WORKSHOP &amp; DELIVERABLES</span>
+            <span class="tag tag-positive">Action Plan &amp; Auto-Saved Checklist</span>
+          </div>
+          <h2 class="slide-heading"><strong>Workshop ท้ายคาบ:</strong> เช็กลิสต์ส่งมอบก่อนเริ่มพัฒนา Sprint 1</h2>
+        </div>
+
+        <p class="slide-lede">
+          ให้แต่ละกลุ่มดำเนินการตั้งค่า Environment และ Sprint 1 Backlog ให้ครบทั้ง 6 รายการด้านล่าง ระบบจะบันทึกสถานะเช็กลิสต์ของกลุ่มไว้ให้อัตโนมัติ และสามารถส่งออกเป็นไฟล์สรุป Sprint 1 Commitment เพื่อนำไปแนบใน GitHub Repository หรือ Google Classroom ได้ทันที
+        </p>
+
+        <div class="grid-asymmetric-8-4">
+          <div class="stack-sm" id="deliverables-checklist">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="stack-md">
+            <div class="key-tile">
+              <span class="label">ความพร้อมก่อนเริ่ม Sprint 1</span>
+              <div class="key-value" id="deliverables-percent">0%</div>
+              <p style="margin:var(--space-xs) 0 0; font-size:0.875rem; color:var(--on-surface-variant);" id="deliverables-status-text">
+                ยังไม่ได้ทำเครื่องหมายรายการส่งมอบ กดเลือกทีละข้อทางซ้ายเพื่อติดตามงานกลุ่ม
+              </p>
+            </div>
+
+            <div class="layer stack-sm">
+              <div class="field-group">
+                <label class="field-label" for="team-name-input">ชื่อกลุ่ม / รหัสโปรเจกต์ (สำหรับไฟล์ส่งออก)</label>
+                <input type="text" id="team-name-input" class="carbon-input" value="Group-POS-01" oninput="updateTeamName(this.value)">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="exportSprintCommitment()">
+                <i data-lucide="download" aria-hidden="true"></i>
+                <span>ส่งออกสรุป Sprint 1 (.md)</span>
+              </button>
+              <button type="button" class="btn btn-secondary" id="btn-reset-all" onclick="resetAllProgress(this)">
+                <i data-lucide="trash-2" aria-hidden="true"></i>
+                <span>ล้างข้อมูลความคืบหน้า</span>
+              </button>
+              <span id="export-feedback-msg" style="font-size:0.8125rem; color:var(--positive);" aria-live="polite"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-bottom-nav">
+          <button type="button" class="btn btn-secondary btn-compact" onclick="goToSlide(1)">
+            <i data-lucide="arrow-up" aria-hidden="true"></i>
+            <span>กลับไปสไลด์ที่ 01</span>
+          </button>
+          <span style="font-size:0.875rem; color:var(--on-surface-variant);">จบเนื้อหาสัปดาห์ที่ 6 · 1145 204 Sophomore Project</span>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="deck-footer">
+    <div>
+      <strong>1145 204 Sophomore Project</strong> · สัปดาห์ที่ 6: Sprint 1 Planning &amp; Environment Setup (Grocery POS Platform)
+    </div>
+    <div>
+      แหล่งอ้างอิงหลัก: เอกสารโครงงานปี 1–3, มคอ.2 วท.บ. วิทยาการข้อมูล, Scrum Guide (Schwaber &amp; Sutherland), Agile Estimating and Planning (Cohn), User Story Mapping (Patton), Continuous Delivery (Thoughtworks/Sprinting Software), GitHub Projects Agile Guide
+    </div>
+  </footer>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // DATA MODELS (Backtick template literals used for all multi-line / quoted data)
+    // =========================================================================
+    const TOTAL_SLIDES = 9;
+
+    const BACKLOG_ITEMS = [
+      {
+        id: `US-101`,
+        priority: `must`,
+        sprint: `Sprint 1`,
+        points: 5,
+        title: `US-101: โครงสร้างฐานข้อมูล POS 6 ตารางหลัก & Seed Data`,
+        role: `ผู้ดูแลระบบ / นักพัฒนา (Backend Developer)`,
+        story: `As a Backend Developer, I want to initialize the 6-table PostgreSQL schema (Users, Categories, Products, Inventory_Stock, Orders, Order_Items) with sample grocery data so that all team members can build APIs against consistent tables.`,
+        ac: [
+          `Given Docker Compose กำลังทำงาน, When รันคำสั่ง migration และ seed.sql, Then ต้องสร้างครบ 6 ตารางพร้อม Foreign Key ที่ถูกต้อง`,
+          `Given ตาราง Products ถูก Seed แล้ว, When ค้นหาด้วย sku_barcode, Then ต้องคืนค่ารายการสินค้าที่มี price >= 0 และ category_id ตรงกับหมวดหมู่`
+        ],
+        tasks: [
+          `เขียน SQL Migration สำหรับ 6 ตารางหลัก (4 ชม.)`,
+          `สร้างไฟล์ seed.sql สินค้าร้านชำ 20 รายการ (2 ชม.)`,
+          `เขียน Integration Test ตรวจสอบ Foreign Key Constraints (2 ชม.)`
+        ]
+      },
+      {
+        id: `US-102`,
+        priority: `must`,
+        sprint: `Sprint 1`,
+        points: 5,
+        title: `US-102: ระบบ Login & สิทธิ์การใช้งาน Cashier / Manager`,
+        role: `แคชเชียร์ / ผู้จัดการร้าน (Cashier / Manager)`,
+        story: `As a Store Manager, I want role-based authentication (Cashier vs Manager) using hashed passwords so that only authorized staff can access POS checkout or adjust product prices.`,
+        ac: [
+          `Given ผู้ใช้กรอก username และ password ถูกต้อง, When กดเข้าสู่ระบบ POST /api/auth/login, Then ระบบคืนค่า JWT Token พร้อม role_enum และบันทึก session`,
+          `Given ผู้ใช้มีสิทธิ์เป็น Cashier, When เรียก endpoint แก้ไขราคาสินค้าหรือลบผู้ใช้, Then ระบบต้องปฏิเสธด้วย HTTP 403 Forbidden`
+        ],
+        tasks: [
+          `สร้าง Endpoint /auth/login พร้อม bcrypt password hash (4 ชม.)`,
+          `สร้าง Middleware ตรวจสอบ JWT และ role_enum (3 ชม.)`,
+          `พัฒนาหน้า Login Form และเก็บสถานะผู้ใช้บน Frontend (4 ชม.)`
+        ]
+      },
+      {
+        id: `US-103`,
+        priority: `must`,
+        sprint: `Sprint 1`,
+        points: 3,
+        title: `US-103: จัดการหมวดหมู่และรายการสินค้าพร้อมบาร์โค้ด (CRUD)`,
+        role: `ผู้จัดการร้าน (Store Manager)`,
+        story: `As a Store Manager, I want to add, edit, and search grocery products with SKU barcodes and categories so that cashiers have accurate catalog data before Sprint 2 checkout begins.`,
+        ac: [
+          `Given Manager ล็อกอินแล้ว, When เพิ่มสินค้าใหม่พร้อมบาร์โค้ดที่ยังไม่ซ้ำและราคา > 0, Then สินค้าต้องปรากฏในรายการและค้นหาเจอทันที`,
+          `Given บาร์โค้ดซ้ำกับสินค้าที่มีอยู่, When กดบันทึก, Then ระบบต้องแจ้งข้อผิดพลาด HTTP 409 Conflict และไม่บันทึกซ้ำ`
+        ],
+        tasks: [
+          `สร้าง REST API GET/POST/PUT /api/products & /categories (4 ชม.)`,
+          `สร้างหน้าตารางจัดการสินค้าแบบค้นหาด้วยบาร์โค้ดได้ (4 ชม.)`
+        ]
+      },
+      {
+        id: `US-104`,
+        priority: `must`,
+        sprint: `Sprint 1`,
+        points: 3,
+        title: `US-104: เปิด-ปิดกะแคชเชียร์และบันทึกเงินทอนตั้งต้น`,
+        role: `แคชเชียร์ (Cashier)`,
+        story: `As a Cashier, I want to record opening cash drawer balance when starting a shift so that end-of-day cash reconciliation matches physical drawer totals.`,
+        ac: [
+          `Given Cashier ยังไม่ได้เปิดกะ, When กรอกยอดเงินทอนตั้งต้น >= 0 และกดเปิดกะ, Then ระบบสร้าง shift record สถานะ OPEN`,
+          `Given Cashier พยายามเปิดหน้าคิดเงินโดยยังไม่เปิดกะ, When เข้าสู่หน้าจอ POS, Then ระบบแจ้งเตือนให้เปิดกะก่อนเริ่มขาย`
+        ],
+        tasks: [
+          `สร้างตาราง/ฟิลด์ Shift Session และ API Open/Close Shift (3 ชม.)`,
+          `เขียน Unit Test ตรวจสอบการเปิดกะซ้อน (2 ชม.)`
+        ]
+      },
+      {
+        id: `US-201`,
+        priority: `should`,
+        sprint: `Sprint 2`,
+        points: 8,
+        title: `US-201: หน้าจอขาย POS สแกนบาร์โค้ดและชำระเงิน PromptPay/Cash`,
+        role: `แคชเชียร์ (Cashier)`,
+        story: `As a Cashier, I want to scan product barcodes into an active cart, calculate subtotals, and accept Cash or PromptPay payments so that customer checkout completes in under 15 seconds.`,
+        ac: [
+          `Given แคชเชียร์สแกนบาร์โค้ดสินค้าที่มีในสต็อก, When กดยืนยันชำระเงิน, Then ระบบสร้าง Order + Order_Items และคำนวณเงินทอน/แสดง QR PromptPay ได้ถูกต้อง`
+        ],
+        tasks: [
+          `วางโครงตะกร้าสินค้า POS + Shortcut คีย์บอร์ด (Sprint 2)`,
+          `ระบบตัดสต็อก Atomic Transaction (Sprint 2)`
+        ]
+      },
+      {
+        id: `SPK-01`,
+        priority: `spike`,
+        sprint: `Sprint 1`,
+        points: 2,
+        title: `SPK-01: ทดสอบเทคนิค Row-Level Lock ป้องกันสต็อกติดลบเมื่อขายพร้อมกัน`,
+        role: `ทีมพัฒนา (Engineering Spike)`,
+        story: `As a Development Team, we want to prototype PostgreSQL SELECT ... FOR UPDATE behavior under concurrent checkouts so that Sprint 2 stock deduction does not cause race conditions.`,
+        ac: [
+          `Given สินค้าคงเหลือ 1 ชิ้น, When ยิง Request สั่งซื้อพร้อมกัน 2 เครื่อง, Then ต้องสำเร็จเพียง 1 รายการและอีกรายการได้รับข้อความสต็อกไม่พอ`
+        ],
+        tasks: [
+          `เขียนสคริปต์จำลอง Concurrent Checkout 2 threads (3 ชม.)`,
+          `สรุปแนวทาง Transaction Lock ไว้ในเอกสาร Architecture Note (1 ชม.)`
+        ]
+      },
+      {
+        id: `US-301`,
+        priority: `could`,
+        sprint: `Sprint 3`,
+        points: 5,
+        title: `US-301: แจ้งเตือนสินค้าใกล้หมดและรายงานยอดขายปลอดข้อมูลส่วนบุคคล (PDPA)`,
+        role: `ผู้จัดการร้าน (Store Manager)`,
+        story: `As a Store Manager, I want low-stock alerts when quantity falls below reorder_level and daily sales charts without customer PII so that replenishment and reporting comply with PDPA.`,
+        ac: [
+          `Given สต็อกสินค้า <= reorder_level, When เปิดหน้า Dashboard, Then แสดงป้ายแจ้งเตือนรายการที่ต้องสั่งซื้อเพิ่มทันที`,
+          `Given ส่งออกไฟล์สรุปยอดขายรายวัน, When ตรวจสอบคอลัมน์ CSV, Then ต้องไม่มีเบอร์โทรศัพท์หรือเลขบัตรประชาชนลูกค้า`
+        ],
+        tasks: [
+          `ระบบแจ้งเตือน Low Stock (Sprint 3)`,
+          `รายงาน Peak Hours และ PDPA Anonymizer (Sprint 3)`
+        ]
+      }
+    ];
+
+    const POKER_STORIES = [
+      {
+        id: `US-101`,
+        title: `US-101: ออกแบบและ Migrate ฐานข้อมูล POS 6 ตารางหลัก`,
+        context: `ครอบคลุม Users, Categories, Products, Inventory_Stock, Orders และ Order_Items พร้อมไฟล์ seed.sql ข้อมูลร้านชำ 20 รายการ`,
+        teamVotes: [3, 5, 5, 8],
+        outlierNote: `Dev D โหวต 8 คะแนนเพราะกังวลเรื่อง Foreign Key และประเภทข้อมูลเงินทอน/ราคา (Decimal) แต่หลังพูดคุยกัน ทีมเห็นว่ามี Schema ต้นแบบจากสัปดาห์ที่ 5 แล้ว จึงตกลงที่ 5 Points`
+      },
+      {
+        id: `US-102`,
+        title: `US-102: ระบบ Login & Role-Based Access (Cashier / Manager)`,
+        context: `ตรวจสอบรหัสผ่านด้วย bcrypt, ออก JWT Token และป้องกัน Endpoint สำหรับผู้จัดการไม่ให้แคชเชียร์เรียกใช้งานได้`,
+        teamVotes: [5, 5, 8, 5],
+        outlierNote: `งานเกี่ยวข้องกับความปลอดภัย Password Hashing และ Middleware แยกสิทธิ์ทั้งฝั่ง API และ Route Guard ทีมจึงเห็นพ้องที่ 5 Points`
+      },
+      {
+        id: `US-103`,
+        title: `US-103: จัดการแคตตาล็อกสินค้าและบาร์โค้ดร้านชำ (CRUD)`,
+        context: `เพิ่ม แก้ไข ค้นหาสินค้าด้วยชื่อหรือรหัสบาร์โค้ด พร้อมตรวจสอบค่าซ้ำและราคาห้ามติดลบ`,
+        teamVotes: [2, 3, 3, 5],
+        outlierNote: `Pattern แบบ CRUD มาตรฐาน มีความซับซ้อนปานกลางตรงการตรวจสอบบาร์โค้ดซ้ำและหมวดหมู่ ทีมสรุปที่ 3 Points`
+      },
+      {
+        id: `US-104`,
+        title: `US-104: ระบบเปิด-ปิดกะแคชเชียร์และบันทึกเงินทอนตั้งต้น`,
+        context: `บันทึกยอดเงินสดตั้งต้นตอนเปิดกะและป้องกันการเปิดกะซ้อนของแคชเชียร์คนเดียวกัน`,
+        teamVotes: [2, 3, 3, 3],
+        outlierNote: `ขอบเขตชัดเจน ใช้ตาราง Shift ขนาดเล็กพร้อมกฎห้ามเปิดกะซ้อน ทีมเห็นพ้องที่ 3 Points`
+      }
+    ];
+
+    const BOILERPLATE_NODES = {
+      root: {
+        name: `grocery-pos-platform/`,
+        role: `Root Monorepo ของกลุ่มโครงงาน`,
+        desc: `เก็บทุกบริการไว้ใน Repository เดียวเพื่อให้เปิด Pull Request เชื่อม Frontend, Backend และ Migration เข้าด้วยกันได้ง่ายใน Sprint 1`,
+        snippet: `grocery-pos-platform/\n├── backend/\n├── frontend/\n├── database/\n├── tests/\n├── docker-compose.yml\n├── .env.example\n├── .gitignore\n└── README.md`
+      },
+      backend: {
+        name: `backend/`,
+        role: `REST API, Authentication & Business Logic`,
+        desc: `แยก Router (รับ Request), Service (กฎธุรกิจ POS), และ Repository/Models (คุยกับ DB) ออกจากกัน เพื่อให้สลับ Database หรือทดสอบ Unit Test ได้โดยไม่ต้องพึ่ง UI`,
+        snippet: `backend/\n├── src/\n│   ├── routes/        # auth.routes, product.routes\n│   ├── middleware/    # jwtAuth, requireRole('MANAGER')\n│   ├── services/      # authService, catalogService\n│   └── db/            # connection pool & transaction helper\n├── Dockerfile\n└── package.json / requirements.txt`
+      },
+      frontend: {
+        name: `frontend/`,
+        role: `หน้าจอ Login, จัดการสินค้า และ POS`,
+        desc: `พัฒนาหน้าจอตาม User Story โดยใช้ตัวแปรสภาพแวดล้อมชี้ไปที่ Backend API (เช่น VITE_API_URL) แทนการ Hardcode URL`,
+        snippet: `frontend/\n├── src/\n│   ├── pages/         # LoginPage, CatalogPage, ShiftPage\n│   ├── components/    # Navbar, ProductTable, RoleGuard\n│   └── api/           # axios/fetch client\n├── Dockerfile\n└── package.json`
+      },
+      db: {
+        name: `database/`,
+        role: `SQL Migrations & Seed Data`,
+        desc: `เก็บไฟล์สร้าง 6 ตารางหลัก (Users, Categories, Products, Inventory_Stock, Orders, Order_Items) และข้อมูลร้านชำตัวอย่างเพื่อให้ทุกคนได้ฐานข้อมูลเหมือนกันทันทีที่สั่ง docker compose up`,
+        snippet: `database/\n├── 01_schema.sql      # CREATE TABLE + Foreign Keys + Indexes\n└── 02_seed.sql        # ผู้ใช้ทดสอบ 2 บทบาท + สินค้าร้านชำ 20 รายการ`
+      },
+      tests: {
+        name: `tests/`,
+        role: `Automated Unit & Acceptance Tests`,
+        desc: `เก็บชุดทดสอบที่แปลงมาจาก Acceptance Criteria (Given–When–Then) ของแต่ละ User Story เพื่อให้ CI รันตรวจสอบทุกครั้งที่เปิด Pull Request`,
+        snippet: `tests/\n├── auth.test          # ทดสอบ Login สำเร็จ และ Cashier ถูกบล็อก 403\n├── catalog.test       # ทดสอบบาร์โค้ดซ้ำคืน 409\n└── shift.test         # ทดสอบเปิดกะซ้อนไม่ได้`
+      },
+      compose: {
+        name: `docker-compose.yml`,
+        role: `ตัวประสาน 3 บริการ (Orchestration)`,
+        desc: `ผูก Network, Volume เก็บข้อมูล DB ถาวร และ Healthcheck เพื่อให้ Backend รอจน PostgreSQL พร้อมรับ Connection จริงก่อนสตาร์ท`,
+        snippet: `services: db (5432) -> api (8000) -> web (5173)\nvolumes: pgdata (กันข้อมูลหายเวลาสั่ง down)`
+      },
+      env: {
+        name: `.env.example & AGENTS.md`,
+        role: `ความปลอดภัย & มาตรฐานการทำงานร่วมกับ AI`,
+        desc: `.env.example เก็บเฉพาะชื่อตัวแปรตัวอย่าง (ห้ามใส่รหัสจริง ส่วน .env จริงใส่ใน .gitignore) และ AGENTS.md ระบุกติกาการเขียนโค้ด/รันเทสต์ของทีม`,
+        snippet: `# .env.example\nPOSTGRES_USER=pos_admin\nPOSTGRES_PASSWORD=change_me_local\nPOSTGRES_DB=grocery_pos\nJWT_SECRET=replace_with_dev_secret`
+      }
+    };
+
+    const DOCKER_SNIPPETS = {
+      compose: `services:
+  db:
+    image: postgres:16-alpine
+    container_name: grocery-pos-db
+    environment:
+      POSTGRES_USER: \${POSTGRES_USER}
+      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
+      POSTGRES_DB: \${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \${POSTGRES_USER} -d \${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    container_name: grocery-pos-api
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    container_name: grocery-pos-web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:`,
+      env: `# คัดลอกไฟล์นี้เป็น .env ก่อนรัน (ห้าม Commit ไฟล์ .env ขึ้น GitHub เด็ดขาด)
+POSTGRES_USER=pos_dev
+POSTGRES_PASSWORD=dev_only_local_pass
+POSTGRES_DB=grocery_pos_db
+DATABASE_URL=postgresql://pos_dev:dev_only_local_pass@db:5432/grocery_pos_db
+
+# Auth & Session
+JWT_SECRET=local_dev_jwt_secret_change_in_prod
+JWT_EXPIRES_IN=8h
+
+# Frontend
+VITE_API_BASE_URL=http://localhost:8000/api`,
+      commands: `# 1. เตรียมไฟล์ตั้งค่าครั้งแรก
+cp .env.example .env
+
+# 2. สร้าง Image และรันทั้ง 3 บริการในโหมดเบื้องหลัง
+docker compose up -d --build
+
+# 3. ตรวจสอบสถานะและดู Log เฉพาะ API
+docker compose ps
+docker compose logs -f api
+
+# 4. รันชุดทดสอบอัตโนมัติใน Container
+docker compose exec api npm test
+
+# 5. หยุดบริการ (เก็บข้อมูล DB ไว้) หรือล้างข้อมูลใหม่ทั้งหมด (-v)
+docker compose down`
+    };
+
+    const DOCKER_ERRORS = {
+      port: {
+        title: `Port 5432 is already allocated`,
+        cause: `เครื่องของนักศึกษาติดตั้ง PostgreSQL แบบ Local ไว้ก่อนแล้วและกำลังเปิดใช้งานพอร์ต 5432 อยู่`,
+        fix: `แก้ไขฝั่งซ้ายของ ports ใน docker-compose.yml เป็น "5433:5432" (ภายใน Container ยังคุยกันที่ 5432 เหมือนเดิม) หรือสั่งหยุด Postgres บนเครื่องก่อน`
+      },
+      race: {
+        title: `ECONNREFUSED db:5432 ตอนเปิด Container ครั้งแรก`,
+        cause: `Docker เริ่มสตาร์ท Container ของ API ทันทีที่ Container DB ถูกสร้าง แต่ตัว Postgres ยัง Init ตารางไม่เสร็จ`,
+        fix: `เพิ่ม healthcheck (pg_isready) ในบริการ db และตั้ง depends_on: db: condition: service_healthy ในบริการ api ตามตัวอย่างด้านซ้าย`
+      },
+      secret: {
+        title: `เผลอ Push ไฟล์ .env ขึ้น GitHub Repository`,
+        cause: `ลืมเพิ่ม .env ลงในไฟล์ .gitignore ก่อนสั่ง git add .`,
+        fix: `1) เพิ่ม .env ใน .gitignore ทันที 2) รัน git rm --cached .env แล้ว Commit 3) เปลี่ยนรหัสผ่านและ JWT_SECRET ใหม่ทั้งหมดเพราะประวัติ Git ยังมองเห็นได้`
+      }
+    };
+
+    const INITIAL_KANBAN_TASKS = [
+      { id: `T-01`, story: `US-101`, title: `เขียน SQL Schema 6 ตาราง + Seed`, owner: `Dev A`, col: `Done` },
+      { id: `T-02`, story: `US-102`, title: `API /auth/login + bcrypt hash`, owner: `Dev B`, col: `Awaiting Review` },
+      { id: `T-03`, story: `US-102`, title: `Middleware ตรวจ Role Cashier/Manager`, owner: `Dev B`, col: `In Progress` },
+      { id: `T-04`, story: `US-103`, title: `REST API จัดการสินค้า & บาร์โค้ด`, owner: `Dev C`, col: `In Progress` },
+      { id: `T-05`, story: `US-104`, title: `API เปิด-ปิดกะแคชเชียร์`, owner: `Dev D`, col: `Todo` },
+      { id: `T-06`, story: `SPK-01`, title: `ทดสอบ Row Lock ตัดสต็อกพร้อมกัน`, owner: `Dev A`, col: `Todo` }
+    ];
+
+    const KANBAN_COLS = [`Todo`, `In Progress`, `Awaiting Review`, `Done`];
+
+    const DELIVERABLES_LIST = [
+      {
+        id: `deliv-1`,
+        title: `1. Product Backlog บน GitHub Projects จัดกลุ่ม MoSCoW แล้ว`,
+        desc: `มี User Story ครบทั้ง 3 Sprints พร้อมป้ายกำกับ Must / Should / Could / Spike`
+      },
+      {
+        id: `deliv-2`,
+        title: `2. Sprint 1 Stories มี Acceptance Criteria (Given–When–Then) ครบ`,
+        desc: `ทุก Story ใน Sprint 1 (US-101 ถึง US-104) ผ่านการโหวต Story Points และแตก Task ≤ 1 วันแล้ว`
+      },
+      {
+        id: `deliv-3`,
+        title: `3. โครงสร้าง Repository Boilerplate & .gitignore มาตรฐาน`,
+        desc: `แยกโฟลเดอร์ backend/, frontend/, database/, tests/ พร้อมไฟล์ .env.example และ README`
+      },
+      {
+        id: `deliv-4`,
+        title: `4. ไฟล์ docker-compose.yml รันได้จริงบนเครื่องสมาชิกทุกคน`,
+        desc: `คำสั่ง docker compose up -d --build เปิดบริการ DB + API + Web และ Seed ข้อมูลร้านชำสำเร็จ`
+      },
+      {
+        id: `deliv-5`,
+        title: `5. กำหนด Sprint 1 Goal, Capacity Commitment และ DoD ร่วมกัน`,
+        desc: `ทีมบันทึกเป้าหมาย Sprint 1 และเลือกคะแนนรวมไม่เกิน Capacity ที่คำนวณไว้`
+      },
+      {
+        id: `deliv-6`,
+        title: `6. เปิด Pull Request แรก (Initial Schema & Boilerplate) ผ่าน CI`,
+        desc: `ไม่มีการ Push ตรงเข้า main มีเพื่อนในกลุ่ม Review และสถานะ GitHub Actions เป็นสีเขียว`
+      }
+    ];
+
+    // =========================================================================
+    // APPLICATION STATE (persisted via window.notebookAppApi)
+    // =========================================================================
+    let appState = {
+      currentSlide: 1,
+      presenterMode: false,
+      backlogFilter: `all`,
+      selectedBacklogId: `US-101`,
+      pokerStoryIdx: 0,
+      pokerUserPick: null,
+      pokerRevealed: false,
+      selectedTreeNode: `root`,
+      dockerTab: `compose`,
+      dockerError: `port`,
+      kanbanTasks: JSON.parse(JSON.stringify(INITIAL_KANBAN_TASKS)),
+      capMembers: 4,
+      capWeeks: 2,
+      capFocus: 75,
+      committedStoryIds: [`US-101`, `US-102`, `US-103`, `US-104`],
+      checkedDeliverables: [],
+      teamName: `Group-POS-01`
+    };
+
+    let burndownChart = null;
+    let isRestoring = false;
+
+    async function persistState() {
+      if (isRestoring) return;
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+        try {
+          await window.notebookAppApi.setAppState(appState);
+        } catch (err) {
+          // Ignore transient persistence failures in preview
+        }
+      }
+    }
+
+    // =========================================================================
+    // SLIDE NAVIGATION & PRESENTER MODE (Hoisted function declarations)
+    // =========================================================================
+    function updateSlideChrome(slideNum) {
+      appState.currentSlide = slideNum;
+      const counter = document.getElementById('slide-counter-badge');
+      if (counter) {
+        counter.textContent = `${String(slideNum).padStart(2, '0')} / ${String(TOTAL_SLIDES).padStart(2, '0')}`;
+      }
+      const fill = document.getElementById('deck-progress-fill');
+      if (fill) {
+        fill.style.width = `${(slideNum / TOTAL_SLIDES) * 100}%`;
+      }
+      const prevBtn = document.getElementById('btn-prev-slide');
+      const nextBtn = document.getElementById('btn-next-slide');
+      if (prevBtn) prevBtn.disabled = slideNum <= 1;
+      if (nextBtn) nextBtn.disabled = slideNum >= TOTAL_SLIDES;
+
+      document.querySelectorAll('.rail-btn').forEach(function(btn) {
+        const target = Number(btn.getAttribute('data-slide-target'));
+        if (target === slideNum) {
+          btn.classList.add('is-active');
+        } else {
+          btn.classList.remove('is-active');
+        }
+      });
+
+      document.querySelectorAll('.slide-frame').forEach(function(sec) {
+        const s = Number(sec.getAttribute('data-slide'));
+        if (s === slideNum) {
+          sec.classList.add('is-current-slide');
+        } else {
+          sec.classList.remove('is-current-slide');
+        }
+      });
+    }
+
+    function goToSlide(slideNum) {
+      const clamped = Math.max(1, Math.min(TOTAL_SLIDES, Number(slideNum)));
+      updateSlideChrome(clamped);
+      const targetEl = document.getElementById(`slide-${clamped}`);
+      if (targetEl && !appState.presenterMode) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      if (clamped === 7 && burndownChart) {
+        setTimeout(function() { burndownChart.resize(); }, 60);
+      }
+      persistState();
+    }
+
+    function navigateSlide(delta) {
+      goToSlide(appState.currentSlide + delta);
+    }
+
+    function applyPresenterModeUI() {
+      const label = document.getElementById('mode-toggle-label');
+      if (appState.presenterMode) {
+        document.body.classList.add('presenter-mode');
+        if (label) label.textContent = `ดูทุกสไลด์ (Scroll)`;
+      } else {
+        document.body.classList.remove('presenter-mode');
+        if (label) label.textContent = `โหมดนำเสนอทีละสไลด์`;
+      }
+      if (burndownChart) {
+        setTimeout(function() { burndownChart.resize(); }, 60);
+      }
+    }
+
+    function togglePresenterMode() {
+      appState.presenterMode = !appState.presenterMode;
+      applyPresenterModeUI();
+      if (appState.presenterMode) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const cur = document.getElementById(`slide-${appState.currentSlide}`);
+        if (cur) cur.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      persistState();
+    }
+
+    // =========================================================================
+    // SLIDE 02: BACKLOG GROOMING
+    // =========================================================================
+    function filterBacklog(filterKey, btnEl) {
+      appState.backlogFilter = filterKey;
+      document.querySelectorAll('[data-filter]').forEach(function(b) {
+        b.classList.remove('is-active');
+      });
+      if (btnEl) btnEl.classList.add('is-active');
+      renderBacklogList();
+      persistState();
+    }
+
+    function selectBacklogStory(storyId) {
+      appState.selectedBacklogId = storyId;
+      renderBacklogList();
+      renderBacklogDetail();
+      persistState();
+    }
+
+    function getPriorityTagHtml(priority) {
+      if (priority === `must`) return `<span class="tag">Must Have</span>`;
+      if (priority === `should`) return `<span class="tag tag-neutral">Should Have</span>`;
+      if (priority === `could`) return `<span class="tag tag-neutral">Could Have</span>`;
+      return `<span class="tag tag-warning">Spike</span>`;
+    }
+
+    function renderBacklogList() {
+      const container = document.getElementById('backlog-list-container');
+      if (!container) return;
+
+      const filtered = BACKLOG_ITEMS.filter(function(item) {
+        return appState.backlogFilter === `all` || item.priority === appState.backlogFilter;
+      });
+
+      if (!filtered.some(function(item) { return item.id === appState.selectedBacklogId; }) && filtered.length > 0) {
+        appState.selectedBacklogId = filtered[0].id;
+      }
+
+      container.innerHTML = filtered.map(function(item) {
+        const isSel = item.id === appState.selectedBacklogId ? ` is-selected` : ``;
+        return `
+          <button type="button" class="story-btn${isSel}" onclick="selectBacklogStory('${item.id}')">
+            <div>
+              <div style="font-weight:600; font-size:0.9375rem;">${item.title}</div>
+              <div style="font-size:0.8125rem; color:var(--on-surface-variant);">${item.sprint} · ${item.points} pts</div>
+            </div>
+            ${getPriorityTagHtml(item.priority)}
+          </button>
+        `;
+      }).join('');
+
+      renderBacklogDetail();
+    }
+
+    function renderBacklogDetail() {
+      const panel = document.getElementById('backlog-detail-panel');
+      if (!panel) return;
+      const item = BACKLOG_ITEMS.find(function(x) { return x.id === appState.selectedBacklogId; }) || BACKLOG_ITEMS[0];
+      if (!item) return;
+
+      const acHtml = item.ac.map(function(c) {
+        return `<li>${c}</li>`;
+      }).join('');
+      const tasksHtml = item.tasks.map(function(t) {
+        return `<li>${t}</li>`;
+      }).join('');
+
+      panel.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-sm); margin-bottom:var(--space-sm);">
+          <span class="label-en" style="margin:0;">${item.id} · ${item.sprint} · ${item.points} STORY POINTS</span>
+          ${getPriorityTagHtml(item.priority)}
+        </div>
+        <h3 class="subhead">${item.title}</h3>
+        <div class="layer-white" style="margin-bottom:var(--space-md);">
+          <span class="label">User Story (${item.role})</span>
+          <p style="margin:0; font-family:var(--font-label); font-size:0.875rem; line-height:1.55;">${item.story}</p>
+        </div>
+        <div style="margin-bottom:var(--space-md);">
+          <span class="label">Acceptance Criteria (Given–When–Then)</span>
+          <ul class="hairline-list">${acHtml}</ul>
+        </div>
+        <div>
+          <span class="label">Task ย่อยสำหรับแตกงานลง Sprint Board (≤ 1 วัน)</span>
+          <ul class="hairline-list">${tasksHtml}</ul>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // SLIDE 03: PLANNING POKER
+    // =========================================================================
+    function selectPokerStory(idxStr) {
+      appState.pokerStoryIdx = Number(idxStr) || 0;
+      appState.pokerRevealed = false;
+      renderPokerUI();
+      persistState();
+    }
+
+    function pickPokerCard(pts) {
+      appState.pokerUserPick = pts;
+      appState.pokerRevealed = false;
+      renderPokerUI();
+      persistState();
+    }
+
+    function revealPokerVotes() {
+      if (appState.pokerUserPick === null) {
+        appState.pokerUserPick = POKER_STORIES[appState.pokerStoryIdx].teamVotes[1];
+      }
+      appState.pokerRevealed = true;
+      renderPokerUI();
+      persistState();
+    }
+
+    function resetPokerVotes() {
+      appState.pokerUserPick = null;
+      appState.pokerRevealed = false;
+      renderPokerUI();
+      persistState();
+    }
+
+    function renderPokerUI() {
+      const story = POKER_STORIES[appState.pokerStoryIdx] || POKER_STORIES[0];
+      const titleEl = document.getElementById('poker-story-title');
+      const ctxEl = document.getElementById('poker-story-context');
+      const selEl = document.getElementById('poker-story-select');
+      const votesEl = document.getElementById('poker-votes-display');
+
+      if (selEl) selEl.value = String(appState.pokerStoryIdx);
+      if (titleEl) titleEl.textContent = story.title;
+      if (ctxEl) ctxEl.textContent = story.context;
+
+      document.querySelectorAll('.poker-card').forEach(function(card) {
+        const val = Number(card.getAttribute('data-pts'));
+        if (val === appState.pokerUserPick) {
+          card.classList.add('is-picked');
+        } else {
+          card.classList.remove('is-picked');
+        }
+      });
+
+      if (!votesEl) return;
+      if (!appState.pokerRevealed) {
+        const msg = appState.pokerUserPick !== null
+          ? `คุณเลือกไพ่ <strong>${appState.pokerUserPick} pts</strong> แล้ว — กด "เปิดไพ่พร้อมกัน" เพื่อเทียบกับเพื่อนร่วมทีม`
+          : `เลือกไพ่ของคุณทางซ้าย แล้วกด "เปิดไพ่พร้อมกัน" เพื่อดูความเห็นต่างของทีม`;
+        votesEl.innerHTML = `
+          <span class="label">ผลการเปิดไพ่ของทีม (4 Developers)</span>
+          <p style="margin:0; color:var(--on-surface-variant);">${msg}</p>
+        `;
+      } else {
+        const devLabels = [`Dev A`, `Dev B`, `Dev C`, `Dev D`];
+        const cardsHtml = story.teamVotes.map(function(v, i) {
+          return `<div class="layer-white" style="text-align:center; padding:var(--space-sm);"><span class="label" style="margin:0;">${devLabels[i]}</span><strong style="font-family:var(--font-label); font-size:1.25rem;">${v}</strong></div>`;
+        }).join('');
+        votesEl.innerHTML = `
+          <span class="label">ผลการเปิดไพ่พร้อมกัน (ไพ่ของคุณ: ${appState.pokerUserPick} pts)</span>
+          <div style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:var(--space-sm); margin:var(--space-sm) 0;">
+            ${cardsHtml}
+          </div>
+          <p style="margin:0; font-size:0.9375rem;"><strong>ข้อสรุปหลังอภิปราย:</strong> ${story.outlierNote}</p>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // SLIDE 04: BOILERPLATE TREE
+    // =========================================================================
+    function selectTreeNode(nodeKey, btnEl) {
+      appState.selectedTreeNode = nodeKey;
+      document.querySelectorAll('.tree-item').forEach(function(item) {
+        item.classList.remove('is-active');
+      });
+      if (btnEl) btnEl.classList.add('is-active');
+      renderBoilerplateInspector();
+      persistState();
+    }
+
+    function renderBoilerplateInspector() {
+      const box = document.getElementById('boilerplate-inspector');
+      if (!box) return;
+      const node = BOILERPLATE_NODES[appState.selectedTreeNode] || BOILERPLATE_NODES.root;
+      box.innerHTML = `
+        <span class="label-en">${node.role}</span>
+        <h3 class="subhead" style="font-family:var(--font-label);">${node.name}</h3>
+        <p style="margin:0 0 var(--space-sm); color:var(--on-surface-variant);">${node.desc}</p>
+        <pre class="code-panel">${node.snippet}</pre>
+      `;
+    }
+
+    // =========================================================================
+    // SLIDE 05: DOCKER ENVIRONMENT
+    // =========================================================================
+    function switchDockerTab(tabKey, btnEl) {
+      appState.dockerTab = tabKey;
+      document.querySelectorAll('[data-docker-tab]').forEach(function(b) {
+        b.classList.remove('is-active');
+      });
+      if (btnEl) btnEl.classList.add('is-active');
+      renderDockerCode();
+      persistState();
+    }
+
+    function renderDockerCode() {
+      const el = document.getElementById('docker-code-view');
+      if (!el) return;
+      el.textContent = DOCKER_SNIPPETS[appState.dockerTab] || DOCKER_SNIPPETS.compose;
+    }
+
+    function copyDockerSnippet() {
+      const text = DOCKER_SNIPPETS[appState.dockerTab] || ``;
+      const msgEl = document.getElementById('copy-status-msg');
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(function() {
+          if (msgEl) msgEl.textContent = `คัดลอกโค้ดเข้าสู่คลิปบอร์ดแล้ว`;
+        }).catch(function() {
+          if (msgEl) msgEl.textContent = `เลือกข้อความจากกล่องสีดำด้านบนเพื่อคัดลอก`;
+        });
+      } else if (msgEl) {
+        msgEl.textContent = `เลือกข้อความจากกล่องสีดำด้านบนเพื่อคัดลอก`;
+      }
+    }
+
+    function selectDockerError(errKey, btnEl) {
+      appState.dockerError = errKey;
+      document.querySelectorAll('[data-err]').forEach(function(b) {
+        b.classList.remove('is-selected');
+      });
+      if (btnEl) btnEl.classList.add('is-selected');
+      renderDockerError();
+      persistState();
+    }
+
+    function renderDockerError() {
+      const el = document.getElementById('docker-error-detail');
+      if (!el) return;
+      const info = DOCKER_ERRORS[appState.dockerError] || DOCKER_ERRORS.port;
+      el.innerHTML = `
+        <strong style="display:block; margin-bottom:var(--space-xs);">${info.title}</strong>
+        <p style="margin:0 0 var(--space-xs); font-size:0.875rem; color:var(--on-surface-variant);"><strong>สาเหตุ:</strong> ${info.cause}</p>
+        <p style="margin:0; font-size:0.875rem;"><strong>วิธีแก้:</strong> ${info.fix}</p>
+      `;
+    }
+
+    // =========================================================================
+    // SLIDE 06: KANBAN SIMULATION
+    // =========================================================================
+    function moveKanbanTask(taskId, direction) {
+      const task = appState.kanbanTasks.find(function(t) { return t.id === taskId; });
+      if (!task) return;
+      const idx = KANBAN_COLS.indexOf(task.col);
+      const nextIdx = idx + direction;
+      if (nextIdx >= 0 && nextIdx < KANBAN_COLS.length) {
+        task.col = KANBAN_COLS[nextIdx];
+        renderKanbanBoard();
+        persistState();
+      }
+    }
+
+    function resetKanbanBoard() {
+      appState.kanbanTasks = JSON.parse(JSON.stringify(INITIAL_KANBAN_TASKS));
+      renderKanbanBoard();
+      persistState();
+    }
+
+    function renderKanbanBoard() {
+      const board = document.getElementById('kanban-board');
+      if (!board) return;
+
+      board.innerHTML = KANBAN_COLS.map(function(colName) {
+        const tasks = appState.kanbanTasks.filter(function(t) { return t.col === colName; });
+        const colIdx = KANBAN_COLS.indexOf(colName);
+        const cardsHtml = tasks.map(function(t) {
+          return `
+            <div class="kanban-task">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="label" style="margin:0; color:var(--primary);">${t.id} · ${t.story}</span>
+                <span style="font-size:0.75rem; color:var(--on-surface-variant);">${t.owner}</span>
+              </div>
+              <div style="font-size:0.875rem; font-weight:500;">${t.title}</div>
+              <div class="kanban-task-actions">
+                <button type="button" class="mini-btn" onclick="moveKanbanTask('${t.id}', -1)" ${colIdx === 0 ? 'disabled' : ''}>← ย้อน</button>
+                <button type="button" class="mini-btn" onclick="moveKanbanTask('${t.id}', 1)" ${colIdx === KANBAN_COLS.length - 1 ? 'disabled' : ''}>เลื่อน →</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="kanban-col">
+            <div class="kanban-col-head">
+              <strong style="font-family:var(--font-label); font-size:0.8125rem;">${colName}</strong>
+              <span class="tag tag-neutral">${tasks.length}</span>
+            </div>
+            ${cardsHtml || '<p style="margin:0; font-size:0.8125rem; color:var(--on-surface-variant);">ไม่มีงานในคอลัมน์นี้</p>'}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // SLIDE 07: SPRINT CAPACITY & CHART.JS BURNDOWN
+    // =========================================================================
+    function syncFocusFromSlider(val) {
+      const numEl = document.getElementById('cap-focus-number');
+      if (numEl) numEl.value = val;
+      appState.capFocus = Number(val);
+      recalcCapacity();
+    }
+
+    function syncFocusFromNumber(val) {
+      const clamped = Math.max(50, Math.min(90, Number(val) || 75));
+      const sliderEl = document.getElementById('cap-focus-slider');
+      if (sliderEl) sliderEl.value = String(clamped);
+      appState.capFocus = clamped;
+      recalcCapacity();
+    }
+
+    function toggleCommittedStory(storyId) {
+      const idx = appState.committedStoryIds.indexOf(storyId);
+      if (idx === -1) {
+        appState.committedStoryIds.push(storyId);
+      } else {
+        appState.committedStoryIds.splice(idx, 1);
+      }
+      renderCommitStoryToggles();
+      recalcCapacity();
+    }
+
+    function renderCommitStoryToggles() {
+      const box = document.getElementById('commit-story-toggles');
+      if (!box) return;
+      const sprint1Candidates = BACKLOG_ITEMS.filter(function(item) {
+        return item.sprint === `Sprint 1` || item.id === `US-201`;
+      });
+
+      box.innerHTML = sprint1Candidates.map(function(item) {
+        const checked = appState.committedStoryIds.indexOf(item.id) !== -1;
+        return `
+          <label class="check-row${checked ? ' is-checked' : ''}" style="padding:var(--space-sm) var(--space-md);">
+            <input type="checkbox" class="check-box" ${checked ? 'checked' : ''} onchange="toggleCommittedStory('${item.id}')">
+            <div style="flex:1;">
+              <div style="font-size:0.875rem; font-weight:500;">${item.title}</div>
+              <div style="font-size:0.75rem; color:var(--on-surface-variant);">${item.points} Story Points · ${item.sprint}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function recalcCapacity() {
+      const memEl = document.getElementById('cap-members');
+      const wkEl = document.getElementById('cap-weeks');
+      const focusLabel = document.getElementById('cap-focus-label');
+
+      const members = Math.max(2, Math.min(8, Number(memEl ? memEl.value : 4) || 4));
+      const weeks = Number(wkEl ? wkEl.value : 2) || 2;
+      const focus = appState.capFocus;
+
+      appState.capMembers = members;
+      appState.capWeeks = weeks;
+
+      if (focusLabel) focusLabel.textContent = `${focus}%`;
+
+      // Assume student project baseline ~8 productive hours/week per person, ~3.5 hours per Story Point
+      const availableHours = members * weeks * 8 * (focus / 100);
+      const maxPts = Math.max(4, Math.round(availableHours / 2.65));
+
+      const committedPts = BACKLOG_ITEMS
+        .filter(function(item) { return appState.committedStoryIds.indexOf(item.id) !== -1; })
+        .reduce(function(sum, item) { return sum + item.points; }, 0);
+
+      const maxEl = document.getElementById('cap-max-pts');
+      const noteEl = document.getElementById('cap-hours-note');
+      const comEl = document.getElementById('cap-committed-pts');
+      const tagEl = document.getElementById('cap-status-tag');
+
+      if (maxEl) maxEl.textContent = `${maxPts} pts`;
+      if (noteEl) noteEl.textContent = `คำนวณจาก ${members} คน · ${weeks} สัปดาห์ · Focus ${focus}% (~${Math.round(availableHours)} ชม.)`;
+      if (comEl) comEl.textContent = `${committedPts} pts`;
+
+      const ratio = maxPts > 0 ? Math.round((committedPts / maxPts) * 100) : 0;
+      if (tagEl) {
+        tagEl.className = `tag`;
+        if (committedPts === 0) {
+          tagEl.classList.add('tag-neutral');
+          tagEl.textContent = `ยังไม่ได้เลือกงาน`;
+        } else if (ratio > 100) {
+          tagEl.classList.add('tag-error');
+          tagEl.textContent = `เกินกำลังทีม (${ratio}% — เสี่ยงงานค้าง)`;
+        } else if (ratio >= 75) {
+          tagEl.classList.add('tag-positive');
+          tagEl.textContent = `สมดุลดี (${ratio}% ของ Capacity)`;
+        } else {
+          tagEl.classList.add('tag-warning');
+          tagEl.textContent = `เผื่อเวลาไว้มาก (${ratio}% — เพิ่ม Spike ได้)`;
+        }
+      }
+
+      updateBurndownChart(weeks, committedPts, maxPts);
+      persistState();
+    }
+
+    function updateBurndownChart(weeks, committedPts, maxPts) {
+      const canvas = document.getElementById('burndown-chart');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      const styles = getComputedStyle(document.documentElement);
+      const primaryColor = styles.getPropertyValue('--data-1').trim() || '#0f62fe';
+      const contextColor = styles.getPropertyValue('--data-context').trim() || '#8d8d8d';
+      const errorColor = styles.getPropertyValue('--error').trim() || '#da1e28';
+      const gridColor = styles.getPropertyValue('--outline-variant').trim() || '#e0e0e0';
+      const textColor = styles.getPropertyValue('--on-surface-variant').trim() || '#525252';
+
+      const totalDays = weeks * 7;
+      const labels = [];
+      const idealSeries = [];
+      const capacityCeiling = [];
+
+      for (let d = 0; d <= totalDays; d += (weeks === 2 ? 2 : 1)) {
+        labels.push(`Day ${d}`);
+        const remain = Math.max(0, Number((committedPts * (1 - d / totalDays)).toFixed(1)));
+        idealSeries.push(remain);
+        capacityCeiling.push(maxPts);
+      }
+
+      const lineColor = committedPts > maxPts ? errorColor : primaryColor;
+
+      if (burndownChart) {
+        burndownChart.data.labels = labels;
+        burndownChart.data.datasets[0].data = idealSeries;
+        burndownChart.data.datasets[0].borderColor = lineColor;
+        burndownChart.data.datasets[0].backgroundColor = lineColor;
+        burndownChart.data.datasets[1].data = capacityCeiling;
+        burndownChart.update();
+        return;
+      }
+
+      burndownChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: `Ideal Burndown (Committed: pts คงเหลือ)`,
+              data: idealSeries,
+              borderColor: lineColor,
+              backgroundColor: lineColor,
+              borderWidth: 2,
+              tension: 0,
+              pointRadius: 3
+            },
+            {
+              label: `เพดาน Capacity ของทีม (pts)`,
+              data: capacityCeiling,
+              borderColor: contextColor,
+              borderDash: [5, 5],
+              borderWidth: 1.5,
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'start',
+              labels: {
+                color: textColor,
+                boxWidth: 12,
+                boxHeight: 12
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: gridColor },
+              ticks: { color: textColor }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              ticks: { color: textColor },
+              title: {
+                display: true,
+                text: `Story Points`,
+                color: textColor
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // SLIDE 09: DELIVERABLES CHECKLIST & EXPORT
+    // =========================================================================
+    function toggleDeliverable(itemId) {
+      const idx = appState.checkedDeliverables.indexOf(itemId);
+      if (idx === -1) {
+        appState.checkedDeliverables.push(itemId);
+      } else {
+        appState.checkedDeliverables.splice(idx, 1);
+      }
+      renderDeliverablesChecklist();
+      persistState();
+    }
+
+    function renderDeliverablesChecklist() {
+      const box = document.getElementById('deliverables-checklist');
+      const pctEl = document.getElementById('deliverables-percent');
+      const railCountEl = document.getElementById('rail-checklist-count');
+      const statusTextEl = document.getElementById('deliverables-status-text');
+
+      if (!box) return;
+      const doneCount = appState.checkedDeliverables.length;
+      const total = DELIVERABLES_LIST.length;
+      const pct = Math.round((doneCount / total) * 100);
+
+      box.innerHTML = DELIVERABLES_LIST.map(function(item) {
+        const checked = appState.checkedDeliverables.indexOf(item.id) !== -1;
+        return `
+          <label class="check-row${checked ? ' is-checked' : ''}">
+            <input type="checkbox" class="check-box" ${checked ? 'checked' : ''} onchange="toggleDeliverable('${item.id}')">
+            <div>
+              <div style="font-weight:600; font-size:0.9375rem;">${item.title}</div>
+              <div style="font-size:0.875rem; color:var(--on-surface-variant); margin-top:2px;">${item.desc}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (railCountEl) railCountEl.textContent = `${doneCount} / ${total}`;
+      if (statusTextEl) {
+        if (doneCount === 0) {
+          statusTextEl.textContent = `ยังไม่ได้ทำเครื่องหมายรายการส่งมอบ กดเลือกทีละข้อทางซ้ายเพื่อติดตามงานกลุ่ม`;
+        } else if (doneCount === total) {
+          statusTextEl.textContent = `ครบทั้ง 6 รายการแล้ว กลุ่มพร้อมเริ่มพัฒนา Sprint 1 อย่างเป็นทางการ`;
+        } else {
+          statusTextEl.textContent = `ดำเนินการแล้ว ${doneCount} จาก ${total} รายการ เหลืออีก ${total - doneCount} รายการ`;
+        }
+      }
+    }
+
+    function updateTeamName(val) {
+      appState.teamName = val || `Group-POS-01`;
+      persistState();
+    }
+
+    function exportSprintCommitment() {
+      const committedStories = BACKLOG_ITEMS.filter(function(item) {
+        return appState.committedStoryIds.indexOf(item.id) !== -1;
+      });
+      const totalPts = committedStories.reduce(function(s, x) { return s + x.points; }, 0);
+      const checkedLabels = DELIVERABLES_LIST.map(function(d) {
+        const mark = appState.checkedDeliverables.indexOf(d.id) !== -1 ? `[x]` : `[ ]`;
+        return `- ${mark} ${d.title}`;
+      }).join('\n');
+
+      const storiesText = committedStories.map(function(s) {
+        return `- ${s.id} (${s.points} pts): ${s.title}`;
+      }).join('\n');
+
+      const mdContent = `# Sprint 1 Commitment — ${appState.teamName}\n` +
+        `Course: 1145 204 Sophomore Project (Week 6)\n` +
+        `Project: Grocery POS Platform\n\n` +
+        `## Sprint 1 Goal\n` +
+        `ส่งมอบโครงสร้างฐานข้อมูล 6 ตาราง ระบบ Login/RBAC และสภาพแวดล้อม Docker Compose ที่รันทดสอบผ่าน CI\n\n` +
+        `## Team Capacity\n` +
+        `- Members: ${appState.capMembers}\n` +
+        `- Sprint Length: ${appState.capWeeks} weeks\n` +
+        `- Focus Factor: ${appState.capFocus}%\n` +
+        `- Total Committed Story Points: ${totalPts} pts\n\n` +
+        `## Committed Backlog Items\n${storiesText || '- (None selected)'}\n\n` +
+        `## Week 6 Setup Checklist\n${checkedLabels}\n`;
+
+      const feedback = document.getElementById('export-feedback-msg');
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+        window.notebookAppApi.triggerFileDownload({
+          content: mdContent,
+          contentType: 'text/plain',
+          encoding: 'UTF-8',
+          filename: `${appState.teamName.replace(/[^a-zA-Z0-9_-]/g, '_')}_sprint1_commitment.md`
+        });
+        if (feedback) feedback.textContent = `ดาวน์โหลดไฟล์สรุป Sprint 1 เรียบร้อยแล้ว`;
+      } else {
+        const blob = new Blob([mdContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `sprint1_commitment.md`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        if (feedback) feedback.textContent = `ดาวน์โหลดไฟล์สรุป Sprint 1 เรียบร้อยแล้ว`;
+      }
+    }
+
+    function resetAllProgress(btn) {
+      if (btn && btn.dataset.armed !== 'true') {
+        btn.dataset.armed = 'true';
+        const span = btn.querySelector('span');
+        if (span) span.textContent = `กดอีกครั้งเพื่อยืนยันการล้างข้อมูล`;
+        return;
+      }
+      if (btn) {
+        btn.dataset.armed = 'false';
+        const span = btn.querySelector('span');
+        if (span) span.textContent = `ล้างข้อมูลความคืบหน้า`;
+      }
+      appState.checkedDeliverables = [];
+      appState.pokerUserPick = null;
+      appState.pokerRevealed = false;
+      appState.kanbanTasks = JSON.parse(JSON.stringify(INITIAL_KANBAN_TASKS));
+      appState.committedStoryIds = [`US-101`, `US-102`, `US-103`, `US-104`];
+      renderPokerUI();
+      renderKanbanBoard();
+      renderCommitStoryToggles();
+      recalcCapacity();
+      renderDeliverablesChecklist();
+      const fb = document.getElementById('export-feedback-msg');
+      if (fb) fb.textContent = `ล้างข้อมูลกลับสู่ค่าเริ่มต้นแล้ว`;
+      persistState();
+    }
+
+    // =========================================================================
+    // INITIALIZATION & STATE RESTORE
+    // =========================================================================
+    function restoreUIState(saved) {
+      isRestoring = true;
+      if (saved && typeof saved === 'object') {
+        appState = Object.assign({}, appState, saved);
+      }
+
+      const memEl = document.getElementById('cap-members');
+      const wkEl = document.getElementById('cap-weeks');
+      const focusSlider = document.getElementById('cap-focus-slider');
+      const focusNum = document.getElementById('cap-focus-number');
+      const teamEl = document.getElementById('team-name-input');
+
+      if (memEl) memEl.value = String(appState.capMembers);
+      if (wkEl) wkEl.value = String(appState.capWeeks);
+      if (focusSlider) focusSlider.value = String(appState.capFocus);
+      if (focusNum) focusNum.value = String(appState.capFocus);
+      if (teamEl) teamEl.value = appState.teamName;
+
+      // Sync active filter tab
+      document.querySelectorAll('[data-filter]').forEach(function(b) {
+        b.classList.toggle('is-active', b.getAttribute('data-filter') === appState.backlogFilter);
+      });
+      // Sync tree node
+      document.querySelectorAll('.tree-item').forEach(function(item) {
+        item.classList.toggle('is-active', item.getAttribute('data-node') === appState.selectedTreeNode);
+      });
+      // Sync docker tabs & error
+      document.querySelectorAll('[data-docker-tab]').forEach(function(b) {
+        b.classList.toggle('is-active', b.getAttribute('data-docker-tab') === appState.dockerTab);
+      });
+      document.querySelectorAll('[data-err]').forEach(function(b) {
+        b.classList.toggle('is-selected', b.getAttribute('data-err') === appState.dockerError);
+      });
+
+      applyPresenterModeUI();
+      updateSlideChrome(appState.currentSlide);
+      renderBacklogList();
+      renderPokerUI();
+      renderBoilerplateInspector();
+      renderDockerCode();
+      renderDockerError();
+      renderKanbanBoard();
+      renderCommitStoryToggles();
+      recalcCapacity();
+      renderDeliverablesChecklist();
+      isRestoring = false;
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+
+      let saved = null;
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+        try {
+          saved = await window.notebookAppApi.getAppState();
+        } catch (err) {
+          saved = null;
+        }
+      }
+
+      restoreUIState(saved);
+
+      // Track active slide while scrolling in Scroll Deck mode
+      if (typeof IntersectionObserver !== 'undefined') {
+        const observer = new IntersectionObserver(function(entries) {
+          if (appState.presenterMode) return;
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              const s = Number(entry.target.getAttribute('data-slide'));
+              if (s && s !== appState.currentSlide) {
+                updateSlideChrome(s);
+              }
+            }
+          });
+        }, { threshold: 0.35 });
+
+        document.querySelectorAll('.slide-frame').forEach(function(sec) {
+          observer.observe(sec);
+        });
+      }
+
+      // Keyboard navigation for classroom slide projection
+      document.addEventListener('keydown', function(e) {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          navigateSlide(1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          navigateSlide(-1);
+        }
+      });
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    });
+  </script>
+</body>
+</html>

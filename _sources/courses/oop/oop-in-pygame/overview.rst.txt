@@ -34,7 +34,7 @@ Pygame เป็นไลบรารี (library) สำหรับการ�
 
  * กรณีที่ที่ใช้ระบบปฏิบัติการ Windows และใช้งาน powershell หรือ command prompt
 
-.. code-block:: powershell 
+.. code-block:: bash
 
    .\pygameenv\Scripts\activate
 

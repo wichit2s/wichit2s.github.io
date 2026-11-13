@@ -10,7 +10,6 @@ wichit2s
    :maxdepth: 2
    :caption: :
 
-   .. cv/index
    courses/index
    workshops/index
 

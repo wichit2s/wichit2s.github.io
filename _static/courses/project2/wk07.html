@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="carbon">
+  <title>สัปดาห์ที่ 7: การพัฒนา Sprint 1 และการตรวจโค้ด — 1145 204 Sophomore Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Carbon surfaces */
+      --background: #ffffff;
+      --surface-container-low: #f4f4f4;
+      --surface-container: #f4f4f4;
+      --surface-container-high: #e0e0e0;
+
+      /* Carbon ink */
+      --on-surface: #161616;
+      --on-surface-variant: #525252;
+
+      /* Carbon rules */
+      --outline: #8d8d8d;
+      --outline-variant: #e0e0e0;
+
+      /* Carbon accents */
+      --primary: #0f62fe;
+      --primary-hover: #0353e9;
+      --on-primary: #ffffff;
+      --primary-container: #d0e2ff;
+      --on-primary-container: #161616;
+      --secondary: #6f6f6f;
+      --tertiary: #198038;
+      --tertiary-container: #defbe6;
+      --on-tertiary-container: #0e6027;
+      --error: #da1e28;
+      --error-container: #fff1f1;
+      --on-error: #ffffff;
+      --warning: #b28600;
+      --warning-container: #fcf4d6;
+      --positive: #198038;
+      --focus: #0f62fe;
+
+      /* Data series */
+      --data-1: #0f62fe;
+      --data-2: #6929c4;
+      --data-3: #005d5d;
+      --data-4: #9f1853;
+      --data-context: #8d8d8d;
+
+      /* Fonts (Thai-first with IBM Plex pairing) */
+      --font-headline: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-body: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+      --font-label: 'IBM Plex Mono', 'IBM Plex Sans Thai', monospace;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.25rem;
+      --rounded-full: 0.75rem;
+
+      /* Style effects */
+      --shadow-1: 0 2px 6px rgb(0 0 0 / 0.1);
+      --shadow-2: 0 4px 12px rgb(0 0 0 / 0.12);
+      --rule: 1px solid var(--outline-variant);
+      --field-rule: 1px solid var(--outline);
+      --indicator: 2px solid var(--primary);
+      --state-bar-blue: 3px solid var(--primary);
+      --state-bar-green: 3px solid var(--tertiary);
+      --state-bar-red: 3px solid var(--error);
+      --state-bar-warn: 3px solid var(--warning);
+
+      /* Narrative type scale */
+      --display-size: clamp(2rem, 1.35rem + 2.4vw, 3.25rem);
+      --headline-size: clamp(1.5rem, 1.15rem + 1.3vw, 2.125rem);
+      --subhead-size: clamp(1.125rem, 1rem + 0.45vw, 1.375rem);
+      --body-size: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Top Course Masthead */
+    .masthead {
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-lg);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-lg);
+      align-items: end;
+    }
+
+    .mono-en {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+    }
+
+    .thai-label {
+      font-family: var(--font-body);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--on-surface-variant);
+    }
+
+    .headline {
+      font-family: var(--font-headline);
+      font-weight: 300;
+      letter-spacing: 0;
+      line-height: 1.22;
+      margin: 0;
+    }
+    .headline strong { font-weight: 600; }
+
+    .display-title {
+      font-size: var(--display-size);
+      margin-top: var(--space-xs);
+      margin-bottom: var(--space-sm);
+    }
+
+    .lede {
+      max-width: 65ch;
+      color: var(--on-surface-variant);
+      margin: 0;
+    }
+
+    /* Slide Navigation Bar */
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      background: var(--surface-container);
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule);
+    }
+
+    .deck-controls-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .deck-controls-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .slide-counter {
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      color: var(--on-surface);
+      padding: 0 var(--space-sm);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--surface-container-high);
+      position: relative;
+      margin-top: var(--space-xs);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 10%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    /* Buttons (Carbon square style) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: 0;
+      border: 1px solid transparent;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+      text-align: left;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-secondary:hover {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--on-surface);
+      border-color: var(--outline-variant);
+    }
+    .btn-ghost:hover {
+      background: var(--surface-container-high);
+    }
+    .btn-danger {
+      background: transparent;
+      color: var(--error);
+      border-color: var(--error);
+    }
+    .btn-danger:hover {
+      background: var(--error-container);
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Slide Index Pills */
+    .slide-index-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+      gap: var(--space-xs);
+      margin-top: var(--space-sm);
+    }
+    .index-btn {
+      background: var(--surface-container);
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--on-surface-variant);
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-sm);
+      font-size: 0.875rem;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .index-btn:hover {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+    .index-btn.is-active {
+      border-bottom: var(--indicator);
+      background: var(--background);
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+    .index-num {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* Slide Sections */
+    .slides-stack {
+      display: grid;
+      gap: var(--space-2xl);
+    }
+
+    .slide {
+      background: var(--background);
+      border-top: 2px solid var(--on-surface);
+      padding-top: var(--space-lg);
+      padding-bottom: var(--space-xl);
+      border-bottom: var(--rule);
+    }
+
+    .deck-presentation-mode .slide {
+      display: none;
+    }
+    .deck-presentation-mode .slide.is-current {
+      display: block;
+    }
+
+    .slide-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: var(--rule);
+      margin-bottom: var(--space-lg);
+    }
+
+    .slide-title {
+      font-size: var(--headline-size);
+    }
+
+    .slide-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Carbon Layers & Tags */
+    .layer {
+      background: var(--surface-container);
+      border-radius: 0;
+      padding: var(--space-md);
+    }
+    .layer .layer {
+      background: var(--surface-container-high);
+    }
+
+    .key-tile {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-bottom: var(--indicator);
+    }
+
+    .key-value {
+      font-family: var(--font-label);
+      font-weight: 300;
+      font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+      line-height: 1.2;
+      color: var(--on-surface);
+      margin: var(--space-xs) 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 var(--space-sm);
+      border-radius: var(--rounded-full);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .tag-green {
+      background: var(--tertiary-container);
+      color: var(--on-tertiary-container);
+    }
+    .tag-red {
+      background: var(--error-container);
+      color: var(--error);
+    }
+    .tag-warn {
+      background: var(--warning-container);
+      color: var(--on-surface);
+    }
+    .tag-gray {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+
+    /* Asymmetric & Card Grids */
+    .split-8-4 {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .split-5-7 {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .split-6-6 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    /* Notification / Callout Strip */
+    .callout {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-left: var(--state-bar-blue);
+    }
+    .callout-green { border-left: var(--state-bar-green); }
+    .callout-red { border-left: var(--state-bar-red); }
+    .callout-warn { border-left: var(--state-bar-warn); }
+
+    /* Tables */
+    .data-table-wrap {
+      overflow-x: auto;
+      border-bottom: var(--rule);
+    }
+    table.carbon-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9375rem;
+    }
+    table.carbon-table thead th {
+      background: var(--surface-container-high);
+      padding: var(--space-sm) var(--space-md);
+      font-weight: 600;
+      color: var(--on-surface);
+      border-bottom: var(--rule);
+    }
+    table.carbon-table tbody tr:nth-child(even) {
+      background: var(--surface-container);
+    }
+    table.carbon-table tbody td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule);
+      vertical-align: top;
+    }
+    table.carbon-table tbody tr.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .num-cell {
+      font-family: var(--font-label);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Code Blocks */
+    .code-panel {
+      background: var(--surface-container);
+      border-left: var(--state-bar-blue);
+      padding: var(--space-md);
+      font-family: var(--font-label);
+      font-size: 0.84rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      white-space: pre;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .code-panel-bad {
+      border-left: var(--state-bar-red);
+    }
+    .code-panel-good {
+      border-left: var(--state-bar-green);
+    }
+
+    /* Interactive Tabs (local inside Slide 4 & 7) */
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      border-bottom: var(--rule);
+      margin-bottom: var(--space-md);
+    }
+    .tab-btn {
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: var(--space-sm) var(--space-xs);
+      min-height: 44px;
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+    }
+    .tab-btn:hover {
+      color: var(--on-surface);
+    }
+    .tab-btn.is-active {
+      border-bottom: var(--indicator);
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+
+    /* Interactive Schema Nodes */
+    .schema-list {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .schema-btn {
+      width: 100%;
+      background: var(--surface-container);
+      border: 0;
+      border-left: 3px solid transparent;
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .schema-btn:hover {
+      background: var(--surface-container-high);
+    }
+    .schema-btn.is-selected {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-left: 3px solid var(--primary);
+      font-weight: 600;
+    }
+
+    /* Kanban Columns */
+    .kanban-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+    .kanban-col {
+      background: var(--surface-container);
+      padding: var(--space-sm);
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .kanban-col-head {
+      padding-bottom: var(--space-xs);
+      border-bottom: var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kanban-card {
+      background: var(--background);
+      padding: var(--space-sm);
+      border-left: 3px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .kanban-card-actions {
+      display: flex;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+      margin-top: var(--space-xs);
+    }
+    .mini-btn {
+      min-height: 32px;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      color: var(--on-surface);
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .mini-btn:hover:not(:disabled) {
+      background: var(--primary-container);
+      border-color: var(--primary);
+    }
+    .mini-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Interactive Code Review Spotter */
+    .review-line {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: var(--space-sm);
+      padding: var(--space-xs) var(--space-sm);
+      font-family: var(--font-label);
+      font-size: 0.82rem;
+      border-bottom: var(--rule);
+      background: var(--background);
+      align-items: start;
+    }
+    .review-line-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      font-family: inherit;
+      font-size: inherit;
+      color: var(--on-surface);
+      cursor: pointer;
+      min-height: 28px;
+    }
+    .review-line.has-issue-selected {
+      background: var(--primary-container);
+    }
+    .review-line.is-verified-bug {
+      background: var(--error-container);
+    }
+    .review-line.is-verified-clean {
+      background: var(--surface-container);
+    }
+
+    /* Form Controls (Carbon underline inputs) */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+    }
+    .carbon-input, .carbon-select, .carbon-textarea {
+      width: 100%;
+      background: var(--surface-container);
+      border: 0;
+      border-bottom: var(--field-rule);
+      border-radius: 0;
+      padding: var(--space-sm) var(--space-md);
+      color: var(--on-surface);
+      font-size: 0.9375rem;
+    }
+    .carbon-input, .carbon-select {
+      height: 44px;
+    }
+    .carbon-select {
+      padding-right: var(--space-xl);
+    }
+    .carbon-textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+    .carbon-input:focus-visible, .carbon-select:focus-visible, .carbon-textarea:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 0;
+    }
+
+    .form-row-end {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: end;
+    }
+
+    /* Checklist Rows */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container);
+      border-bottom: var(--rule);
+      cursor: pointer;
+      min-height: 44px;
+    }
+    .check-row:hover {
+      background: var(--surface-container-high);
+    }
+    .check-row input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Inline list separators */
+    .ruled-list > * + * {
+      border-top: var(--rule);
+      padding-top: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+
+    .status-banner {
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container);
+      border-left: var(--state-bar-blue);
+      font-size: 0.875rem;
+    }
+    .status-banner.is-success {
+      background: var(--tertiary-container);
+      border-left: var(--state-bar-green);
+      color: var(--on-tertiary-container);
+    }
+    .status-banner.is-error {
+      background: var(--error-container);
+      border-left: var(--state-bar-red);
+      color: var(--error);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .split-8-4, .split-5-7, .split-6-6 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .kanban-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+      }
+      .masthead {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .kanban-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid" id="app-root">
+    <!-- Static Masthead -->
+    <header class="masthead">
+      <div>
+        <div class="mono-en"><a href="../../../courses/project2/index.html">COURSE 1145 204 SOPHOMORE PROJECT</a> • WEEK 7 LECTURE DECK</div>
+        <h1 class="headline display-title">
+          <strong>Sprint 1 </strong> Development &amp; Code Review
+        </h1>
+        <p class="lede">
+          แนวทางการพัฒนา Core Modules ใน Sprint 1 ให้มีโครงสร้างสะอาดตามหลัก Clean Code และ SOLID
+          พร้อมกระบวนการ Peer Code Review เวิร์กโฟลว์ Pull Request บน GitHub Projects
+          และการแปลงข้อเสนอแนะจากอาจารย์ที่ปรึกษาเป็นหลักฐานการปรับปรุงที่วัดผลได้
+        </p>
+      </div>
+      <div class="layer" style="min-width: 240px;">
+        <div class="thai-label">เป้าหมายหลักสัปดาห์ที่ 7</div>
+        <div class="key-value">Sprint 1 → PR Ready</div>
+        <div class="thai-label" style="color: var(--on-surface);">Database + Auth + Core POS Logic</div>
+      </div>
+    </header>
+
+    <!-- Slide Navigation & Mode Controls -->
+    <nav class="deck-controls" aria-label="ตัวควบคุมสไลด์">
+      <div class="deck-controls-left">
+        <button type="button" class="btn btn-ghost" id="btn-prev-slide" onclick="stepSlide(-1)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+          สไลด์ก่อนหน้า
+        </button>
+        <span class="slide-counter" id="slide-counter">สไลด์ 1 / 10</span>
+        <button type="button" class="btn btn-primary" id="btn-next-slide" onclick="stepSlide(1)">
+          สไลด์ถัดไป
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+        </button>
+      </div>
+      <div class="deck-controls-right">
+        <button type="button" class="btn btn-secondary" id="btn-toggle-mode" onclick="toggleDeckMode()">
+          สลับเป็นโหมดนำเสนอทีละสไลด์
+        </button>
+        <button type="button" class="btn btn-ghost" id="btn-toggle-index" onclick="toggleSlideIndex()">
+          สารบัญสไลด์ (10)
+        </button>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="deck-progress-fill"></div>
+      </div>
+      <div class="slide-index-strip" id="slide-index-strip" hidden></div>
+    </nav>
+
+    <!-- Main Slide Stack -->
+    <main class="slides-stack" id="slides-container">
+
+      <!-- SLIDE 1 -->
+      <section class="slide is-current" id="slide-1" data-slide-index="0" data-slide-title="ภาพรวมและเป้าหมาย Sprint 1">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 01 • WEEK 7 OVERVIEW</div>
+            <h2 class="headline slide-title"><strong>ทำไม "โค้ดที่รันผ่าน"</strong> จึงยังไม่พอสำหรับ Sprint 1</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">1145 204</span>
+            <span class="tag tag-gray">Grocery POS</span>
+          </div>
+        </div>
+
+        <div class="split-8-4">
+          <div class="ruled-list">
+            <div class="callout">
+              <strong>ประเด็นสำคัญประจำสัปดาห์:</strong> ในการพัฒนาโครงงานซอฟต์แวร์ระดับปี 2 เป้าหมายของ Sprint 1 ไม่ใช่เพียงการเขียนให้หน้าจอเปิดติด แต่คือการสร้างรากฐานสถาปัตยกรรมที่ทีมทุกคนอ่านเข้าใจ แก้ไขต่อได้ใน Sprint 2–3 และมีหลักฐานการทำงานบน Git ที่ตรวจสอบได้
+            </div>
+            <div>
+              <h3 class="headline" style="font-size: var(--subhead-size); margin-bottom: var(--space-sm);"><strong>5 หัวข้อหลักในสัปดาห์ที่ 7</strong></h3>
+              <table class="carbon-table">
+                <thead>
+                  <tr>
+                    <th style="width: 72px;">ลำดับ</th>
+                    <th>หัวข้อการเรียนรู้</th>
+                    <th>ผลลัพธ์ที่คาดหวังกับ Grocery POS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="num-cell">01</td>
+                    <td><strong>Core Module Development</strong></td>
+                    <td>ออกแบบ Walking Skeleton ของฐานข้อมูล Auth และคลังสินค้า</td>
+                  </tr>
+                  <tr>
+                    <td class="num-cell">02</td>
+                    <td><strong>Clean Code &amp; SOLID</strong></td>
+                    <td>แยกความรับผิดชอบ Controller / Service / Repository ลดโค้ดซ้ำซ้อน</td>
+                  </tr>
+                  <tr>
+                    <td class="num-cell">03</td>
+                    <td><strong>Peer Code Review</strong></td>
+                    <td>ตรวจหาจุดบกพร่อง Edge Case และความปลอดภัยก่อนรวมโค้ด</td>
+                  </tr>
+                  <tr>
+                    <td class="num-cell">04</td>
+                    <td><strong>Pull Request Workflow</strong></td>
+                    <td>ใช้ PR Template เชื่อม Issue และผ่าน CI Gate ก่อน Merge</td>
+                  </tr>
+                  <tr>
+                    <td class="num-cell">05</td>
+                    <td><strong>Advisor Feedback Integration</strong></td>
+                    <td>แปลงคำแนะนำอาจารย์เป็น Task พร้อมหลักฐาน Commit/PR ยืนยัน</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div style="display: grid; gap: var(--space-md);">
+            <div class="key-tile">
+              <div class="mono-en">SPRINT 1 MILESTONE</div>
+              <div class="key-value">DB &amp; Auth</div>
+              <div class="thai-label">วางโครงสร้างตาราง + สิทธิ์ผู้ใช้ ก่อนต่อยอดสู่ POS Screen</div>
+            </div>
+            <div class="key-tile">
+              <div class="mono-en">RUBRIC WEIGHT (ARCHITECTURE &amp; CODE)</div>
+              <div class="key-value">22–25 pts</div>
+              <div class="thai-label">ระดับดีเยี่ยม: Clean Code + Testing + Git Commit สม่ำเสมอ</div>
+            </div>
+            <div class="layer">
+              <div class="thai-label">สัดส่วนคะแนนรวมรายวิชา</div>
+              <div style="margin-top: var(--space-xs); font-weight: 600;">Advisor 50% + Committee 50%</div>
+              <p style="margin: var(--space-xs) 0 0; font-size: 0.875rem; color: var(--on-surface-variant);">
+                อาจารย์ที่ปรึกษาประเมินจากวินัยรายสัปดาห์ ประวัติ Git และคุณภาพ PR ระหว่าง Sprint
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2 -->
+      <section class="slide" id="slide-2" data-slide-index="1" data-slide-title="ขอบเขต Sprint 1 และโครงสร้าง Core Modules">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 02 • CORE MODULE DEVELOPMENT</div>
+            <h2 class="headline slide-title"><strong>Walking Skeleton</strong> และสถาปัตยกรรมฐานข้อมูล Grocery POS</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">Sprint 1 Core</span>
+          </div>
+        </div>
+
+        <p style="max-width: 65ch; margin-top: 0;">
+          ตามแนวคิด <em>User Story Mapping</em> ทีมควรเริ่มจาก <strong>Walking Skeleton</strong> — ชุดโมดูลเล็กที่สุดที่ทำงานเชื่อมต่อกันได้ครบวงจร (Database → Backend API → Authentication → Core CRUD) แล้วจึงขยายสู่ Sprint 2 (หน้าจอคิดเงิน POS) และ Sprint 3 (แจ้งเตือนสต็อกใกล้หมด)
+        </p>
+
+        <div class="split-5-7">
+          <div>
+            <div class="thai-label" style="margin-bottom: var(--space-sm);">คลิกเลือกตารางเพื่อดูรายละเอียดโมดูลและสปรินต์ที่รับผิดชอบ</div>
+            <div class="schema-list" id="schema-selector">
+              <button type="button" class="schema-btn is-selected" data-table="Users" onclick="selectSchemaTable('Users')">
+                <span><strong>Users</strong> (user_id, username, password_hash, role_enum)</span>
+                <span class="tag">Sprint 1</span>
+              </button>
+              <button type="button" class="schema-btn" data-table="Categories" onclick="selectSchemaTable('Categories')">
+                <span><strong>Categories</strong> (category_id, category_name)</span>
+                <span class="tag">Sprint 1</span>
+              </button>
+              <button type="button" class="schema-btn" data-table="Products" onclick="selectSchemaTable('Products')">
+                <span><strong>Products</strong> (product_id, category_id, name, price, barcode)</span>
+                <span class="tag">Sprint 1</span>
+              </button>
+              <button type="button" class="schema-btn" data-table="Inventory_Items" onclick="selectSchemaTable('Inventory_Items')">
+                <span><strong>Inventory_Items</strong> (item_id, product_id, stock_qty, unit, reorder_level)</span>
+                <span class="tag tag-warn">Sprint 1–3</span>
+              </button>
+              <button type="button" class="schema-btn" data-table="Orders" onclick="selectSchemaTable('Orders')">
+                <span><strong>Orders</strong> (order_id, user_id, order_datetime, total_amount, status)</span>
+                <span class="tag tag-gray">Sprint 2</span>
+              </button>
+              <button type="button" class="schema-btn" data-table="Order_Items" onclick="selectSchemaTable('Order_Items')">
+                <span><strong>Order_Items</strong> (order_item_id, order_id, product_id, qty, subtotal)</span>
+                <span class="tag tag-gray">Sprint 2</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="layer" id="schema-detail-panel" aria-live="polite">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3 -->
+      <section class="slide" id="slide-3" data-slide-index="2" data-slide-title="การแตกงาน Sprint Backlog และ Kanban Flow">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 03 • SPRINT EXECUTION &amp; KANBAN</div>
+            <h2 class="headline slide-title"><strong>การแตก User Story เป็น Task</strong> และวินัยบน GitHub Board</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">Scrum + Kanban</span>
+          </div>
+        </div>
+
+        <div class="split-8-4" style="margin-bottom: var(--space-lg);">
+          <div class="callout">
+            <strong>ตัวอย่าง User Story ของ Grocery POS (Sprint 1):</strong>
+            “ในบทบาทของผู้จัดการร้าน (Store Manager) ฉันต้องการเพิ่มและปรับยอดสินค้าคงคลังพร้อมกำหนดจุดสั่งซื้อซ้ำ (Reorder Level) เพื่อให้ระบบแจ้งเตือนก่อนสินค้าหมดชั้นวาง”
+            <div style="margin-top: var(--space-xs); color: var(--on-surface-variant); font-size: 0.9rem;">
+              <strong>กฎการแตก Task (Scrum Guide):</strong> แตก User Story ออกเป็น Subtasks ขนาดไม่เกิน 1 วัน เพื่อติดตามความคืบหน้าได้จริงใน Daily Scrum และเปิด PR ได้เร็ว
+            </div>
+          </div>
+          <div class="layer">
+            <div class="mono-en">ESTIMATION &amp; PRIORITY</div>
+            <div style="margin-top: var(--space-xs); font-size: 0.9rem;">
+              ใช้โมเดล <strong>MoSCoW</strong> จัดลำดับ: <em>Must Have</em> (Auth, DB, Product CRUD) ลง Sprint 1 ส่วนงานรองเก็บไว้ใน <em>Icebox</em>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+          <div class="thai-label">กระดานจำลอง Sprint 1: กดปุ่มย้ายการ์ดงานเพื่อดูเงื่อนไขแต่ละสถานะ (Definition of Done)</div>
+          <button type="button" class="mini-btn" onclick="resetKanbanDemo()">รีเซ็ตบอร์ดตัวอย่าง</button>
+        </div>
+
+        <div class="kanban-grid" id="kanban-board">
+          <!-- Populated by JS -->
+        </div>
+        <div class="status-banner" id="kanban-status-msg" style="margin-top: var(--space-md);" aria-live="polite">
+          คลิกปุ่มลูกศรบนการ์ดงานเพื่อจำลองการเลื่อนสถานะจาก Todo → In Progress → Awaiting Review → Done
+        </div>
+      </section>
+
+      <!-- SLIDE 4 -->
+      <section class="slide" id="slide-4" data-slide-index="3" data-slide-title="Clean Code และหลัก SOLID สำหรับ POS">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 04 • CLEAN CODE &amp; SOLID PRINCIPLES</div>
+            <h2 class="headline slide-title"><strong>Don't Let the Sun Set on Bad Code:</strong> Refactoring ด้วย SOLID</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">Clean Architecture</span>
+          </div>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: var(--space-lg);">
+          <div class="layer">
+            <div class="mono-en">SRP • SINGLE RESPONSIBILITY</div>
+            <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>1 คลาส 1 เหตุผลที่ต้องเปลี่ยน</strong></h3>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+              แยก <code>PriceCalculator</code> (คำนวณราคารวม/ภาษี) ออกจาก <code>InventoryRepository</code> (คิวรีฐานข้อมูล) และ <code>ReceiptFormatter</code>
+            </p>
+          </div>
+          <div class="layer">
+            <div class="mono-en">OCP • OPEN/CLOSED</div>
+            <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>ขยายได้โดยไม่แก้โค้ดเดิม</strong></h3>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+              เพิ่มโปรโมชันสมาชิกหรือส่วนลดตามฤดูกาลผ่าน Strategy Interface โดยไม่ต้องแก้เงื่อนไข <code>if-else</code> ยาวในคลาสคิดเงิน
+            </p>
+          </div>
+          <div class="layer">
+            <div class="mono-en">ISP &amp; LSP • INTERFACE DISCIPLINE</div>
+            <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>แยกสิทธิ์และสัญญาให้ชัด</strong></h3>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+              แคชเชียร์เรียกใช้เฉพาะเมธอดขายผ่าน <code>IPosCheckout</code> ไม่ถูกบังคับพึ่งเมธอดจัดการคลังของผู้ดูแลระบบ
+            </p>
+          </div>
+          <div class="layer">
+            <div class="mono-en">DIP &amp; DRY • DECOUPLING</div>
+            <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>พึ่ง Abstraction ไม่ผูก DB ตรง</strong></h3>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+              Service ระดับสูงพึ่ง <code>IStockStore</code> ทำให้สลับ MySQL/PostgreSQL หรือใช้ Mock ทดสอบ Unit Test ได้ทันที
+            </p>
+          </div>
+        </div>
+
+        <div class="tab-bar" role="tablist" aria-label="เปรียบเทียบโค้ด Clean Code">
+          <button type="button" class="tab-btn is-active" id="tab-refactor-bad" onclick="switchRefactorView('bad')">
+            Before: โค้ดที่รวมทุกอย่าง (Smelly Code)
+          </button>
+          <button type="button" class="tab-btn" id="tab-refactor-good" onclick="switchRefactorView('good')">
+            After: Refactor ตาม SRP + DIP + Guard Clauses
+          </button>
+        </div>
+
+        <div class="split-8-4">
+          <pre class="code-panel code-panel-bad" id="refactor-code-view"></pre>
+          <div class="layer" id="refactor-notes-view" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5 -->
+      <section class="slide" id="slide-5" data-slide-index="4" data-slide-title="ความปลอดภัย Edge Case และ Test-First Mindset">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 05 • SPRINT 1 SECURITY &amp; RELIABILITY</div>
+            <h2 class="headline slide-title"><strong>จุดเสี่ยงทางเทคนิค</strong> ของระบบ Grocery POS ใน Sprint 1</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag tag-red">Risk Mitigation</span>
+          </div>
+        </div>
+
+        <div class="split-6-6">
+          <div>
+            <h3 class="headline" style="font-size: var(--subhead-size); margin-top: 0;"><strong>4 ข้อบังคับด้านความปลอดภัยและข้อมูล</strong></h3>
+            <table class="carbon-table">
+              <thead>
+                <tr>
+                  <th>หัวข้อ</th>
+                  <th>ความเสี่ยงที่พบประจำ</th>
+                  <th>วิธีป้องกันใน Sprint 1</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Authentication</strong></td>
+                  <td>เก็บรหัสผ่าน Plaintext หรือส่ง <code>password_hash</code> กลับใน API</td>
+                  <td>ใช้ bcrypt/argon2 และตัดฟิลด์ลับออกใน DTO response</td>
+                </tr>
+                <tr>
+                  <td><strong>Authorization</strong></td>
+                  <td>เช็กสิทธิ์แค่หน้า UI แต่ไม่ตรวจ <code>role_enum</code> บน API</td>
+                  <td>บังคับ Role Middleware ทุก Endpoint (Cashier vs Manager)</td>
+                </tr>
+                <tr>
+                  <td><strong>SQL Injection</strong></td>
+                  <td>ต่อสตริง SQL ด้วย <code>+</code> เมื่อค้นหาบาร์โค้ดสินค้า</td>
+                  <td>ใช้ Parameterized Query / ORM Prepared Statements เท่านั้น</td>
+                </tr>
+                <tr>
+                  <td><strong>Concurrency</strong></td>
+                  <td>ตัดสต็อกพร้อมกัน 2 เครื่องจนสินค้าเหลือติดลบ</td>
+                  <td>ใช้ DB Transaction + Atomic Update (<code>WHERE stock_qty &gt;= qty</code>)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: grid; gap: var(--space-md);">
+            <div class="callout callout-green">
+              <strong>Serendipitous Decoupling (พลังของ Unit Testing):</strong>
+              การเขียน Test ก่อนหรือเขียนคู่กับการพัฒนาโมดูล จะบังคับให้นักศึกษาแยกการคำนวณราคาและการตรวจสอบสต็อกออกจากฐานข้อมูลจริง ทำให้โครงสร้างโค้ดสะอาดขึ้นโดยอัตโนมัติ
+            </div>
+            <div class="layer">
+              <div class="mono-en">ACCEPTANCE TEST RULE (XP)</div>
+              <p style="margin: var(--space-xs) 0 0;">
+                “เมื่อ Acceptance Test ของ User Story ใดผ่านแล้ว ให้บันทึกเป็นชุดทดสอบอัตโนมัติประจำระบบ และห้ามปล่อยให้พังซ้ำใน Commit ถัดไป”
+              </p>
+            </div>
+            <div class="layer">
+              <div class="mono-en">EDGE CASES ที่ต้องมี TEST เสมอ</div>
+              <ul style="margin: var(--space-xs) 0 0; padding-left: var(--space-lg);">
+                <li>จำนวนสินค้าเป็น 0 หรือติดลบ (<code>qty &lt;= 0</code>)</li>
+                <li>บาร์โค้ดซ้ำ / ไม่พบสินค้าในคลัง</li>
+                <li>การปัดเศษทศนิยมเงินตรา (หลีกเลี่ยง floating-point drift)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6 -->
+      <section class="slide" id="slide-6" data-slide-index="5" data-slide-title="แนวทาง Peer Code Review และแบบฝึกหัดจับจุดบกพร่อง">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 06 • PEER CODE REVIEW GUIDELINES</div>
+            <h2 class="headline slide-title"><strong>Collective Code Ownership:</strong> ศิลปะการตรวจโค้ดเพื่อนร่วมทีม</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">Interactive Lab</span>
+          </div>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: var(--space-lg);">
+          <div class="callout">
+            <strong>[Blocker] ต้องแก้ไขก่อน Merge</strong>
+            <div style="font-size: 0.875rem; margin-top: var(--space-xs);">ช่องโหว่ความปลอดภัย, Bug คำนวณเงิน/สต็อกผิด, ไม่มี Test หรือ CI ไม่ผ่าน</div>
+          </div>
+          <div class="callout callout-warn">
+            <strong>[Suggestion] ข้อเสนอแนะเชิงออกแบบ</strong>
+            <div style="font-size: 0.875rem; margin-top: var(--space-xs);">จุดที่ผิด SRP, ชื่อตัวแปรคลุมเครือ, หรือควรแยกฟังก์ชันเพื่ออ่านง่ายขึ้น</div>
+          </div>
+          <div class="callout callout-green">
+            <strong>[Nit / Praise] รายละเอียดย่อยและคำชม</strong>
+            <div style="font-size: 0.875rem; margin-top: var(--space-xs);">การจัดรูปแบบเล็กน้อย (ไม่ขวางการ Merge) และชื่นชมเทคนิคที่ดีของเพื่อน</div>
+          </div>
+        </div>
+
+        <div class="split-8-4">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+              <div class="thai-label">แบบฝึกหัดในชั้นเรียน: คลิกเลือกบรรทัดที่มีจุดบกพร่องในฟังก์ชัน Sprint 1 (มี 4 จุด)</div>
+              <div style="display: flex; gap: var(--space-xs);">
+                <button type="button" class="mini-btn" onclick="verifyCodeReviewQuiz()">ตรวจคำตอบ</button>
+                <button type="button" class="mini-btn" onclick="resetCodeReviewQuiz()">ล้างการเลือก</button>
+              </div>
+            </div>
+            <div id="code-review-quiz-lines" style="border: var(--rule);">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="layer" id="code-review-feedback" aria-live="polite">
+            <div class="mono-en">REVIEWER BENCHMARK</div>
+            <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>คำแนะนำการรีวิว</strong></h3>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+              ลองสวมบทบาทเป็น Peer Reviewer ของทีม เลือกบรรทัดที่มีความเสี่ยงด้านความปลอดภัย Clean Code หรือ Edge Case แล้วกด <strong>ตรวจคำตอบ</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7 -->
+      <section class="slide" id="slide-7" data-slide-index="6" data-slide-title="เวิร์กโฟลว์ Pull Request และ CI Pipeline">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 07 • PULL REQUEST WORKFLOW &amp; CI</div>
+            <h2 class="headline slide-title"><strong>6 ขั้นตอน Pull Request</strong> จาก Branch สู่ Main อย่างปลอดภัย</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">GitHub Projects</span>
+          </div>
+        </div>
+
+        <div class="split-6-6">
+          <div>
+            <h3 class="headline" style="font-size: var(--subhead-size); margin-top: 0;"><strong>วงจรมาตรฐานของ 1 Pull Request</strong></h3>
+            <table class="carbon-table">
+              <thead>
+                <tr>
+                  <th style="width: 56px;">ขั้น</th>
+                  <th>กิจกรรม</th>
+                  <th>เครื่องมือบน GitHub</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="num-cell">01</td>
+                  <td>แตก Branch จาก <code>main</code> ตาม Task</td>
+                  <td><code>feat/auth-login</code>, <code>fix/stock-lock</code></td>
+                </tr>
+                <tr>
+                  <td class="num-cell">02</td>
+                  <td>Commit ย่อยพร้อมข้อความชัดเจน + เขียน Test</td>
+                  <td>Git commit history</td>
+                </tr>
+                <tr>
+                  <td class="num-cell">03</td>
+                  <td>เปิด PR ด้วย Template และผูก Issue</td>
+                  <td><code>?template=feature_pr_template.md</code></td>
+                </tr>
+                <tr>
+                  <td class="num-cell">04</td>
+                  <td>ตั้ง Reviewers &amp; ย้ายการ์ดไป Awaiting Review</td>
+                  <td>Sidebar: Development + Reviewers</td>
+                </tr>
+                <tr>
+                  <td class="num-cell">05</td>
+                  <td>ผ่าน CI (Build + Test + Lint) และ Peer Approve</td>
+                  <td>GitHub Actions / Review Comments</td>
+                </tr>
+                <tr>
+                  <td class="num-cell">06</td>
+                  <td>Merge PR และปิด Issue อัตโนมัติ → Done</td>
+                  <td><code>github-project-automation</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="headline" style="font-size: var(--subhead-size); margin-top: 0;"><strong>ตัวจำลอง PR Gate Checker</strong></h3>
+            <p style="margin-top: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+              ตรวจสอบความพร้อมก่อนกด Merge PR ของทีมในสัปดาห์ที่ 7:
+            </p>
+            <div id="pr-gate-list">
+              <label class="check-row">
+                <input type="checkbox" id="pr-chk-1" onchange="evaluatePrGate()">
+                <span>กรอก <code>feature_pr_template.md</code> ครบทั้ง Feature Description, Expected Behavior และ SQL Migration</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="pr-chk-2" onchange="evaluatePrGate()">
+                <span>เชื่อมโยง PR เข้ากับ Issue ใน Sidebar ช่อง <strong>Development</strong> แล้ว</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="pr-chk-3" onchange="evaluatePrGate()">
+                <span>CI Pipeline (Build + Automated Unit/Integration Tests + Linter) ผ่านทั้งหมด</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="pr-chk-4" onchange="evaluatePrGate()">
+                <span>มี Peer Reviewer อย่างน้อย 1 คนตรวจสอบและกด <strong>Approve</strong> (ไม่มี Blocker ค้าง)</span>
+              </label>
+            </div>
+            <div class="status-banner" id="pr-gate-result" style="margin-top: var(--space-md);" aria-live="polite">
+              สถานะ PR: รอการตรวจสอบ (0 / 4 เงื่อนไข)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8 -->
+      <section class="slide" id="slide-8" data-slide-index="7" data-slide-title="การบูรณาการข้อเสนอแนะจากอาจารย์ที่ปรึกษา">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 08 • ADVISOR FEEDBACK INTEGRATION</div>
+            <h2 class="headline slide-title"><strong>เปลี่ยนคำแนะนำอาจารย์ที่ปรึกษา</strong> เป็น Actionable Backlog</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">PDCA + QA Loop</span>
+          </div>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: var(--space-lg);">
+          <div class="layer">
+            <div class="mono-en">1. MIRRORING &amp; ACKNOWLEDGING</div>
+            <p style="margin: var(--space-xs) 0 0; font-size: 0.9rem;">
+              ทวนความเข้าใจข้อเสนอแนะของอาจารย์ด้วยคำพูดของทีม (หลักการสัมภาษณ์ AUN-QA) เพื่อยืนยันว่าเข้าใจปัญหาตรงกันก่อนแก้ไข
+            </p>
+          </div>
+          <div class="layer">
+            <div class="mono-en">2. CONVERT TO GITHUB ISSUE</div>
+            <p style="margin: var(--space-xs) 0 0; font-size: 0.9rem;">
+              แตกความเห็นเป็น Issue พร้อมติด Label (<code>advisor-feedback</code>, <code>refactor</code>, <code>bug</code>) และกำหนด Assignee
+            </p>
+          </div>
+          <div class="layer">
+            <div class="mono-en">3. EVIDENCE-BASED CLOSURE</div>
+            <p style="margin: var(--space-xs) 0 0; font-size: 0.9rem;">
+              ปิดงานด้วยหลักฐานจริง: ลิงก์ PR ที่แก้แล้ว ผลการรัน Test และเดโมในคาบถัดไป (ตอบโจทย์ PDCA Check → Act)
+            </p>
+          </div>
+        </div>
+
+        <div class="split-5-7">
+          <div class="layer">
+            <div class="mono-en">LOG ADVISOR FEEDBACK</div>
+            <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0 var(--space-md);"><strong>บันทึกข้อเสนอแนะเข้าสู่ Sprint Backlog</strong></h3>
+            <div style="display: grid; gap: var(--space-sm);">
+              <div class="field-group">
+                <label class="field-label" for="fb-topic">ประเด็นที่อาจารย์ให้ข้อเสนอแนะ</label>
+                <input type="text" id="fb-topic" class="carbon-input" placeholder="เช่น แยก Business Logic ออกจาก AuthController">
+              </div>
+              <div class="form-row-end">
+                <div class="field-group" style="flex: 1 1 160px;">
+                  <label class="field-label" for="fb-category">ประเภทงาน</label>
+                  <select id="fb-category" class="carbon-select">
+                    <option value="Refactoring">Refactoring</option>
+                    <option value="Security / Auth">Security / Auth</option>
+                    <option value="DB Schema">DB Schema</option>
+                    <option value="Testing">Testing</option>
+                  </select>
+                </div>
+                <div class="field-group" style="flex: 1 1 140px;">
+                  <label class="field-label" for="fb-owner">ผู้รับผิดชอบ</label>
+                  <input type="text" id="fb-owner" class="carbon-input" placeholder="ชื่อสมาชิกในทีม">
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="fb-evidence">หลักฐานที่ต้องส่งมอบ (PR / Test)</label>
+                <input type="text" id="fb-evidence" class="carbon-input" placeholder="เช่น PR #14 + Unit Test ครอบคลุม 4 กรณี">
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xs);">
+                <button type="button" class="btn btn-primary" onclick="addAdvisorFeedback()">เพิ่มเข้า Backlog Log</button>
+              </div>
+              <div id="fb-form-msg" style="font-size: 0.875rem; color: var(--error);" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+              <div class="thai-label">รายการติดตามผล Advisor Feedback (บันทึกอัตโนมัติ)</div>
+              <span class="tag" id="fb-count-tag">0 รายการ</span>
+            </div>
+            <div class="data-table-wrap">
+              <table class="carbon-table">
+                <thead>
+                  <tr>
+                    <th>ประเด็น</th>
+                    <th>ประเภท</th>
+                    <th>ผู้รับผิดชอบ / หลักฐาน</th>
+                    <th>สถานะ</th>
+                  </tr>
+                </thead>
+                <tbody id="fb-table-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9 -->
+      <section class="slide" id="slide-9" data-slide-index="8" data-slide-title="ความสอดคล้องกับเกณฑ์ประเมิน 1145 204">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 09 • ASSESSMENT RUBRIC &amp; SELF-AUDIT</div>
+            <h2 class="headline slide-title"><strong>เชื่อมโยงงาน Sprint 1</strong> กับเกณฑ์ประเมินสถาปัตยกรรมและโค้ด (25 คะแนน)</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag">Rubric 25 pts</span>
+          </div>
+        </div>
+
+        <div class="split-6-6">
+          <div>
+            <h3 class="headline" style="font-size: var(--subhead-size); margin-top: 0;"><strong>เกณฑ์ประเมินคุณภาพซอฟต์แวร์และสถาปัตยกรรม</strong></h3>
+            <table class="carbon-table">
+              <thead>
+                <tr>
+                  <th>ระดับคะแนน</th>
+                  <th>เกณฑ์พิจารณาหลัก</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>ดีเยี่ยม (22–25)</strong></td>
+                  <td>ออกแบบ Architecture, API, DB Schema ถูกต้องตามหลักวิศวกรรม เขียนโค้ดตาม Clean Code มี Unit/Integration Test ครอบคลุม และมี Git Commit สม่ำเสมอ</td>
+                </tr>
+                <tr>
+                  <td><strong>ดี (18–21)</strong></td>
+                  <td>โครงสร้างสถาปัตยกรรมและฐานข้อมูลถูกต้อง เชื่อมต่อ Front/Back ได้ดี โค้ดอ่านง่าย ผ่านการทดสอบในฟังก์ชันหลัก</td>
+                </tr>
+                <tr>
+                  <td><strong>พอใช้ (14–17)</strong></td>
+                  <td>สถาปัตยกรรมมีข้อผิดพลาดบางจุด โครงสร้างโค้ดขาดความเป็นระเบียบ หรือผลการทดสอบไม่ครอบคลุม</td>
+                </tr>
+                <tr>
+                  <td><strong>ปรับปรุง (0–13)</strong></td>
+                  <td>โครงสร้างไม่ถูกต้อง ไม่ตรงหลักวิศวกรรม ไม่มีเอกสาร/ผลการทดสอบ หรือไม่มีประวัติการทำงานบน Git</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="layer">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-sm);">
+              <div>
+                <div class="mono-en">TEAM SELF-AUDIT (WEEK 7)</div>
+                <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>ตรวจสุขภาพโค้ดของทีมก่อนจบสัปดาห์ที่ 7</strong></h3>
+              </div>
+              <div class="key-value" id="audit-score-display">0 / 25</div>
+            </div>
+
+            <div id="self-audit-list" style="margin-top: var(--space-sm);">
+              <label class="check-row">
+                <input type="checkbox" class="audit-chk" data-pts="5" onchange="updateSelfAudit()">
+                <span><strong>(+5)</strong> DB Schema ครบ 6 ตารางหลักพร้อม Foreign Keys และ Constraints</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" class="audit-chk" data-pts="5" onchange="updateSelfAudit()">
+                <span><strong>(+5)</strong> โค้ดแยก Controller / Service / Repository ตามหลัก Clean Code &amp; SRP</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" class="audit-chk" data-pts="5" onchange="updateSelfAudit()">
+                <span><strong>(+5)</strong> มี Unit/Integration Test ครอบคลุม Auth, ราคา และการตัดสต็อก</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" class="audit-chk" data-pts="5" onchange="updateSelfAudit()">
+                <span><strong>(+5)</strong> ใช้ Pull Request + Peer Code Review จริงบน GitHub (ไม่ใช่ Push ตรงเข้า main)</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" class="audit-chk" data-pts="5" onchange="updateSelfAudit()">
+                <span><strong>(+5)</strong> บันทึกและปิดงานจาก Advisor Feedback ด้วยหลักฐาน PR/Commit ครบถ้วน</span>
+              </label>
+            </div>
+
+            <div class="status-banner" id="audit-band-banner" style="margin-top: var(--space-md);" aria-live="polite">
+              ระดับปัจจุบัน: ปรับปรุง (0–13 คะแนน) — เริ่มเช็กรายการที่ทีมทำสำเร็จแล้ว
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10 -->
+      <section class="slide" id="slide-10" data-slide-index="9" data-slide-title="แผนปฏิบัติการหลังจบคาบและสรุปบทเรียน">
+        <div class="slide-header">
+          <div>
+            <div class="mono-en">SLIDE 10 • WRAP-UP &amp; ACTION PLAN</div>
+            <h2 class="headline slide-title"><strong>5 ภารกิจก่อนเข้า Sprint 2</strong> และส่งออกบันทึกความก้าวหน้า</h2>
+          </div>
+          <div class="slide-meta">
+            <span class="tag tag-green">Ready for Sprint 2</span>
+          </div>
+        </div>
+
+        <div class="split-8-4">
+          <div class="layer">
+            <h3 class="headline" style="font-size: var(--subhead-size); margin-top: 0;"><strong>Checklist สิ่งที่ต้องทำให้เสร็จภายในสัปดาห์นี้</strong></h3>
+            <table class="carbon-table">
+              <thead>
+                <tr>
+                  <th style="width: 56px;">ข้อ</th>
+                  <th>งานที่ต้องส่งมอบ</th>
+                  <th>หลักฐานบน GitHub / รายงาน</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="num-cell">01</td>
+                  <td>Freeze โครงสร้าง DB Schema (Users, Products, Inventory)</td>
+                  <td>ไฟล์ SQL Migration + ER Diagram ใน Repo</td>
+                </tr>
+                <tr>
+                  <td class="num-cell">02</td>
+                  <td>ตั้งค่า <code>.github/PULL_REQUEST_TEMPLATE/</code></td>
+                  <td>ไฟล์ <code>feature_pr_template.md</code> และ <code>bugfix_pr_template.md</code></td>
+                </tr>
+                <tr>
+                  <td class="num-cell">03</td>
+                  <td>ทุก Task ต้องผ่าน Peer Review อย่างน้อย 1 Approve</td>
+                  <td>PR History ที่มี Review Comment จริง</td>
+                </tr>
+                <tr>
+                  <td class="num-cell">04</td>
+                  <td>รัน Automated Test ผ่านกรณี Edge Case หลักของ Auth &amp; Stock</td>
+                  <td>ผล Test Log / CI Badge สีเขียว</td>
+                </tr>
+                <tr>
+                  <td class="num-cell">05</td>
+                  <td>บันทึก Advisor Feedback Log และเตรียมเดโมหน้าจอขาย Sprint 2</td>
+                  <td>ตาราง Advisor Feedback + Sprint 1 Retrospective</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: grid; gap: var(--space-md);">
+            <div class="layer">
+              <div class="mono-en">EXPORT WORKSPACE DATA</div>
+              <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>ส่งออกสรุปผลประจำสัปดาห์</strong></h3>
+              <p style="margin: 0 0 var(--space-md); font-size: 0.875rem; color: var(--on-surface-variant);">
+                ดาวน์โหลดผล Self-Audit และ Advisor Feedback Log ของกลุ่มเป็นไฟล์ CSV เพื่อนำไปแนบในรายงานสัปดาห์ที่ 7
+              </p>
+              <div style="display: grid; gap: var(--space-sm);">
+                <button type="button" class="btn btn-primary" onclick="exportWeek7Summary()">
+                  ดาวน์โหลดสรุปผล (.csv)
+                </button>
+                <button type="button" class="btn btn-danger" id="btn-reset-all" onclick="resetAllWorkspace(this)">
+                  ล้างข้อมูลที่บันทึกทั้งหมด
+                </button>
+              </div>
+              <div id="export-status-msg" style="margin-top: var(--space-sm); font-size: 0.875rem; color: var(--on-surface-variant);" aria-live="polite"></div>
+            </div>
+
+            <div class="callout">
+              <div class="mono-en">SOURCE ATTRIBUTION</div>
+              <p style="margin: var(--space-xs) 0 0; font-size: 0.8125rem; color: var(--on-surface-variant);">
+                เรียบเรียงจากเอกสารประกอบรายวิชา 1145 204 Sophomore Project (POS Student Deliverables &amp; Rubric), Agile Principles, Patterns, and Practices in C#, Lean Software Development, The Scrum Guide, Using GitHub Projects for Agile (McMaster Research Software), และแนวทางประกันคุณภาพ AUN-QA
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    const SCHEMA_DETAILS = {
+      Users: {
+        title: `Users — การยืนยันตัวตนและสิทธิ์การใช้งาน (Sprint 1)`,
+        columns: [
+          `user_id (PK)`,
+          `username (UNIQUE)`,
+          `password_hash (bcrypt/argon2)`,
+          `role_enum ('ADMIN', 'MANAGER', 'CASHIER')`
+        ],
+        responsibility: `ใช้จัดการการเข้าสู่ระบบและการควบคุมสิทธิ์ (RBAC) โดยต้องไม่ส่งค่า password_hash กลับไปยัง Client และต้องบังคับตรวจสิทธิ์บน Backend API ทุกคำสั่ง`,
+        risk: `ความเสี่ยงหลัก: เก็บรหัสผ่านแบบ Plaintext หรือตรวจสิทธิ์เฉพาะหน้า Frontend`
+      },
+      Categories: {
+        title: `Categories — หมวดหมู่สินค้าในร้านชำ (Sprint 1)`,
+        columns: [
+          `category_id (PK)`,
+          `category_name (NOT NULL)`
+        ],
+        responsibility: `จัดกลุ่มสินค้า (เช่น เครื่องดื่ม ของแห้ง ผักสด) เพื่อช่วยแคชเชียร์ค้นหาสินค้าบนหน้าจอขายและใช้สรุปยอดขายตามหมวดหมู่`,
+        risk: `ความเสี่ยงหลัก: การลบหมวดหมู่ที่มีสินค้าผูกอยู่โดยไม่ได้กำหนด Foreign Key Constraint`
+      },
+      Products: {
+        title: `Products — ข้อมูลสินค้าและราคาขาย (Sprint 1)`,
+        columns: [
+          `product_id (PK)`,
+          `category_id (FK -> Categories)`,
+          `name`,
+          `price (DECIMAL(10,2))`,
+          `barcode (UNIQUE)`
+        ],
+        responsibility: `จัดเก็บรายการสินค้าหลัก ราคาต่อหน่วย และบาร์โค้ดสำหรับสแกนขาย ต้องใช้ชนิดข้อมูล DECIMAL แทน FLOAT เพื่อป้องกันปัญหาทศนิยมคลาดเคลื่อน`,
+        risk: `ความเสี่ยงหลัก: ราคาเป็นค่าติดลบ หรือใช้ Floating-point คำนวณเงิน`
+      },
+      Inventory_Items: {
+        title: `Inventory_Items — คลังสินค้าและจุดสั่งซื้อซ้ำ (Sprint 1–3)`,
+        columns: [
+          `item_id (PK)`,
+          `product_id (FK -> Products)`,
+          `stock_quantity (INT/DECIMAL)`,
+          `unit (ชิ้น/แพ็ค/กก.)`,
+          `reorder_level`
+        ],
+        responsibility: `ติดตามจำนวนสินค้าคงเหลือแบบเรียลไทม์ และเปรียบเทียบกับ reorder_level เพื่อแจ้งเตือนเมื่อสินค้าใกล้หมด (ต่อยอดระบบ Alert ใน Sprint 3)`,
+        risk: `ความเสี่ยงหลัก: Race Condition เมื่อแคชเชียร์หลายเครื่องตัดสต็อกสินค้าตัวเดียวกันพร้อมกัน`
+      },
+      Orders: {
+        title: `Orders — หัวบิลการขาย (เตรียมเชื่อม Sprint 2)`,
+        columns: [
+          `order_id (PK)`,
+          `user_id (FK -> Users)`,
+          `order_datetime`,
+          `total_amount (DECIMAL(10,2))`,
+          `status ('PAID', 'VOID', 'PENDING')`
+        ],
+        responsibility: `บันทึกธุรกรรมการขายแต่ละใบเสร็จและระบุพนักงานที่ทำรายการ เพื่อใช้ตรวจสอบย้อนหลังและสรุปยอดประจำวัน`,
+        risk: `ความเสี่ยงหลัก: อนุญาตให้ลบใบเสร็จย้อนหลังแทนการเปลี่ยนสถานะเป็น VOID`
+      },
+      Order_Items: {
+        title: `Order_Items — รายการสินค้าต่อบิล (เตรียมเชื่อม Sprint 2)`,
+        columns: [
+          `order_item_id (PK)`,
+          `order_id (FK -> Orders)`,
+          `product_id (FK -> Products)`,
+          `quantity`,
+          `subtotal (DECIMAL(10,2))`
+        ],
+        responsibility: `เก็บรายละเอียดจำนวนและราคา ณ เวลาที่ขาย (Snapshot Price) เพื่อไม่ให้ยอดบิลเก่าเปลี่ยนตามเมื่อมีการปรับราคาสินค้าในอนาคต`,
+        risk: `ความเสี่ยงหลัก: ไม่เก็บราคา ณ เวลาที่ขาย ทำให้รายงานย้อนหลังผิดเพี้ยน`
+      }
+    };
+
+    const INITIAL_KANBAN_TASKS = [
+      { id: `US-101`, title: `ออกแบบ SQL Migration (Users, Products, Inventory)`, owner: `Dev A`, col: `Done` },
+      { id: `US-102`, title: `ระบบ Login + Hash รหัสผ่านด้วย bcrypt`, owner: `Dev B`, col: `Awaiting Review` },
+      { id: `US-103`, title: `API เพิ่ม/แก้ไขสินค้า พร้อมตรวจ Role Manager`, owner: `Dev C`, col: `In Progress` },
+      { id: `US-104`, title: `เขียน Unit Test ป้องกันการตัดสต็อกติดลบ`, owner: `Dev A`, col: `Todo` }
+    ];
+
+    const KANBAN_COLS = [`Todo`, `In Progress`, `Awaiting Review`, `Done`];
+
+    const KANBAN_GUIDANCE = {
+      Todo: `สถานะ Todo: งานถูกแตกขนาดไม่เกิน 1 วันและระบุ Acceptance Criteria ชัดเจนแล้ว รอสมาชิกหยิบไปทำ`,
+      'In Progress': `สถานะ In Progress: สมาชิกกำลังเขียนโค้ดใน Feature Branch ของตนเอง พร้อมเขียน Unit Test ควบคู่ไปด้วย`,
+      'Awaiting Review': `สถานะ Awaiting Review: เปิด Pull Request แล้ว กำลังรอ CI ผ่านและรอเพื่อนร่วมทีมตรวจโค้ด (Peer Review)`,
+      Done: `สถานะ Done: ผ่านการ Approve และ Merge เข้า main แล้ว ระบบ GitHub Automation ปิด Issue ให้อัตโนมัติ`
+    };
+
+    const REFACTOR_CODE = {
+      bad: {
+        code: `// Bad: รวม Controller + Business Logic + SQL + Receipt ในฟังก์ชันเดียว\napp.post('/api/checkout', async (req, res) => {\n  const items = req.body.items;\n  let total = 0;\n  for (let i = 0; i < items.length; i++) {\n    // 1. Magic number & SQL injection risk\n    const rows = await db.query(\n      "SELECT * FROM Products WHERE product_id = " + items[i].id\n    );\n    total += rows[0].price * items[i].qty * 1.07;\n    await db.query(\n      "UPDATE Inventory_Items SET stock_quantity = stock_quantity - " + items[i].qty\n    );\n  }\n  console.log("Receipt printed total=" + total);\n  res.json({ ok: true, total: total });\n});`,
+        title: `ปัญหาในโค้ดชุดนี้ (Design Smells)`,
+        points: [
+          `ผิด SRP: Endpoint ทำทั้งรับ HTTP, คำนวณภาษี 1.07, คิวรี DB และพิมพ์ใบเสร็จ`,
+          `SQL Injection: ต่อสตริง SQL โดยตรงกับ input จากผู้ใช้`,
+          `Concurrency Bug: ไม่อยู่ใน DB Transaction และไม่เช็กสต็อกเพียงพอ`,
+          `ทดสอบยาก (Untestable): ผูกติดกับ Express req/res และ db.query โดยตรง`
+        ]
+      },
+      good: {
+        code: `// Good: แยกความรับผิดชอบตาม SRP + DIP + Parameterized Atomic Update\nconst VAT_RATE = 0.07;\n\nclass CheckoutService {\n  constructor(productRepo, inventoryRepo, txManager) {\n    this.productRepo = productRepo;\n    this.inventoryRepo = inventoryRepo;\n    this.txManager = txManager;\n  }\n\n  async processOrder(items) {\n    if (!Array.isArray(items) || items.length === 0) {\n      throw new Error('Order must contain at least one item');\n    }\n    return this.txManager.run(async (tx) => {\n      let subtotal = 0;\n      for (const item of items) {\n        if (item.qty <= 0) throw new Error('Quantity must be positive');\n        const product = await this.productRepo.findById(tx, item.id);\n        if (!product) throw new Error('Product not found');\n\n        const updated = await this.inventoryRepo.deductIfAvailable(tx, item.id, item.qty);\n        if (!updated) throw new Error('Insufficient stock');\n        subtotal += Number(product.price) * item.qty;\n      }\n      const total = Math.round(subtotal * (1 + VAT_RATE) * 100) / 100;\n      return { subtotal, total };\n    });\n  }\n}`,
+        title: `สิ่งที่ปรับปรุงตามหลัก Clean Code & SOLID`,
+        points: [
+          `SRP & DIP: แยก CheckoutService ออกจาก Express และรับ Repo ผ่าน Constructor`,
+          `Parameterized + Atomic Update: deductIfAvailable ใช้ WHERE stock_quantity >= qty ภายใน Transaction`,
+          `Guard Clauses: ดัก Edge Case (รายการว่าง, qty <= 0, สต็อกไม่พอ) ตั้งแต่ต้น`,
+          `Unit Test Ready: สามารถส่ง Mock Repo เข้าไปทดสอบ Logic ได้โดยไม่ต้องต่อ DB จริง`
+        ]
+      }
+    };
+
+    const REVIEW_QUIZ_LINES = [
+      { ln: 1, text: `async function registerCashier(db, username, password) {`, bug: false, note: `ชื่อฟังก์ชันและพารามิเตอร์สื่อความหมายชัดเจน` },
+      { ln: 2, text: `  if (!username || password.length < 8) return { error: 'Invalid' };`, bug: false, note: `มีการตรวจสอบความยาวรหัสผ่านเบื้องต้น (Guard Clause)` },
+      { ln: 3, text: `  const sql = "INSERT INTO Users (username, password_hash, role_enum) VALUES ('" + username + "', '" + password + "', 'CASHIER')";`, bug: true, note: `[Blocker #1 & #2] พบ 2 ปัญหาร้ายแรงในบรรทัดเดียว: (1) ต่อสตริง SQL เสี่ยง SQL Injection ต้องใช้ Parameterized Query และ (2) บันทึก password แบบ Plaintext โดยไม่ Hash ด้วย bcrypt/argon2` },
+      { ln: 4, text: `  await db.execute(sql);`, bug: false, note: `การเรียก execute ควรรับค่าแบบ parameterized ($1, $2, $3)` },
+      { ln: 5, text: `  await sendWelcomeEmail(username);`, bug: true, note: `[Suggestion #3] ผิด SRP: ฟังก์ชันสมัครผู้ใช้ในระบบ POS ไม่ควรผูกติดกับบริการส่งอีเมลโดยตรง ควรแยก Event หรือ Notification Service` },
+      { ln: 6, text: `  return { status: 201, user: username, rawPassword: password };`, bug: true, note: `[Blocker #4] Security Leak: ห้ามส่งรหัสผ่านหรือ password_hash กลับไปใน API Response` },
+      { ln: 7, text: `}`, bug: false, note: `สิ้นสุดฟังก์ชัน` }
+    ];
+
+    const DEFAULT_FEEDBACK_ITEMS = [
+      {
+        id: 1,
+        topic: `เพิ่ม DB Transaction ป้องกันตัดสต็อกติดลบเมื่อกดขายพร้อมกัน`,
+        category: `DB Schema`,
+        owner: `ทีม Backend`,
+        evidence: `PR #11 + Concurrent Test 2 จุด`,
+        done: true
+      },
+      {
+        id: 2,
+        topic: `แยก Service คำนวณราคาออกจาก Controller เพื่อลดความซับซ้อน`,
+        category: `Refactoring`,
+        owner: `Dev A`,
+        evidence: `PR #12 (Awaiting Review)`,
+        done: false
+      }
+    ];
+
+    let appState = {
+      currentSlide: 0,
+      presentationMode: false,
+      selectedSchema: `Users`,
+      refactorTab: `bad`,
+      kanbanTasks: JSON.parse(JSON.stringify(INITIAL_KANBAN_TASKS)),
+      reviewSelectedLines: [],
+      reviewChecked: false,
+      prChecks: [false, false, false, false],
+      auditChecks: [false, false, false, false, false],
+      feedbackItems: JSON.parse(JSON.stringify(DEFAULT_FEEDBACK_ITEMS))
+    };
+
+    function persistState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+        window.notebookAppApi.setAppState(appState).catch(function() {});
+      }
+    }
+
+    function renderSlideIndex() {
+      const strip = document.getElementById('slide-index-strip');
+      const slides = document.querySelectorAll('.slide');
+      if (!strip) return;
+      let html = '';
+      slides.forEach(function(slide, idx) {
+        const title = slide.getAttribute('data-slide-title') || (`สไลด์ ` + (idx + 1));
+        const activeClass = idx === appState.currentSlide ? 'is-active' : '';
+        const numText = String(idx + 1).padStart(2, '0');
+        html += `<button type="button" class="index-btn ${activeClass}" onclick="goToSlide(${idx})"><span class="index-num">${numText}</span><span>${title}</span></button>`;
+      });
+      strip.innerHTML = html;
+    }
+
+    function updateSlideControls() {
+      const slides = document.querySelectorAll('.slide');
+      const total = slides.length || 10;
+      const counter = document.getElementById('slide-counter');
+      const fill = document.getElementById('deck-progress-fill');
+      const prevBtn = document.getElementById('btn-prev-slide');
+      const nextBtn = document.getElementById('btn-next-slide');
+      const modeBtn = document.getElementById('btn-toggle-mode');
+      const container = document.getElementById('slides-container');
+
+      if (counter) counter.textContent = `สไลด์ ${appState.currentSlide + 1} / ${total}`;
+      if (fill) fill.style.width = `${((appState.currentSlide + 1) / total) * 100}%`;
+      if (prevBtn) prevBtn.disabled = appState.currentSlide <= 0;
+      if (nextBtn) nextBtn.disabled = appState.currentSlide >= total - 1;
+
+      if (container) {
+        if (appState.presentationMode) {
+          container.classList.add('deck-presentation-mode');
+        } else {
+          container.classList.remove('deck-presentation-mode');
+        }
+      }
+
+      if (modeBtn) {
+        modeBtn.textContent = appState.presentationMode
+          ? `สลับเป็นโหมดอ่านแบบเลื่อน`
+          : `สลับเป็นโหมดนำเสนอทีละสไลด์`;
+      }
+
+      slides.forEach(function(slide, idx) {
+        if (idx === appState.currentSlide) {
+          slide.classList.add('is-current');
+        } else {
+          slide.classList.remove('is-current');
+        }
+      });
+
+      renderSlideIndex();
+    }
+
+    function goToSlide(idx) {
+      const slides = document.querySelectorAll('.slide');
+      const maxIdx = slides.length - 1;
+      if (idx < 0) idx = 0;
+      if (idx > maxIdx) idx = maxIdx;
+      appState.currentSlide = idx;
+      updateSlideControls();
+      persistState();
+
+      if (!appState.presentationMode && slides[idx]) {
+        slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function stepSlide(delta) {
+      goToSlide(appState.currentSlide + delta);
+    }
+
+    function toggleDeckMode() {
+      appState.presentationMode = !appState.presentationMode;
+      updateSlideControls();
+      persistState();
+    }
+
+    function toggleSlideIndex() {
+      const strip = document.getElementById('slide-index-strip');
+      if (!strip) return;
+      strip.hidden = !strip.hidden;
+    }
+
+    function selectSchemaTable(tableName) {
+      appState.selectedSchema = tableName;
+      const buttons = document.querySelectorAll('#schema-selector .schema-btn');
+      buttons.forEach(function(btn) {
+        if (btn.getAttribute('data-table') === tableName) {
+          btn.classList.add('is-selected');
+        } else {
+          btn.classList.remove('is-selected');
+        }
+      });
+
+      const detail = SCHEMA_DETAILS[tableName];
+      const panel = document.getElementById('schema-detail-panel');
+      if (panel && detail) {
+        const colsHtml = detail.columns.map(function(col) {
+          return `<li style="font-family: var(--font-label); font-size: 0.875rem;">${col}</li>`;
+        }).join('');
+        panel.innerHTML = `
+          <div class="mono-en">SCHEMA SPECIFICATION</div>
+          <h3 class="headline" style="font-size: 1.25rem; margin: var(--space-xs) 0 var(--space-sm);"><strong>${detail.title}</strong></h3>
+          <div class="thai-label">คอลัมน์สำคัญ</div>
+          <ul style="margin: var(--space-xs) 0 var(--space-md); padding-left: var(--space-lg);">${colsHtml}</ul>
+          <div class="thai-label">บทบาทในระบบ Grocery POS</div>
+          <p style="margin: var(--space-xs) 0 var(--space-md);">${detail.responsibility}</p>
+          <div class="callout callout-red">
+            <strong>ข้อควรระวังในการพัฒนาและรีวิว:</strong> ${detail.risk}
+          </div>
+        `;
+      }
+      persistState();
+    }
+
+    function renderKanbanBoard() {
+      const board = document.getElementById('kanban-board');
+      if (!board) return;
+      let html = '';
+      KANBAN_COLS.forEach(function(colName) {
+        const colTasks = appState.kanbanTasks.filter(function(t) { return t.col === colName; });
+        const cardsHtml = colTasks.map(function(task) {
+          const colIdx = KANBAN_COLS.indexOf(colName);
+          const disablePrev = colIdx === 0 ? 'disabled' : '';
+          const disableNext = colIdx === KANBAN_COLS.length - 1 ? 'disabled' : '';
+          return `
+            <div class="kanban-card">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="mono-en" style="color: var(--primary); font-weight: 600;">${task.id}</span>
+                <span class="tag tag-gray">${task.owner}</span>
+              </div>
+              <div style="font-size: 0.875rem; font-weight: 500;">${task.title}</div>
+              <div class="kanban-card-actions">
+                <button type="button" class="mini-btn" ${disablePrev} onclick="moveKanbanTask('${task.id}', -1)">&larr; ย้อนกลับ</button>
+                <button type="button" class="mini-btn" ${disableNext} onclick="moveKanbanTask('${task.id}', 1)">ถัดไป &rarr;</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        html += `
+          <div class="kanban-col">
+            <div class="kanban-col-head">
+              <span class="mono-en" style="color: var(--on-surface); font-weight: 600;">${colName}</span>
+              <span class="tag">${colTasks.length}</span>
+            </div>
+            ${cardsHtml}
+          </div>
+        `;
+      });
+      board.innerHTML = html;
+    }
+
+    function moveKanbanTask(taskId, delta) {
+      const task = appState.kanbanTasks.find(function(t) { return t.id === taskId; });
+      if (!task) return;
+      const curIdx = KANBAN_COLS.indexOf(task.col);
+      const nextIdx = curIdx + delta;
+      if (nextIdx < 0 || nextIdx >= KANBAN_COLS.length) return;
+      task.col = KANBAN_COLS[nextIdx];
+      renderKanbanBoard();
+      const banner = document.getElementById('kanban-status-msg');
+      if (banner) {
+        banner.textContent = `ย้าย ${task.id} ไปที่ "${task.col}" — ${KANBAN_GUIDANCE[task.col]}`;
+        banner.className = task.col === 'Done' ? 'status-banner is-success' : 'status-banner';
+      }
+      persistState();
+    }
+
+    function resetKanbanDemo() {
+      appState.kanbanTasks = JSON.parse(JSON.stringify(INITIAL_KANBAN_TASKS));
+      renderKanbanBoard();
+      const banner = document.getElementById('kanban-status-msg');
+      if (banner) {
+        banner.textContent = `รีเซ็ตบอร์ดกลับสู่สถานะเริ่มต้นของ Sprint 1 เรียบร้อยแล้ว`;
+        banner.className = 'status-banner';
+      }
+      persistState();
+    }
+
+    function switchRefactorView(tabKey) {
+      appState.refactorTab = tabKey;
+      const btnBad = document.getElementById('tab-refactor-bad');
+      const btnGood = document.getElementById('tab-refactor-good');
+      const codeEl = document.getElementById('refactor-code-view');
+      const notesEl = document.getElementById('refactor-notes-view');
+
+      if (btnBad && btnGood) {
+        btnBad.classList.toggle('is-active', tabKey === 'bad');
+        btnGood.classList.toggle('is-active', tabKey === 'good');
+      }
+
+      const data = REFACTOR_CODE[tabKey] || REFACTOR_CODE.bad;
+      if (codeEl) {
+        codeEl.textContent = data.code;
+        codeEl.className = tabKey === 'good' ? 'code-panel code-panel-good' : 'code-panel code-panel-bad';
+      }
+      if (notesEl) {
+        const itemsHtml = data.points.map(function(pt) {
+          return `<li style="margin-bottom: var(--space-xs);">${pt}</li>`;
+        }).join('');
+        notesEl.innerHTML = `
+          <div class="mono-en">${tabKey === 'good' ? 'CLEAN ARCHITECTURE' : 'CODE SMELLS'}</div>
+          <h4 class="headline" style="font-size: 1.125rem; margin: var(--space-xs) 0 var(--space-sm);"><strong>${data.title}</strong></h4>
+          <ul style="margin: 0; padding-left: var(--space-lg); font-size: 0.9375rem;">${itemsHtml}</ul>
+        `;
+      }
+      persistState();
+    }
+
+    function renderCodeReviewQuiz() {
+      const container = document.getElementById('code-review-quiz-lines');
+      if (!container) return;
+      let html = '';
+      REVIEW_QUIZ_LINES.forEach(function(item) {
+        const isSelected = appState.reviewSelectedLines.indexOf(item.ln) !== -1;
+        let rowClass = 'review-line';
+        if (appState.reviewChecked) {
+          if (item.bug) {
+            rowClass += ' is-verified-bug';
+          } else if (isSelected) {
+            rowClass += ' is-verified-clean';
+          }
+        } else if (isSelected) {
+          rowClass += ' has-issue-selected';
+        }
+
+        const mark = isSelected ? `[เลือก]` : `L${item.ln}`;
+        html += `
+          <div class="${rowClass}">
+            <span class="mono-en" style="color: ${isSelected ? 'var(--primary)' : 'var(--on-surface-variant)'};">${mark}</span>
+            <button type="button" class="review-line-btn" onclick="toggleReviewLine(${item.ln})">${escapeHtml(item.text)}</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+
+      if (appState.reviewChecked) {
+        renderReviewFeedbackPanel();
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function toggleReviewLine(lineNum) {
+      if (appState.reviewChecked) {
+        appState.reviewChecked = false;
+      }
+      const idx = appState.reviewSelectedLines.indexOf(lineNum);
+      if (idx === -1) {
+        appState.reviewSelectedLines.push(lineNum);
+      } else {
+        appState.reviewSelectedLines.splice(idx, 1);
+      }
+      renderCodeReviewQuiz();
+      persistState();
+    }
+
+    function renderReviewFeedbackPanel() {
+      const panel = document.getElementById('code-review-feedback');
+      if (!panel) return;
+      const bugLines = REVIEW_QUIZ_LINES.filter(function(l) { return l.bug; }).map(function(l) { return l.ln; });
+      const hits = bugLines.filter(function(ln) { return appState.reviewSelectedLines.indexOf(ln) !== -1; });
+      const falsePositives = appState.reviewSelectedLines.filter(function(ln) { return bugLines.indexOf(ln) === -1; });
+
+      const notesHtml = REVIEW_QUIZ_LINES.filter(function(l) { return l.bug; }).map(function(l) {
+        const foundTag = appState.reviewSelectedLines.indexOf(l.ln) !== -1
+          ? `<span class="tag tag-green">พบจุดนี้</span>`
+          : `<span class="tag tag-red">พลาดจุดนี้</span>`;
+        return `<div style="margin-top: var(--space-sm); padding-top: var(--space-sm); border-top: var(--rule);">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-xs);">
+            <span class="mono-en">LINE ${l.ln}</span>
+            ${foundTag}
+          </div>
+          <div style="font-size: 0.875rem; margin-top: var(--space-xs);">${l.note}</div>
+        </div>`;
+      }).join('');
+
+      panel.innerHTML = `
+        <div class="mono-en">REVIEW RESULT</div>
+        <h3 class="headline" style="font-size: 1.125rem; margin: var(--space-xs) 0;">
+          <strong>ตรวจพบ ${hits.length} / ${bugLines.length} จุดเสี่ยง</strong>
+        </h3>
+        <div style="font-size: 0.875rem; color: var(--on-surface-variant);">
+          บรรทัดที่เลือกเกิน (False positives): ${falsePositives.length} จุด
+        </div>
+        ${notesHtml}
+      `;
+    }
+
+    function verifyCodeReviewQuiz() {
+      appState.reviewChecked = true;
+      renderCodeReviewQuiz();
+      persistState();
+    }
+
+    function resetCodeReviewQuiz() {
+      appState.reviewSelectedLines = [];
+      appState.reviewChecked = false;
+      renderCodeReviewQuiz();
+      const panel = document.getElementById('code-review-feedback');
+      if (panel) {
+        panel.innerHTML = `
+          <div class="mono-en">REVIEWER BENCHMARK</div>
+          <h3 class="headline" style="font-size: 1.0625rem; margin: var(--space-xs) 0;"><strong>คำแนะนำการรีวิว</strong></h3>
+          <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+            ลองสวมบทบาทเป็น Peer Reviewer ของทีม เลือกบรรทัดที่มีความเสี่ยงด้านความปลอดภัย Clean Code หรือ Edge Case แล้วกด <strong>ตรวจคำตอบ</strong>
+          </p>
+        `;
+      }
+      persistState();
+    }
+
+    function evaluatePrGate() {
+      const ids = [`pr-chk-1`, `pr-chk-2`, `pr-chk-3`, `pr-chk-4`];
+      let passed = 0;
+      ids.forEach(function(id, idx) {
+        const el = document.getElementById(id);
+        const checked = !!(el && el.checked);
+        appState.prChecks[idx] = checked;
+        if (checked) passed += 1;
+      });
+      const resultEl = document.getElementById('pr-gate-result');
+      if (resultEl) {
+        if (passed === 4) {
+          resultEl.className = 'status-banner is-success';
+          resultEl.textContent = `สถานะ PR: Ready to Merge (ผ่านครบ 4 / 4 เงื่อนไข) — สามารถ Merge เข้า main และปิด Issue ได้`;
+        } else {
+          resultEl.className = 'status-banner is-error';
+          resultEl.textContent = `สถานะ PR: Blocked (${passed} / 4 เงื่อนไข) — ยังขาด ${4 - passed} รายการก่อนอนุญาตให้ Merge`;
+        }
+      }
+      persistState();
+    }
+
+    function renderFeedbackTable() {
+      const tbody = document.getElementById('fb-table-body');
+      const countTag = document.getElementById('fb-count-tag');
+      if (countTag) countTag.textContent = `${appState.feedbackItems.length} รายการ`;
+      if (!tbody) return;
+
+      if (appState.feedbackItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="color: var(--on-surface-variant);">ยังไม่มีรายการบันทึกข้อเสนอแนะ ลองกรอกข้อมูลด้านซ้ายเพื่อเพิ่มเข้า Backlog</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = appState.feedbackItems.map(function(item) {
+        const statusBtnText = item.done ? `ปิดงานแล้ว` : `กำลังดำเนินการ`;
+        const statusClass = item.done ? `tag tag-green` : `tag tag-warn`;
+        return `
+          <tr>
+            <td><strong>${escapeHtml(item.topic)}</strong></td>
+            <td><span class="tag tag-gray">${escapeHtml(item.category)}</span></td>
+            <td>
+              <div>${escapeHtml(item.owner)}</div>
+              <div style="font-size: 0.8125rem; color: var(--on-surface-variant);">${escapeHtml(item.evidence)}</div>
+            </td>
+            <td>
+              <button type="button" class="mini-btn" onclick="toggleFeedbackStatus(${item.id})">
+                <span class="${statusClass}">${statusBtnText}</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function addAdvisorFeedback() {
+      const topicEl = document.getElementById('fb-topic');
+      const catEl = document.getElementById('fb-category');
+      const ownerEl = document.getElementById('fb-owner');
+      const evEl = document.getElementById('fb-evidence');
+      const msgEl = document.getElementById('fb-form-msg');
+
+      const topic = topicEl ? topicEl.value.trim() : '';
+      const category = catEl ? catEl.value : 'Refactoring';
+      const owner = ownerEl ? ownerEl.value.trim() : '';
+      const evidence = evEl ? evEl.value.trim() : '';
+
+      if (!topic || !owner) {
+        if (msgEl) msgEl.textContent = `กรุณาระบุทั้ง "ประเด็นข้อเสนอแนะ" และ "ผู้รับผิดชอบ" ก่อนบันทึก`;
+        return;
+      }
+
+      if (msgEl) msgEl.textContent = ``;
+      const newId = Date.now();
+      appState.feedbackItems.unshift({
+        id: newId,
+        topic: topic,
+        category: category,
+        owner: owner,
+        evidence: evidence || `รอแนบลิงก์ PR / Test`,
+        done: false
+      });
+
+      if (topicEl) topicEl.value = '';
+      if (ownerEl) ownerEl.value = '';
+      if (evEl) evEl.value = '';
+
+      renderFeedbackTable();
+      persistState();
+    }
+
+    function toggleFeedbackStatus(itemId) {
+      const target = appState.feedbackItems.find(function(it) { return it.id === itemId; });
+      if (!target) return;
+      target.done = !target.done;
+      renderFeedbackTable();
+      persistState();
+    }
+
+    function updateSelfAudit() {
+      const checks = document.querySelectorAll('.audit-chk');
+      let total = 0;
+      checks.forEach(function(chk, idx) {
+        const isChecked = !!chk.checked;
+        appState.auditChecks[idx] = isChecked;
+        if (isChecked) {
+          total += parseInt(chk.getAttribute('data-pts') || '0', 10);
+        }
+      });
+
+      const scoreEl = document.getElementById('audit-score-display');
+      const bannerEl = document.getElementById('audit-band-banner');
+      if (scoreEl) scoreEl.textContent = `${total} / 25`;
+
+      if (bannerEl) {
+        if (total >= 22) {
+          bannerEl.className = 'status-banner is-success';
+          bannerEl.textContent = `ระดับปัจจุบัน: ดีเยี่ยม (${total} คะแนน) — พร้อมเข้าสู่ Sprint 2 อย่างมั่นใจ`;
+        } else if (total >= 18) {
+          bannerEl.className = 'status-banner';
+          bannerEl.textContent = `ระดับปัจจุบัน: ดี (${total} คะแนน) — เก็บรายละเอียด Test และ PR Review เพิ่มเพื่อแตะระดับดีเยี่ยม`;
+        } else if (total >= 14) {
+          bannerEl.className = 'status-banner';
+          bannerEl.textContent = `ระดับปัจจุบัน: พอใช้ (${total} คะแนน) — ควรเร่ง Refactor โครงสร้างและเพิ่มการทดสอบก่อนส่ง`;
+        } else {
+          bannerEl.className = 'status-banner is-error';
+          bannerEl.textContent = `ระดับปัจจุบัน: ปรับปรุง (${total} คะแนน) — ต้องเร่งวาง DB Schema, Clean Code และ Git History ทันที`;
+        }
+      }
+      persistState();
+    }
+
+    function exportWeek7Summary() {
+      const score = appState.auditChecks.reduce(function(acc, checked) {
+        return acc + (checked ? 5 : 0);
+      }, 0);
+
+      const rows = [
+        [`Section`, `Item`, `Detail`, `Status`]
+      ];
+      rows.push([`Self-Audit`, `Week 7 Readiness Score`, `${score} / 25`, score >= 22 ? `Excellent` : `In Progress`]);
+      appState.feedbackItems.forEach(function(item) {
+        rows.push([
+          `Advisor Feedback`,
+          item.topic.replace(/"/g, '""'),
+          `${item.category} | ${item.owner} | ${item.evidence}`.replace(/"/g, '""'),
+          item.done ? `Closed` : `Open`
+        ]);
+      });
+
+      const csvContent = '\uFEFF' + rows.map(function(r) {
+        return r.map(function(cell) { return `"${cell}"`; }).join(',');
+      }).join('\n');
+
+      const msgEl = document.getElementById('export-status-msg');
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+        window.notebookAppApi.triggerFileDownload({
+          content: csvContent,
+          contentType: 'text/csv',
+          encoding: 'UTF-8',
+          filename: 'wk07_sprint1_review_summary.csv'
+        });
+        if (msgEl) msgEl.textContent = `ส่งออกไฟล์ wk07_sprint1_review_summary.csv เรียบร้อยแล้ว`;
+      } else {
+        if (msgEl) msgEl.textContent = `เตรียมข้อมูลสรุป ${rows.length - 1} รายการเรียบร้อยแล้ว`;
+      }
+    }
+
+    function resetAllWorkspace(btn) {
+      if (btn && btn.dataset.armed !== 'true') {
+        btn.dataset.armed = 'true';
+        btn.textContent = `คลิกอีกครั้งเพื่อยืนยันการล้างข้อมูล`;
+        return;
+      }
+      if (btn) {
+        btn.dataset.armed = 'false';
+        btn.textContent = `ล้างข้อมูลที่บันทึกทั้งหมด`;
+      }
+
+      appState = {
+        currentSlide: 0,
+        presentationMode: false,
+        selectedSchema: `Users`,
+        refactorTab: `bad`,
+        kanbanTasks: JSON.parse(JSON.stringify(INITIAL_KANBAN_TASKS)),
+        reviewSelectedLines: [],
+        reviewChecked: false,
+        prChecks: [false, false, false, false],
+        auditChecks: [false, false, false, false, false],
+        feedbackItems: JSON.parse(JSON.stringify(DEFAULT_FEEDBACK_ITEMS))
+      };
+
+      applyStateToUi();
+      persistState();
+      const msgEl = document.getElementById('export-status-msg');
+      if (msgEl) msgEl.textContent = `รีเซ็ตข้อมูลทั้งหมดกลับสู่ค่าเริ่มต้นแล้ว`;
+    }
+
+    function applyStateToUi() {
+      updateSlideControls();
+      selectSchemaTable(appState.selectedSchema || `Users`);
+      renderKanbanBoard();
+      switchRefactorView(appState.refactorTab || `bad`);
+      renderCodeReviewQuiz();
+
+      [`pr-chk-1`, `pr-chk-2`, `pr-chk-3`, `pr-chk-4`].forEach(function(id, idx) {
+        const el = document.getElementById(id);
+        if (el) el.checked = !!(appState.prChecks && appState.prChecks[idx]);
+      });
+      evaluatePrGate();
+
+      const auditInputs = document.querySelectorAll('.audit-chk');
+      auditInputs.forEach(function(chk, idx) {
+        chk.checked = !!(appState.auditChecks && appState.auditChecks[idx]);
+      });
+      updateSelfAudit();
+      renderFeedbackTable();
+    }
+
+    async function initApp() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            appState = Object.assign(appState, saved);
+          }
+        } catch (err) {
+          // Use default state
+        }
+      }
+
+      applyStateToUi();
+
+      document.addEventListener('keydown', function(e) {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+        if (e.key === 'ArrowRight') {
+          stepSlide(1);
+        } else if (e.key === 'ArrowLeft') {
+          stepSlide(-1);
+        }
+      });
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+  </script>
+</body>
+</html>

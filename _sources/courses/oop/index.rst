@@ -81,7 +81,7 @@
      - `UML Introduction <https://www.geeksforgeeks.org/unified-modeling-language-uml-introduction/>`_
    * - **9**
 
-       :icon:`fa fa-link` `สไลด์ <../../_static/courses/oop/slides/wk09.html>`_
+       :icon:`fa-solid fa-link` `สไลด์ <../../_static/courses/oop/slides/wk09.html>`_
      - ทบทวนเนื้อหา OOP และ UML เพื่อการพัฒนาโปรเจกต์
      - * อธิบายความรู้เพื่อเตรียมพร้อมสำหรับการประยุกต์ใช้ในโปรเจกต์ 
      - * `OOP Concepts <./concepts/index.html>`_
@@ -89,7 +89,7 @@
        * `Github Guide <https://www.geeksforgeeks.org/ultimate-guide-git-github/>`_
    * - **10**
 
-       :icon:`fa fa-link` `สไลด์ <../../_static/courses/oop/slides/wk10.html>`_
+       :icon:`fa-solid fa-link` `สไลด์ <../../_static/courses/oop/slides/wk10.html>`_
      - บทนำสู่ Design Patterns ในโปรแกรมเชิงวัตถุ
         * Design Patterns
         * SOLID Principles
@@ -100,10 +100,10 @@
    * - **11,12,13**
      - พัฒนาโปรเจกต์และประยุกต์ใช้แนวคิดเชิงวัตถุ
         Object-Oriented Application Frameworks
-       1. :icon:`fa fa-link` `สไลด์ PyGame <../../_static/courses/oop/slides/pygame.html>`_
-       2. :icon:`fa fa-link` `สไลด์ PySide6 <../../_static/courses/oop/slides/pyside6.html>`_
-       3. :icon:`fa fa-link` `สไลด์ ScikitLearn <../../_static/courses/oop/slides/sklearn.html>`_
-       4. :icon:`fa fa-link` `สไลด์ FastAPI <../../_static/courses/oop/slides/fastapi.html>`_
+       1. :icon:`fa-solid fa-link` `สไลด์ PyGame <../../_static/courses/oop/slides/pygame.html>`_
+       2. :icon:`fa-solid fa-link` `สไลด์ PySide6 <../../_static/courses/oop/slides/pyside6.html>`_
+       3. :icon:`fa-solid fa-link` `สไลด์ ScikitLearn <../../_static/courses/oop/slides/sklearn.html>`_
+       4. :icon:`fa-solid fa-link` `สไลด์ FastAPI <../../_static/courses/oop/slides/fastapi.html>`_
      - 1. เข้าใจหลักการพัฒนาชุดคำสั่งเสริมที่ใช้แนวคิดเชิงวัตถุ
        2. อธิบายหลักการใช้งานชุดคำสั่งเสริมที่ใช้แนวคิดเชิงวัตถุเพื่อนำมาแก้ปัญหาโจทย์ที่กำหนดให้ได้ 
      - * `pygame <https://pygame.org/docs>`_ 
@@ -123,10 +123,3 @@
 
 
      
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   oop-in-pygame/slide
-
-
